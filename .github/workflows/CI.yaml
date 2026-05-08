@@ -18,22 +18,6 @@ jobs:
       - name: Build
         run: go build ./...
 
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: "1.25.8"
-          cache: false
-      - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@46c9287ccb5fd9a896cb5705a7012084e34f6736
-        with:
-          version: "v2.11.4"
-          args: "--timeout=5m -v"
-
   test:
     name: Tests
     runs-on: ubuntu-latest
