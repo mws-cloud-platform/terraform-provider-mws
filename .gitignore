@@ -1,0 +1,7 @@
+# Editor/IDE
+.idea/
+.vscode/
+.zed/
+
+# OS X
+.DS_Store

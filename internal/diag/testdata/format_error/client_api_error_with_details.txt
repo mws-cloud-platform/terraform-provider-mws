@@ -1,0 +1,5 @@
+Error: api error. Code: 412. Status: FAILED_PRECONDITION. Description: precondition failed
+Details: foo - bar
+
+RequestID: 123
+TraceID: xxx-xxx
