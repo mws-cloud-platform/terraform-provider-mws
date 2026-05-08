@@ -31,7 +31,7 @@ jobs:
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@46c9287ccb5fd9a896cb5705a7012084e34f6736
         with:
-          version: "v{{.golint_version}}"
+          version: "v2.11.4"
           args: "--timeout=5m -v"
 
   test:
