@@ -5,7 +5,7 @@ package model
 import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
-	"github.com/hashicorp/terraform-plugin-framework/path"
+	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/mapplanmodifier"
@@ -60,7 +60,7 @@ func (s *SecretVersion) GetSchema() schema.Schema {
 				MarkdownDescription: `Increase this field's value if you want to force updating the associated write-only field.`,
 				Optional:            true,
 				Validators: []validator.Int64{
-					int64validator.AlsoRequires(path.MatchRoot("data"))},
+					int64validator.AlsoRequires(tfpath.MatchRoot("data"))},
 				PlanModifiers: []planmodifier.Int64{
 					int64planmodifier.RequiresReplaceIfConfigured(),
 				},
@@ -71,7 +71,7 @@ func (s *SecretVersion) GetSchema() schema.Schema {
 				WriteOnly:           true,
 				Required:            true,
 				Validators: []validator.Map{
-					mapvalidator.AlsoRequires(path.MatchRoot("data_version"))},
+					mapvalidator.AlsoRequires(tfpath.MatchRoot("data_version"))},
 				PlanModifiers: []planmodifier.Map{
 					mapplanmodifier.RequiresReplaceIfConfigured(),
 				},

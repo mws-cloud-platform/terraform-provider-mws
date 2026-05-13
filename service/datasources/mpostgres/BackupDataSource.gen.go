@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -27,13 +26,6 @@ var (
 type BackupDataSource struct {
 	sdk    *resourcesdk.PostgresBackup
 	config *provider.Config
-}
-
-type BackupModel struct {
-	BackupParam  types.String `tfsdk:"backup"`
-	ClusterParam types.String `tfsdk:"cluster"`
-	ProjectParam types.String `tfsdk:"project"`
-	tfmodel.PostgresBackup
 }
 
 func NewBackupDataSource() datasource.DataSource {
@@ -90,8 +82,8 @@ func (m *BackupDataSource) Configure(ctx context.Context, req datasource.Configu
 
 func (m *BackupDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "BackupDataSource.Read")
-	var data BackupModel
 
+	var data tfmodel.BackupModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

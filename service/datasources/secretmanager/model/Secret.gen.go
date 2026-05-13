@@ -20,7 +20,7 @@ type Secret struct {
 
 func (s *Secret) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Секрет — это текстовая строка, содержащая любую информацию, которую пользователь хочет защитить, например, пароли, токены или ключи API`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,

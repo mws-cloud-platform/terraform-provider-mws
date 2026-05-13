@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -27,12 +26,6 @@ var (
 type DiskDataSource struct {
 	sdk    *resourcesdk.Disk
 	config *provider.Config
-}
-
-type DiskModel struct {
-	DiskParam    types.String `tfsdk:"disk"`
-	ProjectParam types.String `tfsdk:"project"`
-	tfmodel.Disk
 }
 
 func NewDiskDataSource() datasource.DataSource {
@@ -85,8 +78,8 @@ func (m *DiskDataSource) Configure(ctx context.Context, req datasource.Configure
 
 func (m *DiskDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "DiskDataSource.Read")
-	var data DiskModel
 
+	var data tfmodel.DiskModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

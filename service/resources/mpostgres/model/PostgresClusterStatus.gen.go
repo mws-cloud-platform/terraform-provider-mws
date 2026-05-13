@@ -34,7 +34,7 @@ func (s *PostgresClusterStatus) GetSchema() schema.Schema {
 			},
 			"state": schema.StringAttribute{
 				MarkdownDescription: `Состояние кластера
-  * "CREATING"     - Создаётся
+  * "CREATING"     - Создается
   * "RUNNING"      - Работает в штатном режиме
   * "STOPPING"     - Останавливается
   * "STOPPED"      - Остановлен
@@ -42,8 +42,8 @@ func (s *PostgresClusterStatus) GetSchema() schema.Schema {
   * "UPDATING"     - Выполняется обновление
   * "ERROR"        - Произошла ошибка, требуется участие команды поддержки
   * "DELETING"     - Удаляется
-  * "DELETED"      - Удалён
-  * "UNIDENTIFIED" - Не удаётся определить статус
+  * "DELETED"      - Удален
+  * "UNIDENTIFIED" - Не удается определить статус
   * "RESTORING"    - Восстанавливается
   * "MAINTENANCE"  - Ведутся работы по тех.обслуживанию
 `,
@@ -70,7 +70,7 @@ func (s *PostgresClusterStatus) GetSchema() schema.Schema {
   * "ALIVE"    - Полностью работоспособен
   * "DEGRADED" - Деградирует (некоторые, но не все, экземпляры неработоспособны)
   * "FAILED"   - Неработоспособен
-  * "UNKNOWN"  - Не удаётся определить состояние (на этапе создания)
+  * "UNKNOWN"  - Не удается определить состояние (на этапе создания)
 `,
 				Validators: []validator.String{
 					stringvalidator.OneOf(

@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -27,13 +26,6 @@ var (
 type SubnetDataSource struct {
 	sdk    *resourcesdk.Subnet
 	config *provider.Config
-}
-
-type SubnetModel struct {
-	NetworkParam types.String `tfsdk:"network"`
-	ProjectParam types.String `tfsdk:"project"`
-	SubnetParam  types.String `tfsdk:"subnet"`
-	tfmodel.Subnet
 }
 
 func NewSubnetDataSource() datasource.DataSource {
@@ -90,8 +82,8 @@ func (m *SubnetDataSource) Configure(ctx context.Context, req datasource.Configu
 
 func (m *SubnetDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "SubnetDataSource.Read")
-	var data SubnetModel
 
+	var data tfmodel.SubnetModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

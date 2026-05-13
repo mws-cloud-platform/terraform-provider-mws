@@ -74,6 +74,12 @@ func NodeGroupStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.NodeG
 		t.ImageStorageSize = types.StringNull()
 	}
 
+	if am.ImageStorageIops != nil {
+		t.ImageStorageIops = types.Int64PointerValue(am.ImageStorageIops)
+	} else {
+		t.ImageStorageIops = types.Int64Null()
+	}
+
 	if am.Scale != nil {
 		scaleTmp, d := NodeGroupStatusScaleAPIResponseToTFModel(ctx, am.Scale)
 		diags = append(diags, d...)

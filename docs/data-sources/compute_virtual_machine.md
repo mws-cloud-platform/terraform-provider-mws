@@ -389,6 +389,7 @@ Read-Only:
 Read-Only:
 
 - `disks` (Attributes List) (see [below for nested schema](#nestedatt--storage--disks))
+- `local_disks` (Attributes List) (see [below for nested schema](#nestedatt--storage--local_disks))
 
 <a id="nestedatt--storage--disks"></a>
 ### Nested Schema for `storage.disks`
@@ -424,3 +425,16 @@ Read-Only:
 Read-Only:
 
 - `image` (String) Ссылка на образ
+
+
+
+
+
+<a id="nestedatt--storage--local_disks"></a>
+### Nested Schema for `storage.local_disks`
+
+Read-Only:
+
+- `device_name` (String) Уникальное имя устройства, которое отображается в дереве /dev/disk/by-id/mws-* Linux. Если не указано - "mws-{name}", если указано - "mws-{deviceName}"
+- `name` (String) Уникальное имя диска в рамках виртуальной машины
+- `size` (String) Размер диска. Должен быть кратен 248GB

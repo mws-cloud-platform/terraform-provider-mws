@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -27,13 +26,6 @@ var (
 type ClusterDatabaseDataSource struct {
 	sdk    *resourcesdk.PostgresClusterDatabase
 	config *provider.Config
-}
-
-type ClusterDatabaseModel struct {
-	ClusterParam  types.String `tfsdk:"cluster"`
-	DatabaseParam types.String `tfsdk:"database"`
-	ProjectParam  types.String `tfsdk:"project"`
-	tfmodel.PostgresClusterDatabase
 }
 
 func NewClusterDatabaseDataSource() datasource.DataSource {
@@ -90,8 +82,8 @@ func (m *ClusterDatabaseDataSource) Configure(ctx context.Context, req datasourc
 
 func (m *ClusterDatabaseDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "ClusterDatabaseDataSource.Read")
-	var data ClusterDatabaseModel
 
+	var data tfmodel.ClusterDatabaseModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

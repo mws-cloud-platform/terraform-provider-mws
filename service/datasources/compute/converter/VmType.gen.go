@@ -121,6 +121,24 @@ func VmTypeAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.VmType
 		t.Disks = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.VmTypeDisksSpec).GetSchema().Attributes))
 	}
 
+	if val, ok := am.Spec.LocalDisks.Get(); ok {
+		localDisksTmp, d := VmTypeLocalDisksSpecAPIOptionalResponseToTFModel(ctx, &val)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		localDisksTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.VmTypeLocalDisksSpec).GetSchema().Attributes),
+			*localDisksTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.LocalDisks = localDisksTfObject
+	} else {
+		t.LocalDisks = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.VmTypeLocalDisksSpec).GetSchema().Attributes))
+	}
+
 	return &t, diags
 }
 

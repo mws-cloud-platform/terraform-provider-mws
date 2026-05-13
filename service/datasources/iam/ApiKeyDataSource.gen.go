@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -27,13 +26,6 @@ var (
 type ApiKeyDataSource struct {
 	sdk    *resourcesdk.ApiKey
 	config *provider.Config
-}
-
-type ApiKeyModel struct {
-	ApiKeyParam         types.String `tfsdk:"api_key"`
-	ProjectParam        types.String `tfsdk:"project"`
-	ServiceAccountParam types.String `tfsdk:"service_account"`
-	tfmodel.ApiKey
 }
 
 func NewApiKeyDataSource() datasource.DataSource {
@@ -90,8 +82,8 @@ func (m *ApiKeyDataSource) Configure(ctx context.Context, req datasource.Configu
 
 func (m *ApiKeyDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "ApiKeyDataSource.Read")
-	var data ApiKeyModel
 
+	var data tfmodel.ApiKeyModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

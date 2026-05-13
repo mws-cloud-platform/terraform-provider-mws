@@ -29,7 +29,7 @@ type PostgresCluster struct {
 
 func (s *PostgresCluster) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Кластер в Managed PostgreSQL — это группа узлов (виртуальных машин), объединенных для хранения и обработки данных с помощью СУБД PostgreSQL. В облачной инфраструктуре кластер — единый интерфейс для управления базами данных`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,

@@ -39,12 +39,6 @@ func ApiKeyStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.ApiKeySt
 	}
 	t.Ready = readyTfObject
 
-	if am.ApiKey != nil {
-		t.ApiKey = types.StringPointerValue(am.ApiKey)
-	} else {
-		t.ApiKey = types.StringNull()
-	}
-
 	if am.LastAuthTime != nil {
 		t.LastAuthTime = types.StringPointerValue(ptr.Get(am.LastAuthTime.Format(time.RFC3339)))
 	} else {

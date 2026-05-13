@@ -19,7 +19,10 @@ type ServiceAccount struct {
 
 func (s *ServiceAccount) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Сервисный аккаунт — это специальная учетная запись, создаваемая пользователем
+для вспомогательных целей — чтобы организовать взаимодействие программ и
+сервисов с облачными ресурсами
+`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,

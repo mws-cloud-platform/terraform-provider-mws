@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -27,13 +26,6 @@ var (
 type SecretVersionDataSource struct {
 	sdk    *resourcesdk.SecretVersion
 	config *provider.Config
-}
-
-type SecretVersionModel struct {
-	NameParam    types.String `tfsdk:"name"`
-	ProjectParam types.String `tfsdk:"project"`
-	VersionParam types.String `tfsdk:"version"`
-	tfmodel.SecretVersion
 }
 
 func NewSecretVersionDataSource() datasource.DataSource {
@@ -90,8 +82,8 @@ func (m *SecretVersionDataSource) Configure(ctx context.Context, req datasource.
 
 func (m *SecretVersionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "SecretVersionDataSource.Read")
-	var data SecretVersionModel
 
+	var data tfmodel.SecretVersionModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

@@ -12,10 +12,10 @@ import (
 	mwssdk "go.mws.cloud/go-sdk/mws"
 	"go.mws.cloud/go-sdk/mws/credentials"
 	"go.mws.cloud/go-sdk/mws/iam"
+	"go.mws.cloud/go-sdk/pkg/imds"
 	"go.mws.cloud/util-toolset/pkg/os/env"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 
-	"go.mws.cloud/terraform-provider-mws/internal/imds"
 	base "go.mws.cloud/terraform-provider-mws/internal/provider"
 	"go.mws.cloud/terraform-provider-mws/internal/useragent"
 )

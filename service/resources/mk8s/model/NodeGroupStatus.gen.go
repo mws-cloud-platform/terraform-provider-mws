@@ -17,6 +17,7 @@ type NodeGroupStatus struct {
 	Cpu              types.String `tfsdk:"cpu"`
 	Memory           types.String `tfsdk:"memory"`
 	ImageStorageSize types.String `tfsdk:"image_storage_size"`
+	ImageStorageIops types.Int64  `tfsdk:"image_storage_iops"`
 	Scale            types.Object `tfsdk:"scale"`
 	NodesReady       types.Int64  `tfsdk:"nodes_ready"`
 	Labels           types.List   `tfsdk:"labels"`
@@ -50,6 +51,10 @@ func (s *NodeGroupStatus) GetSchema() schema.Schema {
 			},
 			"image_storage_size": schema.StringAttribute{
 				Computed: true,
+			},
+			"image_storage_iops": schema.Int64Attribute{
+				MarkdownDescription: `Количество операций ввода-вывода в секунду (IOPS) для хранилища image-ей и контейнеров`,
+				Computed:            true,
 			},
 			"scale": schema.SingleNestedAttribute{
 				Attributes: new(NodeGroupStatusScale).GetSchema().Attributes,

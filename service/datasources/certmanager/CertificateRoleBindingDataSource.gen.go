@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -27,13 +26,6 @@ var (
 type CertificateRoleBindingDataSource struct {
 	sdk    *resourcesdk.CertificateRoleBinding
 	config *provider.Config
-}
-
-type CertificateRoleBindingModel struct {
-	NameParam        types.String `tfsdk:"name"`
-	ProjectParam     types.String `tfsdk:"project"`
-	RoleBindingParam types.String `tfsdk:"role_binding"`
-	tfmodel.CertificateRoleBinding
 }
 
 func NewCertificateRoleBindingDataSource() datasource.DataSource {
@@ -90,8 +82,8 @@ func (m *CertificateRoleBindingDataSource) Configure(ctx context.Context, req da
 
 func (m *CertificateRoleBindingDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "CertificateRoleBindingDataSource.Read")
-	var data CertificateRoleBindingModel
 
+	var data tfmodel.CertificateRoleBindingModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
-	"github.com/hashicorp/terraform-plugin-framework/path"
+	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -35,15 +35,6 @@ var (
 type FirewallRuleResource struct {
 	sdk    *resourcesdk.FirewallRule
 	config *provider.Config
-}
-
-type FirewallRuleModel struct {
-	FirewallRuleParam types.String   `tfsdk:"firewall_rule"`
-	NetworkParam      types.String   `tfsdk:"network"`
-	ProjectParam      types.String   `tfsdk:"project"`
-	Timeouts          timeouts.Value `tfsdk:"timeouts"`
-	ID                types.String   `tfsdk:"id"`
-	tfmodel.FirewallRule
 }
 
 func NewFirewallRuleResource() resource.Resource {
@@ -114,8 +105,8 @@ func (m *FirewallRuleResource) Configure(ctx context.Context, req resource.Confi
 
 func (m *FirewallRuleResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "FirewallRuleResource.Create")
-	var data FirewallRuleModel
 
+	var data tfmodel.FirewallRuleModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -132,14 +123,14 @@ func (m *FirewallRuleResource) Create(ctx context.Context, req resource.CreateRe
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "FirewallRuleResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.FirewallRuleTFToAPIRequestModel(ctx, &data.FirewallRule)
+	body, diags := conv.FirewallRuleTFToAPIRequestModel(ctx, &data.FirewallRule)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "FirewallRuleResource.TFToAPI")
@@ -152,7 +143,7 @@ func (m *FirewallRuleResource) Create(ctx context.Context, req resource.CreateRe
 			Project:      data.ProjectParam.ValueString(),
 			Network:      data.NetworkParam.ValueString(),
 			FirewallRule: data.FirewallRuleParam.ValueString(),
-			Body:         *bodyRequest,
+			Body:         *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -180,8 +171,8 @@ func (m *FirewallRuleResource) Create(ctx context.Context, req resource.CreateRe
 
 func (m *FirewallRuleResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "FirewallRuleResource.Read")
-	var data FirewallRuleModel
 
+	var data tfmodel.FirewallRuleModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -230,8 +221,8 @@ func (m *FirewallRuleResource) Read(ctx context.Context, req resource.ReadReques
 
 func (m *FirewallRuleResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "FirewallRuleResource.Update")
-	var data FirewallRuleModel
 
+	var data tfmodel.FirewallRuleModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -248,14 +239,14 @@ func (m *FirewallRuleResource) Update(ctx context.Context, req resource.UpdateRe
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "FirewallRuleResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.FirewallRuleTFToAPIRequestModel(ctx, &data.FirewallRule)
+	body, diags := conv.FirewallRuleTFToAPIRequestModel(ctx, &data.FirewallRule)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "FirewallRuleResource.TFToAPI")
@@ -268,7 +259,7 @@ func (m *FirewallRuleResource) Update(ctx context.Context, req resource.UpdateRe
 			Project:      data.ProjectParam.ValueString(),
 			Network:      data.NetworkParam.ValueString(),
 			FirewallRule: data.FirewallRuleParam.ValueString(),
-			Body:         bodyRequest.AsUpdateModel(),
+			Body:         body.AsUpdateModel(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -296,8 +287,8 @@ func (m *FirewallRuleResource) Update(ctx context.Context, req resource.UpdateRe
 
 func (m *FirewallRuleResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "FirewallRuleResource.Delete")
-	var data FirewallRuleModel
 
+	var data tfmodel.FirewallRuleModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -314,7 +305,7 @@ func (m *FirewallRuleResource) Delete(ctx context.Context, req resource.DeleteRe
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "FirewallRuleResource.Timeouts")
@@ -342,7 +333,7 @@ func (m *FirewallRuleResource) Delete(ctx context.Context, req resource.DeleteRe
 func (m *FirewallRuleResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "FirewallRuleResource.ImportState")
 
-	var data FirewallRuleModel
+	var data tfmodel.FirewallRuleModel
 
 	ref, err := vpcref.ParseFirewallRuleRef(ctx, req.ID)
 	if err != nil {
@@ -356,9 +347,9 @@ func (m *FirewallRuleResource) ImportState(ctx context.Context, req resource.Imp
 	apiRes, err := m.sdk.GetFirewallRule(
 		ctx,
 		client.GetFirewallRuleRequest{
-			FirewallRule: string(ref.ResourceName()),
-			Network:      ref.GetNetwork(),
 			Project:      ref.GetProject(),
+			Network:      ref.GetNetwork(),
+			FirewallRule: ref.GetFirewallRule(),
 		})
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -379,12 +370,12 @@ func (m *FirewallRuleResource) ImportState(ctx context.Context, req resource.Imp
 
 	data.FirewallRule = *tfRes
 
-	data.FirewallRuleParam = types.StringValue(string(ref.ResourceName()))
-	data.NetworkParam = types.StringValue(ref.GetNetwork())
 	data.ProjectParam = types.StringValue(ref.GetProject())
+	data.NetworkParam = types.StringValue(ref.GetNetwork())
+	data.FirewallRuleParam = types.StringValue(ref.GetFirewallRule())
 
 	var rwTimeouts timeouts.Value
-	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, path.Root("timeouts"), &rwTimeouts)...)
+	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "FirewallRuleResource.timeouts.GetAttribute")
 		return

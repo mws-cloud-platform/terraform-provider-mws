@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	"go.mws.cloud/go-sdk/service/compute/client"
@@ -25,11 +24,6 @@ var (
 type VmTypeDataSource struct {
 	sdk    *resourcesdk.VmType
 	config *provider.Config
-}
-
-type VmTypeModel struct {
-	VmTypeParam types.String `tfsdk:"vm_type"`
-	tfmodel.VmType
 }
 
 func NewVmTypeDataSource() datasource.DataSource {
@@ -76,8 +70,8 @@ func (m *VmTypeDataSource) Configure(ctx context.Context, req datasource.Configu
 
 func (m *VmTypeDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "VmTypeDataSource.Read")
-	var data VmTypeModel
 
+	var data tfmodel.VmTypeModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

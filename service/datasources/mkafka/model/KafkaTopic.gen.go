@@ -20,7 +20,9 @@ type KafkaTopic struct {
 
 func (s *KafkaTopic) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Топик — это логический поток сообщений, который создается пользователем в
+кластере и обеспечивает группировку сообщений по темам
+`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,

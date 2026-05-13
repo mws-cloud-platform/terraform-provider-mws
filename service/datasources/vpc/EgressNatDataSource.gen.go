@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -27,13 +26,6 @@ var (
 type EgressNatDataSource struct {
 	sdk    *resourcesdk.EgressNat
 	config *provider.Config
-}
-
-type EgressNatModel struct {
-	EgressNatParam types.String `tfsdk:"egress_nat"`
-	NetworkParam   types.String `tfsdk:"network"`
-	ProjectParam   types.String `tfsdk:"project"`
-	tfmodel.EgressNat
 }
 
 func NewEgressNatDataSource() datasource.DataSource {
@@ -90,8 +82,8 @@ func (m *EgressNatDataSource) Configure(ctx context.Context, req datasource.Conf
 
 func (m *EgressNatDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "EgressNatDataSource.Read")
-	var data EgressNatModel
 
+	var data tfmodel.EgressNatModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -27,12 +26,6 @@ var (
 type ServiceAccountDataSource struct {
 	sdk    *resourcesdk.ServiceAccount
 	config *provider.Config
-}
-
-type ServiceAccountModel struct {
-	ProjectParam        types.String `tfsdk:"project"`
-	ServiceAccountParam types.String `tfsdk:"service_account"`
-	tfmodel.ServiceAccount
 }
 
 func NewServiceAccountDataSource() datasource.DataSource {
@@ -84,8 +77,8 @@ func (m *ServiceAccountDataSource) Configure(ctx context.Context, req datasource
 
 func (m *ServiceAccountDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "ServiceAccountDataSource.Read")
-	var data ServiceAccountModel
 
+	var data tfmodel.ServiceAccountModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

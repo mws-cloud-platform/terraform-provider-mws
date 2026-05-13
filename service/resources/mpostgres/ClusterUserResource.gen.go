@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/path"
+	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -37,15 +37,6 @@ var (
 type ClusterUserResource struct {
 	sdk    *resourcesdk.PostgresClusterUser
 	config *provider.Config
-}
-
-type ClusterUserModel struct {
-	ClusterParam types.String   `tfsdk:"cluster"`
-	ProjectParam types.String   `tfsdk:"project"`
-	UserParam    types.String   `tfsdk:"user"`
-	Timeouts     timeouts.Value `tfsdk:"timeouts"`
-	ID           types.String   `tfsdk:"id"`
-	tfmodel.PostgresClusterUser
 }
 
 func NewClusterUserResource() resource.Resource {
@@ -116,12 +107,14 @@ func (m *ClusterUserResource) Configure(ctx context.Context, req resource.Config
 
 func (m *ClusterUserResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "ClusterUserResource.Create")
-	var data ClusterUserModel
 
+	var data tfmodel.ClusterUserModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	var specPasswordVersion types.Int64
 
 	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
@@ -134,24 +127,23 @@ func (m *ClusterUserResource) Create(ctx context.Context, req resource.CreateReq
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ClusterUserResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.PostgresClusterUserTFToAPIRequestModel(ctx, &data.PostgresClusterUser)
+	body, diags := conv.PostgresClusterUserTFToAPIRequestModel(ctx, &data.PostgresClusterUser)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ClusterUserResource.TFToAPI")
 		return
 	}
 
-	var versionFieldsMap = make(map[string]types.Int64)
-	bodyRequest, diags = func(ctx context.Context, planApiRequest *apimodel.PostgresClusterUserRequest) (*apimodel.PostgresClusterUserRequest, tfdiag.Diagnostics) {
-		var configData ClusterUserModel
+	body, diags = func(ctx context.Context, planApiRequest *apimodel.PostgresClusterUserRequest) (*apimodel.PostgresClusterUserRequest, tfdiag.Diagnostics) {
 
+		var configData tfmodel.ClusterUserModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
 		if resp.Diagnostics.HasError() {
 			return nil, resp.Diagnostics
@@ -162,22 +154,20 @@ func (m *ClusterUserResource) Create(ctx context.Context, req resource.CreateReq
 			return nil, wdiags
 		}
 
-		var specpasswordVersion types.Int64
-		resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, path.Root("password_version"), &specpasswordVersion)...)
+		resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, tfpath.Root("password_version"), &specPasswordVersion)...)
 		if resp.Diagnostics.HasError() {
-			tflog.Debug(ctx, "ClusterUserResource.GetWriteOnlyFromConfig")
-			return nil, resp.Diagnostics.Errors()
+			tflog.Debug(ctx, "ClusterUserResource.GetWriteOnlyAttributeFromConfig")
+			return nil, resp.Diagnostics
 		}
-		if !specpasswordVersion.IsNull() && !specpasswordVersion.IsUnknown() {
+		if !specPasswordVersion.IsNull() && !specPasswordVersion.IsUnknown() {
 			planApiRequest.Spec.Password = configRequest.Spec.Password
-			versionFieldsMap["password_version"] = specpasswordVersion
 		}
 
 		return planApiRequest, nil
-	}(ctx, bodyRequest)
+	}(ctx, body)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
-		tflog.Debug(ctx, "ClusterUserResource.GetWriteOnlyFromConfig")
+		tflog.Debug(ctx, "ClusterUserResource.GetWriteOnlyAttributesFromConfig")
 		return
 	}
 
@@ -187,7 +177,7 @@ func (m *ClusterUserResource) Create(ctx context.Context, req resource.CreateReq
 			Project: data.ProjectParam.ValueString(),
 			Cluster: data.ClusterParam.ValueString(),
 			User:    data.UserParam.ValueString(),
-			Body:    *bodyRequest,
+			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -211,23 +201,21 @@ func (m *ClusterUserResource) Create(ctx context.Context, req resource.CreateReq
 	data.PostgresClusterUser = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-
-	for vPath, version := range versionFieldsMap {
-		if version.IsNull() || version.IsUnknown() {
-			continue
-		}
-		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root(vPath), version)...)
+	if !specPasswordVersion.IsNull() && !specPasswordVersion.IsUnknown() {
+		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("password_version"), specPasswordVersion)...)
 	}
 }
 
 func (m *ClusterUserResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "ClusterUserResource.Read")
-	var data ClusterUserModel
 
+	var data tfmodel.ClusterUserModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	var specPasswordVersion types.Int64
 
 	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
@@ -268,21 +256,22 @@ func (m *ClusterUserResource) Read(ctx context.Context, req resource.ReadRequest
 	data.PostgresClusterUser = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-	var specpasswordVersion types.Int64
-	req.State.GetAttribute(ctx, path.Root("password_version"), &specpasswordVersion)
-	if !specpasswordVersion.IsNull() && !specpasswordVersion.IsUnknown() {
-		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("password_version"), specpasswordVersion)...)
+	resp.Diagnostics.Append(req.State.GetAttribute(ctx, tfpath.Root("password_version"), &specPasswordVersion)...)
+	if !specPasswordVersion.IsNull() && !specPasswordVersion.IsUnknown() {
+		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("password_version"), specPasswordVersion)...)
 	}
 }
 
 func (m *ClusterUserResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "ClusterUserResource.Update")
-	var data ClusterUserModel
 
+	var data tfmodel.ClusterUserModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	var specPasswordVersion types.Int64
 
 	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
@@ -295,24 +284,23 @@ func (m *ClusterUserResource) Update(ctx context.Context, req resource.UpdateReq
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ClusterUserResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.PostgresClusterUserTFToAPIRequestModel(ctx, &data.PostgresClusterUser)
+	body, diags := conv.PostgresClusterUserTFToAPIRequestModel(ctx, &data.PostgresClusterUser)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ClusterUserResource.TFToAPI")
 		return
 	}
 
-	var versionFieldsMap = make(map[string]types.Int64)
-	bodyRequest, diags = func(ctx context.Context, planApiRequest *apimodel.PostgresClusterUserRequest) (*apimodel.PostgresClusterUserRequest, tfdiag.Diagnostics) {
-		var configData ClusterUserModel
+	body, diags = func(ctx context.Context, planApiRequest *apimodel.PostgresClusterUserRequest) (*apimodel.PostgresClusterUserRequest, tfdiag.Diagnostics) {
 
+		var configData tfmodel.ClusterUserModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
 		if resp.Diagnostics.HasError() {
 			return nil, resp.Diagnostics
@@ -323,22 +311,20 @@ func (m *ClusterUserResource) Update(ctx context.Context, req resource.UpdateReq
 			return nil, wdiags
 		}
 
-		var specpasswordVersion types.Int64
-		resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, path.Root("password_version"), &specpasswordVersion)...)
+		resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, tfpath.Root("password_version"), &specPasswordVersion)...)
 		if resp.Diagnostics.HasError() {
-			tflog.Debug(ctx, "ClusterUserResource.GetWriteOnlyFromConfig")
-			return nil, resp.Diagnostics.Errors()
+			tflog.Debug(ctx, "ClusterUserResource.GetWriteOnlyAttributeFromConfig")
+			return nil, resp.Diagnostics
 		}
-		if !specpasswordVersion.IsNull() && !specpasswordVersion.IsUnknown() {
+		if !specPasswordVersion.IsNull() && !specPasswordVersion.IsUnknown() {
 			planApiRequest.Spec.Password = configRequest.Spec.Password
-			versionFieldsMap["password_version"] = specpasswordVersion
 		}
 
 		return planApiRequest, nil
-	}(ctx, bodyRequest)
+	}(ctx, body)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
-		tflog.Debug(ctx, "ClusterUserResource.GetWriteOnlyFromConfig")
+		tflog.Debug(ctx, "ClusterUserResource.GetWriteOnlyAttributesFromConfig")
 		return
 	}
 
@@ -348,7 +334,7 @@ func (m *ClusterUserResource) Update(ctx context.Context, req resource.UpdateReq
 			Project: data.ProjectParam.ValueString(),
 			Cluster: data.ClusterParam.ValueString(),
 			User:    data.UserParam.ValueString(),
-			Body:    bodyRequest.AsUpdateModel(),
+			Body:    body.AsUpdateModel(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -372,19 +358,15 @@ func (m *ClusterUserResource) Update(ctx context.Context, req resource.UpdateReq
 	data.PostgresClusterUser = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-
-	for vPath, version := range versionFieldsMap {
-		if version.IsNull() || version.IsUnknown() {
-			continue
-		}
-		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root(vPath), version)...)
+	if !specPasswordVersion.IsNull() && !specPasswordVersion.IsUnknown() {
+		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("password_version"), specPasswordVersion)...)
 	}
 }
 
 func (m *ClusterUserResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "ClusterUserResource.Delete")
-	var data ClusterUserModel
 
+	var data tfmodel.ClusterUserModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -401,7 +383,7 @@ func (m *ClusterUserResource) Delete(ctx context.Context, req resource.DeleteReq
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ClusterUserResource.Timeouts")
@@ -429,7 +411,7 @@ func (m *ClusterUserResource) Delete(ctx context.Context, req resource.DeleteReq
 func (m *ClusterUserResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "ClusterUserResource.ImportState")
 
-	var data ClusterUserModel
+	var data tfmodel.ClusterUserModel
 
 	ref, err := mpostgresref.ParsePostgresClusterUserRef(ctx, req.ID)
 	if err != nil {
@@ -443,9 +425,9 @@ func (m *ClusterUserResource) ImportState(ctx context.Context, req resource.Impo
 	apiRes, err := m.sdk.GetPostgresClusterUser(
 		ctx,
 		client.GetPostgresClusterUserRequest{
-			Cluster: ref.GetCluster(),
 			Project: ref.GetProject(),
-			User:    string(ref.ResourceName()),
+			Cluster: ref.GetCluster(),
+			User:    ref.GetUser(),
 		})
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -466,12 +448,12 @@ func (m *ClusterUserResource) ImportState(ctx context.Context, req resource.Impo
 
 	data.PostgresClusterUser = *tfRes
 
-	data.ClusterParam = types.StringValue(ref.GetCluster())
 	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.UserParam = types.StringValue(string(ref.ResourceName()))
+	data.ClusterParam = types.StringValue(ref.GetCluster())
+	data.UserParam = types.StringValue(ref.GetUser())
 
 	var rwTimeouts timeouts.Value
-	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, path.Root("timeouts"), &rwTimeouts)...)
+	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ClusterUserResource.timeouts.GetAttribute")
 		return

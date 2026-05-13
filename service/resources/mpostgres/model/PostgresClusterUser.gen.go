@@ -5,7 +5,7 @@ package model
 import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-	"github.com/hashicorp/terraform-plugin-framework/path"
+	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -27,7 +27,7 @@ type PostgresClusterUser struct {
 
 func (s *PostgresClusterUser) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Пользователь в Managed PostgreSQL — это внутренняя учетная запись PostgreSQL для аутентификации в кластере`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,
@@ -50,14 +50,14 @@ func (s *PostgresClusterUser) GetSchema() schema.Schema {
 				MarkdownDescription: `Increase this field's value if you want to force updating the associated write-only field.`,
 				Optional:            true,
 				Validators: []validator.Int64{
-					int64validator.AlsoRequires(path.MatchRoot("password"))},
+					int64validator.AlsoRequires(tfpath.MatchRoot("password"))},
 			},
 			"password": schema.StringAttribute{
 				Sensitive: true,
 				WriteOnly: true,
 				Required:  true,
 				Validators: []validator.String{
-					stringvalidator.AlsoRequires(path.MatchRoot("password_version"))},
+					stringvalidator.AlsoRequires(tfpath.MatchRoot("password_version"))},
 			},
 			"role": schema.StringAttribute{
 				MarkdownDescription: `Пользовательские роли (они же роли приложений):

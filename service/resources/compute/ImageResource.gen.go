@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
-	"github.com/hashicorp/terraform-plugin-framework/path"
+	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -35,14 +35,6 @@ var (
 type ImageResource struct {
 	sdk    *resourcesdk.Image
 	config *provider.Config
-}
-
-type ImageModel struct {
-	ImageParam   types.String   `tfsdk:"image"`
-	ProjectParam types.String   `tfsdk:"project"`
-	Timeouts     timeouts.Value `tfsdk:"timeouts"`
-	ID           types.String   `tfsdk:"id"`
-	tfmodel.Image
 }
 
 func NewImageResource() resource.Resource {
@@ -109,8 +101,8 @@ func (m *ImageResource) Configure(ctx context.Context, req resource.ConfigureReq
 
 func (m *ImageResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "ImageResource.Create")
-	var data ImageModel
 
+	var data tfmodel.ImageModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -127,14 +119,14 @@ func (m *ImageResource) Create(ctx context.Context, req resource.CreateRequest, 
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ImageResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.ImageTFToAPIRequestModel(ctx, &data.Image)
+	body, diags := conv.ImageTFToAPIRequestModel(ctx, &data.Image)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ImageResource.TFToAPI")
@@ -146,7 +138,7 @@ func (m *ImageResource) Create(ctx context.Context, req resource.CreateRequest, 
 		client.UpsertImageRequest{
 			Project: data.ProjectParam.ValueString(),
 			Image:   data.ImageParam.ValueString(),
-			Body:    *bodyRequest,
+			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -174,8 +166,8 @@ func (m *ImageResource) Create(ctx context.Context, req resource.CreateRequest, 
 
 func (m *ImageResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "ImageResource.Read")
-	var data ImageModel
 
+	var data tfmodel.ImageModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -223,8 +215,8 @@ func (m *ImageResource) Read(ctx context.Context, req resource.ReadRequest, resp
 
 func (m *ImageResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "ImageResource.Update")
-	var data ImageModel
 
+	var data tfmodel.ImageModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -241,14 +233,14 @@ func (m *ImageResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ImageResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.ImageTFToAPIRequestModel(ctx, &data.Image)
+	body, diags := conv.ImageTFToAPIRequestModel(ctx, &data.Image)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ImageResource.TFToAPI")
@@ -260,7 +252,7 @@ func (m *ImageResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		client.UpdateImageRequest{
 			Project: data.ProjectParam.ValueString(),
 			Image:   data.ImageParam.ValueString(),
-			Body:    bodyRequest.AsUpdateModel(),
+			Body:    body.AsUpdateModel(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -288,8 +280,8 @@ func (m *ImageResource) Update(ctx context.Context, req resource.UpdateRequest, 
 
 func (m *ImageResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "ImageResource.Delete")
-	var data ImageModel
 
+	var data tfmodel.ImageModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -306,7 +298,7 @@ func (m *ImageResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ImageResource.Timeouts")
@@ -333,7 +325,7 @@ func (m *ImageResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 func (m *ImageResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "ImageResource.ImportState")
 
-	var data ImageModel
+	var data tfmodel.ImageModel
 
 	ref, err := computeref.ParseImageRef(ctx, req.ID)
 	if err != nil {
@@ -347,8 +339,8 @@ func (m *ImageResource) ImportState(ctx context.Context, req resource.ImportStat
 	apiRes, err := m.sdk.GetImage(
 		ctx,
 		client.GetImageRequest{
-			Image:   string(ref.ResourceName()),
 			Project: ref.GetProject(),
+			Image:   ref.GetImage(),
 		})
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -369,11 +361,11 @@ func (m *ImageResource) ImportState(ctx context.Context, req resource.ImportStat
 
 	data.Image = *tfRes
 
-	data.ImageParam = types.StringValue(string(ref.ResourceName()))
 	data.ProjectParam = types.StringValue(ref.GetProject())
+	data.ImageParam = types.StringValue(ref.GetImage())
 
 	var rwTimeouts timeouts.Value
-	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, path.Root("timeouts"), &rwTimeouts)...)
+	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ImageResource.timeouts.GetAttribute")
 		return

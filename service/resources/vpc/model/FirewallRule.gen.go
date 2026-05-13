@@ -31,7 +31,7 @@ type FirewallRule struct {
 
 func (s *FirewallRule) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Описывает правило Firewall'а.`,
+		MarkdownDescription: `Правило файрвола — набор параметров, который разрешает или запрещает определенный тип трафика`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,

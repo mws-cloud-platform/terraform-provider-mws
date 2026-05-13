@@ -12,6 +12,7 @@ type KafkaEndpointExternalAccessesStatus struct {
 	Port             types.Int64  `tfsdk:"port"`
 	BootstrapServers types.String `tfsdk:"bootstrap_servers"`
 	BrokerAddresses  types.List   `tfsdk:"broker_addresses"`
+	SchemaRegistry   types.Object `tfsdk:"schema_registry"`
 }
 
 func (s *KafkaEndpointExternalAccessesStatus) GetSchema() schema.Schema {
@@ -35,6 +36,11 @@ func (s *KafkaEndpointExternalAccessesStatus) GetSchema() schema.Schema {
 					Attributes: new(KafkaEndpointExternalAddressStatus).GetSchema().Attributes,
 				},
 				MarkdownDescription: `Список внешних адресов, выделенных для брокеров Kafka.`,
+				Computed:            true,
+			},
+			"schema_registry": schema.SingleNestedAttribute{
+				Attributes:          new(KafkaSchemaRegistryUrls).GetSchema().Attributes,
+				MarkdownDescription: `Внешние HTTPS-адреса Schema Registry.`,
 				Computed:            true,
 			},
 		},

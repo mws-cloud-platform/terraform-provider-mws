@@ -45,12 +45,6 @@ func HmacKeyResourceStatusAPIResponseToTFModel(ctx context.Context, am *apimodel
 		t.AccessKeyId = types.StringNull()
 	}
 
-	if am.SecretAccessKey != nil {
-		t.SecretAccessKey = types.StringPointerValue(am.SecretAccessKey)
-	} else {
-		t.SecretAccessKey = types.StringNull()
-	}
-
 	if am.LastAuthTime != nil {
 		t.LastAuthTime = types.StringPointerValue(ptr.Get(am.LastAuthTime.Format(time.RFC3339)))
 	} else {

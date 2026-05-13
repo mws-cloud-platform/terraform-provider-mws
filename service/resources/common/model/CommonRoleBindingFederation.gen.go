@@ -22,7 +22,7 @@ func (s *CommonRoleBindingFederation) GetSchema() schema.Schema {
 			},
 			"context": schema.SingleNestedAttribute{
 				Attributes: new(CommonRoleBindingFederationContext).GetSchema().Attributes,
-				Required:   true,
+				Optional:   true,
 			},
 		},
 	}

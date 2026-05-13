@@ -11,7 +11,6 @@ import (
 
 type ApiKeyStatus struct {
 	tfcommon.ResourceStatus
-	ApiKey       types.String `tfsdk:"api_key"`
 	LastAuthTime types.String `tfsdk:"last_auth_time"`
 }
 
@@ -22,10 +21,6 @@ func (s *ApiKeyStatus) GetSchema() schema.Schema {
 			"ready": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.ResourceStatusReady).GetSchema().Attributes,
 				MarkdownDescription: `Информация о статусе реконсиляции`,
-				Computed:            true,
-			},
-			"api_key": schema.StringAttribute{
-				MarkdownDescription: `Сгенерированный API-ключ`,
 				Computed:            true,
 			},
 			"last_auth_time": schema.StringAttribute{

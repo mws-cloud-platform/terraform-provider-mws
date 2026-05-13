@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -27,13 +26,6 @@ var (
 type FirewallRuleDataSource struct {
 	sdk    *resourcesdk.FirewallRule
 	config *provider.Config
-}
-
-type FirewallRuleModel struct {
-	FirewallRuleParam types.String `tfsdk:"firewall_rule"`
-	NetworkParam      types.String `tfsdk:"network"`
-	ProjectParam      types.String `tfsdk:"project"`
-	tfmodel.FirewallRule
 }
 
 func NewFirewallRuleDataSource() datasource.DataSource {
@@ -90,8 +82,8 @@ func (m *FirewallRuleDataSource) Configure(ctx context.Context, req datasource.C
 
 func (m *FirewallRuleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "FirewallRuleDataSource.Read")
-	var data FirewallRuleModel
 
+	var data tfmodel.FirewallRuleModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

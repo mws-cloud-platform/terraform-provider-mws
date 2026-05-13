@@ -34,6 +34,12 @@ func DiskSpecSourceAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 		t.Snapshot = types.StringNull()
 	}
 
+	if val, ok := am.DiskBackup.Get(); ok {
+		t.DiskBackup = types.StringPointerValue(ptr.Get(val.Path()))
+	} else {
+		t.DiskBackup = types.StringNull()
+	}
+
 	return &t, diags
 }
 
@@ -61,6 +67,15 @@ func DiskSpecSourceTFToAPIRequestModel(ctx context.Context, tm *tfmodel.DiskSpec
 			return nil, diags
 		}
 		am.Snapshot = &snapshotRef
+	}
+
+	if !tm.DiskBackup.IsNull() && !tm.DiskBackup.IsUnknown() {
+		diskBackupRef, err := compute.ParseDiskBackupRef(ctx, tm.DiskBackup.ValueString())
+		if err != nil {
+			diags.AddError("reference parsing", err.Error())
+			return nil, diags
+		}
+		am.DiskBackup = &diskBackupRef
 	}
 
 	return &am, diags

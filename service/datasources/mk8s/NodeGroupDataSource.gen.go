@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -27,13 +26,6 @@ var (
 type NodeGroupDataSource struct {
 	sdk    *resourcesdk.Mk8sNodeGroup
 	config *provider.Config
-}
-
-type NodeGroupModel struct {
-	ClusterNameParam   types.String `tfsdk:"cluster_name"`
-	NodeGroupNameParam types.String `tfsdk:"node_group_name"`
-	ProjectParam       types.String `tfsdk:"project"`
-	tfmodel.NodeGroup
 }
 
 func NewNodeGroupDataSource() datasource.DataSource {
@@ -90,8 +82,8 @@ func (m *NodeGroupDataSource) Configure(ctx context.Context, req datasource.Conf
 
 func (m *NodeGroupDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "NodeGroupDataSource.Read")
-	var data NodeGroupModel
 
+	var data tfmodel.NodeGroupModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/path"
+	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -18,6 +18,7 @@ import (
 
 	"go.mws.cloud/go-sdk/mws/wait"
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
+	secretmanagerref "go.mws.cloud/go-sdk/service/resources/references/secretmanager"
 	"go.mws.cloud/go-sdk/service/secretmanager/client"
 	apimodel "go.mws.cloud/go-sdk/service/secretmanager/model"
 	resourcesdk "go.mws.cloud/go-sdk/service/secretmanager/sdk"
@@ -29,21 +30,13 @@ import (
 )
 
 var (
-	_ resource.Resource = &SecretVersionResource{}
+	_ resource.Resource                = &SecretVersionResource{}
+	_ resource.ResourceWithImportState = &SecretVersionResource{}
 )
 
 type SecretVersionResource struct {
 	sdk    *resourcesdk.SecretVersion
 	config *provider.Config
-}
-
-type SecretVersionModel struct {
-	NameParam    types.String   `tfsdk:"name"`
-	ProjectParam types.String   `tfsdk:"project"`
-	VersionParam types.String   `tfsdk:"version"`
-	Timeouts     timeouts.Value `tfsdk:"timeouts"`
-	ID           types.String   `tfsdk:"id"`
-	tfmodel.SecretVersion
 }
 
 func NewSecretVersionResource() resource.Resource {
@@ -114,12 +107,14 @@ func (m *SecretVersionResource) Configure(ctx context.Context, req resource.Conf
 
 func (m *SecretVersionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "SecretVersionResource.Create")
-	var data SecretVersionModel
 
+	var data tfmodel.SecretVersionModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	var specDataVersion types.Int64
 
 	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
@@ -132,24 +127,23 @@ func (m *SecretVersionResource) Create(ctx context.Context, req resource.CreateR
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SecretVersionResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.SecretVersionTFToAPIRequestModel(ctx, &data.SecretVersion)
+	body, diags := conv.SecretVersionTFToAPIRequestModel(ctx, &data.SecretVersion)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SecretVersionResource.TFToAPI")
 		return
 	}
 
-	var versionFieldsMap = make(map[string]types.Int64)
-	bodyRequest, diags = func(ctx context.Context, planApiRequest *apimodel.SecretVersionRequest) (*apimodel.SecretVersionRequest, tfdiag.Diagnostics) {
-		var configData SecretVersionModel
+	body, diags = func(ctx context.Context, planApiRequest *apimodel.SecretVersionRequest) (*apimodel.SecretVersionRequest, tfdiag.Diagnostics) {
 
+		var configData tfmodel.SecretVersionModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
 		if resp.Diagnostics.HasError() {
 			return nil, resp.Diagnostics
@@ -160,22 +154,20 @@ func (m *SecretVersionResource) Create(ctx context.Context, req resource.CreateR
 			return nil, wdiags
 		}
 
-		var specdataVersion types.Int64
-		resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, path.Root("data_version"), &specdataVersion)...)
+		resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, tfpath.Root("data_version"), &specDataVersion)...)
 		if resp.Diagnostics.HasError() {
-			tflog.Debug(ctx, "SecretVersionResource.GetWriteOnlyFromConfig")
-			return nil, resp.Diagnostics.Errors()
+			tflog.Debug(ctx, "SecretVersionResource.GetWriteOnlyAttributeFromConfig")
+			return nil, resp.Diagnostics
 		}
-		if !specdataVersion.IsNull() && !specdataVersion.IsUnknown() {
+		if !specDataVersion.IsNull() && !specDataVersion.IsUnknown() {
 			planApiRequest.Spec.Data = configRequest.Spec.Data
-			versionFieldsMap["data_version"] = specdataVersion
 		}
 
 		return planApiRequest, nil
-	}(ctx, bodyRequest)
+	}(ctx, body)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
-		tflog.Debug(ctx, "SecretVersionResource.GetWriteOnlyFromConfig")
+		tflog.Debug(ctx, "SecretVersionResource.GetWriteOnlyAttributesFromConfig")
 		return
 	}
 
@@ -185,7 +177,7 @@ func (m *SecretVersionResource) Create(ctx context.Context, req resource.CreateR
 			Project: data.ProjectParam.ValueString(),
 			Name:    data.NameParam.ValueString(),
 			Version: data.VersionParam.ValueString(),
-			Body:    *bodyRequest,
+			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -209,23 +201,21 @@ func (m *SecretVersionResource) Create(ctx context.Context, req resource.CreateR
 	data.SecretVersion = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-
-	for vPath, version := range versionFieldsMap {
-		if version.IsNull() || version.IsUnknown() {
-			continue
-		}
-		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root(vPath), version)...)
+	if !specDataVersion.IsNull() && !specDataVersion.IsUnknown() {
+		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("data_version"), specDataVersion)...)
 	}
 }
 
 func (m *SecretVersionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "SecretVersionResource.Read")
-	var data SecretVersionModel
 
+	var data tfmodel.SecretVersionModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	var specDataVersion types.Int64
 
 	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
@@ -266,21 +256,22 @@ func (m *SecretVersionResource) Read(ctx context.Context, req resource.ReadReque
 	data.SecretVersion = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-	var specdataVersion types.Int64
-	req.State.GetAttribute(ctx, path.Root("data_version"), &specdataVersion)
-	if !specdataVersion.IsNull() && !specdataVersion.IsUnknown() {
-		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("data_version"), specdataVersion)...)
+	resp.Diagnostics.Append(req.State.GetAttribute(ctx, tfpath.Root("data_version"), &specDataVersion)...)
+	if !specDataVersion.IsNull() && !specDataVersion.IsUnknown() {
+		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("data_version"), specDataVersion)...)
 	}
 }
 
 func (m *SecretVersionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "SecretVersionResource.Update")
-	var data SecretVersionModel
 
+	var data tfmodel.SecretVersionModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	var specDataVersion types.Int64
 
 	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
@@ -293,24 +284,23 @@ func (m *SecretVersionResource) Update(ctx context.Context, req resource.UpdateR
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SecretVersionResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.SecretVersionTFToAPIRequestModel(ctx, &data.SecretVersion)
+	body, diags := conv.SecretVersionTFToAPIRequestModel(ctx, &data.SecretVersion)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SecretVersionResource.TFToAPI")
 		return
 	}
 
-	var versionFieldsMap = make(map[string]types.Int64)
-	bodyRequest, diags = func(ctx context.Context, planApiRequest *apimodel.SecretVersionRequest) (*apimodel.SecretVersionRequest, tfdiag.Diagnostics) {
-		var configData SecretVersionModel
+	body, diags = func(ctx context.Context, planApiRequest *apimodel.SecretVersionRequest) (*apimodel.SecretVersionRequest, tfdiag.Diagnostics) {
 
+		var configData tfmodel.SecretVersionModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
 		if resp.Diagnostics.HasError() {
 			return nil, resp.Diagnostics
@@ -321,22 +311,20 @@ func (m *SecretVersionResource) Update(ctx context.Context, req resource.UpdateR
 			return nil, wdiags
 		}
 
-		var specdataVersion types.Int64
-		resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, path.Root("data_version"), &specdataVersion)...)
+		resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, tfpath.Root("data_version"), &specDataVersion)...)
 		if resp.Diagnostics.HasError() {
-			tflog.Debug(ctx, "SecretVersionResource.GetWriteOnlyFromConfig")
-			return nil, resp.Diagnostics.Errors()
+			tflog.Debug(ctx, "SecretVersionResource.GetWriteOnlyAttributeFromConfig")
+			return nil, resp.Diagnostics
 		}
-		if !specdataVersion.IsNull() && !specdataVersion.IsUnknown() {
+		if !specDataVersion.IsNull() && !specDataVersion.IsUnknown() {
 			planApiRequest.Spec.Data = configRequest.Spec.Data
-			versionFieldsMap["data_version"] = specdataVersion
 		}
 
 		return planApiRequest, nil
-	}(ctx, bodyRequest)
+	}(ctx, body)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
-		tflog.Debug(ctx, "SecretVersionResource.GetWriteOnlyFromConfig")
+		tflog.Debug(ctx, "SecretVersionResource.GetWriteOnlyAttributesFromConfig")
 		return
 	}
 
@@ -346,7 +334,7 @@ func (m *SecretVersionResource) Update(ctx context.Context, req resource.UpdateR
 			Project: data.ProjectParam.ValueString(),
 			Name:    data.NameParam.ValueString(),
 			Version: data.VersionParam.ValueString(),
-			Body:    bodyRequest.AsUpdateModel(),
+			Body:    body.AsUpdateModel(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -370,19 +358,15 @@ func (m *SecretVersionResource) Update(ctx context.Context, req resource.UpdateR
 	data.SecretVersion = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-
-	for vPath, version := range versionFieldsMap {
-		if version.IsNull() || version.IsUnknown() {
-			continue
-		}
-		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root(vPath), version)...)
+	if !specDataVersion.IsNull() && !specDataVersion.IsUnknown() {
+		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("data_version"), specDataVersion)...)
 	}
 }
 
 func (m *SecretVersionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "SecretVersionResource.Delete")
-	var data SecretVersionModel
 
+	var data tfmodel.SecretVersionModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -399,7 +383,7 @@ func (m *SecretVersionResource) Delete(ctx context.Context, req resource.DeleteR
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SecretVersionResource.Timeouts")
@@ -422,4 +406,59 @@ func (m *SecretVersionResource) Delete(ctx context.Context, req resource.DeleteR
 		)
 		return
 	}
+}
+
+func (m *SecretVersionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	tflog.Info(ctx, "SecretVersionResource.ImportState")
+
+	var data tfmodel.SecretVersionModel
+
+	ref, err := secretmanagerref.ParseSecretVersionRef(ctx, req.ID)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Parse reference for SecretVersion",
+			diag.FormatError(err),
+		)
+		return
+	}
+
+	apiRes, err := m.sdk.GetSecretVersion(
+		ctx,
+		client.GetSecretVersionRequest{
+			Project: ref.GetProject(),
+			Name:    ref.GetSecretName(),
+			Version: ref.GetVersion(),
+		})
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Get SecretVersion",
+			diag.FormatError(err),
+		)
+		return
+	}
+
+	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+
+	tfRes, diags := conv.SecretVersionAPIOptionalResponseToTFModel(ctx, apiRes)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() || tfRes == nil {
+		tflog.Debug(ctx, "SecretVersionResource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})
+		return
+	}
+
+	data.SecretVersion = *tfRes
+
+	data.ProjectParam = types.StringValue(ref.GetProject())
+	data.NameParam = types.StringValue(ref.GetSecretName())
+	data.VersionParam = types.StringValue(ref.GetVersion())
+
+	var rwTimeouts timeouts.Value
+	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
+	if resp.Diagnostics.HasError() {
+		tflog.Debug(ctx, "SecretVersionResource.timeouts.GetAttribute")
+		return
+	}
+	data.Timeouts = rwTimeouts
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -16,8 +16,8 @@ type AddressSpec struct {
 func (s *AddressSpec) GetSchema() schema.Schema {
 	return schema.Schema{
 		MarkdownDescription: `Возможно 2 варианта:
-- запросить резервирование случайного адреса (заданы параметры "version")
-- запросить резервирование конкретного адреса (заданы параметры "version", "ipAddress", остальные пусты)
+  - запросить резервирование случайного адреса (заданы параметры "version")
+  - запросить резервирование конкретного адреса (заданы параметры "version", "ipAddress", остальные пусты)
 Если необходимо привязать внешний адрес, заполняется параметр "oneToOneNat"
 `,
 		Attributes: map[string]schema.Attribute{

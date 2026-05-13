@@ -37,8 +37,7 @@ func TestCommonRoleBindingFederationAPIOptionalResponseToTFModelEmpty(t *testing
 func TestCommonRoleBindingFederationConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModel := apimodel.CommonRoleBindingFederation{
-		Id:      iam.NewUserFederationRef("organizationID", "userFederationID"),
-		Context: apimodel.CommonRoleBindingFederationContext{},
+		Id: iam.NewUserFederationRef("organizationID", "userFederationID"),
 	}
 
 	tfModel, diags := commonconv.CommonRoleBindingFederationAPIToTFModel(context.Background(), &emptyApiModel)
@@ -53,8 +52,7 @@ func TestCommonRoleBindingFederationConverters(t *testing.T) {
 func TestCommonRoleBindingFederationResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.CommonRoleBindingFederationRequest{
-		Id:      iam.NewUserFederationRef("organizationID", "userFederationID"),
-		Context: apimodel.CommonRoleBindingFederationContextRequest{},
+		Id: iam.NewUserFederationRef("organizationID", "userFederationID"),
 	}
 
 	emptyApiModelResponse, err := apimodel.CommonRoleBindingFederationRequestToResponse(&emptyApiModelRequest)
@@ -75,8 +73,7 @@ func TestCommonRoleBindingFederationResponseConverters(t *testing.T) {
 func TestCommonRoleBindingFederationOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.CommonRoleBindingFederationRequest{
-		Id:      iam.NewUserFederationRef("organizationID", "userFederationID"),
-		Context: apimodel.CommonRoleBindingFederationContextRequest{},
+		Id: iam.NewUserFederationRef("organizationID", "userFederationID"),
 	}
 
 	emptyApiModelResponse, err := apimodel.CommonRoleBindingFederationRequestToOptionalResponse(&emptyApiModelRequest)

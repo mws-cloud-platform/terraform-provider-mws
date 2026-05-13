@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
-	"github.com/hashicorp/terraform-plugin-framework/path"
+	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -35,15 +35,6 @@ var (
 type CertificateRoleBindingResource struct {
 	sdk    *resourcesdk.CertificateRoleBinding
 	config *provider.Config
-}
-
-type CertificateRoleBindingModel struct {
-	NameParam        types.String   `tfsdk:"name"`
-	ProjectParam     types.String   `tfsdk:"project"`
-	RoleBindingParam types.String   `tfsdk:"role_binding"`
-	Timeouts         timeouts.Value `tfsdk:"timeouts"`
-	ID               types.String   `tfsdk:"id"`
-	tfmodel.CertificateRoleBinding
 }
 
 func NewCertificateRoleBindingResource() resource.Resource {
@@ -114,8 +105,8 @@ func (m *CertificateRoleBindingResource) Configure(ctx context.Context, req reso
 
 func (m *CertificateRoleBindingResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "CertificateRoleBindingResource.Create")
-	var data CertificateRoleBindingModel
 
+	var data tfmodel.CertificateRoleBindingModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -132,14 +123,14 @@ func (m *CertificateRoleBindingResource) Create(ctx context.Context, req resourc
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CertificateRoleBindingResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.CertificateRoleBindingTFToAPIRequestModel(ctx, &data.CertificateRoleBinding)
+	body, diags := conv.CertificateRoleBindingTFToAPIRequestModel(ctx, &data.CertificateRoleBinding)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CertificateRoleBindingResource.TFToAPI")
@@ -152,7 +143,7 @@ func (m *CertificateRoleBindingResource) Create(ctx context.Context, req resourc
 			Project:     data.ProjectParam.ValueString(),
 			Name:        data.NameParam.ValueString(),
 			RoleBinding: data.RoleBindingParam.ValueString(),
-			Body:        *bodyRequest,
+			Body:        *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -180,8 +171,8 @@ func (m *CertificateRoleBindingResource) Create(ctx context.Context, req resourc
 
 func (m *CertificateRoleBindingResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "CertificateRoleBindingResource.Read")
-	var data CertificateRoleBindingModel
 
+	var data tfmodel.CertificateRoleBindingModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -230,8 +221,8 @@ func (m *CertificateRoleBindingResource) Read(ctx context.Context, req resource.
 
 func (m *CertificateRoleBindingResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "CertificateRoleBindingResource.Update")
-	var data CertificateRoleBindingModel
 
+	var data tfmodel.CertificateRoleBindingModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -248,14 +239,14 @@ func (m *CertificateRoleBindingResource) Update(ctx context.Context, req resourc
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CertificateRoleBindingResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.CertificateRoleBindingTFToAPIRequestModel(ctx, &data.CertificateRoleBinding)
+	body, diags := conv.CertificateRoleBindingTFToAPIRequestModel(ctx, &data.CertificateRoleBinding)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CertificateRoleBindingResource.TFToAPI")
@@ -268,7 +259,7 @@ func (m *CertificateRoleBindingResource) Update(ctx context.Context, req resourc
 			Project:     data.ProjectParam.ValueString(),
 			Name:        data.NameParam.ValueString(),
 			RoleBinding: data.RoleBindingParam.ValueString(),
-			Body:        bodyRequest.AsUpdateModel(),
+			Body:        body.AsUpdateModel(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -296,8 +287,8 @@ func (m *CertificateRoleBindingResource) Update(ctx context.Context, req resourc
 
 func (m *CertificateRoleBindingResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "CertificateRoleBindingResource.Delete")
-	var data CertificateRoleBindingModel
 
+	var data tfmodel.CertificateRoleBindingModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -314,7 +305,7 @@ func (m *CertificateRoleBindingResource) Delete(ctx context.Context, req resourc
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CertificateRoleBindingResource.Timeouts")
@@ -342,7 +333,7 @@ func (m *CertificateRoleBindingResource) Delete(ctx context.Context, req resourc
 func (m *CertificateRoleBindingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "CertificateRoleBindingResource.ImportState")
 
-	var data CertificateRoleBindingModel
+	var data tfmodel.CertificateRoleBindingModel
 
 	ref, err := certmanagerref.ParseCertificateRoleBindingRef(ctx, req.ID)
 	if err != nil {
@@ -356,9 +347,9 @@ func (m *CertificateRoleBindingResource) ImportState(ctx context.Context, req re
 	apiRes, err := m.sdk.GetCertificateRoleBinding(
 		ctx,
 		client.GetCertificateRoleBindingRequest{
-			Name:        ref.GetName(),
 			Project:     ref.GetProject(),
-			RoleBinding: string(ref.ResourceName()),
+			Name:        ref.GetName(),
+			RoleBinding: ref.GetRoleBinding(),
 		})
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -379,12 +370,12 @@ func (m *CertificateRoleBindingResource) ImportState(ctx context.Context, req re
 
 	data.CertificateRoleBinding = *tfRes
 
-	data.NameParam = types.StringValue(ref.GetName())
 	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.RoleBindingParam = types.StringValue(string(ref.ResourceName()))
+	data.NameParam = types.StringValue(ref.GetName())
+	data.RoleBindingParam = types.StringValue(ref.GetRoleBinding())
 
 	var rwTimeouts timeouts.Value
-	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, path.Root("timeouts"), &rwTimeouts)...)
+	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CertificateRoleBindingResource.timeouts.GetAttribute")
 		return

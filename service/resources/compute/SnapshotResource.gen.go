@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
-	"github.com/hashicorp/terraform-plugin-framework/path"
+	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -35,14 +35,6 @@ var (
 type SnapshotResource struct {
 	sdk    *resourcesdk.Snapshot
 	config *provider.Config
-}
-
-type SnapshotModel struct {
-	ProjectParam  types.String   `tfsdk:"project"`
-	SnapshotParam types.String   `tfsdk:"snapshot"`
-	Timeouts      timeouts.Value `tfsdk:"timeouts"`
-	ID            types.String   `tfsdk:"id"`
-	tfmodel.Snapshot
 }
 
 func NewSnapshotResource() resource.Resource {
@@ -109,8 +101,8 @@ func (m *SnapshotResource) Configure(ctx context.Context, req resource.Configure
 
 func (m *SnapshotResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "SnapshotResource.Create")
-	var data SnapshotModel
 
+	var data tfmodel.SnapshotModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -127,14 +119,14 @@ func (m *SnapshotResource) Create(ctx context.Context, req resource.CreateReques
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SnapshotResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.SnapshotTFToAPIRequestModel(ctx, &data.Snapshot)
+	body, diags := conv.SnapshotTFToAPIRequestModel(ctx, &data.Snapshot)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SnapshotResource.TFToAPI")
@@ -146,7 +138,7 @@ func (m *SnapshotResource) Create(ctx context.Context, req resource.CreateReques
 		client.UpsertSnapshotRequest{
 			Project:  data.ProjectParam.ValueString(),
 			Snapshot: data.SnapshotParam.ValueString(),
-			Body:     *bodyRequest,
+			Body:     *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -174,8 +166,8 @@ func (m *SnapshotResource) Create(ctx context.Context, req resource.CreateReques
 
 func (m *SnapshotResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "SnapshotResource.Read")
-	var data SnapshotModel
 
+	var data tfmodel.SnapshotModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -223,8 +215,8 @@ func (m *SnapshotResource) Read(ctx context.Context, req resource.ReadRequest, r
 
 func (m *SnapshotResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "SnapshotResource.Update")
-	var data SnapshotModel
 
+	var data tfmodel.SnapshotModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -241,14 +233,14 @@ func (m *SnapshotResource) Update(ctx context.Context, req resource.UpdateReques
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SnapshotResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.SnapshotTFToAPIRequestModel(ctx, &data.Snapshot)
+	body, diags := conv.SnapshotTFToAPIRequestModel(ctx, &data.Snapshot)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SnapshotResource.TFToAPI")
@@ -260,7 +252,7 @@ func (m *SnapshotResource) Update(ctx context.Context, req resource.UpdateReques
 		client.UpdateSnapshotRequest{
 			Project:  data.ProjectParam.ValueString(),
 			Snapshot: data.SnapshotParam.ValueString(),
-			Body:     bodyRequest.AsUpdateModel(),
+			Body:     body.AsUpdateModel(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -288,8 +280,8 @@ func (m *SnapshotResource) Update(ctx context.Context, req resource.UpdateReques
 
 func (m *SnapshotResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "SnapshotResource.Delete")
-	var data SnapshotModel
 
+	var data tfmodel.SnapshotModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -306,7 +298,7 @@ func (m *SnapshotResource) Delete(ctx context.Context, req resource.DeleteReques
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SnapshotResource.Timeouts")
@@ -333,7 +325,7 @@ func (m *SnapshotResource) Delete(ctx context.Context, req resource.DeleteReques
 func (m *SnapshotResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "SnapshotResource.ImportState")
 
-	var data SnapshotModel
+	var data tfmodel.SnapshotModel
 
 	ref, err := computeref.ParseSnapshotRef(ctx, req.ID)
 	if err != nil {
@@ -348,7 +340,7 @@ func (m *SnapshotResource) ImportState(ctx context.Context, req resource.ImportS
 		ctx,
 		client.GetSnapshotRequest{
 			Project:  ref.GetProject(),
-			Snapshot: string(ref.ResourceName()),
+			Snapshot: ref.GetSnapshot(),
 		})
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -370,10 +362,10 @@ func (m *SnapshotResource) ImportState(ctx context.Context, req resource.ImportS
 	data.Snapshot = *tfRes
 
 	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.SnapshotParam = types.StringValue(string(ref.ResourceName()))
+	data.SnapshotParam = types.StringValue(ref.GetSnapshot())
 
 	var rwTimeouts timeouts.Value
-	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, path.Root("timeouts"), &rwTimeouts)...)
+	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SnapshotResource.timeouts.GetAttribute")
 		return

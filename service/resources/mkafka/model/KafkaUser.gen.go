@@ -5,7 +5,7 @@ package model
 import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-	"github.com/hashicorp/terraform-plugin-framework/path"
+	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -26,7 +26,8 @@ type KafkaUser struct {
 
 func (s *KafkaUser) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Пользователь — это внутренняя учетная запись Kafka для аутентификации в кластере
+`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,
@@ -49,7 +50,7 @@ func (s *KafkaUser) GetSchema() schema.Schema {
 				MarkdownDescription: `Increase this field's value if you want to force updating the associated write-only field.`,
 				Optional:            true,
 				Validators: []validator.Int64{
-					int64validator.AlsoRequires(path.MatchRoot("password"))},
+					int64validator.AlsoRequires(tfpath.MatchRoot("password"))},
 			},
 			"password": schema.StringAttribute{
 				MarkdownDescription: `Пароль пользователя.`,
@@ -57,7 +58,7 @@ func (s *KafkaUser) GetSchema() schema.Schema {
 				WriteOnly:           true,
 				Required:            true,
 				Validators: []validator.String{
-					stringvalidator.AlsoRequires(path.MatchRoot("password_version"))},
+					stringvalidator.AlsoRequires(tfpath.MatchRoot("password_version"))},
 			},
 			"roles": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{

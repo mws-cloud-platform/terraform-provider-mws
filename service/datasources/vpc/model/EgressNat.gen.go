@@ -20,7 +20,7 @@ type EgressNat struct {
 
 func (s *EgressNat) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Описывает Egress (Many-to-Many) NAT-шлюз.`,
+		MarkdownDescription: `Egress (Many-to-Many) NAT-шлюз — механизм для исходящего трафика, при котором несколько внутренних IP-адресов сопоставляются с одним или несколькими внешними IP-адресами`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,

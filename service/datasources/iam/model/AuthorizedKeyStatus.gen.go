@@ -11,9 +11,8 @@ import (
 
 type AuthorizedKeyStatus struct {
 	tfcommon.ResourceStatus
-	PrivateKey     types.String `tfsdk:"private_key"`
-	PrivateKeyFile types.String `tfsdk:"private_key_file"`
-	LastAuthTime   types.String `tfsdk:"last_auth_time"`
+	PublicKey    types.String `tfsdk:"public_key"`
+	LastAuthTime types.String `tfsdk:"last_auth_time"`
 }
 
 func (s *AuthorizedKeyStatus) GetSchema() schema.Schema {
@@ -25,12 +24,8 @@ func (s *AuthorizedKeyStatus) GetSchema() schema.Schema {
 				MarkdownDescription: `Информация о статусе реконсиляции`,
 				Computed:            true,
 			},
-			"private_key": schema.StringAttribute{
-				MarkdownDescription: `Закрытый ключ, сгенерированный на стороне сервиса. Возвращается только в ответ на первый запрос генерации ключей.`,
-				Computed:            true,
-			},
-			"private_key_file": schema.StringAttribute{
-				MarkdownDescription: `Файл с закрытым ключом, сгенерированным на стороне сервиса, в формате base64`,
+			"public_key": schema.StringAttribute{
+				MarkdownDescription: `Открытый ключ, сгенерированный на стороне сервиса.`,
 				Computed:            true,
 			},
 			"last_auth_time": schema.StringAttribute{

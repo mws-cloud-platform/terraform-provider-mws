@@ -8,7 +8,8 @@ import (
 )
 
 type StorageSpec struct {
-	Disks types.List `tfsdk:"disks"`
+	Disks      types.List `tfsdk:"disks"`
+	LocalDisks types.List `tfsdk:"local_disks"`
 }
 
 func (s *StorageSpec) GetSchema() schema.Schema {
@@ -20,6 +21,12 @@ func (s *StorageSpec) GetSchema() schema.Schema {
 					Attributes: new(StorageDiskSpecOrRefWithAttachments).GetSchema().Attributes,
 				},
 				Required: true,
+			},
+			"local_disks": schema.ListNestedAttribute{
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: new(StorageLocalDiskSpec).GetSchema().Attributes,
+				},
+				Optional: true,
 			},
 		},
 	}

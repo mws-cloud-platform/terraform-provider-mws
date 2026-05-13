@@ -104,6 +104,12 @@ func NodeGroupAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Nod
 		t.ImageStorageSize = types.StringNull()
 	}
 
+	if val, ok := am.Spec.ImageStorageIops.Get(); ok {
+		t.ImageStorageIops = types.Int64Value(val)
+	} else {
+		t.ImageStorageIops = types.Int64Null()
+	}
+
 	scaleTmp, d := NodeGroupSpecScaleAPIOptionalResponseToTFModel(ctx, &am.Spec.Scale)
 	diags = append(diags, d...)
 	if diags.HasError() {
@@ -284,6 +290,10 @@ func NodeGroupTFToAPIRequestModel(ctx context.Context, tm *tfmodel.NodeGroup) (*
 			return nil, diags
 		}
 		am.Spec.ImageStorageSize = &tmpImageStorageSize
+	}
+
+	if !tm.ImageStorageIops.IsNull() && !tm.ImageStorageIops.IsUnknown() {
+		am.Spec.ImageStorageIops = tm.ImageStorageIops.ValueInt64Pointer()
 	}
 
 	if !tm.Scale.IsNull() && !tm.Scale.IsUnknown() {

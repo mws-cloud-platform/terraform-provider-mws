@@ -19,19 +19,19 @@ func (s *Http01Challenge) GetSchema() schema.Schema {
 `,
 		Attributes: map[string]schema.Attribute{
 			"source_url": schema.StringAttribute{
-				MarkdownDescription: `Исходный URL, по которому должен быть доступен HTTP-01 challenge.  
-Используется для настройки перенаправления при включённой делегации.
+				MarkdownDescription: `Исходный URL, по которому должен быть доступен HTTP-01 challenge.
+Используется для настройки перенаправления при включенной делегации
 `,
 				Computed: true,
 			},
 			"delegated": schema.BoolAttribute{
-				MarkdownDescription: `Указывает, успешно ли настроена делегация  
+				MarkdownDescription: `Указывает, успешно ли настроена делегация
 и может ли challenge ACME быть проверен автоматически.
 `,
 				Computed: true,
 			},
 			"delegation_url": schema.StringAttribute{
-				MarkdownDescription: `Целевой URL, на который должен выполняться редирект с "sourceUrl"  
+				MarkdownDescription: `Целевой URL, на который должен выполняться редирект с "sourceUrl"
 для поддержки автоматического продления сертификата.
 `,
 				Computed: true,

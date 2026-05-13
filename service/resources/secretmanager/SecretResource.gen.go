@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
-	"github.com/hashicorp/terraform-plugin-framework/path"
+	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -35,14 +35,6 @@ var (
 type SecretResource struct {
 	sdk    *resourcesdk.Secret
 	config *provider.Config
-}
-
-type SecretModel struct {
-	NameParam    types.String   `tfsdk:"name"`
-	ProjectParam types.String   `tfsdk:"project"`
-	Timeouts     timeouts.Value `tfsdk:"timeouts"`
-	ID           types.String   `tfsdk:"id"`
-	tfmodel.Secret
 }
 
 func NewSecretResource() resource.Resource {
@@ -109,8 +101,8 @@ func (m *SecretResource) Configure(ctx context.Context, req resource.ConfigureRe
 
 func (m *SecretResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "SecretResource.Create")
-	var data SecretModel
 
+	var data tfmodel.SecretModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -127,14 +119,14 @@ func (m *SecretResource) Create(ctx context.Context, req resource.CreateRequest,
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SecretResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.SecretTFToAPIRequestModel(ctx, &data.Secret)
+	body, diags := conv.SecretTFToAPIRequestModel(ctx, &data.Secret)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SecretResource.TFToAPI")
@@ -146,7 +138,7 @@ func (m *SecretResource) Create(ctx context.Context, req resource.CreateRequest,
 		client.UpsertSecretRequest{
 			Project: data.ProjectParam.ValueString(),
 			Name:    data.NameParam.ValueString(),
-			Body:    *bodyRequest,
+			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -174,8 +166,8 @@ func (m *SecretResource) Create(ctx context.Context, req resource.CreateRequest,
 
 func (m *SecretResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "SecretResource.Read")
-	var data SecretModel
 
+	var data tfmodel.SecretModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -223,8 +215,8 @@ func (m *SecretResource) Read(ctx context.Context, req resource.ReadRequest, res
 
 func (m *SecretResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "SecretResource.Update")
-	var data SecretModel
 
+	var data tfmodel.SecretModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -241,14 +233,14 @@ func (m *SecretResource) Update(ctx context.Context, req resource.UpdateRequest,
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SecretResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.SecretTFToAPIRequestModel(ctx, &data.Secret)
+	body, diags := conv.SecretTFToAPIRequestModel(ctx, &data.Secret)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SecretResource.TFToAPI")
@@ -260,7 +252,7 @@ func (m *SecretResource) Update(ctx context.Context, req resource.UpdateRequest,
 		client.UpdateSecretRequest{
 			Project: data.ProjectParam.ValueString(),
 			Name:    data.NameParam.ValueString(),
-			Body:    bodyRequest.AsUpdateModel(),
+			Body:    body.AsUpdateModel(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -288,8 +280,8 @@ func (m *SecretResource) Update(ctx context.Context, req resource.UpdateRequest,
 
 func (m *SecretResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "SecretResource.Delete")
-	var data SecretModel
 
+	var data tfmodel.SecretModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -306,7 +298,7 @@ func (m *SecretResource) Delete(ctx context.Context, req resource.DeleteRequest,
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SecretResource.Timeouts")
@@ -333,7 +325,7 @@ func (m *SecretResource) Delete(ctx context.Context, req resource.DeleteRequest,
 func (m *SecretResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "SecretResource.ImportState")
 
-	var data SecretModel
+	var data tfmodel.SecretModel
 
 	ref, err := secretmanagerref.ParseSecretRef(ctx, req.ID)
 	if err != nil {
@@ -347,8 +339,8 @@ func (m *SecretResource) ImportState(ctx context.Context, req resource.ImportSta
 	apiRes, err := m.sdk.GetSecret(
 		ctx,
 		client.GetSecretRequest{
-			Name:    string(ref.ResourceName()),
 			Project: ref.GetProject(),
+			Name:    ref.GetName(),
 		})
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -369,11 +361,11 @@ func (m *SecretResource) ImportState(ctx context.Context, req resource.ImportSta
 
 	data.Secret = *tfRes
 
-	data.NameParam = types.StringValue(string(ref.ResourceName()))
 	data.ProjectParam = types.StringValue(ref.GetProject())
+	data.NameParam = types.StringValue(ref.GetName())
 
 	var rwTimeouts timeouts.Value
-	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, path.Root("timeouts"), &rwTimeouts)...)
+	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SecretResource.timeouts.GetAttribute")
 		return

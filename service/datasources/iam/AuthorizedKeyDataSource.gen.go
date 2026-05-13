@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -27,13 +26,6 @@ var (
 type AuthorizedKeyDataSource struct {
 	sdk    *resourcesdk.AuthorizedKey
 	config *provider.Config
-}
-
-type AuthorizedKeyModel struct {
-	AuthorizedKeyParam  types.String `tfsdk:"authorized_key"`
-	ProjectParam        types.String `tfsdk:"project"`
-	ServiceAccountParam types.String `tfsdk:"service_account"`
-	tfmodel.AuthorizedKey
 }
 
 func NewAuthorizedKeyDataSource() datasource.DataSource {
@@ -88,8 +80,8 @@ func (m *AuthorizedKeyDataSource) Configure(ctx context.Context, req datasource.
 
 func (m *AuthorizedKeyDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "AuthorizedKeyDataSource.Read")
-	var data AuthorizedKeyModel
 
+	var data tfmodel.AuthorizedKeyModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

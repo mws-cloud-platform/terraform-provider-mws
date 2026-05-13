@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
-	"github.com/hashicorp/terraform-plugin-framework/path"
+	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -35,14 +35,6 @@ var (
 type ServiceAccountResource struct {
 	sdk    *resourcesdk.ServiceAccount
 	config *provider.Config
-}
-
-type ServiceAccountModel struct {
-	ProjectParam        types.String   `tfsdk:"project"`
-	ServiceAccountParam types.String   `tfsdk:"service_account"`
-	Timeouts            timeouts.Value `tfsdk:"timeouts"`
-	ID                  types.String   `tfsdk:"id"`
-	tfmodel.ServiceAccount
 }
 
 func NewServiceAccountResource() resource.Resource {
@@ -108,8 +100,8 @@ func (m *ServiceAccountResource) Configure(ctx context.Context, req resource.Con
 
 func (m *ServiceAccountResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "ServiceAccountResource.Create")
-	var data ServiceAccountModel
 
+	var data tfmodel.ServiceAccountModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -126,14 +118,14 @@ func (m *ServiceAccountResource) Create(ctx context.Context, req resource.Create
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ServiceAccountResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.ServiceAccountTFToAPIRequestModel(ctx, &data.ServiceAccount)
+	body, diags := conv.ServiceAccountTFToAPIRequestModel(ctx, &data.ServiceAccount)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ServiceAccountResource.TFToAPI")
@@ -145,7 +137,7 @@ func (m *ServiceAccountResource) Create(ctx context.Context, req resource.Create
 		client.UpsertServiceAccountRequest{
 			Project:        data.ProjectParam.ValueString(),
 			ServiceAccount: data.ServiceAccountParam.ValueString(),
-			Body:           *bodyRequest,
+			Body:           *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -173,8 +165,8 @@ func (m *ServiceAccountResource) Create(ctx context.Context, req resource.Create
 
 func (m *ServiceAccountResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "ServiceAccountResource.Read")
-	var data ServiceAccountModel
 
+	var data tfmodel.ServiceAccountModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -222,8 +214,8 @@ func (m *ServiceAccountResource) Read(ctx context.Context, req resource.ReadRequ
 
 func (m *ServiceAccountResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "ServiceAccountResource.Update")
-	var data ServiceAccountModel
 
+	var data tfmodel.ServiceAccountModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -240,14 +232,14 @@ func (m *ServiceAccountResource) Update(ctx context.Context, req resource.Update
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ServiceAccountResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.ServiceAccountTFToAPIRequestModel(ctx, &data.ServiceAccount)
+	body, diags := conv.ServiceAccountTFToAPIRequestModel(ctx, &data.ServiceAccount)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ServiceAccountResource.TFToAPI")
@@ -259,7 +251,7 @@ func (m *ServiceAccountResource) Update(ctx context.Context, req resource.Update
 		client.UpdateServiceAccountRequest{
 			Project:        data.ProjectParam.ValueString(),
 			ServiceAccount: data.ServiceAccountParam.ValueString(),
-			Body:           bodyRequest.AsUpdateModel(),
+			Body:           body.AsUpdateModel(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -287,8 +279,8 @@ func (m *ServiceAccountResource) Update(ctx context.Context, req resource.Update
 
 func (m *ServiceAccountResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "ServiceAccountResource.Delete")
-	var data ServiceAccountModel
 
+	var data tfmodel.ServiceAccountModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -305,7 +297,7 @@ func (m *ServiceAccountResource) Delete(ctx context.Context, req resource.Delete
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ServiceAccountResource.Timeouts")
@@ -332,7 +324,7 @@ func (m *ServiceAccountResource) Delete(ctx context.Context, req resource.Delete
 func (m *ServiceAccountResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "ServiceAccountResource.ImportState")
 
-	var data ServiceAccountModel
+	var data tfmodel.ServiceAccountModel
 
 	ref, err := iamref.ParseServiceAccountRef(ctx, req.ID)
 	if err != nil {
@@ -347,7 +339,7 @@ func (m *ServiceAccountResource) ImportState(ctx context.Context, req resource.I
 		ctx,
 		client.GetServiceAccountRequest{
 			Project:        ref.GetProject(),
-			ServiceAccount: string(ref.ResourceName()),
+			ServiceAccount: ref.GetServiceAccount(),
 		})
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -369,10 +361,10 @@ func (m *ServiceAccountResource) ImportState(ctx context.Context, req resource.I
 	data.ServiceAccount = *tfRes
 
 	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.ServiceAccountParam = types.StringValue(string(ref.ResourceName()))
+	data.ServiceAccountParam = types.StringValue(ref.GetServiceAccount())
 
 	var rwTimeouts timeouts.Value
-	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, path.Root("timeouts"), &rwTimeouts)...)
+	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ServiceAccountResource.timeouts.GetAttribute")
 		return

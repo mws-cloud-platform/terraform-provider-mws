@@ -20,7 +20,10 @@ type Cluster struct {
 
 func (s *Cluster) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Кластер Managed Kubernetes — кластер Kubernetes на базе облачной
+инфраструктуры MWS Cloud Platform. Представляет собой совокупность Control
+Plane (управляющего слоя) и групп рабочих узлов
+`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,

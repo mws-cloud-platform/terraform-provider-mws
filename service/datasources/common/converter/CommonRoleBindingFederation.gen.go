@@ -25,19 +25,23 @@ func CommonRoleBindingFederationAPIToTFModel(ctx context.Context, am *apimodel.C
 
 	t.Id = types.StringValue(am.Id.Path())
 
-	contextTmp, d := CommonRoleBindingFederationContextAPIToTFModel(ctx, &am.Context)
-	diags = append(diags, d...)
-	if diags.HasError() {
-		return nil, diags
+	if am.Context != nil {
+		contextTmp, d := CommonRoleBindingFederationContextAPIToTFModel(ctx, am.Context)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		contextTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingFederationContext).GetSchema().Attributes),
+			*contextTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.Context = contextTfObject
+	} else {
+		t.Context = types.ObjectNull(tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingFederationContext).GetSchema().Attributes))
 	}
-	contextTfObject, d := types.ObjectValueFrom(ctx,
-		tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingFederationContext).GetSchema().Attributes),
-		*contextTmp)
-	diags = append(diags, d...)
-	if diags.HasError() {
-		return nil, diags
-	}
-	t.Context = contextTfObject
 
 	return &t, diags
 }
@@ -52,19 +56,23 @@ func CommonRoleBindingFederationAPIResponseToTFModel(ctx context.Context, am *ap
 
 	t.Id = types.StringValue(am.Id.Path())
 
-	contextTmp, d := CommonRoleBindingFederationContextAPIResponseToTFModel(ctx, &am.Context)
-	diags = append(diags, d...)
-	if diags.HasError() {
-		return nil, diags
+	if am.Context != nil {
+		contextTmp, d := CommonRoleBindingFederationContextAPIResponseToTFModel(ctx, am.Context)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		contextTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingFederationContext).GetSchema().Attributes),
+			*contextTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.Context = contextTfObject
+	} else {
+		t.Context = types.ObjectNull(tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingFederationContext).GetSchema().Attributes))
 	}
-	contextTfObject, d := types.ObjectValueFrom(ctx,
-		tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingFederationContext).GetSchema().Attributes),
-		*contextTmp)
-	diags = append(diags, d...)
-	if diags.HasError() {
-		return nil, diags
-	}
-	t.Context = contextTfObject
 
 	return &t, diags
 }
@@ -79,19 +87,23 @@ func CommonRoleBindingFederationAPIOptionalResponseToTFModel(ctx context.Context
 
 	t.Id = types.StringValue(am.Id.Path())
 
-	contextTmp, d := CommonRoleBindingFederationContextAPIOptionalResponseToTFModel(ctx, &am.Context)
-	diags = append(diags, d...)
-	if diags.HasError() {
-		return nil, diags
+	if val, ok := am.Context.Get(); ok {
+		contextTmp, d := CommonRoleBindingFederationContextAPIOptionalResponseToTFModel(ctx, &val)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		contextTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingFederationContext).GetSchema().Attributes),
+			*contextTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.Context = contextTfObject
+	} else {
+		t.Context = types.ObjectNull(tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingFederationContext).GetSchema().Attributes))
 	}
-	contextTfObject, d := types.ObjectValueFrom(ctx,
-		tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingFederationContext).GetSchema().Attributes),
-		*contextTmp)
-	diags = append(diags, d...)
-	if diags.HasError() {
-		return nil, diags
-	}
-	t.Context = contextTfObject
 
 	return &t, diags
 }
@@ -126,7 +138,7 @@ func CommonRoleBindingFederationTFToAPIModel(ctx context.Context, tm *tfcommon.C
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.Context = *contextTmp
+		am.Context = contextTmp
 	}
 
 	return &am, diags
@@ -162,7 +174,7 @@ func CommonRoleBindingFederationTFToAPIRequestModel(ctx context.Context, tm *tfc
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.Context = *contextTmp
+		am.Context = contextTmp
 	}
 
 	return &am, diags

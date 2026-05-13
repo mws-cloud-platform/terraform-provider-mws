@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
-	"github.com/hashicorp/terraform-plugin-framework/path"
+	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -35,14 +35,6 @@ var (
 type DiskResource struct {
 	sdk    *resourcesdk.Disk
 	config *provider.Config
-}
-
-type DiskModel struct {
-	DiskParam    types.String   `tfsdk:"disk"`
-	ProjectParam types.String   `tfsdk:"project"`
-	Timeouts     timeouts.Value `tfsdk:"timeouts"`
-	ID           types.String   `tfsdk:"id"`
-	tfmodel.Disk
 }
 
 func NewDiskResource() resource.Resource {
@@ -109,8 +101,8 @@ func (m *DiskResource) Configure(ctx context.Context, req resource.ConfigureRequ
 
 func (m *DiskResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "DiskResource.Create")
-	var data DiskModel
 
+	var data tfmodel.DiskModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -137,14 +129,14 @@ func (m *DiskResource) Create(ctx context.Context, req resource.CreateRequest, r
 	}
 	data.Zone = zoneParam
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "DiskResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.DiskTFToAPIRequestModel(ctx, &data.Disk)
+	body, diags := conv.DiskTFToAPIRequestModel(ctx, &data.Disk)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "DiskResource.TFToAPI")
@@ -156,7 +148,7 @@ func (m *DiskResource) Create(ctx context.Context, req resource.CreateRequest, r
 		client.UpsertDiskRequest{
 			Project: data.ProjectParam.ValueString(),
 			Disk:    data.DiskParam.ValueString(),
-			Body:    *bodyRequest,
+			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -184,8 +176,8 @@ func (m *DiskResource) Create(ctx context.Context, req resource.CreateRequest, r
 
 func (m *DiskResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "DiskResource.Read")
-	var data DiskModel
 
+	var data tfmodel.DiskModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -243,8 +235,8 @@ func (m *DiskResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 
 func (m *DiskResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "DiskResource.Update")
-	var data DiskModel
 
+	var data tfmodel.DiskModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -271,14 +263,14 @@ func (m *DiskResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	}
 	data.Zone = zoneParam
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "DiskResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.DiskTFToAPIRequestModel(ctx, &data.Disk)
+	body, diags := conv.DiskTFToAPIRequestModel(ctx, &data.Disk)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "DiskResource.TFToAPI")
@@ -290,7 +282,7 @@ func (m *DiskResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		client.UpdateDiskRequest{
 			Project: data.ProjectParam.ValueString(),
 			Disk:    data.DiskParam.ValueString(),
-			Body:    bodyRequest.AsUpdateModel(),
+			Body:    body.AsUpdateModel(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -318,8 +310,8 @@ func (m *DiskResource) Update(ctx context.Context, req resource.UpdateRequest, r
 
 func (m *DiskResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "DiskResource.Delete")
-	var data DiskModel
 
+	var data tfmodel.DiskModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -346,7 +338,7 @@ func (m *DiskResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 	}
 	data.Zone = zoneParam
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "DiskResource.Timeouts")
@@ -373,7 +365,7 @@ func (m *DiskResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 func (m *DiskResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "DiskResource.ImportState")
 
-	var data DiskModel
+	var data tfmodel.DiskModel
 
 	ref, err := computeref.ParseDiskRef(ctx, req.ID)
 	if err != nil {
@@ -387,8 +379,8 @@ func (m *DiskResource) ImportState(ctx context.Context, req resource.ImportState
 	apiRes, err := m.sdk.GetDisk(
 		ctx,
 		client.GetDiskRequest{
-			Disk:    string(ref.ResourceName()),
 			Project: ref.GetProject(),
+			Disk:    ref.GetDisk(),
 		})
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -409,11 +401,11 @@ func (m *DiskResource) ImportState(ctx context.Context, req resource.ImportState
 
 	data.Disk = *tfRes
 
-	data.DiskParam = types.StringValue(string(ref.ResourceName()))
 	data.ProjectParam = types.StringValue(ref.GetProject())
+	data.DiskParam = types.StringValue(ref.GetDisk())
 
 	var rwTimeouts timeouts.Value
-	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, path.Root("timeouts"), &rwTimeouts)...)
+	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "DiskResource.timeouts.GetAttribute")
 		return

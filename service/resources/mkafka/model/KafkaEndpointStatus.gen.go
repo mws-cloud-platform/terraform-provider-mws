@@ -11,6 +11,7 @@ type KafkaEndpointStatus struct {
 	Name             types.String `tfsdk:"name"`
 	Network          types.String `tfsdk:"network"`
 	BootstrapServers types.String `tfsdk:"bootstrap_servers"`
+	SchemaRegistry   types.Object `tfsdk:"schema_registry"`
 	Port             types.Int64  `tfsdk:"port"`
 	BrokerAddresses  types.List   `tfsdk:"broker_addresses"`
 	ExternalAccess   types.Object `tfsdk:"external_access"`
@@ -30,6 +31,11 @@ func (s *KafkaEndpointStatus) GetSchema() schema.Schema {
 			},
 			"bootstrap_servers": schema.StringAttribute{
 				MarkdownDescription: `Список адресов для первоначального подключения к кластеру внутри пользовательской (VPC).`,
+				Computed:            true,
+			},
+			"schema_registry": schema.SingleNestedAttribute{
+				Attributes:          new(KafkaSchemaRegistryUrls).GetSchema().Attributes,
+				MarkdownDescription: `Адреса Schema Registry во внутренней сети (VPC).`,
 				Computed:            true,
 			},
 			"port": schema.Int64Attribute{

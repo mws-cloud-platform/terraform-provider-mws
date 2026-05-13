@@ -8,7 +8,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/path"
+	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -37,14 +37,6 @@ var (
 type CertificateResource struct {
 	sdk    *resourcesdk.Certificate
 	config *provider.Config
-}
-
-type CertificateModel struct {
-	NameParam    types.String   `tfsdk:"name"`
-	ProjectParam types.String   `tfsdk:"project"`
-	Timeouts     timeouts.Value `tfsdk:"timeouts"`
-	ID           types.String   `tfsdk:"id"`
-	tfmodel.Certificate
 }
 
 func NewCertificateResource() resource.Resource {
@@ -111,12 +103,14 @@ func (m *CertificateResource) Configure(ctx context.Context, req resource.Config
 
 func (m *CertificateResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "CertificateResource.Create")
-	var data CertificateModel
 
+	var data tfmodel.CertificateModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	var specSelfManagedVersion types.Int64
 
 	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
@@ -129,24 +123,23 @@ func (m *CertificateResource) Create(ctx context.Context, req resource.CreateReq
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CertificateResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.CertificateTFToAPIRequestModel(ctx, &data.Certificate)
+	body, diags := conv.CertificateTFToAPIRequestModel(ctx, &data.Certificate)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CertificateResource.TFToAPI")
 		return
 	}
 
-	var versionFieldsMap = make(map[string]types.Int64)
-	bodyRequest, diags = func(ctx context.Context, planApiRequest *apimodel.CertificateRequest) (*apimodel.CertificateRequest, tfdiag.Diagnostics) {
-		var configData CertificateModel
+	body, diags = func(ctx context.Context, planApiRequest *apimodel.CertificateRequest) (*apimodel.CertificateRequest, tfdiag.Diagnostics) {
 
+		var configData tfmodel.CertificateModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
 		if resp.Diagnostics.HasError() {
 			return nil, resp.Diagnostics
@@ -157,22 +150,20 @@ func (m *CertificateResource) Create(ctx context.Context, req resource.CreateReq
 			return nil, wdiags
 		}
 
-		var specselfManagedVersion types.Int64
-		resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, path.Root("self_managed_version"), &specselfManagedVersion)...)
+		resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, tfpath.Root("self_managed_version"), &specSelfManagedVersion)...)
 		if resp.Diagnostics.HasError() {
-			tflog.Debug(ctx, "CertificateResource.GetWriteOnlyFromConfig")
-			return nil, resp.Diagnostics.Errors()
+			tflog.Debug(ctx, "CertificateResource.GetWriteOnlyAttributeFromConfig")
+			return nil, resp.Diagnostics
 		}
-		if !specselfManagedVersion.IsNull() && !specselfManagedVersion.IsUnknown() {
+		if !specSelfManagedVersion.IsNull() && !specSelfManagedVersion.IsUnknown() {
 			planApiRequest.Spec.SelfManaged = configRequest.Spec.SelfManaged
-			versionFieldsMap["self_managed_version"] = specselfManagedVersion
 		}
 
 		return planApiRequest, nil
-	}(ctx, bodyRequest)
+	}(ctx, body)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
-		tflog.Debug(ctx, "CertificateResource.GetWriteOnlyFromConfig")
+		tflog.Debug(ctx, "CertificateResource.GetWriteOnlyAttributesFromConfig")
 		return
 	}
 
@@ -181,7 +172,7 @@ func (m *CertificateResource) Create(ctx context.Context, req resource.CreateReq
 		client.UpsertCertificateRequest{
 			Project: data.ProjectParam.ValueString(),
 			Name:    data.NameParam.ValueString(),
-			Body:    *bodyRequest,
+			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -205,23 +196,21 @@ func (m *CertificateResource) Create(ctx context.Context, req resource.CreateReq
 	data.Certificate = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-
-	for vPath, version := range versionFieldsMap {
-		if version.IsNull() || version.IsUnknown() {
-			continue
-		}
-		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root(vPath), version)...)
+	if !specSelfManagedVersion.IsNull() && !specSelfManagedVersion.IsUnknown() {
+		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("self_managed_version"), specSelfManagedVersion)...)
 	}
 }
 
 func (m *CertificateResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "CertificateResource.Read")
-	var data CertificateModel
 
+	var data tfmodel.CertificateModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	var specSelfManagedVersion types.Int64
 
 	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
@@ -261,21 +250,22 @@ func (m *CertificateResource) Read(ctx context.Context, req resource.ReadRequest
 	data.Certificate = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-	var specselfManagedVersion types.Int64
-	req.State.GetAttribute(ctx, path.Root("self_managed_version"), &specselfManagedVersion)
-	if !specselfManagedVersion.IsNull() && !specselfManagedVersion.IsUnknown() {
-		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("self_managed_version"), specselfManagedVersion)...)
+	resp.Diagnostics.Append(req.State.GetAttribute(ctx, tfpath.Root("self_managed_version"), &specSelfManagedVersion)...)
+	if !specSelfManagedVersion.IsNull() && !specSelfManagedVersion.IsUnknown() {
+		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("self_managed_version"), specSelfManagedVersion)...)
 	}
 }
 
 func (m *CertificateResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "CertificateResource.Update")
-	var data CertificateModel
 
+	var data tfmodel.CertificateModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	var specSelfManagedVersion types.Int64
 
 	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
@@ -288,24 +278,23 @@ func (m *CertificateResource) Update(ctx context.Context, req resource.UpdateReq
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CertificateResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.CertificateTFToAPIRequestModel(ctx, &data.Certificate)
+	body, diags := conv.CertificateTFToAPIRequestModel(ctx, &data.Certificate)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CertificateResource.TFToAPI")
 		return
 	}
 
-	var versionFieldsMap = make(map[string]types.Int64)
-	bodyRequest, diags = func(ctx context.Context, planApiRequest *apimodel.CertificateRequest) (*apimodel.CertificateRequest, tfdiag.Diagnostics) {
-		var configData CertificateModel
+	body, diags = func(ctx context.Context, planApiRequest *apimodel.CertificateRequest) (*apimodel.CertificateRequest, tfdiag.Diagnostics) {
 
+		var configData tfmodel.CertificateModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
 		if resp.Diagnostics.HasError() {
 			return nil, resp.Diagnostics
@@ -316,22 +305,20 @@ func (m *CertificateResource) Update(ctx context.Context, req resource.UpdateReq
 			return nil, wdiags
 		}
 
-		var specselfManagedVersion types.Int64
-		resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, path.Root("self_managed_version"), &specselfManagedVersion)...)
+		resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, tfpath.Root("self_managed_version"), &specSelfManagedVersion)...)
 		if resp.Diagnostics.HasError() {
-			tflog.Debug(ctx, "CertificateResource.GetWriteOnlyFromConfig")
-			return nil, resp.Diagnostics.Errors()
+			tflog.Debug(ctx, "CertificateResource.GetWriteOnlyAttributeFromConfig")
+			return nil, resp.Diagnostics
 		}
-		if !specselfManagedVersion.IsNull() && !specselfManagedVersion.IsUnknown() {
+		if !specSelfManagedVersion.IsNull() && !specSelfManagedVersion.IsUnknown() {
 			planApiRequest.Spec.SelfManaged = configRequest.Spec.SelfManaged
-			versionFieldsMap["self_managed_version"] = specselfManagedVersion
 		}
 
 		return planApiRequest, nil
-	}(ctx, bodyRequest)
+	}(ctx, body)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
-		tflog.Debug(ctx, "CertificateResource.GetWriteOnlyFromConfig")
+		tflog.Debug(ctx, "CertificateResource.GetWriteOnlyAttributesFromConfig")
 		return
 	}
 
@@ -340,7 +327,7 @@ func (m *CertificateResource) Update(ctx context.Context, req resource.UpdateReq
 		client.UpdateCertificateRequest{
 			Project: data.ProjectParam.ValueString(),
 			Name:    data.NameParam.ValueString(),
-			Body:    bodyRequest.AsUpdateModel(),
+			Body:    body.AsUpdateModel(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -364,19 +351,15 @@ func (m *CertificateResource) Update(ctx context.Context, req resource.UpdateReq
 	data.Certificate = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
-
-	for vPath, version := range versionFieldsMap {
-		if version.IsNull() || version.IsUnknown() {
-			continue
-		}
-		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root(vPath), version)...)
+	if !specSelfManagedVersion.IsNull() && !specSelfManagedVersion.IsUnknown() {
+		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("self_managed_version"), specSelfManagedVersion)...)
 	}
 }
 
 func (m *CertificateResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "CertificateResource.Delete")
-	var data CertificateModel
 
+	var data tfmodel.CertificateModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -393,7 +376,7 @@ func (m *CertificateResource) Delete(ctx context.Context, req resource.DeleteReq
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CertificateResource.Timeouts")
@@ -420,7 +403,7 @@ func (m *CertificateResource) Delete(ctx context.Context, req resource.DeleteReq
 func (m *CertificateResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "CertificateResource.ImportState")
 
-	var data CertificateModel
+	var data tfmodel.CertificateModel
 
 	ref, err := certmanagerref.ParseCertificateRef(ctx, req.ID)
 	if err != nil {
@@ -434,8 +417,8 @@ func (m *CertificateResource) ImportState(ctx context.Context, req resource.Impo
 	apiRes, err := m.sdk.GetCertificate(
 		ctx,
 		client.GetCertificateRequest{
-			Name:    string(ref.ResourceName()),
 			Project: ref.GetProject(),
+			Name:    ref.GetName(),
 		})
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -456,11 +439,11 @@ func (m *CertificateResource) ImportState(ctx context.Context, req resource.Impo
 
 	data.Certificate = *tfRes
 
-	data.NameParam = types.StringValue(string(ref.ResourceName()))
 	data.ProjectParam = types.StringValue(ref.GetProject())
+	data.NameParam = types.StringValue(ref.GetName())
 
 	var rwTimeouts timeouts.Value
-	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, path.Root("timeouts"), &rwTimeouts)...)
+	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CertificateResource.timeouts.GetAttribute")
 		return

@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -27,12 +26,6 @@ var (
 type ClusterDataSource struct {
 	sdk    *resourcesdk.Kafka
 	config *provider.Config
-}
-
-type ClusterModel struct {
-	ClusterParam types.String `tfsdk:"cluster"`
-	ProjectParam types.String `tfsdk:"project"`
-	tfmodel.KafkaCluster
 }
 
 func NewClusterDataSource() datasource.DataSource {
@@ -85,8 +78,8 @@ func (m *ClusterDataSource) Configure(ctx context.Context, req datasource.Config
 
 func (m *ClusterDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "ClusterDataSource.Read")
-	var data ClusterModel
 
+	var data tfmodel.ClusterModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

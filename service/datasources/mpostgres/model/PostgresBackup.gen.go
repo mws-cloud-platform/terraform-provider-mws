@@ -17,7 +17,7 @@ type PostgresBackup struct {
 
 func (s *PostgresBackup) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Резервное копирование в Managed PostgreSQL позволяет автоматизировать создание резервных копий кластера и его восстановление. С помощью резервных копий можно восстановить кластер в случае повреждения, потери данных или совершения ошибочных операций`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,

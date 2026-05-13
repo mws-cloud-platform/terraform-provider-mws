@@ -19,11 +19,16 @@ type KafkaCluster struct {
 	Instances         types.Object `tfsdk:"instances"`
 	ProductConfig     types.String `tfsdk:"product_config"`
 	MaintenanceWindow types.Object `tfsdk:"maintenance_window"`
+	SchemaRegistry    types.Object `tfsdk:"schema_registry"`
 }
 
 func (s *KafkaCluster) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Кластер Managed Kafka — это группа узлов (брокеров), объединенных для приема,
+хранения и передачи потоков данных с помощью Apache Kafka. В облачной
+инфраструктуре кластер — единый интерфейс для управления потоками данных в
+реальном времени
+`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,
@@ -63,6 +68,11 @@ func (s *KafkaCluster) GetSchema() schema.Schema {
 			"maintenance_window": schema.SingleNestedAttribute{
 				Attributes: new(tfcommon.MaintenanceWindow).GetSchema().Attributes,
 				Computed:   true,
+			},
+			"schema_registry": schema.SingleNestedAttribute{
+				Attributes:          new(KafkaSchemaRegistrySpec).GetSchema().Attributes,
+				MarkdownDescription: `Настройка Schema Registry для кластера.`,
+				Computed:            true,
 			},
 		},
 	}

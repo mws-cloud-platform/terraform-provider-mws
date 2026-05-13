@@ -17,6 +17,7 @@ type NodeGroup struct {
 	Subnet           types.Object `tfsdk:"subnet"`
 	VmType           types.Object `tfsdk:"vm_type"`
 	ImageStorageSize types.String `tfsdk:"image_storage_size"`
+	ImageStorageIops types.Int64  `tfsdk:"image_storage_iops"`
 	Scale            types.Object `tfsdk:"scale"`
 	Labels           types.List   `tfsdk:"labels"`
 	Taints           types.List   `tfsdk:"taints"`
@@ -27,7 +28,9 @@ type NodeGroup struct {
 
 func (s *NodeGroup) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Группа узлов в кластере Managed Kubernetes — это группа виртуальных машин
+Compute, на которых запускаются контейнеры с приложениями
+`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,
@@ -56,6 +59,10 @@ func (s *NodeGroup) GetSchema() schema.Schema {
 			},
 			"image_storage_size": schema.StringAttribute{
 				MarkdownDescription: `размер хранилища для image-ей и контейнеров. Размер в Gb`,
+				Computed:            true,
+			},
+			"image_storage_iops": schema.Int64Attribute{
+				MarkdownDescription: `Количество операций ввода-вывода в секунду (IOPS) для хранилища image-ей и контейнеров`,
 				Computed:            true,
 			},
 			"scale": schema.SingleNestedAttribute{

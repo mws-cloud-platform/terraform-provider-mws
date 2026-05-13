@@ -11,9 +11,8 @@ import (
 
 type HmacKeyResourceStatus struct {
 	tfcommon.ResourceStatus
-	AccessKeyId     types.String `tfsdk:"access_key_id"`
-	SecretAccessKey types.String `tfsdk:"secret_access_key"`
-	LastAuthTime    types.String `tfsdk:"last_auth_time"`
+	AccessKeyId  types.String `tfsdk:"access_key_id"`
+	LastAuthTime types.String `tfsdk:"last_auth_time"`
 }
 
 func (s *HmacKeyResourceStatus) GetSchema() schema.Schema {
@@ -27,10 +26,6 @@ func (s *HmacKeyResourceStatus) GetSchema() schema.Schema {
 			},
 			"access_key_id": schema.StringAttribute{
 				MarkdownDescription: `Идентификатор ключа (readOnly).`,
-				Computed:            true,
-			},
-			"secret_access_key": schema.StringAttribute{
-				MarkdownDescription: `HMAC-ключ (readOnly).`,
 				Computed:            true,
 			},
 			"last_auth_time": schema.StringAttribute{

@@ -23,7 +23,7 @@ type PostgresClusterDatabase struct {
 
 func (s *PostgresClusterDatabase) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `База данных в Managed PostgreSQL — это логически изолированный набор данных внутри кластера PostgreSQL`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,

@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -27,13 +26,6 @@ var (
 type TopicDataSource struct {
 	sdk    *resourcesdk.Topic
 	config *provider.Config
-}
-
-type TopicModel struct {
-	ClusterParam types.String `tfsdk:"cluster"`
-	ProjectParam types.String `tfsdk:"project"`
-	TopicParam   types.String `tfsdk:"topic"`
-	tfmodel.KafkaTopic
 }
 
 func NewTopicDataSource() datasource.DataSource {
@@ -90,8 +82,8 @@ func (m *TopicDataSource) Configure(ctx context.Context, req datasource.Configur
 
 func (m *TopicDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "TopicDataSource.Read")
-	var data TopicModel
 
+	var data tfmodel.TopicModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

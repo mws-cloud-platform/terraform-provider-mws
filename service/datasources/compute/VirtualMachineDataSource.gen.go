@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -27,12 +26,6 @@ var (
 type VirtualMachineDataSource struct {
 	sdk    *resourcesdk.VirtualMachine
 	config *provider.Config
-}
-
-type VirtualMachineModel struct {
-	ProjectParam        types.String `tfsdk:"project"`
-	VirtualMachineParam types.String `tfsdk:"virtual_machine"`
-	tfmodel.VirtualMachine
 }
 
 func NewVirtualMachineDataSource() datasource.DataSource {
@@ -84,8 +77,8 @@ func (m *VirtualMachineDataSource) Configure(ctx context.Context, req datasource
 
 func (m *VirtualMachineDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "VirtualMachineDataSource.Read")
-	var data VirtualMachineModel
 
+	var data tfmodel.VirtualMachineModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

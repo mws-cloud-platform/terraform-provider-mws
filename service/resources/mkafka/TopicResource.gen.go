@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
-	"github.com/hashicorp/terraform-plugin-framework/path"
+	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -35,15 +35,6 @@ var (
 type TopicResource struct {
 	sdk    *resourcesdk.Topic
 	config *provider.Config
-}
-
-type TopicModel struct {
-	ClusterParam types.String   `tfsdk:"cluster"`
-	ProjectParam types.String   `tfsdk:"project"`
-	TopicParam   types.String   `tfsdk:"topic"`
-	Timeouts     timeouts.Value `tfsdk:"timeouts"`
-	ID           types.String   `tfsdk:"id"`
-	tfmodel.KafkaTopic
 }
 
 func NewTopicResource() resource.Resource {
@@ -114,8 +105,8 @@ func (m *TopicResource) Configure(ctx context.Context, req resource.ConfigureReq
 
 func (m *TopicResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "TopicResource.Create")
-	var data TopicModel
 
+	var data tfmodel.TopicModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -132,14 +123,14 @@ func (m *TopicResource) Create(ctx context.Context, req resource.CreateRequest, 
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "TopicResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.KafkaTopicTFToAPIRequestModel(ctx, &data.KafkaTopic)
+	body, diags := conv.KafkaTopicTFToAPIRequestModel(ctx, &data.KafkaTopic)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "TopicResource.TFToAPI")
@@ -152,7 +143,7 @@ func (m *TopicResource) Create(ctx context.Context, req resource.CreateRequest, 
 			Project: data.ProjectParam.ValueString(),
 			Cluster: data.ClusterParam.ValueString(),
 			Topic:   data.TopicParam.ValueString(),
-			Body:    *bodyRequest,
+			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -180,8 +171,8 @@ func (m *TopicResource) Create(ctx context.Context, req resource.CreateRequest, 
 
 func (m *TopicResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "TopicResource.Read")
-	var data TopicModel
 
+	var data tfmodel.TopicModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -230,8 +221,8 @@ func (m *TopicResource) Read(ctx context.Context, req resource.ReadRequest, resp
 
 func (m *TopicResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "TopicResource.Update")
-	var data TopicModel
 
+	var data tfmodel.TopicModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -248,14 +239,14 @@ func (m *TopicResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "TopicResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.KafkaTopicTFToAPIRequestModel(ctx, &data.KafkaTopic)
+	body, diags := conv.KafkaTopicTFToAPIRequestModel(ctx, &data.KafkaTopic)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "TopicResource.TFToAPI")
@@ -268,7 +259,7 @@ func (m *TopicResource) Update(ctx context.Context, req resource.UpdateRequest, 
 			Project: data.ProjectParam.ValueString(),
 			Cluster: data.ClusterParam.ValueString(),
 			Topic:   data.TopicParam.ValueString(),
-			Body:    bodyRequest.AsUpdateModel(),
+			Body:    body.AsUpdateModel(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -296,8 +287,8 @@ func (m *TopicResource) Update(ctx context.Context, req resource.UpdateRequest, 
 
 func (m *TopicResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "TopicResource.Delete")
-	var data TopicModel
 
+	var data tfmodel.TopicModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -314,7 +305,7 @@ func (m *TopicResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "TopicResource.Timeouts")
@@ -342,7 +333,7 @@ func (m *TopicResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 func (m *TopicResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "TopicResource.ImportState")
 
-	var data TopicModel
+	var data tfmodel.TopicModel
 
 	ref, err := mkafkaref.ParseKafkaTopicRef(ctx, req.ID)
 	if err != nil {
@@ -356,9 +347,9 @@ func (m *TopicResource) ImportState(ctx context.Context, req resource.ImportStat
 	apiRes, err := m.sdk.GetKafkaTopic(
 		ctx,
 		client.GetKafkaTopicRequest{
-			Cluster: ref.GetCluster(),
 			Project: ref.GetProject(),
-			Topic:   string(ref.ResourceName()),
+			Cluster: ref.GetCluster(),
+			Topic:   ref.GetTopic(),
 		})
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -379,12 +370,12 @@ func (m *TopicResource) ImportState(ctx context.Context, req resource.ImportStat
 
 	data.KafkaTopic = *tfRes
 
-	data.ClusterParam = types.StringValue(ref.GetCluster())
 	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.TopicParam = types.StringValue(string(ref.ResourceName()))
+	data.ClusterParam = types.StringValue(ref.GetCluster())
+	data.TopicParam = types.StringValue(ref.GetTopic())
 
 	var rwTimeouts timeouts.Value
-	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, path.Root("timeouts"), &rwTimeouts)...)
+	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "TopicResource.timeouts.GetAttribute")
 		return

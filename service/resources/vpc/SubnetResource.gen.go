@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
-	"github.com/hashicorp/terraform-plugin-framework/path"
+	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -35,15 +35,6 @@ var (
 type SubnetResource struct {
 	sdk    *resourcesdk.Subnet
 	config *provider.Config
-}
-
-type SubnetModel struct {
-	NetworkParam types.String   `tfsdk:"network"`
-	ProjectParam types.String   `tfsdk:"project"`
-	SubnetParam  types.String   `tfsdk:"subnet"`
-	Timeouts     timeouts.Value `tfsdk:"timeouts"`
-	ID           types.String   `tfsdk:"id"`
-	tfmodel.Subnet
 }
 
 func NewSubnetResource() resource.Resource {
@@ -114,8 +105,8 @@ func (m *SubnetResource) Configure(ctx context.Context, req resource.ConfigureRe
 
 func (m *SubnetResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "SubnetResource.Create")
-	var data SubnetModel
 
+	var data tfmodel.SubnetModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -132,14 +123,14 @@ func (m *SubnetResource) Create(ctx context.Context, req resource.CreateRequest,
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SubnetResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.SubnetTFToAPIRequestModel(ctx, &data.Subnet)
+	body, diags := conv.SubnetTFToAPIRequestModel(ctx, &data.Subnet)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SubnetResource.TFToAPI")
@@ -152,7 +143,7 @@ func (m *SubnetResource) Create(ctx context.Context, req resource.CreateRequest,
 			Project: data.ProjectParam.ValueString(),
 			Network: data.NetworkParam.ValueString(),
 			Subnet:  data.SubnetParam.ValueString(),
-			Body:    *bodyRequest,
+			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -180,8 +171,8 @@ func (m *SubnetResource) Create(ctx context.Context, req resource.CreateRequest,
 
 func (m *SubnetResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "SubnetResource.Read")
-	var data SubnetModel
 
+	var data tfmodel.SubnetModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -230,8 +221,8 @@ func (m *SubnetResource) Read(ctx context.Context, req resource.ReadRequest, res
 
 func (m *SubnetResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "SubnetResource.Update")
-	var data SubnetModel
 
+	var data tfmodel.SubnetModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -248,14 +239,14 @@ func (m *SubnetResource) Update(ctx context.Context, req resource.UpdateRequest,
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SubnetResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.SubnetTFToAPIRequestModel(ctx, &data.Subnet)
+	body, diags := conv.SubnetTFToAPIRequestModel(ctx, &data.Subnet)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SubnetResource.TFToAPI")
@@ -268,7 +259,7 @@ func (m *SubnetResource) Update(ctx context.Context, req resource.UpdateRequest,
 			Project: data.ProjectParam.ValueString(),
 			Network: data.NetworkParam.ValueString(),
 			Subnet:  data.SubnetParam.ValueString(),
-			Body:    bodyRequest.AsUpdateModel(),
+			Body:    body.AsUpdateModel(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -296,8 +287,8 @@ func (m *SubnetResource) Update(ctx context.Context, req resource.UpdateRequest,
 
 func (m *SubnetResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "SubnetResource.Delete")
-	var data SubnetModel
 
+	var data tfmodel.SubnetModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -314,7 +305,7 @@ func (m *SubnetResource) Delete(ctx context.Context, req resource.DeleteRequest,
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SubnetResource.Timeouts")
@@ -342,7 +333,7 @@ func (m *SubnetResource) Delete(ctx context.Context, req resource.DeleteRequest,
 func (m *SubnetResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "SubnetResource.ImportState")
 
-	var data SubnetModel
+	var data tfmodel.SubnetModel
 
 	ref, err := vpcref.ParseSubnetRef(ctx, req.ID)
 	if err != nil {
@@ -356,9 +347,9 @@ func (m *SubnetResource) ImportState(ctx context.Context, req resource.ImportSta
 	apiRes, err := m.sdk.GetSubnet(
 		ctx,
 		client.GetSubnetRequest{
-			Network: ref.GetNetwork(),
 			Project: ref.GetProject(),
-			Subnet:  string(ref.ResourceName()),
+			Network: ref.GetNetwork(),
+			Subnet:  ref.GetSubnet(),
 		})
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -379,12 +370,12 @@ func (m *SubnetResource) ImportState(ctx context.Context, req resource.ImportSta
 
 	data.Subnet = *tfRes
 
-	data.NetworkParam = types.StringValue(ref.GetNetwork())
 	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.SubnetParam = types.StringValue(string(ref.ResourceName()))
+	data.NetworkParam = types.StringValue(ref.GetNetwork())
+	data.SubnetParam = types.StringValue(ref.GetSubnet())
 
 	var rwTimeouts timeouts.Value
-	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, path.Root("timeouts"), &rwTimeouts)...)
+	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SubnetResource.timeouts.GetAttribute")
 		return

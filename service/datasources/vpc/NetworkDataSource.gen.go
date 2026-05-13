@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -27,12 +26,6 @@ var (
 type NetworkDataSource struct {
 	sdk    *resourcesdk.Network
 	config *provider.Config
-}
-
-type NetworkModel struct {
-	NetworkParam types.String `tfsdk:"network"`
-	ProjectParam types.String `tfsdk:"project"`
-	tfmodel.Network
 }
 
 func NewNetworkDataSource() datasource.DataSource {
@@ -85,8 +78,8 @@ func (m *NetworkDataSource) Configure(ctx context.Context, req datasource.Config
 
 func (m *NetworkDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "NetworkDataSource.Read")
-	var data NetworkModel
 
+	var data tfmodel.NetworkModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

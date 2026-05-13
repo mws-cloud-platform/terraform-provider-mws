@@ -63,5 +63,23 @@ func KafkaEndpointExternalAccessesStatusAPIResponseToTFModel(ctx context.Context
 		})
 	}
 
+	if am.SchemaRegistry != nil {
+		schemaRegistryTmp, d := KafkaSchemaRegistryUrlsAPIResponseToTFModel(ctx, am.SchemaRegistry)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		schemaRegistryTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.KafkaSchemaRegistryUrls).GetSchema().Attributes),
+			*schemaRegistryTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.SchemaRegistry = schemaRegistryTfObject
+	} else {
+		t.SchemaRegistry = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.KafkaSchemaRegistryUrls).GetSchema().Attributes))
+	}
+
 	return &t, diags
 }

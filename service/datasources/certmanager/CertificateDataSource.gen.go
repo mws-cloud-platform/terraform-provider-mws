@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -27,12 +26,6 @@ var (
 type CertificateDataSource struct {
 	sdk    *resourcesdk.Certificate
 	config *provider.Config
-}
-
-type CertificateModel struct {
-	NameParam    types.String `tfsdk:"name"`
-	ProjectParam types.String `tfsdk:"project"`
-	tfmodel.Certificate
 }
 
 func NewCertificateDataSource() datasource.DataSource {
@@ -85,8 +78,8 @@ func (m *CertificateDataSource) Configure(ctx context.Context, req datasource.Co
 
 func (m *CertificateDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "CertificateDataSource.Read")
-	var data CertificateModel
 
+	var data tfmodel.CertificateModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

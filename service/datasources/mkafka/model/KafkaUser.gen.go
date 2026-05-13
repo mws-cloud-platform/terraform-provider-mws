@@ -18,7 +18,8 @@ type KafkaUser struct {
 
 func (s *KafkaUser) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Пользователь — это внутренняя учетная запись Kafka для аутентификации в кластере
+`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,

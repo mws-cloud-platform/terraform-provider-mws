@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
-	"github.com/hashicorp/terraform-plugin-framework/path"
+	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -35,15 +35,6 @@ var (
 type OneToOneNatResource struct {
 	sdk    *resourcesdk.OneToOneNat
 	config *provider.Config
-}
-
-type OneToOneNatModel struct {
-	NetworkParam     types.String   `tfsdk:"network"`
-	OneToOneNatParam types.String   `tfsdk:"one_to_one_nat"`
-	ProjectParam     types.String   `tfsdk:"project"`
-	Timeouts         timeouts.Value `tfsdk:"timeouts"`
-	ID               types.String   `tfsdk:"id"`
-	tfmodel.OneToOneNat
 }
 
 func NewOneToOneNatResource() resource.Resource {
@@ -114,8 +105,8 @@ func (m *OneToOneNatResource) Configure(ctx context.Context, req resource.Config
 
 func (m *OneToOneNatResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "OneToOneNatResource.Create")
-	var data OneToOneNatModel
 
+	var data tfmodel.OneToOneNatModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -132,14 +123,14 @@ func (m *OneToOneNatResource) Create(ctx context.Context, req resource.CreateReq
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "OneToOneNatResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.OneToOneNatTFToAPIRequestModel(ctx, &data.OneToOneNat)
+	body, diags := conv.OneToOneNatTFToAPIRequestModel(ctx, &data.OneToOneNat)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "OneToOneNatResource.TFToAPI")
@@ -152,7 +143,7 @@ func (m *OneToOneNatResource) Create(ctx context.Context, req resource.CreateReq
 			Project:     data.ProjectParam.ValueString(),
 			Network:     data.NetworkParam.ValueString(),
 			OneToOneNat: data.OneToOneNatParam.ValueString(),
-			Body:        *bodyRequest,
+			Body:        *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -180,8 +171,8 @@ func (m *OneToOneNatResource) Create(ctx context.Context, req resource.CreateReq
 
 func (m *OneToOneNatResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "OneToOneNatResource.Read")
-	var data OneToOneNatModel
 
+	var data tfmodel.OneToOneNatModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -230,8 +221,8 @@ func (m *OneToOneNatResource) Read(ctx context.Context, req resource.ReadRequest
 
 func (m *OneToOneNatResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "OneToOneNatResource.Update")
-	var data OneToOneNatModel
 
+	var data tfmodel.OneToOneNatModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -248,14 +239,14 @@ func (m *OneToOneNatResource) Update(ctx context.Context, req resource.UpdateReq
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "OneToOneNatResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.OneToOneNatTFToAPIRequestModel(ctx, &data.OneToOneNat)
+	body, diags := conv.OneToOneNatTFToAPIRequestModel(ctx, &data.OneToOneNat)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "OneToOneNatResource.TFToAPI")
@@ -268,7 +259,7 @@ func (m *OneToOneNatResource) Update(ctx context.Context, req resource.UpdateReq
 			Project:     data.ProjectParam.ValueString(),
 			Network:     data.NetworkParam.ValueString(),
 			OneToOneNat: data.OneToOneNatParam.ValueString(),
-			Body:        bodyRequest.AsUpdateModel(),
+			Body:        body.AsUpdateModel(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -296,8 +287,8 @@ func (m *OneToOneNatResource) Update(ctx context.Context, req resource.UpdateReq
 
 func (m *OneToOneNatResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "OneToOneNatResource.Delete")
-	var data OneToOneNatModel
 
+	var data tfmodel.OneToOneNatModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -314,7 +305,7 @@ func (m *OneToOneNatResource) Delete(ctx context.Context, req resource.DeleteReq
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "OneToOneNatResource.Timeouts")
@@ -342,7 +333,7 @@ func (m *OneToOneNatResource) Delete(ctx context.Context, req resource.DeleteReq
 func (m *OneToOneNatResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "OneToOneNatResource.ImportState")
 
-	var data OneToOneNatModel
+	var data tfmodel.OneToOneNatModel
 
 	ref, err := vpcref.ParseOneToOneNatRef(ctx, req.ID)
 	if err != nil {
@@ -356,9 +347,9 @@ func (m *OneToOneNatResource) ImportState(ctx context.Context, req resource.Impo
 	apiRes, err := m.sdk.GetOneToOneNat(
 		ctx,
 		client.GetOneToOneNatRequest{
-			Network:     ref.GetNetwork(),
-			OneToOneNat: string(ref.ResourceName()),
 			Project:     ref.GetProject(),
+			Network:     ref.GetNetwork(),
+			OneToOneNat: ref.GetOneToOneNat(),
 		})
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -379,12 +370,12 @@ func (m *OneToOneNatResource) ImportState(ctx context.Context, req resource.Impo
 
 	data.OneToOneNat = *tfRes
 
-	data.NetworkParam = types.StringValue(ref.GetNetwork())
-	data.OneToOneNatParam = types.StringValue(string(ref.ResourceName()))
 	data.ProjectParam = types.StringValue(ref.GetProject())
+	data.NetworkParam = types.StringValue(ref.GetNetwork())
+	data.OneToOneNatParam = types.StringValue(ref.GetOneToOneNat())
 
 	var rwTimeouts timeouts.Value
-	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, path.Root("timeouts"), &rwTimeouts)...)
+	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "OneToOneNatResource.timeouts.GetAttribute")
 		return

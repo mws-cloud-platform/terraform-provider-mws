@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -27,13 +26,6 @@ var (
 type RouteDataSource struct {
 	sdk    *resourcesdk.Route
 	config *provider.Config
-}
-
-type RouteModel struct {
-	NetworkParam types.String `tfsdk:"network"`
-	ProjectParam types.String `tfsdk:"project"`
-	RouteParam   types.String `tfsdk:"route"`
-	tfmodel.Route
 }
 
 func NewRouteDataSource() datasource.DataSource {
@@ -90,8 +82,8 @@ func (m *RouteDataSource) Configure(ctx context.Context, req datasource.Configur
 
 func (m *RouteDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "RouteDataSource.Read")
-	var data RouteModel
 
+	var data tfmodel.RouteModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

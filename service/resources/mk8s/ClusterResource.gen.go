@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
-	"github.com/hashicorp/terraform-plugin-framework/path"
+	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -35,14 +35,6 @@ var (
 type ClusterResource struct {
 	sdk    *resourcesdk.Mk8sCluster
 	config *provider.Config
-}
-
-type ClusterModel struct {
-	ClusterNameParam types.String   `tfsdk:"cluster_name"`
-	ProjectParam     types.String   `tfsdk:"project"`
-	Timeouts         timeouts.Value `tfsdk:"timeouts"`
-	ID               types.String   `tfsdk:"id"`
-	tfmodel.Cluster
 }
 
 func NewClusterResource() resource.Resource {
@@ -109,8 +101,8 @@ func (m *ClusterResource) Configure(ctx context.Context, req resource.ConfigureR
 
 func (m *ClusterResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "ClusterResource.Create")
-	var data ClusterModel
 
+	var data tfmodel.ClusterModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -127,14 +119,14 @@ func (m *ClusterResource) Create(ctx context.Context, req resource.CreateRequest
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ClusterResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.ClusterTFToAPIRequestModel(ctx, &data.Cluster)
+	body, diags := conv.ClusterTFToAPIRequestModel(ctx, &data.Cluster)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ClusterResource.TFToAPI")
@@ -146,7 +138,7 @@ func (m *ClusterResource) Create(ctx context.Context, req resource.CreateRequest
 		client.UpsertMk8sClusterRequest{
 			Project:     data.ProjectParam.ValueString(),
 			ClusterName: data.ClusterNameParam.ValueString(),
-			Body:        *bodyRequest,
+			Body:        *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -174,8 +166,8 @@ func (m *ClusterResource) Create(ctx context.Context, req resource.CreateRequest
 
 func (m *ClusterResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "ClusterResource.Read")
-	var data ClusterModel
 
+	var data tfmodel.ClusterModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -223,8 +215,8 @@ func (m *ClusterResource) Read(ctx context.Context, req resource.ReadRequest, re
 
 func (m *ClusterResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "ClusterResource.Update")
-	var data ClusterModel
 
+	var data tfmodel.ClusterModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -241,14 +233,14 @@ func (m *ClusterResource) Update(ctx context.Context, req resource.UpdateRequest
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ClusterResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.ClusterTFToAPIRequestModel(ctx, &data.Cluster)
+	body, diags := conv.ClusterTFToAPIRequestModel(ctx, &data.Cluster)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ClusterResource.TFToAPI")
@@ -260,7 +252,7 @@ func (m *ClusterResource) Update(ctx context.Context, req resource.UpdateRequest
 		client.UpdateMk8sClusterRequest{
 			Project:     data.ProjectParam.ValueString(),
 			ClusterName: data.ClusterNameParam.ValueString(),
-			Body:        bodyRequest.AsUpdateModel(),
+			Body:        body.AsUpdateModel(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -288,8 +280,8 @@ func (m *ClusterResource) Update(ctx context.Context, req resource.UpdateRequest
 
 func (m *ClusterResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "ClusterResource.Delete")
-	var data ClusterModel
 
+	var data tfmodel.ClusterModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -306,7 +298,7 @@ func (m *ClusterResource) Delete(ctx context.Context, req resource.DeleteRequest
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ClusterResource.Timeouts")
@@ -333,7 +325,7 @@ func (m *ClusterResource) Delete(ctx context.Context, req resource.DeleteRequest
 func (m *ClusterResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "ClusterResource.ImportState")
 
-	var data ClusterModel
+	var data tfmodel.ClusterModel
 
 	ref, err := mk8sref.ParseClusterRef(ctx, req.ID)
 	if err != nil {
@@ -347,8 +339,8 @@ func (m *ClusterResource) ImportState(ctx context.Context, req resource.ImportSt
 	apiRes, err := m.sdk.GetMk8sCluster(
 		ctx,
 		client.GetMk8sClusterRequest{
-			ClusterName: string(ref.ResourceName()),
 			Project:     ref.GetProject(),
+			ClusterName: ref.GetClusterName(),
 		})
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -369,11 +361,11 @@ func (m *ClusterResource) ImportState(ctx context.Context, req resource.ImportSt
 
 	data.Cluster = *tfRes
 
-	data.ClusterNameParam = types.StringValue(string(ref.ResourceName()))
 	data.ProjectParam = types.StringValue(ref.GetProject())
+	data.ClusterNameParam = types.StringValue(ref.GetClusterName())
 
 	var rwTimeouts timeouts.Value
-	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, path.Root("timeouts"), &rwTimeouts)...)
+	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ClusterResource.timeouts.GetAttribute")
 		return

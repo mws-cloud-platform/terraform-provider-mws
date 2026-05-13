@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -27,13 +26,6 @@ var (
 type OneToOneNatDataSource struct {
 	sdk    *resourcesdk.OneToOneNat
 	config *provider.Config
-}
-
-type OneToOneNatModel struct {
-	NetworkParam     types.String `tfsdk:"network"`
-	OneToOneNatParam types.String `tfsdk:"one_to_one_nat"`
-	ProjectParam     types.String `tfsdk:"project"`
-	tfmodel.OneToOneNat
 }
 
 func NewOneToOneNatDataSource() datasource.DataSource {
@@ -90,8 +82,8 @@ func (m *OneToOneNatDataSource) Configure(ctx context.Context, req datasource.Co
 
 func (m *OneToOneNatDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "OneToOneNatDataSource.Read")
-	var data OneToOneNatModel
 
+	var data tfmodel.OneToOneNatModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

@@ -10,12 +10,13 @@ import (
 )
 
 type VmType struct {
-	Kind     types.String `tfsdk:"kind"`
-	Metadata types.Object `tfsdk:"metadata"`
-	Status   types.Object `tfsdk:"status"`
-	Cpu      types.Object `tfsdk:"cpu"`
-	Memory   types.Object `tfsdk:"memory"`
-	Disks    types.Object `tfsdk:"disks"`
+	Kind       types.String `tfsdk:"kind"`
+	Metadata   types.Object `tfsdk:"metadata"`
+	Status     types.Object `tfsdk:"status"`
+	Cpu        types.Object `tfsdk:"cpu"`
+	Memory     types.Object `tfsdk:"memory"`
+	Disks      types.Object `tfsdk:"disks"`
+	LocalDisks types.Object `tfsdk:"local_disks"`
 }
 
 func (s *VmType) GetSchema() schema.Schema {
@@ -49,6 +50,11 @@ func (s *VmType) GetSchema() schema.Schema {
 			"disks": schema.SingleNestedAttribute{
 				Attributes:          new(VmTypeDisksSpec).GetSchema().Attributes,
 				MarkdownDescription: `Спецификация сетевых дисков, которые доступны для ВМ указанного типа.`,
+				Computed:            true,
+			},
+			"local_disks": schema.SingleNestedAttribute{
+				Attributes:          new(VmTypeLocalDisksSpec).GetSchema().Attributes,
+				MarkdownDescription: `Спецификация локальных дисков, которые доступны для ВМ указанного типа.`,
 				Computed:            true,
 			},
 		},

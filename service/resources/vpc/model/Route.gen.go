@@ -21,7 +21,7 @@ type Route struct {
 
 func (s *Route) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Маршрут — это набор правил, определяющих путь пакетов от источника к получателю`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,

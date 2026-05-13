@@ -253,6 +253,10 @@ Required:
 
 - `disks` (Attributes List) (see [below for nested schema](#nestedatt--storage--disks))
 
+Optional:
+
+- `local_disks` (Attributes List) (see [below for nested schema](#nestedatt--storage--local_disks))
+
 <a id="nestedatt--storage--disks"></a>
 ### Nested Schema for `storage.disks`
 
@@ -293,6 +297,19 @@ Optional:
 
 
 
+
+
+<a id="nestedatt--storage--local_disks"></a>
+### Nested Schema for `storage.local_disks`
+
+Required:
+
+- `name` (String) Уникальное имя диска в рамках виртуальной машины
+- `size` (String) Размер диска. Должен быть кратен 248GB
+
+Optional:
+
+- `device_name` (String) Уникальное имя устройства, которое отображается в дереве /dev/disk/by-id/mws-* Linux. Если не указано - "mws-{name}", если указано - "mws-{deviceName}"
 
 
 

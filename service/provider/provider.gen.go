@@ -12,6 +12,7 @@ import (
 	dscertmanager "go.mws.cloud/terraform-provider-mws/service/datasources/certmanager"
 	dscompute "go.mws.cloud/terraform-provider-mws/service/datasources/compute"
 	dsiam "go.mws.cloud/terraform-provider-mws/service/datasources/iam"
+	dskms "go.mws.cloud/terraform-provider-mws/service/datasources/kms"
 	dsmk8s "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s"
 	dsmkafka "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka"
 	dsmpostgres "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres"
@@ -20,6 +21,7 @@ import (
 	rscertmanager "go.mws.cloud/terraform-provider-mws/service/resources/certmanager"
 	rscompute "go.mws.cloud/terraform-provider-mws/service/resources/compute"
 	rsiam "go.mws.cloud/terraform-provider-mws/service/resources/iam"
+	rskms "go.mws.cloud/terraform-provider-mws/service/resources/kms"
 	rsmk8s "go.mws.cloud/terraform-provider-mws/service/resources/mk8s"
 	rsmkafka "go.mws.cloud/terraform-provider-mws/service/resources/mkafka"
 	rsmpostgres "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres"
@@ -44,6 +46,9 @@ func resources() []func() resource.Resource {
 		rscompute.NewImageResource,
 		rscompute.NewDiskResource,
 		rsiam.NewServiceAccountResource,
+		rsiam.NewHmacKeyResource,
+		rsiam.NewApiKeyResource,
+		rskms.NewCryptoKeyResource,
 		rsmk8s.NewClusterResource,
 		rsmk8s.NewNodeGroupResource,
 		rsmkafka.NewClusterResource,
@@ -73,6 +78,9 @@ func dataSources() []func() datasource.DataSource {
 		dscompute.NewImageDataSource,
 		dscompute.NewDiskDataSource,
 		dsiam.NewServiceAccountDataSource,
+		dsiam.NewHmacKeyDataSource,
+		dsiam.NewApiKeyDataSource,
+		dskms.NewCryptoKeyDataSource,
 		dsmk8s.NewClusterDataSource,
 		dsmk8s.NewNodeGroupDataSource,
 		dsmkafka.NewClusterDataSource,

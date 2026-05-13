@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -27,12 +26,6 @@ var (
 type ExternalAddressDataSource struct {
 	sdk    *resourcesdk.ExternalAddress
 	config *provider.Config
-}
-
-type ExternalAddressModel struct {
-	ExternalAddressParam types.String `tfsdk:"external_address"`
-	ProjectParam         types.String `tfsdk:"project"`
-	tfmodel.ExternalAddress
 }
 
 func NewExternalAddressDataSource() datasource.DataSource {
@@ -85,8 +78,8 @@ func (m *ExternalAddressDataSource) Configure(ctx context.Context, req datasourc
 
 func (m *ExternalAddressDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "ExternalAddressDataSource.Read")
-	var data ExternalAddressModel
 
+	var data tfmodel.ExternalAddressModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -27,12 +26,6 @@ var (
 type ImageDataSource struct {
 	sdk    *resourcesdk.Image
 	config *provider.Config
-}
-
-type ImageModel struct {
-	ImageParam   types.String `tfsdk:"image"`
-	ProjectParam types.String `tfsdk:"project"`
-	tfmodel.Image
 }
 
 func NewImageDataSource() datasource.DataSource {
@@ -85,8 +78,8 @@ func (m *ImageDataSource) Configure(ctx context.Context, req datasource.Configur
 
 func (m *ImageDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "ImageDataSource.Read")
-	var data ImageModel
 
+	var data tfmodel.ImageModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

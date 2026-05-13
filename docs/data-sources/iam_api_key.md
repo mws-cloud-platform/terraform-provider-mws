@@ -3,18 +3,23 @@
 page_title: "mws_iam_api_key Data Source - mws"
 subcategory: ""
 description: |-
-  
+  API-ключ — это уникальная строка длиной 128 символов, предназначенная для
+  упрощенной аутентификации сервисных аккаунтов в тех облачных сервисах, которые
+  не поддерживают авторизованные ключи
 ---
 
 # mws_iam_api_key (Data Source)
 
-
+API-ключ — это уникальная строка длиной 128 символов, предназначенная для
+упрощенной аутентификации сервисных аккаунтов в тех облачных сервисах, которые
+не поддерживают авторизованные ключи
 
 ## Example Usage
 
 ```terraform
 data "mws_iam_api_key" "iam_api_key_name" {
-  api_key = "my-api-key"
+  api_key         = "my-api-key"
+  service_account = "my-service-account"
 }
 ```
 

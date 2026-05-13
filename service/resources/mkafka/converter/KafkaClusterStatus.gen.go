@@ -146,5 +146,23 @@ func KafkaClusterStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.Ka
 		t.MaintenanceWindow = types.ObjectNull(tfconv.GetAttributesTypes(new(tfcommon.MaintenanceWindow2).GetSchema().Attributes))
 	}
 
+	if am.SchemaRegistry != nil {
+		schemaRegistryTmp, d := KafkaSchemaRegistrySpecAPIResponseToTFModel(ctx, am.SchemaRegistry)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		schemaRegistryTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.KafkaSchemaRegistrySpec).GetSchema().Attributes),
+			*schemaRegistryTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.SchemaRegistry = schemaRegistryTfObject
+	} else {
+		t.SchemaRegistry = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.KafkaSchemaRegistrySpec).GetSchema().Attributes))
+	}
+
 	return &t, diags
 }

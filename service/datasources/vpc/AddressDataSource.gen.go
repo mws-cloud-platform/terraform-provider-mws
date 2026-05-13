@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -27,13 +26,6 @@ var (
 type AddressDataSource struct {
 	sdk    *resourcesdk.Address
 	config *provider.Config
-}
-
-type AddressModel struct {
-	AddressParam types.String `tfsdk:"address"`
-	NetworkParam types.String `tfsdk:"network"`
-	ProjectParam types.String `tfsdk:"project"`
-	tfmodel.Address
 }
 
 func NewAddressDataSource() datasource.DataSource {
@@ -90,8 +82,8 @@ func (m *AddressDataSource) Configure(ctx context.Context, req datasource.Config
 
 func (m *AddressDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "AddressDataSource.Read")
-	var data AddressModel
 
+	var data tfmodel.AddressModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return

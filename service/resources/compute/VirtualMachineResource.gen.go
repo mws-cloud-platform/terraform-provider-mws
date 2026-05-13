@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
-	"github.com/hashicorp/terraform-plugin-framework/path"
+	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -35,14 +35,6 @@ var (
 type VirtualMachineResource struct {
 	sdk    *resourcesdk.VirtualMachine
 	config *provider.Config
-}
-
-type VirtualMachineModel struct {
-	ProjectParam        types.String   `tfsdk:"project"`
-	VirtualMachineParam types.String   `tfsdk:"virtual_machine"`
-	Timeouts            timeouts.Value `tfsdk:"timeouts"`
-	ID                  types.String   `tfsdk:"id"`
-	tfmodel.VirtualMachine
 }
 
 func NewVirtualMachineResource() resource.Resource {
@@ -108,8 +100,8 @@ func (m *VirtualMachineResource) Configure(ctx context.Context, req resource.Con
 
 func (m *VirtualMachineResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "VirtualMachineResource.Create")
-	var data VirtualMachineModel
 
+	var data tfmodel.VirtualMachineModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -136,14 +128,14 @@ func (m *VirtualMachineResource) Create(ctx context.Context, req resource.Create
 	}
 	data.Zone = zoneParam
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "VirtualMachineResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.VirtualMachineTFToAPIRequestModel(ctx, &data.VirtualMachine)
+	body, diags := conv.VirtualMachineTFToAPIRequestModel(ctx, &data.VirtualMachine)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "VirtualMachineResource.TFToAPI")
@@ -155,7 +147,7 @@ func (m *VirtualMachineResource) Create(ctx context.Context, req resource.Create
 		client.UpsertVirtualMachineRequest{
 			Project:        data.ProjectParam.ValueString(),
 			VirtualMachine: data.VirtualMachineParam.ValueString(),
-			Body:           *bodyRequest,
+			Body:           *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -183,8 +175,8 @@ func (m *VirtualMachineResource) Create(ctx context.Context, req resource.Create
 
 func (m *VirtualMachineResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "VirtualMachineResource.Read")
-	var data VirtualMachineModel
 
+	var data tfmodel.VirtualMachineModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -242,8 +234,8 @@ func (m *VirtualMachineResource) Read(ctx context.Context, req resource.ReadRequ
 
 func (m *VirtualMachineResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "VirtualMachineResource.Update")
-	var data VirtualMachineModel
 
+	var data tfmodel.VirtualMachineModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -270,14 +262,14 @@ func (m *VirtualMachineResource) Update(ctx context.Context, req resource.Update
 	}
 	data.Zone = zoneParam
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "VirtualMachineResource.Timeouts")
 		return
 	}
 
-	bodyRequest, diags := conv.VirtualMachineTFToAPIRequestModel(ctx, &data.VirtualMachine)
+	body, diags := conv.VirtualMachineTFToAPIRequestModel(ctx, &data.VirtualMachine)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "VirtualMachineResource.TFToAPI")
@@ -289,7 +281,7 @@ func (m *VirtualMachineResource) Update(ctx context.Context, req resource.Update
 		client.UpdateVirtualMachineRequest{
 			Project:        data.ProjectParam.ValueString(),
 			VirtualMachine: data.VirtualMachineParam.ValueString(),
-			Body:           bodyRequest.AsUpdateModel(),
+			Body:           body.AsUpdateModel(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -317,8 +309,8 @@ func (m *VirtualMachineResource) Update(ctx context.Context, req resource.Update
 
 func (m *VirtualMachineResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "VirtualMachineResource.Delete")
-	var data VirtualMachineModel
 
+	var data tfmodel.VirtualMachineModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -345,7 +337,7 @@ func (m *VirtualMachineResource) Delete(ctx context.Context, req resource.Delete
 	}
 	data.Zone = zoneParam
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 1800*time.Second)
+	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "VirtualMachineResource.Timeouts")
@@ -372,7 +364,7 @@ func (m *VirtualMachineResource) Delete(ctx context.Context, req resource.Delete
 func (m *VirtualMachineResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "VirtualMachineResource.ImportState")
 
-	var data VirtualMachineModel
+	var data tfmodel.VirtualMachineModel
 
 	ref, err := computeref.ParseVirtualMachineRef(ctx, req.ID)
 	if err != nil {
@@ -387,7 +379,7 @@ func (m *VirtualMachineResource) ImportState(ctx context.Context, req resource.I
 		ctx,
 		client.GetVirtualMachineRequest{
 			Project:        ref.GetProject(),
-			VirtualMachine: string(ref.ResourceName()),
+			VirtualMachine: ref.GetVirtualMachine(),
 		})
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -409,10 +401,10 @@ func (m *VirtualMachineResource) ImportState(ctx context.Context, req resource.I
 	data.VirtualMachine = *tfRes
 
 	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.VirtualMachineParam = types.StringValue(string(ref.ResourceName()))
+	data.VirtualMachineParam = types.StringValue(ref.GetVirtualMachine())
 
 	var rwTimeouts timeouts.Value
-	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, path.Root("timeouts"), &rwTimeouts)...)
+	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "VirtualMachineResource.timeouts.GetAttribute")
 		return

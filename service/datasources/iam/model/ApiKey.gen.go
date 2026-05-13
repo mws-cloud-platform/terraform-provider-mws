@@ -18,7 +18,10 @@ type ApiKey struct {
 
 func (s *ApiKey) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `API-ключ — это уникальная строка длиной 128 символов, предназначенная для
+упрощенной аутентификации сервисных аккаунтов в тех облачных сервисах, которые
+не поддерживают авторизованные ключи
+`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,

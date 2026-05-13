@@ -22,8 +22,8 @@ func (s *AddressSpecOrRef) GetSchema() schema.Schema {
 			"spec": schema.SingleNestedAttribute{
 				Attributes: new(AddressSpec).GetSchema().Attributes,
 				MarkdownDescription: `Возможно 2 варианта:
-- запросить резервирование случайного адреса (заданы параметры "version")
-- запросить резервирование конкретного адреса (заданы параметры "version", "ipAddress", остальные пусты)
+  - запросить резервирование случайного адреса (заданы параметры "version")
+  - запросить резервирование конкретного адреса (заданы параметры "version", "ipAddress", остальные пусты)
 Если необходимо привязать внешний адрес, заполняется параметр "oneToOneNat"
 `,
 				Computed: true,

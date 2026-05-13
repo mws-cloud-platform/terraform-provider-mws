@@ -20,6 +20,7 @@ type KafkaClusterStatus struct {
 	Instances            types.Object  `tfsdk:"instances"`
 	Endpoints            types.List    `tfsdk:"endpoints"`
 	MaintenanceWindow    types.Object  `tfsdk:"maintenance_window"`
+	SchemaRegistry       types.Object  `tfsdk:"schema_registry"`
 }
 
 func (s *KafkaClusterStatus) GetSchema() schema.Schema {
@@ -100,6 +101,11 @@ func (s *KafkaClusterStatus) GetSchema() schema.Schema {
 			"maintenance_window": schema.SingleNestedAttribute{
 				Attributes: new(tfcommon.MaintenanceWindow2).GetSchema().Attributes,
 				Computed:   true,
+			},
+			"schema_registry": schema.SingleNestedAttribute{
+				Attributes:          new(KafkaSchemaRegistrySpec).GetSchema().Attributes,
+				MarkdownDescription: `Настройка Schema Registry для кластера.`,
+				Computed:            true,
 			},
 		},
 	}

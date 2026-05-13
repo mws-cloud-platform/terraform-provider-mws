@@ -142,6 +142,24 @@ func KafkaClusterAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaClu
 		t.MaintenanceWindow = types.ObjectNull(tfconv.GetAttributesTypes(new(tfcommon.MaintenanceWindow).GetSchema().Attributes))
 	}
 
+	if am.Spec.SchemaRegistry != nil {
+		schemaRegistryTmp, d := KafkaSchemaRegistrySpecAPIResponseToTFModel(ctx, am.Spec.SchemaRegistry)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		schemaRegistryTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.KafkaSchemaRegistrySpec).GetSchema().Attributes),
+			*schemaRegistryTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.SchemaRegistry = schemaRegistryTfObject
+	} else {
+		t.SchemaRegistry = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.KafkaSchemaRegistrySpec).GetSchema().Attributes))
+	}
+
 	return &t, diags
 }
 
@@ -230,6 +248,22 @@ func KafkaClusterTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaClust
 			return nil, diags
 		}
 		am.Spec.MaintenanceWindow = maintenanceWindowTmp
+	}
+
+	if !tm.SchemaRegistry.IsNull() && !tm.SchemaRegistry.IsUnknown() {
+		schemaRegistryTfModel := tfmodel.KafkaSchemaRegistrySpec{}
+		schemaRegistryDiag := tm.SchemaRegistry.As(ctx, &schemaRegistryTfModel, basetypes.ObjectAsOptions{})
+		diags = append(diags, schemaRegistryDiag...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		schemaRegistryTmp, schemaRegistryDiag := KafkaSchemaRegistrySpecTFToAPIRequestModel(ctx, &schemaRegistryTfModel)
+		diags = append(diags, schemaRegistryDiag...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		am.Spec.SchemaRegistry = schemaRegistryTmp
 	}
 
 	return &am, diags

@@ -8,8 +8,9 @@ import (
 )
 
 type DiskSpecSource struct {
-	Image    types.String `tfsdk:"image"`
-	Snapshot types.String `tfsdk:"snapshot"`
+	Image      types.String `tfsdk:"image"`
+	Snapshot   types.String `tfsdk:"snapshot"`
+	DiskBackup types.String `tfsdk:"disk_backup"`
 }
 
 func (s *DiskSpecSource) GetSchema() schema.Schema {
@@ -22,6 +23,11 @@ func (s *DiskSpecSource) GetSchema() schema.Schema {
 			},
 			"snapshot": schema.StringAttribute{
 				MarkdownDescription: `ID снимка`,
+				Optional:            true,
+				DeprecationMessage:  `Отказываемся в пользу diskBackup`,
+			},
+			"disk_backup": schema.StringAttribute{
+				MarkdownDescription: `ID резервной копии диска`,
 				Optional:            true,
 			},
 		},
