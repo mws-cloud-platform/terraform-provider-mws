@@ -4,7 +4,7 @@
 [![Build](https://go.mws.cloud/badges/mws-cloud-platform/terraform-provider-mws)](https://go.mws.cloud/ci/mws-cloud-platform/terraform-provider-mws)
 [![Go Report Card](https://goreportcard.com/badge/go.mws.cloud/terraform-provider-mws)](https://goreportcard.com/report/go.mws.cloud/terraform-provider-mws)
 ![Last Commit](https://img.shields.io/github/last-commit/mws-cloud-platform/terraform-provider-mws)
-![Go Version](https://img.shields.io/badge/Go-1.25.8%2B-blue)
+![Go Version](https://img.shields.io/badge/Go-1.25.6%2B-blue)
 
 The MWS Cloud Platform Terraform Provider is a plugin that allows [Terraform](https://www.terraform.io) to manage
 resources on the [MWS Cloud Platform](https://mws.ru/cloud-platform).
