@@ -67,57 +67,6 @@ func SecretVersionAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel
 	return &t, diags
 }
 
-func SecretVersionAPIResponseToTFModel(ctx context.Context, am *apimodel.SecretVersionResponse) (*tfmodel.SecretVersion, tfdiag.Diagnostics) {
-	if am == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var t tfmodel.SecretVersion
-
-	t.Kind = types.StringValue(am.Kind)
-
-	if am.Metadata != nil {
-		metadataTmp, d := commonconv.CommonTypedResourceMetadataAPIResponseToTFModel(ctx, am.Metadata)
-		diags = append(diags, d...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		metadataTfObject, d := types.ObjectValueFrom(ctx,
-			tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes),
-			*metadataTmp)
-		diags = append(diags, d...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		t.Metadata = metadataTfObject
-	} else {
-		t.Metadata = types.ObjectNull(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
-	}
-
-	statusTmp, d := SecretVersionStatusAPIResponseToTFModel(ctx, &am.Status)
-	diags = append(diags, d...)
-	if diags.HasError() {
-		return nil, diags
-	}
-	statusTfObject, d := types.ObjectValueFrom(ctx,
-		tfconv.GetAttributesTypes(new(tfmodel.SecretVersionStatus).GetSchema().Attributes),
-		*statusTmp)
-	diags = append(diags, d...)
-	if diags.HasError() {
-		return nil, diags
-	}
-	t.Status = statusTfObject
-
-	if am.Spec.Active != nil {
-		t.Active = types.BoolPointerValue(am.Spec.Active)
-	} else {
-		t.Active = types.BoolNull()
-	}
-
-	return &t, diags
-}
-
 func SecretVersionTFToAPIRequestModel(ctx context.Context, tm *tfmodel.SecretVersion) (*apimodel.SecretVersionRequest, tfdiag.Diagnostics) {
 	if tm == nil {
 		return nil, nil

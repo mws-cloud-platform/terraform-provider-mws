@@ -39,31 +39,3 @@ func TestSecretVersionOptionalResponseConverters(t *testing.T) {
 
 	require.Equal(t, *emptyApiModelResponse, *result)
 }
-
-func TestSecretVersionAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := apimodel.SecretVersionResponse{}
-	_, diags := conv.SecretVersionAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
-func TestSecretVersionResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.SecretVersionRequest{
-		Spec: apimodel.SecretVersionSpecRequest{},
-	}
-
-	emptyApiModelResponse, err := apimodel.SecretVersionRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.SecretVersionAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.SecretVersionTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.SecretVersionRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
-}

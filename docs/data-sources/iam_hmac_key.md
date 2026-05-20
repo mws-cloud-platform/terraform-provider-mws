@@ -3,12 +3,12 @@
 page_title: "mws_iam_hmac_key Data Source - mws"
 subcategory: ""
 description: |-
-  
+  HMAC-ключ (англ. Hash-based Message Authentication Code) — это статический ключ, необходимый для аутентификации сервисного аккаунта в AWS-совместимом API
 ---
 
 # mws_iam_hmac_key (Data Source)
 
-
+HMAC-ключ (англ. Hash-based Message Authentication Code) — это статический ключ, необходимый для аутентификации сервисного аккаунта в AWS-совместимом API
 
 ## Example Usage
 

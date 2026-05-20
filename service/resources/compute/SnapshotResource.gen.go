@@ -49,6 +49,7 @@ func (m *SnapshotResource) Metadata(ctx context.Context, req resource.MetadataRe
 func (m *SnapshotResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	tflog.Info(ctx, "SnapshotResource.Schema")
 	resp.Schema = new(tfmodel.Snapshot).GetSchema()
+	resp.Schema.DeprecationMessage = `Отказываемся в пользу DiskBackup`
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту`,
 		Optional:            true,

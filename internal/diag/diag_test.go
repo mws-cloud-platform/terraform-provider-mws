@@ -4,12 +4,11 @@ import (
 	"net/http"
 	"testing"
 
+	mwserrors "go.mws.cloud/go-sdk/mws/errors"
 	"go.mws.cloud/util-toolset/pkg/testing/golden"
 	"go.mws.cloud/util-toolset/pkg/utils/consterr"
 
-	mwsclient "go.mws.cloud/terraform-provider-mws/internal/client"
 	"go.mws.cloud/terraform-provider-mws/internal/diag"
-	mwserrors "go.mws.cloud/terraform-provider-mws/internal/errors"
 )
 
 func TestFormatError(t *testing.T) {
@@ -28,7 +27,7 @@ func TestFormatError(t *testing.T) {
 		{name: "simple", err: simpleErr},
 		{
 			name: "client_error",
-			err: mwsclient.Error{
+			err: Error{
 				Err:       simpleErr,
 				RequestID: requestID,
 				TraceID:   traceID,
@@ -36,7 +35,7 @@ func TestFormatError(t *testing.T) {
 		},
 		{
 			name: "client_api_error",
-			err: mwsclient.Error{
+			err: Error{
 				Err: &mwserrors.APIError{
 					Code:        http.StatusBadRequest,
 					Status:      mwserrors.InvalidArgument,
@@ -48,7 +47,7 @@ func TestFormatError(t *testing.T) {
 		},
 		{
 			name: "client_api_error_with_details",
-			err: mwsclient.Error{
+			err: Error{
 				Err: &mwserrors.APIError{
 					Code:        http.StatusPreconditionFailed,
 					Status:      mwserrors.FailedPrecondition,
@@ -66,4 +65,26 @@ func TestFormatError(t *testing.T) {
 			dir.String(t, tc.name+".txt", diag.FormatError(tc.err))
 		})
 	}
+}
+
+type Error struct {
+	Err       error
+	RequestID string
+	TraceID   string
+}
+
+func (e Error) Error() string {
+	return e.Err.Error()
+}
+
+func (e Error) Unwrap() error {
+	return e.Err
+}
+
+func (e Error) GetRequestID() string {
+	return e.RequestID
+}
+
+func (e Error) GetTraceID() string {
+	return e.TraceID
 }

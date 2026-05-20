@@ -37,6 +37,10 @@ resource "mws_vpc_address" "address" {
   subnet  = mws_vpc_subnet.subnet_a.metadata.id
 }
 
+resource "mws_iam_service_account" "sa" {
+  service_account = var.service_account_name
+}
+
 resource "mws_mk8s_cluster" "example" {
   availability = {
     zonal_ha = { // zonal high available
@@ -76,7 +80,7 @@ resource "mws_mk8s_node_group" "example" {
   node_group_name = "${var.cluster_name}-example-node-group"
 
   service_account = {
-    ref = var.service_account_ref
+    ref = mws_iam_service_account.sa.metadata.id
   }
 
   subnet = {
@@ -153,6 +157,12 @@ variable "address_name" {
   description = "Name for the primary endpoint address"
 }
 
+variable "service_account_name" {
+  type        = string
+  default     = "my-service-account"
+  description = "Service account name"
+}
+
 variable "cluster_name" {
   type        = string
   default     = "ha-k8s-cluster"
@@ -169,11 +179,6 @@ variable "services_cidr" {
   type        = string
   default     = "10.96.0.0/16"
   description = "Services CIDR block"
-}
-
-variable "service_account_ref" {
-  type        = string
-  description = "Service account reference (iam/projects/<project>/serviceAccounts/<service-account>)"
 }
 ```
 

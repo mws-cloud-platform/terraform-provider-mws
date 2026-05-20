@@ -4,8 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	mwsclient "go.mws.cloud/terraform-provider-mws/internal/client"
-	mwserrors "go.mws.cloud/terraform-provider-mws/internal/errors"
+	mwserrors "go.mws.cloud/go-sdk/mws/errors"
 )
 
 // FormatError formats an error into a string.
@@ -14,21 +13,25 @@ func FormatError(err error) string {
 
 	sb.WriteString("Error: " + err.Error())
 
-	var clientErr mwsclient.Error
-	if errors.As(err, &clientErr) {
-		var apiErr *mwserrors.APIError
-		if errors.As(clientErr.Err, &apiErr) {
-			if apiErr.Details != nil {
-				sb.WriteString("\nDetails: ")
-				sb.WriteString(apiErr.Details.String())
-			}
+	var apiErr *mwserrors.APIError
+	if errors.As(err, &apiErr) {
+		if apiErr.Details != nil {
+			sb.WriteString("\nDetails: ")
+			sb.WriteString(apiErr.Details.String())
 		}
+	}
 
+	if clientErr, ok := err.(mwsClientError); ok {
 		sb.WriteString("\n\nRequestID: ")
-		sb.WriteString(clientErr.RequestID)
+		sb.WriteString(clientErr.GetRequestID())
 		sb.WriteString("\nTraceID: ")
-		sb.WriteString(clientErr.TraceID)
+		sb.WriteString(clientErr.GetTraceID())
 	}
 
 	return sb.String()
+}
+
+type mwsClientError interface {
+	GetRequestID() string
+	GetTraceID() string
 }
