@@ -50,7 +50,7 @@ func (s *KafkaUser) GetSchema() schema.Schema {
 				MarkdownDescription: `Increase this field's value if you want to force updating the associated write-only field.`,
 				Optional:            true,
 				Validators: []validator.Int64{
-					int64validator.AlsoRequires(tfpath.MatchRoot("password"))},
+					int64validator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("password"))},
 			},
 			"password": schema.StringAttribute{
 				MarkdownDescription: `Пароль пользователя.`,
@@ -58,7 +58,7 @@ func (s *KafkaUser) GetSchema() schema.Schema {
 				WriteOnly:           true,
 				Required:            true,
 				Validators: []validator.String{
-					stringvalidator.AlsoRequires(tfpath.MatchRoot("password_version"))},
+					stringvalidator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("password_version"))},
 			},
 			"roles": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{

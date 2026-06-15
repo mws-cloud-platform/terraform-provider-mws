@@ -10,7 +10,7 @@ description: |-
 
 Кластер в Managed PostgreSQL — это группа узлов (виртуальных машин), объединенных для хранения и обработки данных с помощью СУБД PostgreSQL. В облачной инфраструктуре кластер — единый интерфейс для управления базами данных
 
-## Example Usage
+## Примеры использования
 
 ```terraform
 resource "mws_vpc_network" "network" {
@@ -144,6 +144,7 @@ Required:
 
 Optional:
 
+- `direct_addresses` (Attributes List) (see [below for nested schema](#nestedatt--endpoints--direct_addresses))
 - `read_only_addresses` (Attributes List) (see [below for nested schema](#nestedatt--endpoints--read_only_addresses))
 
 <a id="nestedatt--endpoints--primary_addresses"></a>
@@ -169,6 +170,37 @@ Optional:
 
 <a id="nestedatt--endpoints--primary_addresses--spec"></a>
 ### Nested Schema for `endpoints.primary_addresses.spec`
+
+Required:
+
+- `subnet` (String)
+
+
+
+<a id="nestedatt--endpoints--direct_addresses"></a>
+### Nested Schema for `endpoints.direct_addresses`
+
+Optional:
+
+- `external_access` (Attributes) Описание адреса для внешнего подключения к кластеру. (see [below for nested schema](#nestedatt--endpoints--direct_addresses--external_access))
+- `ref` (String) Идентификатор адресса, в которые будет трансляция из service-vpc.
+- `spec` (Attributes) Описание subnet пользователя, в который будет трансляция из service-vpc. (see [below for nested schema](#nestedatt--endpoints--direct_addresses--spec))
+- `zone` (String) Зона инстанса, к которому ведет адрес.
+
+<a id="nestedatt--endpoints--direct_addresses--external_access"></a>
+### Nested Schema for `endpoints.direct_addresses.external_access`
+
+Required:
+
+- `allowed` (Boolean) Флаг, разрешающий внешнее подключение к кластеру.
+
+Optional:
+
+- `ref` (String) Идентификатор внешнего адреса.
+
+
+<a id="nestedatt--endpoints--direct_addresses--spec"></a>
+### Nested Schema for `endpoints.direct_addresses.spec`
 
 Required:
 
@@ -421,8 +453,31 @@ Optional:
 
 Read-Only:
 
+- `direct_addresses` (Attributes List) (see [below for nested schema](#nestedatt--status--network--direct_addresses))
 - `primary_addresses` (Attributes List) (see [below for nested schema](#nestedatt--status--network--primary_addresses))
 - `read_only_addresses` (Attributes List) (see [below for nested schema](#nestedatt--status--network--read_only_addresses))
+
+<a id="nestedatt--status--network--direct_addresses"></a>
+### Nested Schema for `status.network.direct_addresses`
+
+Read-Only:
+
+- `address` (String)
+- `external` (Attributes) Описание внешнего ip адреса для доступа к кластеру (see [below for nested schema](#nestedatt--status--network--direct_addresses--external))
+- `instance` (String) Имя инстанса, к которому ведет адрес.
+- `ip` (String)
+- `subnet` (String)
+- `zone` (String) Зона инстанса, к которому ведет адрес.
+
+<a id="nestedatt--status--network--direct_addresses--external"></a>
+### Nested Schema for `status.network.direct_addresses.external`
+
+Read-Only:
+
+- `address` (String)
+- `ip` (String)
+
+
 
 <a id="nestedatt--status--network--primary_addresses"></a>
 ### Nested Schema for `status.network.primary_addresses`

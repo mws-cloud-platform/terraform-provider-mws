@@ -4,6 +4,8 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -19,10 +21,16 @@ func (s *LinkedVmInfo) GetSchema() schema.Schema {
 			"id": schema.StringAttribute{
 				MarkdownDescription: `Идентификатор виртуальной машины`,
 				Computed:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
 			},
 			"name": schema.StringAttribute{
 				MarkdownDescription: `Имя виртуальной машины`,
 				Required:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
 			},
 		},
 	}

@@ -49,6 +49,10 @@ the [tutorial](https://mws.ru/docs/cloud-platform/terraform/general/terraform-qu
 Learn more at
 the [official tutorial](https://developer.hashicorp.com/terraform/tutorials/providers-plugin-framework/providers-plugin-framework-provider#prepare-terraform-for-local-provider-install).
 
+## OpenTofu Support
+
+The MWS Cloud Platform Terraform Provider is compatible with [OpenTofu](https://opentofu.org/), an open-source alternative to Terraform. You can use this provider with OpenTofu by following the same installation and configuration steps outlined above.
+
 ## Getting Started
 
 * [Quick Start with the MWS Cloud Platform Terraform Provider](https://mws.ru/docs/cloud-platform/terraform/general/terraform-quickstart.html)

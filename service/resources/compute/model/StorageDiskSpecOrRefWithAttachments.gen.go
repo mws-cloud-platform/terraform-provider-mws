@@ -4,6 +4,9 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -21,13 +24,22 @@ func (s *StorageDiskSpecOrRefWithAttachments) GetSchema() schema.Schema {
 			"name": schema.StringAttribute{
 				MarkdownDescription: `Уникальное имя диска в рамках виртуальной машины`,
 				Required:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
 			},
 			"boot": schema.BoolAttribute{
 				Optional: true,
+				PlanModifiers: []planmodifier.Bool{
+					boolplanmodifier.RequiresReplaceIfConfigured(),
+				},
 			},
 			"device_name": schema.StringAttribute{
 				MarkdownDescription: `Уникальное имя устройства, которое отображается в дереве /dev/disk/by-id/mws-* Linux. Если не указано - "mws-{name}", если указано - "mws-{deviceName}"`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
 			},
 			"disk": schema.SingleNestedAttribute{
 				Attributes: new(StorageDiskSpecOrRef).GetSchema().Attributes,

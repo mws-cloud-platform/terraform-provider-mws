@@ -54,6 +54,9 @@ func (m *SecretVersionResource) Schema(ctx context.Context, req resource.SchemaR
 	resp.Schema.Attributes["name"] = schema.StringAttribute{
 		MarkdownDescription: `Имя секрета.`,
 		Required:            true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
 	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту`,
@@ -61,11 +64,15 @@ func (m *SecretVersionResource) Schema(ctx context.Context, req resource.SchemaR
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}
 	resp.Schema.Attributes["version"] = schema.StringAttribute{
 		MarkdownDescription: `Версия секрета.`,
 		Required:            true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
 	}
 	resp.Schema.Attributes["timeouts"] = timeouts.Attributes(ctx, timeouts.Opts{
 		Create: true,

@@ -5,6 +5,8 @@ package model
 import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
@@ -64,6 +66,9 @@ func (s *DiskStatus) GetSchema() schema.Schema {
 				},
 				MarkdownDescription: `Информация о ВМ, использующих этот диск`,
 				Computed:            true,
+				PlanModifiers: []planmodifier.List{
+					listplanmodifier.RequiresReplaceIfConfigured(),
+				},
 			},
 			"initial_source_image": schema.StringAttribute{
 				MarkdownDescription: `Ссылка на исходный образ`,

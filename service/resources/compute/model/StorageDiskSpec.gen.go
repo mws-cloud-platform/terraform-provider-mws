@@ -4,6 +4,9 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -25,10 +28,16 @@ func (s *StorageDiskSpec) GetSchema() schema.Schema {
 				Attributes:          new(StorageDiskSpecSource).GetSchema().Attributes,
 				MarkdownDescription: `Источник для создания диска`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.RequiresReplaceIfConfigured(),
+				},
 			},
 			"disk_type": schema.StringAttribute{
 				MarkdownDescription: `Ссылка на тип диска`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
 			},
 			"iops": schema.Int64Attribute{
 				MarkdownDescription: `Запрашиваемая пользователем IOPS`,
@@ -49,6 +58,9 @@ func (s *StorageDiskSpecSource) GetSchema() schema.Schema {
 			"image": schema.StringAttribute{
 				MarkdownDescription: `Ссылка на образ`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
 			},
 		},
 	}

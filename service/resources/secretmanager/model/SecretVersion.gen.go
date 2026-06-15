@@ -60,7 +60,7 @@ func (s *SecretVersion) GetSchema() schema.Schema {
 				MarkdownDescription: `Increase this field's value if you want to force updating the associated write-only field.`,
 				Optional:            true,
 				Validators: []validator.Int64{
-					int64validator.AlsoRequires(tfpath.MatchRoot("data"))},
+					int64validator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("data"))},
 				PlanModifiers: []planmodifier.Int64{
 					int64planmodifier.RequiresReplaceIfConfigured(),
 				},
@@ -69,9 +69,9 @@ func (s *SecretVersion) GetSchema() schema.Schema {
 				ElementType:         types.StringType,
 				MarkdownDescription: `Содержимое секрета`,
 				WriteOnly:           true,
-				Required:            true,
+				Optional:            true,
 				Validators: []validator.Map{
-					mapvalidator.AlsoRequires(tfpath.MatchRoot("data_version"))},
+					mapvalidator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("data_version"))},
 				PlanModifiers: []planmodifier.Map{
 					mapplanmodifier.RequiresReplaceIfConfigured(),
 				},

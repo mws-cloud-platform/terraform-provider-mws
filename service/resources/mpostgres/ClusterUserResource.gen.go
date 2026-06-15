@@ -54,6 +54,9 @@ func (m *ClusterUserResource) Schema(ctx context.Context, req resource.SchemaReq
 	resp.Schema.Attributes["cluster"] = schema.StringAttribute{
 		MarkdownDescription: `Название или идентификатор кластера.`,
 		Required:            true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
 	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту`,
@@ -61,11 +64,15 @@ func (m *ClusterUserResource) Schema(ctx context.Context, req resource.SchemaReq
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}
 	resp.Schema.Attributes["user"] = schema.StringAttribute{
 		MarkdownDescription: `Пользователь базы данных.`,
 		Required:            true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
 	}
 	resp.Schema.Attributes["timeouts"] = timeouts.Attributes(ctx, timeouts.Opts{
 		Create: true,

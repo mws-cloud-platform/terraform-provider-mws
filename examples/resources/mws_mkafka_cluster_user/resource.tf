@@ -122,6 +122,7 @@ variable "kafka_user_name" {
 
 variable "kafka_user_password" {
   type        = string
+  sensitive   = true
   default     = "securePassword123!"
   description = "Kafka user password"
 }

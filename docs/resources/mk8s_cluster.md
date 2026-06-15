@@ -14,7 +14,7 @@ description: |-
 инфраструктуры MWS Cloud Platform. Представляет собой совокупность Control
 Plane (управляющего слоя) и групп рабочих узлов
 
-## Example Usage
+## Примеры использования
 
 ```terraform
 resource "mws_vpc_network" "network" {

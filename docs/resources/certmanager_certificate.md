@@ -10,7 +10,7 @@ description: |-
 
 TLS/SSL-сертификат — это цифровой объект, с помощью которого веб-системы идентифицируют пользователя и устанавливают зашифрованное сетевое соединение с ним, используя протокол SSL/TLS (Secure Sockets Layer/Transport Layer Security)
 
-## Example Usage
+## Примеры использования
 
 ```terraform
 resource "mws_certmanager_certificate" "certificate" {

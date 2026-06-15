@@ -52,6 +52,9 @@ func (m *CryptoKeyRoleBindingResource) Schema(ctx context.Context, req resource.
 	resp.Schema.Attributes["key"] = schema.StringAttribute{
 		MarkdownDescription: `Название крипто-ключа`,
 		Required:            true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
 	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту`,
@@ -59,11 +62,15 @@ func (m *CryptoKeyRoleBindingResource) Schema(ctx context.Context, req resource.
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}
 	resp.Schema.Attributes["role_binding"] = schema.StringAttribute{
 		MarkdownDescription: `Название биндинга роли для крипто-ключа`,
 		Required:            true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
 	}
 	resp.Schema.Attributes["timeouts"] = timeouts.Attributes(ctx, timeouts.Opts{
 		Create: true,

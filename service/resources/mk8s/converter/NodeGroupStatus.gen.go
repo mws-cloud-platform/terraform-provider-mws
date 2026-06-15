@@ -264,17 +264,9 @@ func NodeGroupStatusRolloutStrategyAPIResponseToTFModel(ctx context.Context, am 
 	var diags tfdiag.Diagnostics
 	var t tfmodel.NodeGroupStatusRolloutStrategy
 
-	if am.MaxSurge != nil {
-		t.MaxSurge = types.Int64PointerValue(ptr.Get(int64(*am.MaxSurge)))
-	} else {
-		t.MaxSurge = types.Int64Null()
-	}
+	t.MaxSurge = types.Int64Value(int64(am.MaxSurge))
 
-	if am.MaxUnavailable != nil {
-		t.MaxUnavailable = types.Int64PointerValue(ptr.Get(int64(*am.MaxUnavailable)))
-	} else {
-		t.MaxUnavailable = types.Int64Null()
-	}
+	t.MaxUnavailable = types.Int64Value(int64(am.MaxUnavailable))
 
 	return &t, diags
 }
@@ -322,17 +314,9 @@ func NodeGroupStatusScaleAutoscalingAPIResponseToTFModel(ctx context.Context, am
 	var diags tfdiag.Diagnostics
 	var t tfmodel.NodeGroupStatusScaleAutoscaling
 
-	if am.Min != nil {
-		t.Min = types.Int64PointerValue(ptr.Get(int64(*am.Min)))
-	} else {
-		t.Min = types.Int64Null()
-	}
+	t.Min = types.Int64Value(int64(am.Min))
 
-	if am.Max != nil {
-		t.Max = types.Int64PointerValue(ptr.Get(int64(*am.Max)))
-	} else {
-		t.Max = types.Int64Null()
-	}
+	t.Max = types.Int64Value(int64(am.Max))
 
 	return &t, diags
 }
@@ -345,11 +329,7 @@ func NodeGroupStatusServiceAccountAPIResponseToTFModel(ctx context.Context, am *
 	var diags tfdiag.Diagnostics
 	var t tfmodel.NodeGroupStatusServiceAccount
 
-	if am.Ref != nil {
-		t.Ref = types.StringPointerValue(ptr.Get(am.Ref.Path()))
-	} else {
-		t.Ref = types.StringNull()
-	}
+	t.Ref = types.StringValue(am.Ref.Path())
 
 	return &t, diags
 }
@@ -362,11 +342,7 @@ func NodeGroupStatusVmTypeAPIResponseToTFModel(ctx context.Context, am *apimodel
 	var diags tfdiag.Diagnostics
 	var t tfmodel.NodeGroupStatusVmType
 
-	if am.Ref != nil {
-		t.Ref = types.StringPointerValue(ptr.Get(am.Ref.Path()))
-	} else {
-		t.Ref = types.StringNull()
-	}
+	t.Ref = types.StringValue(am.Ref.Path())
 
 	return &t, diags
 }

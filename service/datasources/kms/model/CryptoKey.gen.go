@@ -24,7 +24,7 @@ type CryptoKey struct {
 
 func (s *CryptoKey) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Ключ — ресурс облака, который объединяет несколько экземпляров криптографических ключей, называемых версиями ключа`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,

@@ -80,6 +80,33 @@ func PostgresEndpointAPIResponseToTFModel(ctx context.Context, am *apimodel.Post
 		})
 	}
 
+	if am.DirectAddresses != nil {
+		directAddresses := make([]tfmodel.PostgresNetworkDirectAddress, 0, len(am.DirectAddresses))
+
+		for _, entity := range am.DirectAddresses {
+			tmp, d := PostgresNetworkDirectAddressAPIResponseToTFModel(ctx, &entity)
+			diags = append(diags, d...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			directAddresses = append(directAddresses, *tmp)
+		}
+
+		directAddressesList, d := types.ListValueFrom(ctx, types.ObjectType{
+			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.PostgresNetworkDirectAddress).GetSchema().Attributes),
+		}, directAddresses)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		t.DirectAddresses = directAddressesList
+	} else {
+		t.DirectAddresses = types.ListNull(types.ObjectType{
+			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.PostgresNetworkDirectAddress).GetSchema().Attributes),
+		})
+	}
+
 	return &t, diags
 }
 
@@ -139,6 +166,25 @@ func PostgresEndpointTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Postgr
 				return nil, diags
 			}
 			am.ReadOnlyAddresses = append(am.ReadOnlyAddresses, *tmp)
+		}
+	}
+
+	if !tm.DirectAddresses.IsNull() && !tm.DirectAddresses.IsUnknown() {
+		directAddresses := make([]tfmodel.PostgresNetworkDirectAddress, 0)
+		dDirectAddresses := tm.DirectAddresses.ElementsAs(ctx, &directAddresses, false)
+		diags = append(diags, dDirectAddresses...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		am.DirectAddresses = make([]apimodel.PostgresNetworkDirectAddressRequest, 0, len(directAddresses))
+
+		for _, entity := range directAddresses {
+			tmp, d := PostgresNetworkDirectAddressTFToAPIRequestModel(ctx, &entity)
+			diags = append(diags, d...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.DirectAddresses = append(am.DirectAddresses, *tmp)
 		}
 	}
 

@@ -74,8 +74,9 @@ variable "user_name" {
 
 variable "user_password" {
   type        = string
-  description = "Database user password"
   sensitive   = true
+  description = "Database user password"
+  default     = "securePassword123!"
 }
 
 variable "network_name" {

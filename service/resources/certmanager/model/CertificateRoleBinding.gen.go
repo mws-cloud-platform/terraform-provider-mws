@@ -8,15 +8,17 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
+	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
 type CertificateRoleBinding struct {
-	Kind     types.String `tfsdk:"kind"`
-	Metadata types.Object `tfsdk:"metadata"`
-	Status   types.Object `tfsdk:"status"`
-	Subject  types.Object `tfsdk:"subject"`
-	Role     types.String `tfsdk:"role"`
+	Kind             types.String `tfsdk:"kind"`
+	Metadata         types.Object `tfsdk:"metadata"`
+	Status           types.Object `tfsdk:"status"`
+	Subject          types.Object `tfsdk:"subject"`
+	Role             types.String `tfsdk:"role"`
+	SupportRequestId types.String `tfsdk:"support_request_id"`
 }
 
 func (s *CertificateRoleBinding) GetSchema() schema.Schema {
@@ -48,6 +50,13 @@ func (s *CertificateRoleBinding) GetSchema() schema.Schema {
 			"role": schema.StringAttribute{
 				MarkdownDescription: `Роль, определяющая права субъекта на ресурс`,
 				Required:            true,
+			},
+			"support_request_id": schema.StringAttribute{
+				MarkdownDescription: `Идентификатор запроса в службу поддержки, в рамках которого был создан биндинг`,
+				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

@@ -4,6 +4,9 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -18,11 +21,17 @@ func (s *ClusterPrimaryEndpointSpecOrRef) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"ref": schema.StringAttribute{
 				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
 			},
 			"spec": schema.SingleNestedAttribute{
 				Attributes:          new(ClusterPrimaryEndpointSpec).GetSchema().Attributes,
 				MarkdownDescription: `Описание subnet пользователя, из которого будет выделен ip-адрес`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.RequiresReplaceIfConfigured(),
+				},
 			},
 		},
 	}

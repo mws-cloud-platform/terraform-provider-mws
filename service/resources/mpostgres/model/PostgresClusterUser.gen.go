@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
+	locallistplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/listplanmodifier"
 	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
@@ -23,6 +24,7 @@ type PostgresClusterUser struct {
 	PasswordVersion types.Int64      `tfsdk:"password_version"`
 	Password        types.String     `tfsdk:"password"`
 	Role            PostgresUserRole `tfsdk:"role"`
+	AdditionalRoles types.List       `tfsdk:"additional_roles"`
 }
 
 func (s *PostgresClusterUser) GetSchema() schema.Schema {
@@ -50,14 +52,14 @@ func (s *PostgresClusterUser) GetSchema() schema.Schema {
 				MarkdownDescription: `Increase this field's value if you want to force updating the associated write-only field.`,
 				Optional:            true,
 				Validators: []validator.Int64{
-					int64validator.AlsoRequires(tfpath.MatchRoot("password"))},
+					int64validator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("password"))},
 			},
 			"password": schema.StringAttribute{
 				Sensitive: true,
 				WriteOnly: true,
 				Required:  true,
 				Validators: []validator.String{
-					stringvalidator.AlsoRequires(tfpath.MatchRoot("password_version"))},
+					stringvalidator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("password_version"))},
 			},
 			"role": schema.StringAttribute{
 				MarkdownDescription: `Пользовательские роли (они же роли приложений):
@@ -75,6 +77,16 @@ func (s *PostgresClusterUser) GetSchema() schema.Schema {
 				Optional: true,
 				PlanModifiers: []planmodifier.String{
 					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
+			},
+			"additional_roles": schema.ListNestedAttribute{
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: new(PostgresUserAdditionalRole).GetSchema().Attributes,
+				},
+				MarkdownDescription: `Дополнительные роли пользователя`,
+				Optional:            true,
+				PlanModifiers: []planmodifier.List{
+					locallistplanmodifier.RequiresReplaceIfRemoved(),
 				},
 			},
 		},

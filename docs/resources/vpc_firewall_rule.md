@@ -10,7 +10,7 @@ description: |-
 
 Правило файрвола — набор параметров, который разрешает или запрещает определенный тип трафика
 
-## Example Usage
+## Примеры использования
 
 ```terraform
 resource "mws_vpc_network" "network" {

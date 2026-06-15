@@ -9,7 +9,9 @@ import (
 	"github.com/stretchr/testify/require"
 
 	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	"go.mws.cloud/go-sdk/service/resources/references/iam"
+	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
 )
 
@@ -24,9 +26,13 @@ func TestNodeGroupOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.NodeGroupRequest{
 		Spec: apimodel.NodeGroupSpecRequest{
-			Zone:            "zone",
-			Subnet:          apimodel.NodeGroupSpecSubnetRequest{},
-			VmType:          apimodel.NodeGroupSpecVmTypeRequest{},
+			Zone: "zone",
+			Subnet: apimodel.NodeGroupSpecSubnetRequest{
+				Ref: vpc.NewSubnetRef("projectID", "networkID", "subnetID"),
+			},
+			VmType: apimodel.NodeGroupSpecVmTypeRequest{
+				Ref: compute.NewVmTypeRef("vmTypeID"),
+			},
 			Scale:           apimodel.NodeGroupSpecScaleRequest{},
 			VersionControl:  apimodel.NodeGroupVersionControlSpecRequest{},
 			RolloutStrategy: apimodel.NodeGroupSpecRolloutStrategyRequest{},

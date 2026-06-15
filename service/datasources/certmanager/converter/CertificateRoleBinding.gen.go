@@ -8,9 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
 	"go.mws.cloud/go-sdk/service/resources/references/iam"
+	"go.mws.cloud/go-sdk/service/resources/references/support"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/certmanager/model"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
@@ -79,6 +81,12 @@ func CertificateRoleBindingAPIOptionalResponseToTFModel(ctx context.Context, am 
 
 	t.Role = types.StringValue(am.Spec.Role.Path())
 
+	if val, ok := am.Spec.SupportRequestId.Get(); ok {
+		t.SupportRequestId = types.StringPointerValue(ptr.Get(val.Path()))
+	} else {
+		t.SupportRequestId = types.StringNull()
+	}
+
 	return &t, diags
 }
 
@@ -129,6 +137,15 @@ func CertificateRoleBindingTFToAPIRequestModel(ctx context.Context, tm *tfmodel.
 			return nil, diags
 		}
 		am.Spec.Role = roleRef
+	}
+
+	if !tm.SupportRequestId.IsNull() && !tm.SupportRequestId.IsUnknown() {
+		supportRequestIdRef, err := support.ParseRequestIDRef(ctx, tm.SupportRequestId.ValueString())
+		if err != nil {
+			diags.AddError("reference parsing", err.Error())
+			return nil, diags
+		}
+		am.Spec.SupportRequestId = &supportRequestIdRef
 	}
 
 	return &am, diags

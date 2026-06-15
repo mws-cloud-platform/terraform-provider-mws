@@ -12,7 +12,7 @@ description: |-
 Группа узлов в кластере Managed Kubernetes — это группа виртуальных машин
 Compute, на которых запускаются контейнеры с приложениями
 
-## Example Usage
+## Примеры использования
 
 ```terraform
 data "mws_mk8s_node_group" "example" {

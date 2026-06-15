@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 )
 
-func MaintenanceWindowAPIToTFModel(ctx context.Context, am *apimodel.MaintenanceWindow) (*tfcommon.MaintenanceWindow, tfdiag.Diagnostics) {
+func MaintenanceWindowAPIToTFModel(ctx context.Context, am *commonapimodel.MaintenanceWindow) (*tfcommon.MaintenanceWindow, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -39,7 +39,7 @@ func MaintenanceWindowAPIToTFModel(ctx context.Context, am *apimodel.Maintenance
 	return &t, diags
 }
 
-func MaintenanceWindowAPIResponseToTFModel(ctx context.Context, am *apimodel.MaintenanceWindowResponse) (*tfcommon.MaintenanceWindow, tfdiag.Diagnostics) {
+func MaintenanceWindowAPIResponseToTFModel(ctx context.Context, am *commonapimodel.MaintenanceWindowResponse) (*tfcommon.MaintenanceWindow, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -64,7 +64,7 @@ func MaintenanceWindowAPIResponseToTFModel(ctx context.Context, am *apimodel.Mai
 	return &t, diags
 }
 
-func MaintenanceWindowAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.MaintenanceWindowOptionalResponse) (*tfcommon.MaintenanceWindow, tfdiag.Diagnostics) {
+func MaintenanceWindowAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.MaintenanceWindowOptionalResponse) (*tfcommon.MaintenanceWindow, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -89,13 +89,13 @@ func MaintenanceWindowAPIOptionalResponseToTFModel(ctx context.Context, am *apim
 	return &t, diags
 }
 
-func MaintenanceWindowTFToAPIModel(ctx context.Context, tm *tfcommon.MaintenanceWindow) (*apimodel.MaintenanceWindow, tfdiag.Diagnostics) {
+func MaintenanceWindowTFToAPIModel(ctx context.Context, tm *tfcommon.MaintenanceWindow) (*commonapimodel.MaintenanceWindow, tfdiag.Diagnostics) {
 	if tm == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.MaintenanceWindow
+	var am commonapimodel.MaintenanceWindow
 
 	if !tm.Weekly.IsNull() && !tm.Weekly.IsUnknown() {
 		weeklyTfModel := tfcommon.WeeklyMaintenanceWindow{}
@@ -116,13 +116,13 @@ func MaintenanceWindowTFToAPIModel(ctx context.Context, tm *tfcommon.Maintenance
 	return &am, diags
 }
 
-func MaintenanceWindowTFToAPIRequestModel(ctx context.Context, tm *tfcommon.MaintenanceWindow) (*apimodel.MaintenanceWindowRequest, tfdiag.Diagnostics) {
+func MaintenanceWindowTFToAPIRequestModel(ctx context.Context, tm *tfcommon.MaintenanceWindow) (*commonapimodel.MaintenanceWindowRequest, tfdiag.Diagnostics) {
 	if tm == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.MaintenanceWindowRequest
+	var am commonapimodel.MaintenanceWindowRequest
 
 	if !tm.Weekly.IsNull() && !tm.Weekly.IsUnknown() {
 		weeklyTfModel := tfcommon.WeeklyMaintenanceWindow{}

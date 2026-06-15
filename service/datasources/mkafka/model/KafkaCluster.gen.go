@@ -20,6 +20,7 @@ type KafkaCluster struct {
 	ProductConfig     types.String `tfsdk:"product_config"`
 	MaintenanceWindow types.Object `tfsdk:"maintenance_window"`
 	SchemaRegistry    types.Object `tfsdk:"schema_registry"`
+	AutoRebalance     types.Object `tfsdk:"auto_rebalance"`
 }
 
 func (s *KafkaCluster) GetSchema() schema.Schema {
@@ -72,6 +73,11 @@ func (s *KafkaCluster) GetSchema() schema.Schema {
 			"schema_registry": schema.SingleNestedAttribute{
 				Attributes:          new(KafkaSchemaRegistrySpec).GetSchema().Attributes,
 				MarkdownDescription: `Настройка Schema Registry для кластера.`,
+				Computed:            true,
+			},
+			"auto_rebalance": schema.SingleNestedAttribute{
+				Attributes:          new(KafkaAutoRebalanceSpec).GetSchema().Attributes,
+				MarkdownDescription: `Настройка Auto Rebalance для кластера.`,
 				Computed:            true,
 			},
 		},

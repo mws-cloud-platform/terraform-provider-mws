@@ -10,7 +10,7 @@ description: |-
 
 Снимок (snapshot) диска — это копия состояния диска
 
-## Example Usage
+## Примеры использования
 
 ```terraform
 data "mws_compute_snapshot" "snapshot_data" {

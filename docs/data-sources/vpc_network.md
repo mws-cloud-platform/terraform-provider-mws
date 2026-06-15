@@ -10,7 +10,7 @@ description: |-
 
 Сеть — это виртуальный аналог физической сети на базе инфраструктуры MWS
 
-## Example Usage
+## Примеры использования
 
 ```terraform
 data "mws_vpc_network" "network" {

@@ -10,7 +10,7 @@ description: |-
 
 Пользователь в Managed PostgreSQL — это внутренняя учетная запись PostgreSQL для аутентификации в кластере
 
-## Example Usage
+## Примеры использования
 
 ```terraform
 resource "mws_vpc_network" "network" {
@@ -89,8 +89,9 @@ variable "user_name" {
 
 variable "user_password" {
   type        = string
-  description = "Database user password"
   sensitive   = true
+  description = "Database user password"
+  default     = "securePassword123!"
 }
 
 variable "network_name" {
@@ -125,6 +126,7 @@ variable "subnet_cidr" {
 
 ### Optional
 
+- `additional_roles` (Attributes List) Дополнительные роли пользователя (see [below for nested schema](#nestedatt--additional_roles))
 - `kind` (String)
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
 - `password_version` (Number) Increase this field's value if you want to force updating the associated write-only field.
@@ -140,6 +142,15 @@ variable "subnet_cidr" {
 
 - `id` (String) The ID of this resource.
 - `status` (Attributes) (see [below for nested schema](#nestedatt--status))
+
+<a id="nestedatt--additional_roles"></a>
+### Nested Schema for `additional_roles`
+
+Optional:
+
+- `expires_at` (String) Дата отзыва дополнительной роли
+- `name` (String) - "DB_MIGRATOR_ROLE": Дополнительная роль, позволяющая пользователю владельцу бд управлять миграцией данных в mpostgres
+
 
 <a id="nestedatt--metadata"></a>
 ### Nested Schema for `metadata`

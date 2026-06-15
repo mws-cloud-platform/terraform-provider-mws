@@ -53,7 +53,7 @@ func (s *Certificate) GetSchema() schema.Schema {
 				MarkdownDescription: `Increase this field's value if you want to force updating the associated write-only field.`,
 				Optional:            true,
 				Validators: []validator.Int64{
-					int64validator.AlsoRequires(tfpath.MatchRoot("self_managed"))},
+					int64validator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("self_managed"))},
 				PlanModifiers: []planmodifier.Int64{
 					localint64planmodifier.RequiresReplaceIfRemoved(),
 				},
@@ -63,7 +63,7 @@ func (s *Certificate) GetSchema() schema.Schema {
 				WriteOnly:  true,
 				Optional:   true,
 				Validators: []validator.Object{
-					objectvalidator.AlsoRequires(tfpath.MatchRoot("self_managed_version"))},
+					objectvalidator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("self_managed_version"))},
 				PlanModifiers: []planmodifier.Object{
 					localobjectplanmodifier.RequiresReplaceIfRemoved(),
 				},

@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 )
 
-func RoleStageCodeAPIToTFModel(ctx context.Context, am *apimodel.RoleStageCode) (tfcommon.RoleStageCode, tfdiag.Diagnostics) {
+func RoleStageCodeAPIToTFModel(ctx context.Context, am *commonapimodel.RoleStageCode) (tfcommon.RoleStageCode, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfcommon.RoleStageCode{}, nil
 	}
@@ -25,15 +25,15 @@ func RoleStageCodeAPIToTFModel(ctx context.Context, am *apimodel.RoleStageCode) 
 	return t, diags
 }
 
-func RoleStageCodeTFToAPIModel(ctx context.Context, tm tfcommon.RoleStageCode) (*apimodel.RoleStageCode, tfdiag.Diagnostics) {
+func RoleStageCodeTFToAPIModel(ctx context.Context, tm tfcommon.RoleStageCode) (*commonapimodel.RoleStageCode, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
-	var am apimodel.RoleStageCode
+	var am commonapimodel.RoleStageCode
 
 	var tmp = types.String(tm)
 	if tmp.IsNull() {
 		return nil, diags
 	}
-	am = apimodel.RoleStageCode(tmp.ValueString())
+	am = commonapimodel.RoleStageCode(tmp.ValueString())
 
 	return &am, diags
 }

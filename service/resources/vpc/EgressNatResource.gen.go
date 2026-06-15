@@ -52,10 +52,16 @@ func (m *EgressNatResource) Schema(ctx context.Context, req resource.SchemaReque
 	resp.Schema.Attributes["egress_nat"] = schema.StringAttribute{
 		MarkdownDescription: `Имя Egress NAT`,
 		Required:            true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
 	}
 	resp.Schema.Attributes["network"] = schema.StringAttribute{
 		MarkdownDescription: `Имя сети`,
 		Required:            true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
 	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту`,
@@ -63,6 +69,7 @@ func (m *EgressNatResource) Schema(ctx context.Context, req resource.SchemaReque
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}
 	resp.Schema.Attributes["timeouts"] = timeouts.Attributes(ctx, timeouts.Opts{

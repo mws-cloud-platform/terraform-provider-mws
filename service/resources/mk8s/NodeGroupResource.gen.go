@@ -52,10 +52,16 @@ func (m *NodeGroupResource) Schema(ctx context.Context, req resource.SchemaReque
 	resp.Schema.Attributes["cluster_name"] = schema.StringAttribute{
 		MarkdownDescription: `Имя Cluster`,
 		Required:            true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
 	}
 	resp.Schema.Attributes["node_group_name"] = schema.StringAttribute{
 		MarkdownDescription: `Имя Node-группы`,
 		Required:            true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
 	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту`,
@@ -63,6 +69,7 @@ func (m *NodeGroupResource) Schema(ctx context.Context, req resource.SchemaReque
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}
 	resp.Schema.Attributes["timeouts"] = timeouts.Attributes(ctx, timeouts.Opts{

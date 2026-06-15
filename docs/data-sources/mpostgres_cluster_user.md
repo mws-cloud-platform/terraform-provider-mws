@@ -10,7 +10,7 @@ description: |-
 
 Пользователь в Managed PostgreSQL — это внутренняя учетная запись PostgreSQL для аутентификации в кластере
 
-## Example Usage
+## Примеры использования
 
 ```terraform
 data "mws_mpostgres_cluster_user" "mpostgres_cluster_user_name" {
@@ -33,6 +33,7 @@ data "mws_mpostgres_cluster_user" "mpostgres_cluster_user_name" {
 
 ### Read-Only
 
+- `additional_roles` (Attributes List) Дополнительные роли пользователя (see [below for nested schema](#nestedatt--additional_roles))
 - `kind` (String)
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
 - `role` (String) Пользовательские роли (они же роли приложений):
@@ -41,6 +42,15 @@ data "mws_mpostgres_cluster_user" "mpostgres_cluster_user_name" {
 - "DB_WRITER_USER": Пользовательская роль, наследует разрешения групповой роли db_writer, db_reader.
 - "DB_READER_USER": Пользовательская роль, наследует разрешения групповой роли db_reader.
 - `status` (Attributes) (see [below for nested schema](#nestedatt--status))
+
+<a id="nestedatt--additional_roles"></a>
+### Nested Schema for `additional_roles`
+
+Read-Only:
+
+- `expires_at` (String) Дата отзыва дополнительной роли
+- `name` (String) - "DB_MIGRATOR_ROLE": Дополнительная роль, позволяющая пользователю владельцу бд управлять миграцией данных в mpostgres
+
 
 <a id="nestedatt--metadata"></a>
 ### Nested Schema for `metadata`

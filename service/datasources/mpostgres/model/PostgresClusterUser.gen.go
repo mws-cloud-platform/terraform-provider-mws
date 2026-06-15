@@ -12,10 +12,11 @@ import (
 )
 
 type PostgresClusterUser struct {
-	Kind     types.String     `tfsdk:"kind"`
-	Metadata types.Object     `tfsdk:"metadata"`
-	Status   types.Object     `tfsdk:"status"`
-	Role     PostgresUserRole `tfsdk:"role"`
+	Kind            types.String     `tfsdk:"kind"`
+	Metadata        types.Object     `tfsdk:"metadata"`
+	Status          types.Object     `tfsdk:"status"`
+	Role            PostgresUserRole `tfsdk:"role"`
+	AdditionalRoles types.List       `tfsdk:"additional_roles"`
 }
 
 func (s *PostgresClusterUser) GetSchema() schema.Schema {
@@ -47,6 +48,13 @@ func (s *PostgresClusterUser) GetSchema() schema.Schema {
 					),
 				},
 				Computed: true,
+			},
+			"additional_roles": schema.ListNestedAttribute{
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: new(PostgresUserAdditionalRole).GetSchema().Attributes,
+				},
+				MarkdownDescription: `Дополнительные роли пользователя`,
+				Computed:            true,
 			},
 		},
 	}

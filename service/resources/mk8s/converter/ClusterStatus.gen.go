@@ -227,11 +227,7 @@ func ClusterStatusNetworkPrimaryEndpointAPIResponseToTFModel(ctx context.Context
 	var diags tfdiag.Diagnostics
 	var t tfmodel.ClusterStatusNetworkPrimaryEndpoint
 
-	if am.Ref != nil {
-		t.Ref = types.StringPointerValue(ptr.Get(am.Ref.Path()))
-	} else {
-		t.Ref = types.StringNull()
-	}
+	t.Ref = types.StringValue(am.Ref.Path())
 
 	return &t, diags
 }
@@ -244,11 +240,7 @@ func ClusterStatusNetworkPublicEndpointAPIResponseToTFModel(ctx context.Context,
 	var diags tfdiag.Diagnostics
 	var t tfmodel.ClusterStatusNetworkPublicEndpoint
 
-	if am.Ref != nil {
-		t.Ref = types.StringPointerValue(ptr.Get(am.Ref.Path()))
-	} else {
-		t.Ref = types.StringNull()
-	}
+	t.Ref = types.StringValue(am.Ref.Path())
 
 	return &t, diags
 }
@@ -261,11 +253,7 @@ func ClusterStatusNetworkSubnetAPIResponseToTFModel(ctx context.Context, am *api
 	var diags tfdiag.Diagnostics
 	var t tfmodel.ClusterStatusNetworkSubnet
 
-	if am.Ref != nil {
-		t.Ref = types.StringPointerValue(ptr.Get(am.Ref.Path()))
-	} else {
-		t.Ref = types.StringNull()
-	}
+	t.Ref = types.StringValue(am.Ref.Path())
 
 	return &t, diags
 }
@@ -278,11 +266,7 @@ func ClusterStatusNetworkVpcNetworkAPIResponseToTFModel(ctx context.Context, am 
 	var diags tfdiag.Diagnostics
 	var t tfmodel.ClusterStatusNetworkVpcNetwork
 
-	if am.Ref != nil {
-		t.Ref = types.StringPointerValue(ptr.Get(am.Ref.Path()))
-	} else {
-		t.Ref = types.StringNull()
-	}
+	t.Ref = types.StringValue(am.Ref.Path())
 
 	return &t, diags
 }

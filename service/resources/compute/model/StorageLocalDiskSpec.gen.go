@@ -4,6 +4,8 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -20,10 +22,16 @@ func (s *StorageLocalDiskSpec) GetSchema() schema.Schema {
 			"name": schema.StringAttribute{
 				MarkdownDescription: `Уникальное имя диска в рамках виртуальной машины`,
 				Required:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
 			},
 			"device_name": schema.StringAttribute{
 				MarkdownDescription: `Уникальное имя устройства, которое отображается в дереве /dev/disk/by-id/mws-* Linux. Если не указано - "mws-{name}", если указано - "mws-{deviceName}"`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
 			},
 			"size": schema.StringAttribute{
 				MarkdownDescription: `Размер диска. Должен быть кратен 248GB`,

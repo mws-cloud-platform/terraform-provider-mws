@@ -10,13 +10,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/iam"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 )
 
-func CommonRoleBindingSpecSubjectAPIToTFModel(ctx context.Context, am *apimodel.CommonRoleBindingSpecSubject) (*tfcommon.CommonRoleBindingSpecSubject, tfdiag.Diagnostics) {
+func CommonRoleBindingSpecSubjectAPIToTFModel(ctx context.Context, am *commonapimodel.CommonRoleBindingSpecSubject) (*tfcommon.CommonRoleBindingSpecSubject, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -66,10 +66,16 @@ func CommonRoleBindingSpecSubjectAPIToTFModel(ctx context.Context, am *apimodel.
 		t.UserGroup = types.StringNull()
 	}
 
+	if am.Employee != nil {
+		t.Employee = types.StringPointerValue(ptr.Get(am.Employee.Path()))
+	} else {
+		t.Employee = types.StringNull()
+	}
+
 	return &t, diags
 }
 
-func CommonRoleBindingSpecSubjectAPIResponseToTFModel(ctx context.Context, am *apimodel.CommonRoleBindingSpecSubjectResponse) (*tfcommon.CommonRoleBindingSpecSubject, tfdiag.Diagnostics) {
+func CommonRoleBindingSpecSubjectAPIResponseToTFModel(ctx context.Context, am *commonapimodel.CommonRoleBindingSpecSubjectResponse) (*tfcommon.CommonRoleBindingSpecSubject, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -119,10 +125,16 @@ func CommonRoleBindingSpecSubjectAPIResponseToTFModel(ctx context.Context, am *a
 		t.UserGroup = types.StringNull()
 	}
 
+	if am.Employee != nil {
+		t.Employee = types.StringPointerValue(ptr.Get(am.Employee.Path()))
+	} else {
+		t.Employee = types.StringNull()
+	}
+
 	return &t, diags
 }
 
-func CommonRoleBindingSpecSubjectAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.CommonRoleBindingSpecSubjectOptionalResponse) (*tfcommon.CommonRoleBindingSpecSubject, tfdiag.Diagnostics) {
+func CommonRoleBindingSpecSubjectAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.CommonRoleBindingSpecSubjectOptionalResponse) (*tfcommon.CommonRoleBindingSpecSubject, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -172,16 +184,22 @@ func CommonRoleBindingSpecSubjectAPIOptionalResponseToTFModel(ctx context.Contex
 		t.UserGroup = types.StringNull()
 	}
 
+	if val, ok := am.Employee.Get(); ok {
+		t.Employee = types.StringPointerValue(ptr.Get(val.Path()))
+	} else {
+		t.Employee = types.StringNull()
+	}
+
 	return &t, diags
 }
 
-func CommonRoleBindingSpecSubjectTFToAPIModel(ctx context.Context, tm *tfcommon.CommonRoleBindingSpecSubject) (*apimodel.CommonRoleBindingSpecSubject, tfdiag.Diagnostics) {
+func CommonRoleBindingSpecSubjectTFToAPIModel(ctx context.Context, tm *tfcommon.CommonRoleBindingSpecSubject) (*commonapimodel.CommonRoleBindingSpecSubject, tfdiag.Diagnostics) {
 	if tm == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.CommonRoleBindingSpecSubject
+	var am commonapimodel.CommonRoleBindingSpecSubject
 
 	if !tm.User.IsNull() && !tm.User.IsUnknown() {
 		userRef, err := iam.ParseUserRef(ctx, tm.User.ValueString())
@@ -235,16 +253,25 @@ func CommonRoleBindingSpecSubjectTFToAPIModel(ctx context.Context, tm *tfcommon.
 		am.UserGroup = &userGroupRef
 	}
 
+	if !tm.Employee.IsNull() && !tm.Employee.IsUnknown() {
+		employeeRef, err := iam.ParseEmployeeRef(ctx, tm.Employee.ValueString())
+		if err != nil {
+			diags.AddError("reference parsing", err.Error())
+			return nil, diags
+		}
+		am.Employee = &employeeRef
+	}
+
 	return &am, diags
 }
 
-func CommonRoleBindingSpecSubjectTFToAPIRequestModel(ctx context.Context, tm *tfcommon.CommonRoleBindingSpecSubject) (*apimodel.CommonRoleBindingSpecSubjectRequest, tfdiag.Diagnostics) {
+func CommonRoleBindingSpecSubjectTFToAPIRequestModel(ctx context.Context, tm *tfcommon.CommonRoleBindingSpecSubject) (*commonapimodel.CommonRoleBindingSpecSubjectRequest, tfdiag.Diagnostics) {
 	if tm == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.CommonRoleBindingSpecSubjectRequest
+	var am commonapimodel.CommonRoleBindingSpecSubjectRequest
 
 	if !tm.User.IsNull() && !tm.User.IsUnknown() {
 		userRef, err := iam.ParseUserRef(ctx, tm.User.ValueString())
@@ -296,6 +323,15 @@ func CommonRoleBindingSpecSubjectTFToAPIRequestModel(ctx context.Context, tm *tf
 			return nil, diags
 		}
 		am.UserGroup = &userGroupRef
+	}
+
+	if !tm.Employee.IsNull() && !tm.Employee.IsUnknown() {
+		employeeRef, err := iam.ParseEmployeeRef(ctx, tm.Employee.ValueString())
+		if err != nil {
+			diags.AddError("reference parsing", err.Error())
+			return nil, diags
+		}
+		am.Employee = &employeeRef
 	}
 
 	return &am, diags

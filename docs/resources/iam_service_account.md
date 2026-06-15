@@ -14,7 +14,7 @@ description: |-
 для вспомогательных целей — чтобы организовать взаимодействие программ и
 сервисов с облачными ресурсами
 
-## Example Usage
+## Примеры использования
 
 ```terraform
 resource "mws_iam_service_account" "example" {

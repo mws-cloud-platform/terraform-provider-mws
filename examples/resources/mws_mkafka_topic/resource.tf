@@ -38,7 +38,7 @@ resource "mws_mkafka_cluster" "example" {
 
   metadata = {
     display_name = "Example Kafka Cluster"
-    description  = "Managed Kafka cluster example with VPC endpoints"
+    description  = "Managed Kafka cluster example"
   }
 
   active = true
@@ -104,11 +104,7 @@ resource "mws_mkafka_topic" "example" {
   partitions         = 6
   replication_factor = 3
 
-  config = {
-    "cleanup.policy" = "compact,delete"
-    "retention.ms"   = "604800000"  # 7 days
-    "segment.bytes"  = "1073741824" # 1GB
-  }
+  config = "cleanup.policy = compact"
 }
 
 variable "network_name" {

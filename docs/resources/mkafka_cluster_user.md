@@ -10,7 +10,7 @@ description: |-
 
 Пользователь — это внутренняя учетная запись Kafka для аутентификации в кластере
 
-## Example Usage
+## Примеры использования
 
 ```terraform
 resource "mws_vpc_network" "network" {
@@ -137,6 +137,7 @@ variable "kafka_user_name" {
 
 variable "kafka_user_password" {
   type        = string
+  sensitive   = true
   default     = "securePassword123!"
   description = "Kafka user password"
 }

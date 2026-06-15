@@ -13,6 +13,7 @@ type CommonRoleBindingSpecSubject struct {
 	ServiceAgent   types.String `tfsdk:"service_agent"`
 	UserFederation types.Object `tfsdk:"user_federation"`
 	UserGroup      types.String `tfsdk:"user_group"`
+	Employee       types.String `tfsdk:"employee"`
 }
 
 func (s *CommonRoleBindingSpecSubject) GetSchema() schema.Schema {
@@ -38,6 +39,10 @@ func (s *CommonRoleBindingSpecSubject) GetSchema() schema.Schema {
 			},
 			"user_group": schema.StringAttribute{
 				MarkdownDescription: `Идентификатор группы пользователей.`,
+				Computed:            true,
+			},
+			"employee": schema.StringAttribute{
+				MarkdownDescription: `Идентификатор пользователя backoffice.`,
 				Computed:            true,
 			},
 		},

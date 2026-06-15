@@ -10,7 +10,7 @@ description: |-
 
 Внешний адрес — IP-адрес, который используется для связи ресурсов с интернетом
 
-## Example Usage
+## Примеры использования
 
 ```terraform
 resource "mws_vpc_external_address" "vm_external_address" {

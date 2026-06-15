@@ -84,6 +84,33 @@ func PostgresClusterUserAPIResponseToTFModel(ctx context.Context, am *apimodel.P
 		t.Role = types.StringNull()
 	}
 
+	if am.Spec.AdditionalRoles != nil {
+		additionalRoles := make([]tfmodel.PostgresUserAdditionalRole, 0, len(am.Spec.AdditionalRoles))
+
+		for _, entity := range am.Spec.AdditionalRoles {
+			tmp, d := PostgresUserAdditionalRoleAPIResponseToTFModel(ctx, &entity)
+			diags = append(diags, d...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			additionalRoles = append(additionalRoles, *tmp)
+		}
+
+		additionalRolesList, d := types.ListValueFrom(ctx, types.ObjectType{
+			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.PostgresUserAdditionalRole).GetSchema().Attributes),
+		}, additionalRoles)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		t.AdditionalRoles = additionalRolesList
+	} else {
+		t.AdditionalRoles = types.ListNull(types.ObjectType{
+			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.PostgresUserAdditionalRole).GetSchema().Attributes),
+		})
+	}
+
 	return &t, diags
 }
 
@@ -122,6 +149,25 @@ func PostgresClusterUserTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Pos
 			return nil, diags
 		}
 		am.Spec.Role = roleTmp
+	}
+
+	if !tm.AdditionalRoles.IsNull() && !tm.AdditionalRoles.IsUnknown() {
+		additionalRoles := make([]tfmodel.PostgresUserAdditionalRole, 0)
+		dAdditionalRoles := tm.AdditionalRoles.ElementsAs(ctx, &additionalRoles, false)
+		diags = append(diags, dAdditionalRoles...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		am.Spec.AdditionalRoles = make([]apimodel.PostgresUserAdditionalRoleRequest, 0, len(additionalRoles))
+
+		for _, entity := range additionalRoles {
+			tmp, d := PostgresUserAdditionalRoleTFToAPIRequestModel(ctx, &entity)
+			diags = append(diags, d...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Spec.AdditionalRoles = append(am.Spec.AdditionalRoles, *tmp)
+		}
 	}
 
 	return &am, diags

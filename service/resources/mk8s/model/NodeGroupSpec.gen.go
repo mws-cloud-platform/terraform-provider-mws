@@ -92,7 +92,7 @@ func (s *NodeGroupSpecSubnet) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля Subnet анонимного типа структуры NodeGroupSpec`,
 		Attributes: map[string]schema.Attribute{
 			"ref": schema.StringAttribute{
-				Optional: true,
+				Required: true,
 			},
 		},
 	}
@@ -107,7 +107,7 @@ func (s *NodeGroupSpecVmType) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля VmType анонимного типа структуры NodeGroupSpec`,
 		Attributes: map[string]schema.Attribute{
 			"ref": schema.StringAttribute{
-				Optional: true,
+				Required: true,
 			},
 		},
 	}

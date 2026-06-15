@@ -164,5 +164,23 @@ func KafkaClusterStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.Ka
 		t.SchemaRegistry = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.KafkaSchemaRegistrySpec).GetSchema().Attributes))
 	}
 
+	if am.AutoRebalance != nil {
+		autoRebalanceTmp, d := KafkaAutoRebalanceSpecAPIResponseToTFModel(ctx, am.AutoRebalance)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		autoRebalanceTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.KafkaAutoRebalanceSpec).GetSchema().Attributes),
+			*autoRebalanceTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.AutoRebalance = autoRebalanceTfObject
+	} else {
+		t.AutoRebalance = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.KafkaAutoRebalanceSpec).GetSchema().Attributes))
+	}
+
 	return &t, diags
 }

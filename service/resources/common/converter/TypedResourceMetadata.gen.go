@@ -10,12 +10,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
-func TypedResourceMetadataAPIToTFModel(ctx context.Context, am *apimodel.TypedResourceMetadata) (*tfcommon.TypedResourceMetadata, tfdiag.Diagnostics) {
+func TypedResourceMetadataAPIToTFModel(ctx context.Context, am *commonapimodel.TypedResourceMetadata) (*tfcommon.TypedResourceMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -83,7 +83,7 @@ func TypedResourceMetadataAPIToTFModel(ctx context.Context, am *apimodel.TypedRe
 	return &t, diags
 }
 
-func TypedResourceMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.TypedResourceMetadataResponse) (*tfcommon.TypedResourceMetadata, tfdiag.Diagnostics) {
+func TypedResourceMetadataAPIResponseToTFModel(ctx context.Context, am *commonapimodel.TypedResourceMetadataResponse) (*tfcommon.TypedResourceMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -151,7 +151,7 @@ func TypedResourceMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel
 	return &t, diags
 }
 
-func TypedResourceMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.TypedResourceMetadataOptionalResponse) (*tfcommon.TypedResourceMetadata, tfdiag.Diagnostics) {
+func TypedResourceMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.TypedResourceMetadataOptionalResponse) (*tfcommon.TypedResourceMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -219,13 +219,13 @@ func TypedResourceMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *
 	return &t, diags
 }
 
-func TypedResourceMetadataTFToAPIModel(ctx context.Context, tm *tfcommon.TypedResourceMetadata) (*apimodel.TypedResourceMetadata, tfdiag.Diagnostics) {
+func TypedResourceMetadataTFToAPIModel(ctx context.Context, tm *tfcommon.TypedResourceMetadata) (*commonapimodel.TypedResourceMetadata, tfdiag.Diagnostics) {
 	if tm == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.TypedResourceMetadata
+	var am commonapimodel.TypedResourceMetadata
 
 	if !tm.DisplayName.IsNull() && !tm.DisplayName.IsUnknown() {
 		am.DisplayName = tm.DisplayName.ValueStringPointer()
@@ -265,7 +265,7 @@ func TypedResourceMetadataTFToAPIModel(ctx context.Context, tm *tfcommon.TypedRe
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.Usages = make([]apimodel.TypedUsage, 0, len(usages))
+		am.Usages = make([]commonapimodel.TypedUsage, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := TypedUsageTFToAPIModel(ctx, &entity)
@@ -284,13 +284,13 @@ func TypedResourceMetadataTFToAPIModel(ctx context.Context, tm *tfcommon.TypedRe
 	return &am, diags
 }
 
-func TypedResourceMetadataTFToAPIRequestModel(ctx context.Context, tm *tfcommon.TypedResourceMetadata) (*apimodel.TypedResourceMetadataRequest, tfdiag.Diagnostics) {
+func TypedResourceMetadataTFToAPIRequestModel(ctx context.Context, tm *tfcommon.TypedResourceMetadata) (*commonapimodel.TypedResourceMetadataRequest, tfdiag.Diagnostics) {
 	if tm == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.TypedResourceMetadataRequest
+	var am commonapimodel.TypedResourceMetadataRequest
 
 	if !tm.DisplayName.IsNull() && !tm.DisplayName.IsUnknown() {
 		am.DisplayName = tm.DisplayName.ValueStringPointer()
@@ -303,7 +303,7 @@ func TypedResourceMetadataTFToAPIRequestModel(ctx context.Context, tm *tfcommon.
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.Usages = make([]apimodel.TypedUsageRequest, 0, len(usages))
+		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := TypedUsageTFToAPIRequestModel(ctx, &entity)

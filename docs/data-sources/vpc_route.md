@@ -10,7 +10,7 @@ description: |-
 
 Маршрут — это набор правил, определяющих путь пакетов от источника к получателю
 
-## Example Usage
+## Примеры использования
 
 ```terraform
 data "mws_vpc_route" "vpc_route" {

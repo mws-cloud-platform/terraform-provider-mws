@@ -3,14 +3,14 @@
 page_title: "mws_kms_crypto_key Data Source - mws"
 subcategory: ""
 description: |-
-  
+  Ключ — ресурс облака, который объединяет несколько экземпляров криптографических ключей, называемых версиями ключа
 ---
 
 # mws_kms_crypto_key (Data Source)
 
+Ключ — ресурс облака, который объединяет несколько экземпляров криптографических ключей, называемых версиями ключа
 
-
-## Example Usage
+## Примеры использования
 
 ```terraform
 data "mws_kms_crypto_key" "kms_crypto_key" {

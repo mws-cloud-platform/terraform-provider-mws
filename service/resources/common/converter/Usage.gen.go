@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
-func UsageAPIToTFModel(ctx context.Context, am *apimodel.Usage) (*tfcommon.Usage, tfdiag.Diagnostics) {
+func UsageAPIToTFModel(ctx context.Context, am *commonapimodel.Usage) (*tfcommon.Usage, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -29,7 +29,7 @@ func UsageAPIToTFModel(ctx context.Context, am *apimodel.Usage) (*tfcommon.Usage
 	return &t, diags
 }
 
-func UsageAPIResponseToTFModel(ctx context.Context, am *apimodel.UsageResponse) (*tfcommon.Usage, tfdiag.Diagnostics) {
+func UsageAPIResponseToTFModel(ctx context.Context, am *commonapimodel.UsageResponse) (*tfcommon.Usage, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -46,7 +46,7 @@ func UsageAPIResponseToTFModel(ctx context.Context, am *apimodel.UsageResponse) 
 	return &t, diags
 }
 
-func UsageAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.UsageOptionalResponse) (*tfcommon.Usage, tfdiag.Diagnostics) {
+func UsageAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.UsageOptionalResponse) (*tfcommon.Usage, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -63,13 +63,13 @@ func UsageAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.UsageOp
 	return &t, diags
 }
 
-func UsageTFToAPIModel(ctx context.Context, tm *tfcommon.Usage) (*apimodel.Usage, tfdiag.Diagnostics) {
+func UsageTFToAPIModel(ctx context.Context, tm *tfcommon.Usage) (*commonapimodel.Usage, tfdiag.Diagnostics) {
 	if tm == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.Usage
+	var am commonapimodel.Usage
 
 	if !tm.UsageType.IsNull() && !tm.UsageType.IsUnknown() {
 		am.UsageType = tm.UsageType.ValueString()
@@ -86,13 +86,13 @@ func UsageTFToAPIModel(ctx context.Context, tm *tfcommon.Usage) (*apimodel.Usage
 	return &am, diags
 }
 
-func UsageTFToAPIRequestModel(ctx context.Context, tm *tfcommon.Usage) (*apimodel.UsageRequest, tfdiag.Diagnostics) {
+func UsageTFToAPIRequestModel(ctx context.Context, tm *tfcommon.Usage) (*commonapimodel.UsageRequest, tfdiag.Diagnostics) {
 	if tm == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UsageRequest
+	var am commonapimodel.UsageRequest
 
 	if !tm.UsageType.IsNull() && !tm.UsageType.IsUnknown() {
 		am.UsageType = tm.UsageType.ValueString()

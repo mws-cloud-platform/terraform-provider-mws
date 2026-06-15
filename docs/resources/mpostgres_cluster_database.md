@@ -10,7 +10,7 @@ description: |-
 
 База данных в Managed PostgreSQL — это логически изолированный набор данных внутри кластера PostgreSQL
 
-## Example Usage
+## Примеры использования
 
 ```terraform
 resource "mws_vpc_network" "network" {
@@ -102,8 +102,9 @@ variable "user_name" {
 
 variable "user_password" {
   type        = string
-  description = "Database user password"
   sensitive   = true
+  default     = "securePassword123!"
+  description = "Database user password"
 }
 
 variable "network_name" {

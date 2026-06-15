@@ -10,7 +10,7 @@ description: |-
 
 HMAC-ключ (англ. Hash-based Message Authentication Code) — это статический ключ, необходимый для аутентификации сервисного аккаунта в AWS-совместимом API
 
-## Example Usage
+## Примеры использования
 
 ```terraform
 resource "mws_iam_service_account" "example" {

@@ -10,7 +10,7 @@ description: |-
 
 One-to-One NAT-шлюз — механизм, с помощью которого ресурсы во внутренней сети могут выходить в интернет через внешний IP-адрес
 
-## Example Usage
+## Примеры использования
 
 ```terraform
 resource "mws_vpc_network" "network" {

@@ -52,6 +52,9 @@ func (m *DiskBackupResource) Schema(ctx context.Context, req resource.SchemaRequ
 	resp.Schema.Attributes["disk_backup"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к резервной копии диска`,
 		Required:            true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
 	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту`,
@@ -59,6 +62,7 @@ func (m *DiskBackupResource) Schema(ctx context.Context, req resource.SchemaRequ
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}
 	resp.Schema.Attributes["timeouts"] = timeouts.Attributes(ctx, timeouts.Opts{

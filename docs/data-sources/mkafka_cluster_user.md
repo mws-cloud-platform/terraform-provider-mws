@@ -10,7 +10,7 @@ description: |-
 
 Пользователь — это внутренняя учетная запись Kafka для аутентификации в кластере
 
-## Example Usage
+## Примеры использования
 
 ```terraform
 data "mws_mkafka_cluster_user" "mkafka_kafka_user" {

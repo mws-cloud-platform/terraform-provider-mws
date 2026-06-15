@@ -4,6 +4,8 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -21,6 +23,9 @@ func (s *KafkaControllerInstanceSpec) GetSchema() schema.Schema {
 			"combined_with_broker": schema.BoolAttribute{
 				MarkdownDescription: `Размещать контроллеры на тех же виртуальных машинах, что и брокеры`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.Bool{
+					boolplanmodifier.RequiresReplaceIfConfigured(),
+				},
 			},
 			"vm_type": schema.StringAttribute{
 				MarkdownDescription: `Тип виртуальной машины, описывающий ресурсы (vCPU, memory).`,

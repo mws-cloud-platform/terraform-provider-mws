@@ -10,7 +10,7 @@ description: |-
 
 Резервная копия (backup) диска
 
-## Example Usage
+## Примеры использования
 
 ```terraform
 resource "mws_compute_disk" "source_disk" {

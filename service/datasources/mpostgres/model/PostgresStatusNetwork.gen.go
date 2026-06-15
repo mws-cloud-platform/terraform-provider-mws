@@ -10,6 +10,7 @@ import (
 type PostgresStatusNetwork struct {
 	PrimaryAddresses  types.List `tfsdk:"primary_addresses"`
 	ReadOnlyAddresses types.List `tfsdk:"read_only_addresses"`
+	DirectAddresses   types.List `tfsdk:"direct_addresses"`
 }
 
 func (s *PostgresStatusNetwork) GetSchema() schema.Schema {
@@ -25,6 +26,12 @@ func (s *PostgresStatusNetwork) GetSchema() schema.Schema {
 			"read_only_addresses": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(PostgresStatusAddress).GetSchema().Attributes,
+				},
+				Computed: true,
+			},
+			"direct_addresses": schema.ListNestedAttribute{
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: new(PostgresStatusDirectAddress).GetSchema().Attributes,
 				},
 				Computed: true,
 			},

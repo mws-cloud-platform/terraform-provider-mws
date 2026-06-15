@@ -10,11 +10,12 @@ import (
 )
 
 type CertificateRoleBinding struct {
-	Kind     types.String `tfsdk:"kind"`
-	Metadata types.Object `tfsdk:"metadata"`
-	Status   types.Object `tfsdk:"status"`
-	Subject  types.Object `tfsdk:"subject"`
-	Role     types.String `tfsdk:"role"`
+	Kind             types.String `tfsdk:"kind"`
+	Metadata         types.Object `tfsdk:"metadata"`
+	Status           types.Object `tfsdk:"status"`
+	Subject          types.Object `tfsdk:"subject"`
+	Role             types.String `tfsdk:"role"`
+	SupportRequestId types.String `tfsdk:"support_request_id"`
 }
 
 func (s *CertificateRoleBinding) GetSchema() schema.Schema {
@@ -39,6 +40,10 @@ func (s *CertificateRoleBinding) GetSchema() schema.Schema {
 			},
 			"role": schema.StringAttribute{
 				MarkdownDescription: `Роль, определяющая права субъекта на ресурс`,
+				Computed:            true,
+			},
+			"support_request_id": schema.StringAttribute{
+				MarkdownDescription: `Идентификатор запроса в службу поддержки, в рамках которого был создан биндинг`,
 				Computed:            true,
 			},
 		},

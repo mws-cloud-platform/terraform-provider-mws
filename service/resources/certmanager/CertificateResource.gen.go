@@ -54,6 +54,9 @@ func (m *CertificateResource) Schema(ctx context.Context, req resource.SchemaReq
 	resp.Schema.Attributes["name"] = schema.StringAttribute{
 		MarkdownDescription: `Имя сертификата`,
 		Required:            true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
 	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту`,
@@ -61,6 +64,7 @@ func (m *CertificateResource) Schema(ctx context.Context, req resource.SchemaReq
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}
 	resp.Schema.Attributes["timeouts"] = timeouts.Attributes(ctx, timeouts.Opts{

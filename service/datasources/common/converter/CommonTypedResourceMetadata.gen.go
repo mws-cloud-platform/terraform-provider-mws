@@ -11,12 +11,12 @@ import (
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	resmodels "go.mws.cloud/go-sdk/pkg/resources/models"
-	apimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 )
 
-func CommonTypedResourceMetadataAPIToTFModel(ctx context.Context, am *apimodel.CommonTypedResourceMetadata) (*tfcommon.CommonTypedResourceMetadata, tfdiag.Diagnostics) {
+func CommonTypedResourceMetadataAPIToTFModel(ctx context.Context, am *commonapimodel.CommonTypedResourceMetadata) (*tfcommon.CommonTypedResourceMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -96,7 +96,7 @@ func CommonTypedResourceMetadataAPIToTFModel(ctx context.Context, am *apimodel.C
 	return &t, diags
 }
 
-func CommonTypedResourceMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.CommonTypedResourceMetadataResponse) (*tfcommon.CommonTypedResourceMetadata, tfdiag.Diagnostics) {
+func CommonTypedResourceMetadataAPIResponseToTFModel(ctx context.Context, am *commonapimodel.CommonTypedResourceMetadataResponse) (*tfcommon.CommonTypedResourceMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -176,7 +176,7 @@ func CommonTypedResourceMetadataAPIResponseToTFModel(ctx context.Context, am *ap
 	return &t, diags
 }
 
-func CommonTypedResourceMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.CommonTypedResourceMetadataOptionalResponse) (*tfcommon.CommonTypedResourceMetadata, tfdiag.Diagnostics) {
+func CommonTypedResourceMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.CommonTypedResourceMetadataOptionalResponse) (*tfcommon.CommonTypedResourceMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -256,13 +256,13 @@ func CommonTypedResourceMetadataAPIOptionalResponseToTFModel(ctx context.Context
 	return &t, diags
 }
 
-func CommonTypedResourceMetadataTFToAPIModel(ctx context.Context, tm *tfcommon.CommonTypedResourceMetadata) (*apimodel.CommonTypedResourceMetadata, tfdiag.Diagnostics) {
+func CommonTypedResourceMetadataTFToAPIModel(ctx context.Context, tm *tfcommon.CommonTypedResourceMetadata) (*commonapimodel.CommonTypedResourceMetadata, tfdiag.Diagnostics) {
 	if tm == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.CommonTypedResourceMetadata
+	var am commonapimodel.CommonTypedResourceMetadata
 
 	if !tm.Id.IsNull() && !tm.Id.IsUnknown() {
 		idID := resmodels.ParseAnyResourceID(tm.Id.ValueString())
@@ -311,7 +311,7 @@ func CommonTypedResourceMetadataTFToAPIModel(ctx context.Context, tm *tfcommon.C
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.Usages = make([]apimodel.Usage, 0, len(usages))
+		am.Usages = make([]commonapimodel.Usage, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := UsageTFToAPIModel(ctx, &entity)
@@ -330,13 +330,13 @@ func CommonTypedResourceMetadataTFToAPIModel(ctx context.Context, tm *tfcommon.C
 	return &am, diags
 }
 
-func CommonTypedResourceMetadataTFToAPIRequestModel(ctx context.Context, tm *tfcommon.CommonTypedResourceMetadata) (*apimodel.CommonTypedResourceMetadataRequest, tfdiag.Diagnostics) {
+func CommonTypedResourceMetadataTFToAPIRequestModel(ctx context.Context, tm *tfcommon.CommonTypedResourceMetadata) (*commonapimodel.CommonTypedResourceMetadataRequest, tfdiag.Diagnostics) {
 	if tm == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.CommonTypedResourceMetadataRequest
+	var am commonapimodel.CommonTypedResourceMetadataRequest
 
 	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
 		am.Name = tm.Name.ValueStringPointer()
@@ -353,7 +353,7 @@ func CommonTypedResourceMetadataTFToAPIRequestModel(ctx context.Context, tm *tfc
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.Usages = make([]apimodel.UsageRequest, 0, len(usages))
+		am.Usages = make([]commonapimodel.UsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := UsageTFToAPIRequestModel(ctx, &entity)

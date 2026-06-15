@@ -10,7 +10,7 @@ description: |-
 
 Egress (Many-to-Many) NAT-шлюз — механизм для исходящего трафика, при котором несколько внутренних IP-адресов сопоставляются с одним или несколькими внешними IP-адресами
 
-## Example Usage
+## Примеры использования
 
 ```terraform
 data "mws_vpc_egress_nat" "example" {

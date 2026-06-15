@@ -12,6 +12,7 @@ type PostgresEndpoint struct {
 	Network           types.String `tfsdk:"network"`
 	PrimaryAddresses  types.List   `tfsdk:"primary_addresses"`
 	ReadOnlyAddresses types.List   `tfsdk:"read_only_addresses"`
+	DirectAddresses   types.List   `tfsdk:"direct_addresses"`
 }
 
 func (s *PostgresEndpoint) GetSchema() schema.Schema {
@@ -35,6 +36,12 @@ func (s *PostgresEndpoint) GetSchema() schema.Schema {
 			"read_only_addresses": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(PostgresNetworkAddress).GetSchema().Attributes,
+				},
+				Optional: true,
+			},
+			"direct_addresses": schema.ListNestedAttribute{
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: new(PostgresNetworkDirectAddress).GetSchema().Attributes,
 				},
 				Optional: true,
 			},

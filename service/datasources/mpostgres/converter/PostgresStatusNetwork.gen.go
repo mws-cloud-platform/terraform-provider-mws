@@ -75,5 +75,32 @@ func PostgresStatusNetworkAPIResponseToTFModel(ctx context.Context, am *apimodel
 		})
 	}
 
+	if am.DirectAddresses != nil {
+		directAddresses := make([]tfmodel.PostgresStatusDirectAddress, 0, len(am.DirectAddresses))
+
+		for _, entity := range am.DirectAddresses {
+			tmp, d := PostgresStatusDirectAddressAPIResponseToTFModel(ctx, &entity)
+			diags = append(diags, d...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			directAddresses = append(directAddresses, *tmp)
+		}
+
+		directAddressesList, d := types.ListValueFrom(ctx, types.ObjectType{
+			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.PostgresStatusDirectAddress).GetSchema().Attributes),
+		}, directAddresses)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		t.DirectAddresses = directAddressesList
+	} else {
+		t.DirectAddresses = types.ListNull(types.ObjectType{
+			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.PostgresStatusDirectAddress).GetSchema().Attributes),
+		})
+	}
+
 	return &t, diags
 }

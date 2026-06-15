@@ -201,11 +201,7 @@ func NodeGroupSpecSubnetAPIOptionalResponseToTFModel(ctx context.Context, am *ap
 	var diags tfdiag.Diagnostics
 	var t tfmodel.NodeGroupSpecSubnet
 
-	if val, ok := am.Ref.Get(); ok {
-		t.Ref = types.StringPointerValue(ptr.Get(val.Path()))
-	} else {
-		t.Ref = types.StringNull()
-	}
+	t.Ref = types.StringValue(am.Ref.Path())
 
 	return &t, diags
 }
@@ -224,7 +220,7 @@ func NodeGroupSpecSubnetTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Nod
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
 		}
-		am.Ref = &refRef
+		am.Ref = refRef
 	}
 
 	return &am, diags
@@ -238,11 +234,7 @@ func NodeGroupSpecVmTypeAPIOptionalResponseToTFModel(ctx context.Context, am *ap
 	var diags tfdiag.Diagnostics
 	var t tfmodel.NodeGroupSpecVmType
 
-	if val, ok := am.Ref.Get(); ok {
-		t.Ref = types.StringPointerValue(ptr.Get(val.Path()))
-	} else {
-		t.Ref = types.StringNull()
-	}
+	t.Ref = types.StringValue(am.Ref.Path())
 
 	return &t, diags
 }
@@ -261,7 +253,7 @@ func NodeGroupSpecVmTypeTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Nod
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
 		}
-		am.Ref = &refRef
+		am.Ref = refRef
 	}
 
 	return &am, diags

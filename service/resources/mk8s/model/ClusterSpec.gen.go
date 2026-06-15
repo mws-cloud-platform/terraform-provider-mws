@@ -4,6 +4,9 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -22,6 +25,9 @@ func (s *ClusterSpecNetwork) GetSchema() schema.Schema {
 				Attributes:          new(ClusterPrimaryEndpointSpecOrRef).GetSchema().Attributes,
 				MarkdownDescription: `ip-адрес внутри vpc`,
 				Required:            true,
+				PlanModifiers: []planmodifier.Object{
+					objectplanmodifier.RequiresReplaceIfConfigured(),
+				},
 			},
 			"public_endpoint": schema.SingleNestedAttribute{
 				Attributes:          new(ClusterPublicEndpointSpecOrRef).GetSchema().Attributes,
@@ -31,10 +37,16 @@ func (s *ClusterSpecNetwork) GetSchema() schema.Schema {
 			"pods_cidr": schema.StringAttribute{
 				MarkdownDescription: `необходим ip-range v4`,
 				Required:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
 			},
 			"services_cidr": schema.StringAttribute{
 				MarkdownDescription: `необходим ip-range v4`,
 				Required:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
 			},
 		},
 	}

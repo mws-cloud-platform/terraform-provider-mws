@@ -16,7 +16,7 @@ description: |-
 инфраструктуре кластер — единый интерфейс для управления потоками данных в
 реальном времени
 
-## Example Usage
+## Примеры использования
 
 ```terraform
 resource "mws_vpc_network" "network" {
@@ -163,6 +163,7 @@ variable "kafka_name" {
 ### Optional
 
 - `active` (Boolean) Значение включен/выключен кластер.
+- `auto_rebalance` (Attributes) Настройка Auto Rebalance для кластера. (see [below for nested schema](#nestedatt--auto_rebalance))
 - `kind` (String)
 - `maintenance_window` (Attributes) (see [below for nested schema](#nestedatt--maintenance_window))
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
@@ -311,6 +312,14 @@ Optional:
 
 
 
+<a id="nestedatt--auto_rebalance"></a>
+### Nested Schema for `auto_rebalance`
+
+Optional:
+
+- `enabled` (Boolean) Значение включен/выключен auto rebalance.
+
+
 <a id="nestedatt--maintenance_window"></a>
 ### Nested Schema for `maintenance_window`
 
@@ -382,6 +391,7 @@ Optional:
 
 Read-Only:
 
+- `auto_rebalance` (Attributes) Настройка Auto Rebalance для кластера. (see [below for nested schema](#nestedatt--status--auto_rebalance))
 - `effective_kafka_config` (Map of String) Конфигурация параметров кластера после валидации и преобразования из пользователского ввода
 - `endpoints` (Attributes List) Описание эндпойнтов в сетях пользователя (VPC) для подключения к брокерам кластера. (see [below for nested schema](#nestedatt--status--endpoints))
 - `health` (String) Работоспособность кластера
@@ -406,6 +416,14 @@ Read-Only:
   * "DELETED"      - Удалён
   * "UNIDENTIFIED" - Не удаётся определить статус
   * "RESTORING"    - Восстанавливается
+
+<a id="nestedatt--status--auto_rebalance"></a>
+### Nested Schema for `status.auto_rebalance`
+
+Optional:
+
+- `enabled` (Boolean) Значение включен/выключен auto rebalance.
+
 
 <a id="nestedatt--status--endpoints"></a>
 ### Nested Schema for `status.endpoints`

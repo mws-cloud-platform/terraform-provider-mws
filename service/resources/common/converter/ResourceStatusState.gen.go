@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
-func ResourceStatusStateAPIToTFModel(ctx context.Context, am *apimodel.ResourceStatusState) (tfcommon.ResourceStatusState, tfdiag.Diagnostics) {
+func ResourceStatusStateAPIToTFModel(ctx context.Context, am *commonapimodel.ResourceStatusState) (tfcommon.ResourceStatusState, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfcommon.ResourceStatusState{}, nil
 	}
@@ -25,15 +25,15 @@ func ResourceStatusStateAPIToTFModel(ctx context.Context, am *apimodel.ResourceS
 	return t, diags
 }
 
-func ResourceStatusStateTFToAPIModel(ctx context.Context, tm tfcommon.ResourceStatusState) (*apimodel.ResourceStatusState, tfdiag.Diagnostics) {
+func ResourceStatusStateTFToAPIModel(ctx context.Context, tm tfcommon.ResourceStatusState) (*commonapimodel.ResourceStatusState, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
-	var am apimodel.ResourceStatusState
+	var am commonapimodel.ResourceStatusState
 
 	var tmp = types.String(tm)
 	if tmp.IsNull() {
 		return nil, diags
 	}
-	am = apimodel.ResourceStatusState(tmp.ValueString())
+	am = commonapimodel.ResourceStatusState(tmp.ValueString())
 
 	return &am, diags
 }

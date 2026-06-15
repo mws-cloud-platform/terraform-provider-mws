@@ -5,6 +5,9 @@ package model
 import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -30,6 +33,9 @@ func (s *CertificateManagedSpec) GetSchema() schema.Schema {
 					),
 				},
 				Required: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
 			},
 			"provider": schema.StringAttribute{
 				MarkdownDescription: `Провайдер сертификатов, например Let's Encrypt или другой центр сертификации.
@@ -40,12 +46,18 @@ func (s *CertificateManagedSpec) GetSchema() schema.Schema {
 					),
 				},
 				Required: true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
 			},
 			"domains": schema.ListAttribute{
 				ElementType: types.StringType,
 				MarkdownDescription: `Список доменов, для которых будет выдан сертификат.
 `,
 				Required: true,
+				PlanModifiers: []planmodifier.List{
+					listplanmodifier.RequiresReplaceIfConfigured(),
+				},
 			},
 		},
 	}

@@ -53,6 +53,9 @@ func (m *ApiKeyResource) Schema(ctx context.Context, req resource.SchemaRequest,
 	resp.Schema.Attributes["api_key"] = schema.StringAttribute{
 		MarkdownDescription: `Идентификатор API-ключа`,
 		Required:            true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
 	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту`,
@@ -60,11 +63,15 @@ func (m *ApiKeyResource) Schema(ctx context.Context, req resource.SchemaRequest,
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}
 	resp.Schema.Attributes["service_account"] = schema.StringAttribute{
 		MarkdownDescription: `Идентификатор сервисного аккаунта.`,
 		Required:            true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
 	}
 	resp.Schema.Attributes["timeouts"] = timeouts.Attributes(ctx, timeouts.Opts{
 		Create: true,

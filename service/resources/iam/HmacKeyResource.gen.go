@@ -52,6 +52,9 @@ func (m *HmacKeyResource) Schema(ctx context.Context, req resource.SchemaRequest
 	resp.Schema = new(tfmodel.HmacKey).GetSchema()
 	resp.Schema.Attributes["key_name"] = schema.StringAttribute{
 		Required: true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
 	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту`,
@@ -59,10 +62,14 @@ func (m *HmacKeyResource) Schema(ctx context.Context, req resource.SchemaRequest
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}
 	resp.Schema.Attributes["service_account"] = schema.StringAttribute{
 		Required: true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
 	}
 	resp.Schema.Attributes["timeouts"] = timeouts.Attributes(ctx, timeouts.Opts{
 		Create: true,

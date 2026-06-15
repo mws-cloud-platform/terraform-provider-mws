@@ -160,6 +160,24 @@ func KafkaClusterAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaClu
 		t.SchemaRegistry = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.KafkaSchemaRegistrySpec).GetSchema().Attributes))
 	}
 
+	if am.Spec.AutoRebalance != nil {
+		autoRebalanceTmp, d := KafkaAutoRebalanceSpecAPIResponseToTFModel(ctx, am.Spec.AutoRebalance)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		autoRebalanceTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.KafkaAutoRebalanceSpec).GetSchema().Attributes),
+			*autoRebalanceTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.AutoRebalance = autoRebalanceTfObject
+	} else {
+		t.AutoRebalance = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.KafkaAutoRebalanceSpec).GetSchema().Attributes))
+	}
+
 	return &t, diags
 }
 
@@ -264,6 +282,22 @@ func KafkaClusterTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaClust
 			return nil, diags
 		}
 		am.Spec.SchemaRegistry = schemaRegistryTmp
+	}
+
+	if !tm.AutoRebalance.IsNull() && !tm.AutoRebalance.IsUnknown() {
+		autoRebalanceTfModel := tfmodel.KafkaAutoRebalanceSpec{}
+		autoRebalanceDiag := tm.AutoRebalance.As(ctx, &autoRebalanceTfModel, basetypes.ObjectAsOptions{})
+		diags = append(diags, autoRebalanceDiag...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		autoRebalanceTmp, autoRebalanceDiag := KafkaAutoRebalanceSpecTFToAPIRequestModel(ctx, &autoRebalanceTfModel)
+		diags = append(diags, autoRebalanceDiag...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		am.Spec.AutoRebalance = autoRebalanceTmp
 	}
 
 	return &am, diags

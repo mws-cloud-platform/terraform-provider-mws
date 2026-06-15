@@ -10,7 +10,7 @@ description: |-
 
 База данных в Managed PostgreSQL — это логически изолированный набор данных внутри кластера PostgreSQL
 
-## Example Usage
+## Примеры использования
 
 ```terraform
 data "mws_mpostgres_cluster_database" "example_name" {

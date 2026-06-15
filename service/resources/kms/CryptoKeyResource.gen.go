@@ -53,6 +53,9 @@ func (m *CryptoKeyResource) Schema(ctx context.Context, req resource.SchemaReque
 	resp.Schema.Attributes["key"] = schema.StringAttribute{
 		MarkdownDescription: `Название крипто-ключа`,
 		Required:            true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
 	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту`,
@@ -60,6 +63,7 @@ func (m *CryptoKeyResource) Schema(ctx context.Context, req resource.SchemaReque
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}
 	resp.Schema.Attributes["timeouts"] = timeouts.Attributes(ctx, timeouts.Opts{

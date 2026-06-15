@@ -53,6 +53,9 @@ func (m *ExternalAddressResource) Schema(ctx context.Context, req resource.Schem
 	resp.Schema.Attributes["external_address"] = schema.StringAttribute{
 		MarkdownDescription: `Имя внешнего IP-адреса`,
 		Required:            true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
 	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту`,
@@ -60,6 +63,7 @@ func (m *ExternalAddressResource) Schema(ctx context.Context, req resource.Schem
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}
 	resp.Schema.Attributes["timeouts"] = timeouts.Attributes(ctx, timeouts.Opts{

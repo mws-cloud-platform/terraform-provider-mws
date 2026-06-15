@@ -10,7 +10,7 @@ description: |-
 
 Подсеть - это сегмент сети, ассоциированный с диапазоном внутренних адресов
 
-## Example Usage
+## Примеры использования
 
 ```terraform
 data "mws_vpc_subnet" "subnet" {

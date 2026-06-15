@@ -52,6 +52,9 @@ func (m *CertificateRoleBindingResource) Schema(ctx context.Context, req resourc
 	resp.Schema.Attributes["name"] = schema.StringAttribute{
 		MarkdownDescription: `Имя сертификата`,
 		Required:            true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
 	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту`,
@@ -59,11 +62,15 @@ func (m *CertificateRoleBindingResource) Schema(ctx context.Context, req resourc
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}
 	resp.Schema.Attributes["role_binding"] = schema.StringAttribute{
 		MarkdownDescription: `Имя привязки ролей сертификата`,
 		Required:            true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
 	}
 	resp.Schema.Attributes["timeouts"] = timeouts.Attributes(ctx, timeouts.Opts{
 		Create: true,
