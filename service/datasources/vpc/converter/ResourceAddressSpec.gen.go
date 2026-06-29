@@ -62,6 +62,52 @@ func ResourceAddressSpecAPIOptionalResponseToTFModel(ctx context.Context, am *ap
 	return &t, diags
 }
 
+func ResourceAddressSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.ResourceAddressSpecResponse) (*tfmodel.ResourceAddressSpec, tfdiag.Diagnostics) {
+	if am == nil {
+		return nil, nil
+	}
+
+	var diags tfdiag.Diagnostics
+	var t tfmodel.ResourceAddressSpec
+
+	t.Subnet = types.StringValue(am.Subnet.Path())
+
+	if am.IpAddress != nil {
+		t.IpAddress = types.StringValue(ptr.Value(am.IpAddress.RawValue()))
+	} else {
+		t.IpAddress = types.StringNull()
+	}
+
+	if am.Dns != nil {
+		dns := make([]tfmodel.VpcAddressDnsSpec, 0, len(am.Dns))
+
+		for _, entity := range am.Dns {
+			tmp, d := VpcAddressDnsSpecAPIResponseToTFModel(ctx, &entity)
+			diags = append(diags, d...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			dns = append(dns, *tmp)
+		}
+
+		dnsList, d := types.ListValueFrom(ctx, types.ObjectType{
+			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.VpcAddressDnsSpec).GetSchema().Attributes),
+		}, dns)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		t.Dns = dnsList
+	} else {
+		t.Dns = types.ListNull(types.ObjectType{
+			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.VpcAddressDnsSpec).GetSchema().Attributes),
+		})
+	}
+
+	return &t, diags
+}
+
 func ResourceAddressSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ResourceAddressSpec) (*apimodel.ResourceAddressSpecRequest, tfdiag.Diagnostics) {
 	if tm == nil {
 		return nil, nil

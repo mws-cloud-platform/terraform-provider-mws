@@ -19,7 +19,7 @@ func (s *PostgresUserAdditionalRole) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"name": schema.StringAttribute{
-				MarkdownDescription: `- "DB_MIGRATOR_ROLE": Дополнительная роль, позволяющая пользователю владельцу бд управлять миграцией данных в mpostgres`,
+				MarkdownDescription: `- "DB_MIGRATOR_ROLE": Дополнительная роль, позволяющая пользователю БД управлять миграцией данных в mpostgres`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"DB_MIGRATOR_ROLE",

@@ -14,7 +14,7 @@ type ResourceAddressSpecOrRef struct {
 
 func (s *ResourceAddressSpecOrRef) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Спецификация внутреннего адреса, для которого будет осуществляться трансляция.`,
+		MarkdownDescription: `Описывает ссылку на внутренний адрес или спецификацию внутреннего адреса как дополнительный ресурс.`,
 		Attributes: map[string]schema.Attribute{
 			"ref": schema.StringAttribute{
 				MarkdownDescription: `Относительная ссылка на статический внутренний адрес.`,

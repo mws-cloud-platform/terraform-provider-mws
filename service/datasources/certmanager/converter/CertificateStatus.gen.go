@@ -117,5 +117,11 @@ func CertificateStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.Cer
 		t.RenewalAt = types.StringNull()
 	}
 
+	if am.ChallengesDeadline != nil {
+		t.ChallengesDeadline = types.StringPointerValue(ptr.Get(am.ChallengesDeadline.Format(time.RFC3339)))
+	} else {
+		t.ChallengesDeadline = types.StringNull()
+	}
+
 	return &t, diags
 }

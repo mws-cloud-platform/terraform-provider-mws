@@ -115,6 +115,7 @@ func (s *NodeGroupStatusNodeGroupStatus) GetSchema() schema.Schema {
 						"RUNNING",
 						"SCALING_UP",
 						"SCALING_DOWN",
+						"UPGRADING",
 						"DEGRADED",
 						"DELETING",
 						"UNKNOWN",

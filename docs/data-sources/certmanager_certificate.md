@@ -79,6 +79,8 @@ Read-Only:
 
 - `challenges` (Attributes List) Список challenge-задач, которые необходимо выполнить для проверки сертификата.  
 Присутствует только в случае, если сертификат управляемый. (see [below for nested schema](#nestedatt--status--challenges))
+- `challenges_deadline` (String) Время, до которого необходимо настроить делегацию для прохождения проверки прав на домены.
+Присутствует только в случае, если сертификат управляемый.
 - `details` (Attributes) (see [below for nested schema](#nestedatt--status--details))
 - `management_type` (String) Тип сертификата. Если указано SELF_MANAGED, тело запроса должно содержать данные сертификата.  
 Если указано MANAGED, сертификат будет создан центром сертификации (например, Let's Encrypt).

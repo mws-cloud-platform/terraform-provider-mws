@@ -11,8 +11,10 @@ import (
 	provider "go.mws.cloud/terraform-provider-mws/internal/provider/public"
 	dscertmanager "go.mws.cloud/terraform-provider-mws/service/datasources/certmanager"
 	dscompute "go.mws.cloud/terraform-provider-mws/service/datasources/compute"
+	dsgpt "go.mws.cloud/terraform-provider-mws/service/datasources/gpt"
 	dsiam "go.mws.cloud/terraform-provider-mws/service/datasources/iam"
 	dskms "go.mws.cloud/terraform-provider-mws/service/datasources/kms"
+	dsmclickhouse "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse"
 	dsmk8s "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s"
 	dsmkafka "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka"
 	dsmpostgres "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres"
@@ -20,8 +22,10 @@ import (
 	dsvpc "go.mws.cloud/terraform-provider-mws/service/datasources/vpc"
 	rscertmanager "go.mws.cloud/terraform-provider-mws/service/resources/certmanager"
 	rscompute "go.mws.cloud/terraform-provider-mws/service/resources/compute"
+	rsgpt "go.mws.cloud/terraform-provider-mws/service/resources/gpt"
 	rsiam "go.mws.cloud/terraform-provider-mws/service/resources/iam"
 	rskms "go.mws.cloud/terraform-provider-mws/service/resources/kms"
+	rsmclickhouse "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse"
 	rsmk8s "go.mws.cloud/terraform-provider-mws/service/resources/mk8s"
 	rsmkafka "go.mws.cloud/terraform-provider-mws/service/resources/mkafka"
 	rsmpostgres "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres"
@@ -46,10 +50,13 @@ func resources() []func() resource.Resource {
 		rscompute.NewImageResource,
 		rscompute.NewDiskResource,
 		rscompute.NewDiskBackupResource,
+		rsgpt.NewDeploymentResource,
 		rsiam.NewServiceAccountResource,
 		rsiam.NewHmacKeyResource,
 		rsiam.NewApiKeyResource,
 		rskms.NewCryptoKeyResource,
+		rsmclickhouse.NewClusterResource,
+		rsmclickhouse.NewBackupResource,
 		rsmk8s.NewClusterResource,
 		rsmk8s.NewNodeGroupResource,
 		rsmkafka.NewClusterResource,
@@ -79,10 +86,14 @@ func dataSources() []func() datasource.DataSource {
 		dscompute.NewImageDataSource,
 		dscompute.NewDiskDataSource,
 		dscompute.NewDiskBackupDataSource,
+		dsgpt.NewModelDataSource,
+		dsgpt.NewDeploymentDataSource,
 		dsiam.NewServiceAccountDataSource,
 		dsiam.NewHmacKeyDataSource,
 		dsiam.NewApiKeyDataSource,
 		dskms.NewCryptoKeyDataSource,
+		dsmclickhouse.NewClusterDataSource,
+		dsmclickhouse.NewBackupDataSource,
 		dsmk8s.NewClusterDataSource,
 		dsmk8s.NewNodeGroupDataSource,
 		dsmkafka.NewClusterDataSource,

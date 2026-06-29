@@ -19,7 +19,8 @@ func (s *NetworkInterfaceSpec) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"name": schema.StringAttribute{
-				Computed: true,
+				MarkdownDescription: `Имя сетевого интерфейса`,
+				Computed:            true,
 			},
 			"primary": schema.BoolAttribute{
 				Computed: true,
@@ -31,13 +32,8 @@ func (s *NetworkInterfaceSpec) GetSchema() schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(AddressSpecOrRefWithAttachments).GetSchema().Attributes,
 				},
-				MarkdownDescription: `К одному сетевому интерфейсу можно подключить одновременно 4 разных сетевых адреса
-- IPv4 internal
-- IPv4 external
-- IPv6 internal
-- IPv6 external
-`,
-				Computed: true,
+				MarkdownDescription: `IP-адреса сетевого интерфейса`,
+				Computed:            true,
 			},
 		},
 	}

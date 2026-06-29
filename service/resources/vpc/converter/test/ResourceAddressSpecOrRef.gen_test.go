@@ -37,3 +37,29 @@ func TestResourceAddressSpecOrRefOptionalResponseConverters(t *testing.T) {
 
 	require.Equal(t, *emptyApiModelResponse, *result)
 }
+
+func TestResourceAddressSpecOrRefAPIResponseToTFModelEmpty(t *testing.T) {
+	t.Parallel()
+	emptyApiModel := apimodel.ResourceAddressSpecOrRefResponse{}
+	_, diags := conv.ResourceAddressSpecOrRefAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	require.False(t, diags.HasError())
+}
+
+func TestResourceAddressSpecOrRefResponseConverters(t *testing.T) {
+	t.Parallel()
+	emptyApiModelRequest := apimodel.ResourceAddressSpecOrRefRequest{}
+
+	emptyApiModelResponse, err := apimodel.ResourceAddressSpecOrRefRequestToResponse(&emptyApiModelRequest)
+	require.NoError(t, err)
+
+	tfModel, diags := conv.ResourceAddressSpecOrRefAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	require.False(t, diags.HasError())
+
+	filledApiModelRequest, diags := conv.ResourceAddressSpecOrRefTFToAPIRequestModel(context.Background(), tfModel)
+	require.False(t, diags.HasError())
+
+	result, err := apimodel.ResourceAddressSpecOrRefRequestToResponse(filledApiModelRequest)
+	require.NoError(t, err)
+
+	require.Equal(t, *emptyApiModelResponse, *result)
+}

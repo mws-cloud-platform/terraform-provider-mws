@@ -31,6 +31,23 @@ func VpcAddressDnsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apim
 	return &t, diags
 }
 
+func VpcAddressDnsSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.VpcAddressDnsSpecResponse) (*tfmodel.VpcAddressDnsSpec, tfdiag.Diagnostics) {
+	if am == nil {
+		return nil, nil
+	}
+
+	var diags tfdiag.Diagnostics
+	var t tfmodel.VpcAddressDnsSpec
+
+	t.Name = types.StringValue(am.Name)
+
+	t.Ttl = types.StringValue(ptr.Value(am.Ttl.RawValue()))
+
+	t.Ptr = types.BoolValue(am.Ptr)
+
+	return &t, diags
+}
+
 func VpcAddressDnsSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.VpcAddressDnsSpec) (*apimodel.VpcAddressDnsSpecRequest, tfdiag.Diagnostics) {
 	if tm == nil {
 		return nil, nil

@@ -51,6 +51,41 @@ func ResourceAddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, a
 	return &t, diags
 }
 
+func ResourceAddressSpecOrRefAPIResponseToTFModel(ctx context.Context, am *apimodel.ResourceAddressSpecOrRefResponse) (*tfmodel.ResourceAddressSpecOrRef, tfdiag.Diagnostics) {
+	if am == nil {
+		return nil, nil
+	}
+
+	var diags tfdiag.Diagnostics
+	var t tfmodel.ResourceAddressSpecOrRef
+
+	if am.Ref != nil {
+		t.Ref = types.StringPointerValue(ptr.Get(am.Ref.Path()))
+	} else {
+		t.Ref = types.StringNull()
+	}
+
+	if am.Spec != nil {
+		specTmp, d := ResourceAddressSpecAPIResponseToTFModel(ctx, am.Spec)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		specTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.ResourceAddressSpec).GetSchema().Attributes),
+			*specTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.Spec = specTfObject
+	} else {
+		t.Spec = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.ResourceAddressSpec).GetSchema().Attributes))
+	}
+
+	return &t, diags
+}
+
 func ResourceAddressSpecOrRefTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ResourceAddressSpecOrRef) (*apimodel.ResourceAddressSpecOrRefRequest, tfdiag.Diagnostics) {
 	if tm == nil {
 		return nil, nil

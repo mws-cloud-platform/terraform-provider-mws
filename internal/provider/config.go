@@ -9,7 +9,9 @@ const (
 	DefaultEndpoint = "https://api.mwsapis.ru"
 	DefaultZone     = "ru-central1-a"
 
+	// Deprecated: use EndpointEnv instead.
 	EndpointEnv                        = "MWS_ENDPOINT"
+	BaseEndpointEnv                    = "MWS_BASE_ENDPOINT"
 	MWSTokenEnv                        = "MWS_TOKEN"
 	ProjectEnv                         = "MWS_PROJECT"
 	ZoneEnv                            = "MWS_ZONE"
@@ -29,19 +31,21 @@ type Config struct {
 
 // Load loads environment variables and sets defaults for the unset fields.
 func (c *Config) Load(e env.Env) {
-	c.Endpoint = c.loadString(e, c.Endpoint, EndpointEnv, types.StringValue(DefaultEndpoint))
-	c.MWSToken = c.loadString(e, c.MWSToken, MWSTokenEnv, types.StringNull())
-	c.ServiceAccountAuthorizedKeyPath = c.loadString(e, c.ServiceAccountAuthorizedKeyPath, ServiceAccountAuthorizedKeyPathEnv, types.StringNull())
-	c.Project = c.loadString(e, c.Project, ProjectEnv, types.StringNull())
-	c.Zone = c.loadString(e, c.Zone, ZoneEnv, types.StringValue(DefaultZone))
+	c.Endpoint = c.loadString(e, c.Endpoint, types.StringValue(DefaultEndpoint), BaseEndpointEnv, EndpointEnv)
+	c.MWSToken = c.loadString(e, c.MWSToken, types.StringNull(), MWSTokenEnv)
+	c.ServiceAccountAuthorizedKeyPath = c.loadString(e, c.ServiceAccountAuthorizedKeyPath, types.StringNull(), ServiceAccountAuthorizedKeyPathEnv)
+	c.Project = c.loadString(e, c.Project, types.StringNull(), ProjectEnv)
+	c.Zone = c.loadString(e, c.Zone, types.StringValue(DefaultZone), ZoneEnv)
 }
 
-func (*Config) loadString(e env.Env, field types.String, envKey string, defaultValue types.String) types.String {
+func (*Config) loadString(e env.Env, field types.String, defaultValue types.String, envKeys ...string) types.String {
 	if IsValueSet(field) {
 		return field
 	}
-	if value, ok := e.LookupEnv(envKey); ok {
-		return types.StringValue(value)
+	for _, envKey := range envKeys {
+		if value, ok := e.LookupEnv(envKey); ok {
+			return types.StringValue(value)
+		}
 	}
 	return defaultValue
 }

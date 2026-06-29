@@ -38,7 +38,7 @@ func TestConfig_Load(t *testing.T) {
 				ServiceAccountAuthorizedKeyPath: types.StringValue("ServiceAccountAuthorizedKeyPath"),
 			},
 			env: env.MapEnv{ // check priority
-				provider.EndpointEnv:                        "https://foo.com",
+				provider.BaseEndpointEnv:                    "https://foo.com",
 				provider.MWSTokenEnv:                        "bar",
 				provider.ProjectEnv:                         "baz",
 				provider.ZoneEnv:                            "qux",
@@ -56,7 +56,7 @@ func TestConfig_Load(t *testing.T) {
 			name:   "envs",
 			config: provider.Config{},
 			env: env.MapEnv{
-				provider.EndpointEnv:                        "https://example.com",
+				provider.BaseEndpointEnv:                    "https://example.com",
 				provider.MWSTokenEnv:                        "token",
 				provider.ProjectEnv:                         "project",
 				provider.ZoneEnv:                            "zone",

@@ -163,7 +163,7 @@ variable "kafka_name" {
 ### Optional
 
 - `active` (Boolean) Значение включен/выключен кластер.
-- `auto_rebalance` (Attributes) Настройка Auto Rebalance для кластера. (see [below for nested schema](#nestedatt--auto_rebalance))
+- `auto_rebalance` (Attributes) Настройка автоматической ребалансировки для кластера. (see [below for nested schema](#nestedatt--auto_rebalance))
 - `kind` (String)
 - `maintenance_window` (Attributes) (see [below for nested schema](#nestedatt--maintenance_window))
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
@@ -317,7 +317,7 @@ Optional:
 
 Optional:
 
-- `enabled` (Boolean) Значение включен/выключен auto rebalance.
+- `enabled` (Boolean) Состояние автоматической ребалансировки — включена или выключена
 
 
 <a id="nestedatt--maintenance_window"></a>
@@ -391,7 +391,7 @@ Optional:
 
 Read-Only:
 
-- `auto_rebalance` (Attributes) Настройка Auto Rebalance для кластера. (see [below for nested schema](#nestedatt--status--auto_rebalance))
+- `auto_rebalance` (Attributes) Настройка автоматической ребалансировки для кластера. (see [below for nested schema](#nestedatt--status--auto_rebalance))
 - `effective_kafka_config` (Map of String) Конфигурация параметров кластера после валидации и преобразования из пользователского ввода
 - `endpoints` (Attributes List) Описание эндпойнтов в сетях пользователя (VPC) для подключения к брокерам кластера. (see [below for nested schema](#nestedatt--status--endpoints))
 - `health` (String) Работоспособность кластера
@@ -422,7 +422,7 @@ Read-Only:
 
 Optional:
 
-- `enabled` (Boolean) Значение включен/выключен auto rebalance.
+- `enabled` (Boolean) Состояние автоматической ребалансировки — включена или выключена
 
 
 <a id="nestedatt--status--endpoints"></a>

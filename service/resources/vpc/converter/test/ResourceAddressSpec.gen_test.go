@@ -40,3 +40,31 @@ func TestResourceAddressSpecOptionalResponseConverters(t *testing.T) {
 
 	require.Equal(t, *emptyApiModelResponse, *result)
 }
+
+func TestResourceAddressSpecAPIResponseToTFModelEmpty(t *testing.T) {
+	t.Parallel()
+	emptyApiModel := apimodel.ResourceAddressSpecResponse{}
+	_, diags := conv.ResourceAddressSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	require.False(t, diags.HasError())
+}
+
+func TestResourceAddressSpecResponseConverters(t *testing.T) {
+	t.Parallel()
+	emptyApiModelRequest := apimodel.ResourceAddressSpecRequest{
+		Subnet: vpc.NewSubnetRef("projectID", "networkID", "subnetID"),
+	}
+
+	emptyApiModelResponse, err := apimodel.ResourceAddressSpecRequestToResponse(&emptyApiModelRequest)
+	require.NoError(t, err)
+
+	tfModel, diags := conv.ResourceAddressSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	require.False(t, diags.HasError())
+
+	filledApiModelRequest, diags := conv.ResourceAddressSpecTFToAPIRequestModel(context.Background(), tfModel)
+	require.False(t, diags.HasError())
+
+	result, err := apimodel.ResourceAddressSpecRequestToResponse(filledApiModelRequest)
+	require.NoError(t, err)
+
+	require.Equal(t, *emptyApiModelResponse, *result)
+}

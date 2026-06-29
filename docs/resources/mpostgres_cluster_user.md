@@ -149,7 +149,7 @@ variable "subnet_cidr" {
 Optional:
 
 - `expires_at` (String) Дата отзыва дополнительной роли
-- `name` (String) - "DB_MIGRATOR_ROLE": Дополнительная роль, позволяющая пользователю владельцу бд управлять миграцией данных в mpostgres
+- `name` (String) - "DB_MIGRATOR_ROLE": Дополнительная роль, позволяющая пользователю БД управлять миграцией данных в mpostgres
 
 
 <a id="nestedatt--metadata"></a>

@@ -15,6 +15,7 @@ import (
 	mkafkamodel "go.mws.cloud/go-sdk/service/mkafka/model"
 	mkafkasdk "go.mws.cloud/go-sdk/service/mkafka/sdk"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
+	rmref "go.mws.cloud/go-sdk/service/resources/references/rm"
 	vpcref "go.mws.cloud/go-sdk/service/resources/references/vpc"
 
 	mkafkatest "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/acctest"
@@ -78,7 +79,7 @@ func (s *KafkaUserSuite) SetupSuite() {
 						VmType: gen24,
 						Disk:   mkafkamodel.KafkaDataDiskSpecRequest{Size: disk10GB},
 						Allocation: []mkafkamodel.KafkaAllocationRequest{{
-							Zone:  "ru-central1-a",
+							Zone:  rmref.NewZoneRef("ru-central1-a"),
 							Count: 1,
 						}},
 					},

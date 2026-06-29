@@ -49,7 +49,7 @@ func (p *Provider) Schema(resp *tfprovider.SchemaResponse) {
 		Attributes: map[string]tfschema.Attribute{
 			TFEndpointVar: tfschema.StringAttribute{
 				MarkdownDescription: "Endpoint for the provider API calls, default value is <https://api.mwsapis.ru>. " +
-					"This can also be specified using environment variable `MWS_ENDPOINT`.",
+					"This can also be specified using environment variable `MWS_BASE_ENDPOINT`.",
 				Optional: true,
 			},
 			TFMWSTokenVar: tfschema.StringAttribute{

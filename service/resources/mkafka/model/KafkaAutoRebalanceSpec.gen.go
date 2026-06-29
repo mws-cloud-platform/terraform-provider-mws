@@ -13,10 +13,10 @@ type KafkaAutoRebalanceSpec struct {
 
 func (s *KafkaAutoRebalanceSpec) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Настройка Auto Rebalance для кластера.`,
+		MarkdownDescription: `Настройка автоматической ребалансировки для кластера.`,
 		Attributes: map[string]schema.Attribute{
 			"enabled": schema.BoolAttribute{
-				MarkdownDescription: `Значение включен/выключен auto rebalance.`,
+				MarkdownDescription: `Состояние автоматической ребалансировки — включена или выключена`,
 				Optional:            true,
 			},
 		},

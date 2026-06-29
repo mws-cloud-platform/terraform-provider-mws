@@ -42,3 +42,33 @@ func TestVpcAddressDnsSpecOptionalResponseConverters(t *testing.T) {
 
 	require.Equal(t, *emptyApiModelResponse, *result)
 }
+
+func TestVpcAddressDnsSpecAPIResponseToTFModelEmpty(t *testing.T) {
+	t.Parallel()
+	emptyApiModel := apimodel.VpcAddressDnsSpecResponse{}
+	_, diags := conv.VpcAddressDnsSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	require.False(t, diags.HasError())
+}
+
+func TestVpcAddressDnsSpecResponseConverters(t *testing.T) {
+	t.Parallel()
+	emptyApiModelRequest := apimodel.VpcAddressDnsSpecRequest{
+		Name: "name",
+		Ttl:  duration.MustParseString("PT0S"),
+		Ptr:  false,
+	}
+
+	emptyApiModelResponse, err := apimodel.VpcAddressDnsSpecRequestToResponse(&emptyApiModelRequest)
+	require.NoError(t, err)
+
+	tfModel, diags := conv.VpcAddressDnsSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	require.False(t, diags.HasError())
+
+	filledApiModelRequest, diags := conv.VpcAddressDnsSpecTFToAPIRequestModel(context.Background(), tfModel)
+	require.False(t, diags.HasError())
+
+	result, err := apimodel.VpcAddressDnsSpecRequestToResponse(filledApiModelRequest)
+	require.NoError(t, err)
+
+	require.Equal(t, *emptyApiModelResponse, *result)
+}

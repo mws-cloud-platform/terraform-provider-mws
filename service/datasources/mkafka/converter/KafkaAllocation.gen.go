@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/resources/references/rm"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/model"
 )
 
@@ -20,7 +21,7 @@ func KafkaAllocationAPIResponseToTFModel(ctx context.Context, am *apimodel.Kafka
 	var diags tfdiag.Diagnostics
 	var t tfmodel.KafkaAllocation
 
-	t.Zone = types.StringValue(am.Zone)
+	t.Zone = types.StringValue(am.Zone.Path())
 
 	t.Count = types.Int64Value(int64(am.Count))
 
@@ -36,7 +37,12 @@ func KafkaAllocationTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaAl
 	var am apimodel.KafkaAllocationRequest
 
 	if !tm.Zone.IsNull() && !tm.Zone.IsUnknown() {
-		am.Zone = tm.Zone.ValueString()
+		zoneRef, err := rm.ParseZoneRef(ctx, tm.Zone.ValueString())
+		if err != nil {
+			diags.AddError("reference parsing", err.Error())
+			return nil, diags
+		}
+		am.Zone = zoneRef
 	}
 
 	if !tm.Count.IsNull() && !tm.Count.IsUnknown() {

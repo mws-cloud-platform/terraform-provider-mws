@@ -77,7 +77,7 @@ func (s *KafkaCluster) GetSchema() schema.Schema {
 			},
 			"auto_rebalance": schema.SingleNestedAttribute{
 				Attributes:          new(KafkaAutoRebalanceSpec).GetSchema().Attributes,
-				MarkdownDescription: `Настройка Auto Rebalance для кластера.`,
+				MarkdownDescription: `Настройка автоматической ребалансировки для кластера.`,
 				Computed:            true,
 			},
 		},

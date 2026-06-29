@@ -93,13 +93,9 @@ Read-Only:
 
 Read-Only:
 
-- `addresses` (Attributes List) К одному сетевому интерфейсу можно подключить одновременно 4 разных сетевых адреса
-- IPv4 internal
-- IPv4 external
-- IPv6 internal
-- IPv6 external (see [below for nested schema](#nestedatt--network--network_interfaces--addresses))
+- `addresses` (Attributes List) IP-адреса сетевого интерфейса (see [below for nested schema](#nestedatt--network--network_interfaces--addresses))
 - `ip_forwarding_enabled` (Boolean)
-- `name` (String)
+- `name` (String) Имя сетевого интерфейса
 - `primary` (Boolean)
 
 <a id="nestedatt--network--network_interfaces--addresses"></a>

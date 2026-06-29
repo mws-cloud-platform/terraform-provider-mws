@@ -13,13 +13,14 @@ import (
 
 type CertificateStatus struct {
 	tfcommon.ResourceStatus
-	Details        types.Object              `tfsdk:"details"`
-	Valid          types.Bool                `tfsdk:"valid"`
-	Reason         CertificateStatusReason   `tfsdk:"reason"`
-	RenewalStatus  CertificateRenewalStatus  `tfsdk:"renewal_status"`
-	ManagementType CertificateManagementType `tfsdk:"management_type"`
-	Challenges     types.List                `tfsdk:"challenges"`
-	RenewalAt      types.String              `tfsdk:"renewal_at"`
+	Details            types.Object              `tfsdk:"details"`
+	Valid              types.Bool                `tfsdk:"valid"`
+	Reason             CertificateStatusReason   `tfsdk:"reason"`
+	RenewalStatus      CertificateRenewalStatus  `tfsdk:"renewal_status"`
+	ManagementType     CertificateManagementType `tfsdk:"management_type"`
+	Challenges         types.List                `tfsdk:"challenges"`
+	RenewalAt          types.String              `tfsdk:"renewal_at"`
+	ChallengesDeadline types.String              `tfsdk:"challenges_deadline"`
 }
 
 func (s *CertificateStatus) GetSchema() schema.Schema {
@@ -87,6 +88,11 @@ func (s *CertificateStatus) GetSchema() schema.Schema {
 			"renewal_at": schema.StringAttribute{
 				MarkdownDescription: `Время следующего обновления сертификата.`,
 				Computed:            true,
+			},
+			"challenges_deadline": schema.StringAttribute{
+				MarkdownDescription: `Время, до которого необходимо настроить делегацию для прохождения проверки прав на домены.
+Присутствует только в случае, если сертификат управляемый.`,
+				Computed: true,
 			},
 		},
 	}

@@ -38,7 +38,7 @@ data "mws_mkafka_cluster" "mkafka_kafka" {
 ### Read-Only
 
 - `active` (Boolean) Значение включен/выключен кластер.
-- `auto_rebalance` (Attributes) Настройка Auto Rebalance для кластера. (see [below for nested schema](#nestedatt--auto_rebalance))
+- `auto_rebalance` (Attributes) Настройка автоматической ребалансировки для кластера. (see [below for nested schema](#nestedatt--auto_rebalance))
 - `endpoints` (Attributes List) Описание эндпойнтов в сетях пользователя (VPC) для подключения к брокерам кластера. (see [below for nested schema](#nestedatt--endpoints))
 - `instances` (Attributes) Описание ресурсов хостов брокеров и контроллеров. (see [below for nested schema](#nestedatt--instances))
 - `kind` (String)
@@ -54,7 +54,7 @@ data "mws_mkafka_cluster" "mkafka_kafka" {
 
 Read-Only:
 
-- `enabled` (Boolean) Значение включен/выключен auto rebalance.
+- `enabled` (Boolean) Состояние автоматической ребалансировки — включена или выключена
 
 
 <a id="nestedatt--endpoints"></a>
@@ -232,7 +232,7 @@ Read-Only:
 
 Read-Only:
 
-- `auto_rebalance` (Attributes) Настройка Auto Rebalance для кластера. (see [below for nested schema](#nestedatt--status--auto_rebalance))
+- `auto_rebalance` (Attributes) Настройка автоматической ребалансировки для кластера. (see [below for nested schema](#nestedatt--status--auto_rebalance))
 - `effective_kafka_config` (Map of String) Конфигурация параметров кластера после валидации и преобразования из пользователского ввода
 - `endpoints` (Attributes List) Описание эндпойнтов в сетях пользователя (VPC) для подключения к брокерам кластера. (see [below for nested schema](#nestedatt--status--endpoints))
 - `health` (String) Работоспособность кластера
@@ -263,7 +263,7 @@ Read-Only:
 
 Read-Only:
 
-- `enabled` (Boolean) Значение включен/выключен auto rebalance.
+- `enabled` (Boolean) Состояние автоматической ребалансировки — включена или выключена
 
 
 <a id="nestedatt--status--endpoints"></a>

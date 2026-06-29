@@ -25,7 +25,7 @@ provider "mws" {
 
 ### Optional
 
-- `endpoint` (String) Endpoint for the provider API calls, default value is <https://api.mwsapis.ru>. This can also be specified using environment variable `MWS_ENDPOINT`.
+- `endpoint` (String) Endpoint for the provider API calls, default value is <https://api.mwsapis.ru>. This can also be specified using environment variable `MWS_BASE_ENDPOINT`.
 - `mws_token` (String, Sensitive) IAM token for authentication. This can also be specified using environment variable `MWS_TOKEN`. Either `mws_token` or `service_account_authorized_key_path` must be specified. Alternatively, you can run this provider inside a Compute VM with a linked service account.
 - `project` (String) Project name. This can also be specified using environment variable `MWS_PROJECT`.
 - `service_account_authorized_key_path` (String) Path to the service account authorization key file. This can also be specified using environment variable `MWS_SERVICE_ACCOUNT_AUTHORIZED_KEY_PATH`. Either `mws_token` or `service_account_authorized_key_path` must be specified. Alternatively, you can run this provider inside a Compute VM with a linked service account.
