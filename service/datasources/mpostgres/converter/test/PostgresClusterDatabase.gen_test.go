@@ -25,7 +25,7 @@ func TestPostgresClusterDatabaseResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.PostgresClusterDatabaseRequest{
 		Spec: apimodel.PostgresClusterDatabaseSpecRequest{
-			Owner: mpostgres.NewMustPostgresClusterUserRef("projectID", "pd", "K"),
+			Owner: mpostgres.NewMustPostgresClusterUserRef("projectID", "p", "e"),
 		},
 	}
 

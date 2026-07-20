@@ -16,7 +16,7 @@ func (s *ResourceExternalAddressSpec) GetSchema() schema.Schema {
 		MarkdownDescription: `Спецификация внешнего адреса.`,
 		Attributes: map[string]schema.Attribute{
 			"nat_gateway": schema.StringAttribute{
-				MarkdownDescription: `Шлюз, к которому относится адрес. Если шлюз не указан, для трансляции IP-адресов используется шлюз по умолчанию для выхода в интернет (ref=natGateways/internet-gateway).`,
+				MarkdownDescription: `Шлюз, к которому относится адрес. Если шлюз не указан, для трансляции IP-адресов используется шлюз по умолчанию для выхода в интернет (ref=natGateways/internet-gateway)`,
 				Computed:            true,
 			},
 		},

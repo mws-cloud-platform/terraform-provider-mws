@@ -17,7 +17,7 @@ func (s *NlbStatusListenerExternal) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"address": schema.SingleNestedAttribute{
 				Attributes:          new(ResourceExternalAddressStatus).GetSchema().Attributes,
-				MarkdownDescription: `Статус IP-адреса внешнего балансировщика.`,
+				MarkdownDescription: `Статус IP-адреса внешнего балансировщика`,
 				Computed:            true,
 			},
 		},

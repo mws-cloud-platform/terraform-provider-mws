@@ -107,6 +107,17 @@ func PostgresClusterUserAPIResponseToTFModel(ctx context.Context, am *apimodel.P
 		})
 	}
 
+	if am.Spec.AccessControlPolicy != nil {
+		accessControlPolicyTmp, d := PostgresUserAccessControlPolicyAPIToTFModel(ctx, am.Spec.AccessControlPolicy)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.AccessControlPolicy = accessControlPolicyTmp
+	} else {
+		t.AccessControlPolicy = types.StringNull()
+	}
+
 	return &t, diags
 }
 
@@ -160,6 +171,15 @@ func PostgresClusterUserTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Pos
 			}
 			am.Spec.AdditionalRoles = append(am.Spec.AdditionalRoles, *tmp)
 		}
+	}
+
+	if !tm.AccessControlPolicy.IsNull() && !tm.AccessControlPolicy.IsUnknown() {
+		accessControlPolicyTmp, accessControlPolicyDiag := PostgresUserAccessControlPolicyTFToAPIModel(ctx, tm.AccessControlPolicy)
+		diags = append(diags, accessControlPolicyDiag...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		am.Spec.AccessControlPolicy = accessControlPolicyTmp
 	}
 
 	return &am, diags

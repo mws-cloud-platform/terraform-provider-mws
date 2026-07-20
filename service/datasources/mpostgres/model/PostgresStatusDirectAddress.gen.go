@@ -24,19 +24,20 @@ func (s *PostgresStatusDirectAddress) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"ip": schema.StringAttribute{
-				Computed: true,
+				MarkdownDescription: `IPv4- или IPv6-адрес`,
+				Computed:            true,
 			},
 			"external": schema.SingleNestedAttribute{
 				Attributes:          new(PostgresStatusExternalAddress).GetSchema().Attributes,
-				MarkdownDescription: `Описание внешнего ip адреса для доступа к кластеру`,
+				MarkdownDescription: `Описание внешнего IP-адреса для доступа к кластеру`,
 				Computed:            true,
 			},
 			"zone": schema.StringAttribute{
-				MarkdownDescription: `Зона инстанса, к которому ведет адрес.`,
+				MarkdownDescription: `Зона инстанса, к которому ведет адрес`,
 				Computed:            true,
 			},
 			"instance": schema.StringAttribute{
-				MarkdownDescription: `Имя инстанса, к которому ведет адрес.`,
+				MarkdownDescription: `Имя инстанса, к которому ведет адрес`,
 				Computed:            true,
 			},
 		},

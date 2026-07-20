@@ -18,17 +18,17 @@ func (s *SubnetDhcpOptions) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"domain_name": schema.StringAttribute{
-				MarkdownDescription: `Базовое доменное имя для разрешения имен.`,
+				MarkdownDescription: `Базовое доменное имя для разрешения имен`,
 				Computed:            true,
 			},
 			"domain_name_servers": schema.ListAttribute{
 				ElementType:         types.StringType,
-				MarkdownDescription: `Список адресов DNS серверов.`,
+				MarkdownDescription: `Список адресов DNS серверов`,
 				Computed:            true,
 			},
 			"ntp_servers": schema.ListAttribute{
 				ElementType:         types.StringType,
-				MarkdownDescription: `Список адресов NTP серверов.`,
+				MarkdownDescription: `Список адресов NTP серверов`,
 				Computed:            true,
 			},
 		},

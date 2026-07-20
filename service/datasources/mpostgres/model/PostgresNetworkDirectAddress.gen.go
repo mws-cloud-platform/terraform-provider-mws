@@ -17,21 +17,21 @@ func (s *PostgresNetworkDirectAddress) GetSchema() schema.Schema {
 		MarkdownDescription: `Описание адресов к инстансам postgres, в которые будет трансляция из service-vpc.`,
 		Attributes: map[string]schema.Attribute{
 			"ref": schema.StringAttribute{
-				MarkdownDescription: `Идентификатор адресса, в которые будет трансляция из service-vpc.`,
+				MarkdownDescription: `Идентификатор адреса для подключения к узлу`,
 				Computed:            true,
 			},
 			"spec": schema.SingleNestedAttribute{
 				Attributes:          new(PostgresNetworkAddressSpec).GetSchema().Attributes,
-				MarkdownDescription: `Описание subnet пользователя, в который будет трансляция из service-vpc.`,
+				MarkdownDescription: `Описание подсети пользователя, используемой для подключения к узлам`,
 				Computed:            true,
 			},
 			"external_access": schema.SingleNestedAttribute{
 				Attributes:          new(PostgresExternalAccessSpec).GetSchema().Attributes,
-				MarkdownDescription: `Описание адреса для внешнего подключения к кластеру.`,
+				MarkdownDescription: `Описание адреса для внешнего подключения к кластеру`,
 				Computed:            true,
 			},
 			"zone": schema.StringAttribute{
-				MarkdownDescription: `Зона инстанса, к которому ведет адрес.`,
+				MarkdownDescription: `Зона инстанса, к которому ведет адрес`,
 				Computed:            true,
 			},
 		},

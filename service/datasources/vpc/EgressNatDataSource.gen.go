@@ -49,7 +49,7 @@ func (m *EgressNatDataSource) Schema(ctx context.Context, req datasource.SchemaR
 		Required:            true,
 	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к проекту`,
+		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
 	}

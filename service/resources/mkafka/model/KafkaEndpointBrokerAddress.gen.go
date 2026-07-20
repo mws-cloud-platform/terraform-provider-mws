@@ -17,12 +17,12 @@ func (s *KafkaEndpointBrokerAddress) GetSchema() schema.Schema {
 		MarkdownDescription: `Описание адреса пользовательской сети, назначаемого брокеру. Задается или идентификатор существующего адреса, или спецификация нового.`,
 		Attributes: map[string]schema.Attribute{
 			"ref": schema.StringAttribute{
-				MarkdownDescription: `Идентификатор существующего адреса.`,
+				MarkdownDescription: `Идентификатор существующего адреса`,
 				Optional:            true,
 			},
 			"spec": schema.SingleNestedAttribute{
 				Attributes:          new(KafkaEndpointBrokerAddressSpec).GetSchema().Attributes,
-				MarkdownDescription: `Спецификация нового адреса. Адрес будет выделен в ходе реконсиляции кластера.`,
+				MarkdownDescription: `Спецификация нового адреса. Адрес будет выделен в ходе реконсиляции кластера`,
 				Optional:            true,
 			},
 		},

@@ -5,8 +5,6 @@ package model
 import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
@@ -40,8 +38,14 @@ func (s *DiskStatus) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"size": schema.StringAttribute{
-				MarkdownDescription: `Размер диска`,
-				Computed:            true,
+				MarkdownDescription: `Размер диска
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются`,
+				Computed: true,
 			},
 			"iops": schema.SingleNestedAttribute{
 				Attributes:          new(DiskStatusIops).GetSchema().Attributes,
@@ -57,8 +61,14 @@ func (s *DiskStatus) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"block_size": schema.StringAttribute{
-				MarkdownDescription: `Размер блока диска`,
-				Computed:            true,
+				MarkdownDescription: `Размер блока диска
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются`,
+				Computed: true,
 			},
 			"linked_vms": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
@@ -66,9 +76,6 @@ func (s *DiskStatus) GetSchema() schema.Schema {
 				},
 				MarkdownDescription: `Информация о ВМ, использующих этот диск`,
 				Computed:            true,
-				PlanModifiers: []planmodifier.List{
-					listplanmodifier.RequiresReplaceIfConfigured(),
-				},
 			},
 			"initial_source_image": schema.StringAttribute{
 				MarkdownDescription: `Ссылка на исходный образ`,

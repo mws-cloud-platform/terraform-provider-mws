@@ -15,7 +15,7 @@ func (s *KafkaDataDiskStatus) GetSchema() schema.Schema {
 		MarkdownDescription: `Параметры диска с данными на узле кластера Managed Kafka.`,
 		Attributes: map[string]schema.Attribute{
 			"iops": schema.Int64Attribute{
-				MarkdownDescription: `Количество дисковых операций в секунду.`,
+				MarkdownDescription: `Количество дисковых операций в секунду`,
 				Computed:            true,
 			},
 		},

@@ -4,7 +4,6 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -38,21 +37,18 @@ Plane (управляющего слоя) и групп рабочих узло�
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes,
-				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров.`,
+				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров`,
 				Computed:            true,
 				Optional:            true,
 			},
 			"status": schema.SingleNestedAttribute{
 				Attributes:          new(ClusterStatus).GetSchema().Attributes,
-				MarkdownDescription: `Описывает статусную модель k8s cluster.`,
+				MarkdownDescription: `Описывает статусную модель k8s cluster`,
 				Computed:            true,
 			},
 			"availability": schema.SingleNestedAttribute{
 				Attributes: new(ClusterAvailabilitySpec).GetSchema().Attributes,
 				Required:   true,
-				PlanModifiers: []planmodifier.Object{
-					objectplanmodifier.RequiresReplaceIfConfigured(),
-				},
 			},
 			"network": schema.SingleNestedAttribute{
 				Attributes: new(ClusterSpecNetwork).GetSchema().Attributes,

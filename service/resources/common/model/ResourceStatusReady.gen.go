@@ -16,7 +16,7 @@ type ResourceStatusReady struct {
 
 func (s *ResourceStatusReady) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Информация о статусе реконсиляции`,
+		MarkdownDescription: `Информация о статусе реконсиляции.`,
 		Attributes: map[string]schema.Attribute{
 			"state": schema.StringAttribute{
 				MarkdownDescription: `Состояние ресурса`,

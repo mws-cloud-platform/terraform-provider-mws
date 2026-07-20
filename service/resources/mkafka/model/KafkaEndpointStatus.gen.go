@@ -22,36 +22,36 @@ func (s *KafkaEndpointStatus) GetSchema() schema.Schema {
 		MarkdownDescription: `Описание эндпойнтов кластера в пользовательской сети (VPC)`,
 		Attributes: map[string]schema.Attribute{
 			"name": schema.StringAttribute{
-				MarkdownDescription: `Имя эндпойнта.`,
+				MarkdownDescription: `Имя эндпойнта`,
 				Computed:            true,
 			},
 			"network": schema.StringAttribute{
-				MarkdownDescription: `Идентификатор пользовательской сети (VPC).`,
+				MarkdownDescription: `Идентификатор пользовательской сети (VPC)`,
 				Computed:            true,
 			},
 			"bootstrap_servers": schema.StringAttribute{
-				MarkdownDescription: `Список адресов для первоначального подключения к кластеру внутри пользовательской (VPC).`,
+				MarkdownDescription: `Список адресов для первоначального подключения к кластеру внутри пользовательской (VPC)`,
 				Computed:            true,
 			},
 			"schema_registry": schema.SingleNestedAttribute{
 				Attributes:          new(KafkaSchemaRegistryUrls).GetSchema().Attributes,
-				MarkdownDescription: `Адреса Schema Registry во внутренней сети (VPC).`,
+				MarkdownDescription: `Адреса Schema Registry во внутренней сети (VPC)`,
 				Computed:            true,
 			},
 			"port": schema.Int64Attribute{
-				MarkdownDescription: `Порт для доступа к кластеру Kafka внутри пользовательской сети (VPC).`,
+				MarkdownDescription: `Порт для доступа к кластеру Kafka внутри пользовательской сети (VPC)`,
 				Computed:            true,
 			},
 			"broker_addresses": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(KafkaEndpointBrokerAddressStatus).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Список адресов в пользовательской сети, на которые "отображаются" брокеры.`,
+				MarkdownDescription: `Список адресов в пользовательской сети, на которые "отображаются" брокеры`,
 				Computed:            true,
 			},
 			"external_access": schema.SingleNestedAttribute{
 				Attributes:          new(KafkaEndpointExternalAccessesStatus).GetSchema().Attributes,
-				MarkdownDescription: `Настройка внешнего доступа к кластеру Kafka.`,
+				MarkdownDescription: `Настройка внешнего доступа к кластеру Kafka`,
 				Computed:            true,
 			},
 		},

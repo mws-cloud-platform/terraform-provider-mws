@@ -4,9 +4,6 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -22,22 +19,21 @@ func (s *StorageDiskSpec) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"size": schema.StringAttribute{
+				MarkdownDescription: `Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются`,
 				Optional: true,
 			},
 			"source": schema.SingleNestedAttribute{
 				Attributes:          new(StorageDiskSpecSource).GetSchema().Attributes,
 				MarkdownDescription: `Источник для создания диска`,
 				Optional:            true,
-				PlanModifiers: []planmodifier.Object{
-					objectplanmodifier.RequiresReplaceIfConfigured(),
-				},
 			},
 			"disk_type": schema.StringAttribute{
 				MarkdownDescription: `Ссылка на тип диска`,
 				Optional:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-				},
 			},
 			"iops": schema.Int64Attribute{
 				MarkdownDescription: `Запрашиваемая пользователем IOPS`,
@@ -58,9 +54,6 @@ func (s *StorageDiskSpecSource) GetSchema() schema.Schema {
 			"image": schema.StringAttribute{
 				MarkdownDescription: `Ссылка на образ`,
 				Optional:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-				},
 			},
 		},
 	}

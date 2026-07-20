@@ -18,15 +18,15 @@ func (s *NlbStatusHealthCheckHttps) GetSchema() schema.Schema {
 		MarkdownDescription: `Конфигурация проверки работоспособности по протоколу HTTPS.`,
 		Attributes: map[string]schema.Attribute{
 			"port": schema.Int64Attribute{
-				MarkdownDescription: `Порт виртуальной машины, на который будет отправляться запрос.`,
+				MarkdownDescription: `Порт виртуальной машины, на который будет отправляться запрос`,
 				Computed:            true,
 			},
 			"path": schema.StringAttribute{
-				MarkdownDescription: `URL-путь, на который будет отправляться запрос.`,
+				MarkdownDescription: `URL-путь, на который будет отправляться запрос`,
 				Computed:            true,
 			},
 			"expected_code": schema.Int64Attribute{
-				MarkdownDescription: `Ожидаемый HTTP-код ответа.`,
+				MarkdownDescription: `Ожидаемый HTTP-код ответа`,
 				Computed:            true,
 			},
 		},

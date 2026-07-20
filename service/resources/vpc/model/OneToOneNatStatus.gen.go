@@ -26,12 +26,12 @@ func (s *OneToOneNatStatus) GetSchema() schema.Schema {
 			},
 			"internal": schema.SingleNestedAttribute{
 				Attributes:          new(OneToOneNatStatusInternal).GetSchema().Attributes,
-				MarkdownDescription: `Группирующий элемент для всего, что касается внутренних ресурсов.`,
+				MarkdownDescription: `Группирующий элемент для всего, что касается внутренних ресурсов`,
 				Computed:            true,
 			},
 			"external": schema.SingleNestedAttribute{
 				Attributes:          new(OneToOneNatStatusExternal).GetSchema().Attributes,
-				MarkdownDescription: `Группирующий элемент для всего, что касается внешней части (ресурсов, доступных извне).`,
+				MarkdownDescription: `Группирующий элемент для всего, что касается внешней части (ресурсов, доступных извне)`,
 				Computed:            true,
 			},
 		},

@@ -11,6 +11,7 @@ type OutputModalities struct {
 	Text          types.Bool `tfsdk:"text"`
 	Embedding     types.Bool `tfsdk:"embedding"`
 	Audio         types.Bool `tfsdk:"audio"`
+	Image         types.Bool `tfsdk:"image"`
 	Reranking     types.Bool `tfsdk:"reranking"`
 	Transcription types.Bool `tfsdk:"transcription"`
 }
@@ -26,6 +27,9 @@ func (s *OutputModalities) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"audio": schema.BoolAttribute{
+				Computed: true,
+			},
+			"image": schema.BoolAttribute{
 				Computed: true,
 			},
 			"reranking": schema.BoolAttribute{

@@ -16,7 +16,7 @@ func (s *ClickhouseClusterBootstrapAdminSpec) GetSchema() schema.Schema {
 		MarkdownDescription: `Добавление пользователей при создании кластера Clickhouse.`,
 		Attributes: map[string]schema.Attribute{
 			"username": schema.StringAttribute{
-				MarkdownDescription: `Имя учетной записи администратора.`,
+				MarkdownDescription: `Имя учетной записи администратора`,
 				Computed:            true,
 			},
 		},

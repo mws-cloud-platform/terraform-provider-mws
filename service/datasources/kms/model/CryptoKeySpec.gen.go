@@ -17,17 +17,17 @@ func (s *CryptoKeySpecDestructionPolicy) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля DestructionPolicy анонимного типа структуры CryptoKeySpec`,
 		Attributes: map[string]schema.Attribute{
 			"default_destruction_interval_days": schema.Int64Attribute{
-				MarkdownDescription: `Указывает количество дней, по истечении которых ключ будет окончательно уничтожен, 
+				MarkdownDescription: `Указывает количество дней, по истечении которых ключ будет окончательно уничтожен,
 начиная с момента отправки запроса на удаление.
 Значение можно задать только при создании ключа, и оно не может быть изменено позже.
-Если значение не указано при создании ключа, используется значение по умолчанию (1 день).
-`,
+Если значение не указано при создании ключа, используется значение по умолчанию (1 день)`,
 				Computed: true,
 			},
 			"scheduled_destruction_time": schema.StringAttribute{
 				MarkdownDescription: `Временная метка, указывающая, когда ключ должен быть уничтожен.
-Если это поле установлено, ключ будет автоматически уничтожен в указанное время.
-`,
+Если это поле установлено, ключ будет автоматически уничтожен в указанное время
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
 				Computed:           true,
 				DeprecationMessage: `Отказываемся в пользу scheduledDestructionTime в блоке status`,
 			},
@@ -45,14 +45,12 @@ func (s *CryptoKeySpecRotationPolicy) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля RotationPolicy анонимного типа структуры CryptoKeySpec`,
 		Attributes: map[string]schema.Attribute{
 			"enabled": schema.BoolAttribute{
-				MarkdownDescription: `Флаг, указывающий, включена ли автоматическая ротация для ключа.
-`,
-				Computed: true,
+				MarkdownDescription: `Флаг, указывающий, включена ли автоматическая ротация для ключа`,
+				Computed:            true,
 			},
 			"rotation_interval_days": schema.Int64Attribute{
-				MarkdownDescription: `Интервал в днях, через который должна выполняться ротация криптографического ключа.
-`,
-				Computed: true,
+				MarkdownDescription: `Интервал в днях, через который должна выполняться ротация криптографического ключа`,
+				Computed:            true,
 			},
 		},
 	}
@@ -69,8 +67,7 @@ func (s *CryptoKeySpecUsagePolicy) GetSchema() schema.Schema {
 			"enabled": schema.BoolAttribute{
 				MarkdownDescription: `Флаг, указывающий, разрешены ли криптографические операции с этим ключом.
 Если значение установлено в "false", все операции шифрования, расшифровки и другие
-криптографические операции с этим ключом будут заблокированы.
-`,
+криптографические операции с этим ключом будут заблокированы`,
 				Computed: true,
 			},
 		},

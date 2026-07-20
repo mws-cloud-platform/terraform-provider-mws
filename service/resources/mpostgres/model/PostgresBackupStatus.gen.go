@@ -30,15 +30,27 @@ func (s *PostgresBackupStatus) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"start_time": schema.StringAttribute{
-				Computed: true,
+				MarkdownDescription: `Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed:            true,
 			},
 			"finish_time": schema.StringAttribute{
-				Computed: true,
+				MarkdownDescription: `Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed:            true,
 			},
 			"uncompressed_size": schema.StringAttribute{
+				MarkdownDescription: `Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются`,
 				Computed: true,
 			},
 			"compressed_size": schema.StringAttribute{
+				MarkdownDescription: `Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются`,
 				Computed: true,
 			},
 			"backup_trigger": schema.StringAttribute{

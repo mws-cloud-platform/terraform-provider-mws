@@ -18,12 +18,12 @@ func (s *NlbStatusListener) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"internal": schema.SingleNestedAttribute{
 				Attributes:          new(NlbStatusListenerInternal).GetSchema().Attributes,
-				MarkdownDescription: `Статус IP-адреса внутреннего балансировщика.`,
+				MarkdownDescription: `Статус IP-адреса внутреннего балансировщика`,
 				Computed:            true,
 			},
 			"external": schema.SingleNestedAttribute{
 				Attributes:          new(NlbStatusListenerExternal).GetSchema().Attributes,
-				MarkdownDescription: `Статус IP-адреса внешнего балансировщика.`,
+				MarkdownDescription: `Статус IP-адреса внешнего балансировщика`,
 				Computed:            true,
 			},
 		},

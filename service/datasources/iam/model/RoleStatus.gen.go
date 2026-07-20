@@ -25,7 +25,7 @@ func (s *RoleStatus) GetSchema() schema.Schema {
 			},
 			"stage": schema.SingleNestedAttribute{
 				Attributes:          new(RoleStage).GetSchema().Attributes,
-				MarkdownDescription: `Состояние роли (этап жизненного цикла).`,
+				MarkdownDescription: `Состояние роли (этап жизненного цикла)`,
 				Computed:            true,
 			},
 		},

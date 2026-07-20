@@ -14,10 +14,10 @@ type ClickhouseEndpointExternalAddressSpecOrRef struct {
 
 func (s *ClickhouseEndpointExternalAddressSpecOrRef) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Описание шаблона внешнего адреса/адресов, которые будут выделены. Для 'ref' будет выделен только один адрес, для 'spec', будет выделено  необходимое количество адресов, в зависимости от сущности, для которой выделяются адреса.`,
+		MarkdownDescription: `Описание шаблона внешнего адреса/адресов, которые будут выделены. Для "ref" будет выделен только один адрес, для "spec" будет выделено необходимое количество адресов в зависимости от сущности, для которой выделяются адреса.`,
 		Attributes: map[string]schema.Attribute{
 			"ref": schema.StringAttribute{
-				MarkdownDescription: `Ссылка на external address в vpc`,
+				MarkdownDescription: `Ссылка на внешний адрес эндпоинта в VPC`,
 				Optional:            true,
 			},
 			"spec": schema.SingleNestedAttribute{

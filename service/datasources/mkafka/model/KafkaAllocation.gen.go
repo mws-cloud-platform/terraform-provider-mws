@@ -17,11 +17,11 @@ func (s *KafkaAllocation) GetSchema() schema.Schema {
 		MarkdownDescription: `Конфигурация (размещение) узлов кластера по зонам.`,
 		Attributes: map[string]schema.Attribute{
 			"zone": schema.StringAttribute{
-				MarkdownDescription: `Зона расположения узла.`,
+				MarkdownDescription: `Зона расположения узла`,
 				Computed:            true,
 			},
 			"count": schema.Int64Attribute{
-				MarkdownDescription: `Количество брокеров в зоне/подсети.`,
+				MarkdownDescription: `Количество брокеров в зоне/подсети`,
 				Computed:            true,
 			},
 		},

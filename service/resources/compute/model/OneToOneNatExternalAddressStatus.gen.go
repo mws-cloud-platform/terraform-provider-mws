@@ -18,13 +18,13 @@ func (s *OneToOneNatExternalAddressStatus) GetSchema() schema.Schema {
 `,
 		Attributes: map[string]schema.Attribute{
 			"ref": schema.StringAttribute{
-				MarkdownDescription: `ref на публичный Адрес
-`,
-				Computed: true,
+				MarkdownDescription: `Ref на публичный Адрес`,
+				Computed:            true,
 			},
 			"ip_address": schema.StringAttribute{
 				MarkdownDescription: `Фактически присвоенный публичный Адрес
-`,
+
+IPv4- или IPv6-адрес`,
 				Computed: true,
 			},
 		},

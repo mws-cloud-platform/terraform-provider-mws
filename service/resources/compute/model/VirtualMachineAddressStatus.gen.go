@@ -25,23 +25,21 @@ func (s *VirtualMachineAddressStatus) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"subnet": schema.StringAttribute{
-				MarkdownDescription: `Подсеть, в которой был создан адрес
-`,
-				Computed: true,
+				MarkdownDescription: `Подсеть, в которой был создан адрес`,
+				Computed:            true,
 			},
 			"network": schema.StringAttribute{
-				MarkdownDescription: `Сеть, в которой был создан адрес
-`,
-				Computed: true,
+				MarkdownDescription: `Сеть, в которой был создан адрес`,
+				Computed:            true,
 			},
 			"ref": schema.StringAttribute{
-				MarkdownDescription: `ref на ресурс Адрес
-`,
-				Computed: true,
+				MarkdownDescription: `Ref на ресурс Адрес`,
+				Computed:            true,
 			},
 			"ip_address": schema.StringAttribute{
 				MarkdownDescription: `Выделенный IP-адрес
-`,
+
+IPv4- или IPv6-адрес`,
 				Computed: true,
 			},
 			"standard_dns": schema.SingleNestedAttribute{
@@ -55,10 +53,9 @@ func (s *VirtualMachineAddressStatus) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"ready": schema.SingleNestedAttribute{
-				Attributes: new(tfcommon.ResourceStatusReady).GetSchema().Attributes,
-				MarkdownDescription: `Статус ресурса Адрес
-`,
-				Computed: true,
+				Attributes:          new(tfcommon.ResourceStatusReady).GetSchema().Attributes,
+				MarkdownDescription: `Статус ресурса Адрес`,
+				Computed:            true,
 			},
 			"one_to_one_nat": schema.SingleNestedAttribute{
 				Attributes: new(VirtualMachineOneToOneNatStatus).GetSchema().Attributes,

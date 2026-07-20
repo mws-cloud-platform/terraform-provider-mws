@@ -32,20 +32,20 @@ func (s *VpcAddressGroup) GetSchema() schema.Schema {
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes,
-				MarkdownDescription: `Метаданные группы адресов.`,
+				MarkdownDescription: `Метаданные группы адресов`,
 				Computed:            true,
 				Optional:            true,
 			},
 			"status": schema.SingleNestedAttribute{
 				Attributes:          new(VpcAddressGroupStatus).GetSchema().Attributes,
-				MarkdownDescription: `Статус группы адресов.`,
+				MarkdownDescription: `Статус группы адресов`,
 				Computed:            true,
 			},
 			"addresses": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(ResourceAddressSpecOrRef).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Спецификации или ссылки на существующие внутренние адреса.`,
+				MarkdownDescription: `Спецификации или ссылки на существующие внутренние адреса`,
 				Required:            true,
 			},
 		},

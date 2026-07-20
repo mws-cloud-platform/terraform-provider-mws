@@ -27,15 +27,15 @@ data "mws_secretmanager_secret" "secret" {
 
 ### Optional
 
-- `project` (String) Путь к проекту
+- `project` (String) Путь к проекту.
 
 ### Read-Only
 
 - `active` (Boolean) Секрет активен/неактивен
-- `current_secret_version` (String) Номер текущей версии секрета.
+- `current_secret_version` (String) Номер текущей версии секрета
 - `encryption` (Attributes) (see [below for nested schema](#nestedatt--encryption))
 - `kind` (String)
-- `metadata` (Attributes) Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров. (see [below for nested schema](#nestedatt--metadata))
+- `metadata` (Attributes) Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров (see [below for nested schema](#nestedatt--metadata))
 - `status` (Attributes) (see [below for nested schema](#nestedatt--status))
 
 <a id="nestedatt--encryption"></a>
@@ -43,8 +43,8 @@ data "mws_secretmanager_secret" "secret" {
 
 Read-Only:
 
-- `crypto_key_id` (String) Пользовательский крипто-ключ. 
-Значение устанавливается при создании секрета и не может быть изменено.
+- `crypto_key_id` (String) Пользовательский крипто-ключ.
+Значение устанавливается при создании секрета и не может быть изменено
 
 
 <a id="nestedatt--metadata"></a>
@@ -53,22 +53,28 @@ Read-Only:
 Read-Only:
 
 - `create_time` (String) Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `delete_time` (String) Время запроса на удаление ресурса
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `description` (String) Описание ресурса
 - `display_name` (String) Отображаемое имя свойства
 - `id` (String) ID свойства
-- `name` (String, Deprecated) Обязательное уникальное, глобально или в пределах проекта, имя. Используется в качестве части составного идентификатора объекта.
+- `name` (String, Deprecated) Обязательное уникальное, глобально или в пределах проекта, имя. Используется в качестве части составного идентификатора объекта
 - `purge_time` (String) Время удаления ресурса
-- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
 
 <a id="nestedatt--metadata--usages"></a>
 ### Nested Schema for `metadata.usages`
 
 Read-Only:
 
-- `name` (String) Имя связи, требуется для модификации коллекции
+- `name` (String) Имя связи. Требуется для модификации коллекции
 - `resource` (String) Ссылка на ресурс
-- `usage_type` (String) Тип связи. Помимо стандартных own и use могут быть добавлены специализированные типы для конкретных сервисов
+- `usage_type` (String) Тип связи. Помимо стандартных "own" и "use" могут быть добавлены специализированные типы для конкретных сервисов
 
 
 
@@ -78,7 +84,7 @@ Read-Only:
 Read-Only:
 
 - `active` (Boolean) Секрет активен/неактивен
-- `current_secret_version` (String) Номер текущей версии секрета.
+- `current_secret_version` (String) Номер текущей версии секрета
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
 
 <a id="nestedatt--status--ready"></a>

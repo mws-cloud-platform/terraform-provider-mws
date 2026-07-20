@@ -33,16 +33,16 @@ func (s *FirewallRule) GetSchema() schema.Schema {
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes,
-				MarkdownDescription: `Метаданные правила Firewall'а.`,
+				MarkdownDescription: `Метаданные правила Firewall'а`,
 				Computed:            true,
 			},
 			"status": schema.SingleNestedAttribute{
 				Attributes:          new(FirewallRuleStatus).GetSchema().Attributes,
-				MarkdownDescription: `Статус правила Firewall'а.`,
+				MarkdownDescription: `Статус правила Firewall'а`,
 				Computed:            true,
 			},
 			"direction": schema.StringAttribute{
-				MarkdownDescription: `Направление трафика, к которому применяется правило.`,
+				MarkdownDescription: `Направление трафика, к которому применяется правило`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"INGRESS",
@@ -52,11 +52,11 @@ func (s *FirewallRule) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"priority": schema.Int64Attribute{
-				MarkdownDescription: `Приоритет правила. Чем меньше число, тем больший приоритет имеет правило.`,
+				MarkdownDescription: `Приоритет правила. Чем меньше число, тем больший приоритет имеет правило`,
 				Computed:            true,
 			},
 			"action": schema.StringAttribute{
-				MarkdownDescription: `Действие, которое должно быть применено к трафику при срабатывании правила.`,
+				MarkdownDescription: `Действие, которое должно быть применено к трафику при срабатывании правила`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"ALLOW",
@@ -66,22 +66,22 @@ func (s *FirewallRule) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"active": schema.BoolAttribute{
-				MarkdownDescription: `Состояние правила. True - правило активно и контролирует поведение трафика. False - правило не активно.`,
+				MarkdownDescription: `Состояние правила. True - правило активно и контролирует поведение трафика. False - правило не активно`,
 				Computed:            true,
 			},
 			"source": schema.SingleNestedAttribute{
 				Attributes:          new(FirewallRuleSource).GetSchema().Attributes,
-				MarkdownDescription: `Критерий применимости правила, описывает источник отправления пакета.`,
+				MarkdownDescription: `Критерий применимости правила, описывает источник отправления пакета`,
 				Computed:            true,
 			},
 			"destination": schema.SingleNestedAttribute{
 				Attributes:          new(FirewallRuleDestination).GetSchema().Attributes,
-				MarkdownDescription: `Критерий применимости правила, описывает пункт назначения пакета.`,
+				MarkdownDescription: `Критерий применимости правила, описывает пункт назначения пакета`,
 				Computed:            true,
 			},
 			"proto_ports": schema.ListAttribute{
 				ElementType:         types.StringType,
-				MarkdownDescription: `Критерий применимости правила. Определяет список протоколов и соответствующих портов (если применимо) назначения пакета. Значение по умолчанию - пустое значение. Означает любой протокол и порт.`,
+				MarkdownDescription: `Критерий применимости правила. Определяет список протоколов и соответствующих портов (если применимо) назначения пакета. Значение по умолчанию - пустое значение. Означает любой протокол и порт`,
 				Computed:            true,
 			},
 		},

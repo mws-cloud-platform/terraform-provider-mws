@@ -19,7 +19,7 @@ func (s *VpcAddressGroupSpec) GetSchema() schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(ResourceAddressSpecOrRef).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Спецификации или ссылки на существующие внутренние адреса.`,
+				MarkdownDescription: `Спецификации или ссылки на существующие внутренние адреса`,
 				Required:            true,
 			},
 		},

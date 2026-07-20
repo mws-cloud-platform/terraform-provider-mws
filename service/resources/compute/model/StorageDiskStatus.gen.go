@@ -24,36 +24,36 @@ func (s *StorageDiskStatus) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"name": schema.StringAttribute{
-				MarkdownDescription: `Уникальный в рамках ВМ псевдоним (alias) диска
-`,
-				Computed: true,
+				MarkdownDescription: `Уникальный в рамках ВМ псевдоним (alias) диска`,
+				Computed:            true,
 			},
 			"boot": schema.BoolAttribute{
-				MarkdownDescription: `Является ли диск загрузочным
-`,
-				Computed: true,
+				MarkdownDescription: `Является ли диск загрузочным`,
+				Computed:            true,
 			},
 			"device_name": schema.StringAttribute{
-				MarkdownDescription: `Суффикс deviceName в dev/disk/by-id/
-`,
-				Computed: true,
+				MarkdownDescription: `Суффикс deviceName в dev/disk/by-id/`,
+				Computed:            true,
 			},
 			"ref": schema.StringAttribute{
-				MarkdownDescription: `Ссылка на ресурс "Диск"
-`,
-				Computed: true,
+				MarkdownDescription: `Ссылка на ресурс "Диск"`,
+				Computed:            true,
 			},
 			"ready": schema.SingleNestedAttribute{
-				Attributes: new(tfcommon.ResourceStatusReady).GetSchema().Attributes,
-				MarkdownDescription: `Состояние ресурса Диска
-`,
-				Computed: true,
+				Attributes:          new(tfcommon.ResourceStatusReady).GetSchema().Attributes,
+				MarkdownDescription: `Состояние ресурса Диска`,
+				Computed:            true,
 			},
 			"iops": schema.Int64Attribute{
 				MarkdownDescription: `Количество операций ввода-вывода в секунду (IOPS) для диска`,
 				Computed:            true,
 			},
 			"size": schema.StringAttribute{
+				MarkdownDescription: `Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются`,
 				Computed: true,
 			},
 		},

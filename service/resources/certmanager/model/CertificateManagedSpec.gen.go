@@ -5,9 +5,6 @@ package model
 import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -23,41 +20,29 @@ func (s *CertificateManagedSpec) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"preferred_challenge_type": schema.StringAttribute{
-				MarkdownDescription: `Предпочтительный тип проверки домена (challenge).  
-Возможные значения: DNS01 или HTTP01. По умолчанию используется DNS01.
-`,
+				MarkdownDescription: `Предпочтительный тип проверки домена (challenge).
+Возможные значения: DNS01 или HTTP01. По умолчанию используется DNS01`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"DNS01",
 						"HTTP01",
 					),
 				},
-				Required: true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-				},
+				Optional: true,
 			},
 			"provider": schema.StringAttribute{
-				MarkdownDescription: `Провайдер сертификатов, например Let's Encrypt или другой центр сертификации.
-`,
+				MarkdownDescription: `Провайдер сертификатов, например Let's Encrypt или другой центр сертификации`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"LETS_ENCRYPT",
 					),
 				},
-				Required: true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-				},
+				Optional: true,
 			},
 			"domains": schema.ListAttribute{
-				ElementType: types.StringType,
-				MarkdownDescription: `Список доменов, для которых будет выдан сертификат.
-`,
-				Required: true,
-				PlanModifiers: []planmodifier.List{
-					listplanmodifier.RequiresReplaceIfConfigured(),
-				},
+				ElementType:         types.StringType,
+				MarkdownDescription: `Список доменов, для которых будет выдан сертификат`,
+				Required:            true,
 			},
 		},
 	}

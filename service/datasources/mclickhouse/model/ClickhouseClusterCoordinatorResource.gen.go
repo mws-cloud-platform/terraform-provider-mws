@@ -30,17 +30,15 @@ func (s *ClickhouseClusterCoordinatorResource) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"resources": schema.SingleNestedAttribute{
-				Attributes: new(ClickhouseCoordinatorHWResources).GetSchema().Attributes,
-				MarkdownDescription: `Параметры виртуальной машины, где будет работать Clickhouse Keeper/Zookeeper. В случае наличия только одного хоста, 
-Zookeeper/Clickhouse Keeper не поднимаются при отсутствии параметра, в противном случае, параметр должен быть задан.
-`,
-				Computed: true,
+				Attributes:          new(ClickhouseCoordinatorHWResources).GetSchema().Attributes,
+				MarkdownDescription: `Параметры виртуальной машины, где будет работать Clickhouse Keeper/Zookeeper. Необязательный параметр в standalone-конфигурации`,
+				Computed:            true,
 			},
 			"instances": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(ClickhouseClusterCoordinatorInstanceResource).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Описание инстансов координатора.`,
+				MarkdownDescription: `Описание инстансов координатора`,
 				Computed:            true,
 			},
 		},

@@ -18,6 +18,7 @@ import (
 	dsmk8s "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s"
 	dsmkafka "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka"
 	dsmpostgres "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres"
+	dsrm "go.mws.cloud/terraform-provider-mws/service/datasources/rm"
 	dssecretmanager "go.mws.cloud/terraform-provider-mws/service/datasources/secretmanager"
 	dsvpc "go.mws.cloud/terraform-provider-mws/service/datasources/vpc"
 	rscertmanager "go.mws.cloud/terraform-provider-mws/service/resources/certmanager"
@@ -103,6 +104,8 @@ func dataSources() []func() datasource.DataSource {
 		dsmpostgres.NewClusterUserDataSource,
 		dsmpostgres.NewClusterDatabaseDataSource,
 		dsmpostgres.NewBackupDataSource,
+		dsrm.NewZoneDataSource,
+		dsrm.NewRegionDataSource,
 		dssecretmanager.NewSecretDataSource,
 		dsvpc.NewNetworkDataSource,
 		dsvpc.NewExternalAddressDataSource,

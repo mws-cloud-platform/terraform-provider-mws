@@ -5,7 +5,6 @@ package model
 import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -51,9 +50,6 @@ func (s *DiskBackup) GetSchema() schema.Schema {
 				Attributes:          new(DiskBackupSource).GetSchema().Attributes,
 				MarkdownDescription: `Источник для создания резервной копии диска (На текущий момент поддерживается только диск, но в будущем будут и другие источники)`,
 				Required:            true,
-				PlanModifiers: []planmodifier.Object{
-					objectplanmodifier.RequiresReplaceIfConfigured(),
-				},
 			},
 			"os_type": schema.StringAttribute{
 				MarkdownDescription: `Тип операционной системы`,

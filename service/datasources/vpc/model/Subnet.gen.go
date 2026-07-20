@@ -26,7 +26,7 @@ func (s *Subnet) GetSchema() schema.Schema {
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes,
-				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров.`,
+				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров`,
 				Computed:            true,
 			},
 			"status": schema.SingleNestedAttribute{
@@ -34,7 +34,8 @@ func (s *Subnet) GetSchema() schema.Schema {
 				Computed:   true,
 			},
 			"cidr": schema.StringAttribute{
-				Computed: true,
+				MarkdownDescription: `IPv4 подсеть в CIDR нотации`,
+				Computed:            true,
 			},
 			"dhcp_options": schema.SingleNestedAttribute{
 				Attributes: new(SubnetDhcpOptions).GetSchema().Attributes,

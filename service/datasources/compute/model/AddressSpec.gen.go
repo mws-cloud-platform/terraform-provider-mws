@@ -26,8 +26,10 @@ func (s *AddressSpec) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"ip_address": schema.StringAttribute{
-				MarkdownDescription: `Желаемый адрес. Если не указан, то будет выделен из пула адресов подсети.`,
-				Computed:            true,
+				MarkdownDescription: `Желаемый адрес. Если не указан, то будет выделен из пула адресов подсети
+
+IPv4- или IPv6-адрес`,
+				Computed: true,
 			},
 			"dns": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{

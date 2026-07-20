@@ -24,7 +24,8 @@ func (s *ServiceAccountStatus) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"last_auth_date_time": schema.StringAttribute{
-				Computed: true,
+				MarkdownDescription: `Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed:            true,
 			},
 		},
 	}

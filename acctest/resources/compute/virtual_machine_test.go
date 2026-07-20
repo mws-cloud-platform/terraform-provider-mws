@@ -24,6 +24,8 @@ import (
 var (
 	//go:embed testdata/virtual_machine.tf
 	virtualMachineTF string
+	//go:embed testdata/virtual_machine_attach_disk.tf
+	virtualMachineAttachDiskTF string
 	//go:embed testdata/datasource/virtual_machine.tf
 	virtualMachineDataSourceTF string
 )
@@ -195,6 +197,12 @@ func (s *VirtualMachineSuite) TestVirtualMachine() {
 	s.Require().NoError(err)
 
 	tc.ResourceConfig = fmt.Sprintf(virtualMachineTF,
+		s.virtualMachineName,
+		s.bootDisk.GetMetadata().GetId().ID(),
+		s.dataDisk.GetMetadata().GetId().ID(),
+		s.primaryNetworkInterfaceAddress.GetMetadata().GetId().ID(),
+	)
+	tc.UpdatedResourceConfig = fmt.Sprintf(virtualMachineAttachDiskTF,
 		s.virtualMachineName,
 		s.bootDisk.GetMetadata().GetId().ID(),
 		s.dataDisk.GetMetadata().GetId().ID(),

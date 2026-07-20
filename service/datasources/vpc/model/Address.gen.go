@@ -27,21 +27,23 @@ func (s *Address) GetSchema() schema.Schema {
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes,
-				MarkdownDescription: `Метаданные адреса.`,
+				MarkdownDescription: `Метаданные адреса`,
 				Computed:            true,
 			},
 			"status": schema.SingleNestedAttribute{
 				Attributes:          new(AddressStatus).GetSchema().Attributes,
-				MarkdownDescription: `Статус адреса.`,
+				MarkdownDescription: `Статус адреса`,
 				Computed:            true,
 			},
 			"subnet": schema.StringAttribute{
-				MarkdownDescription: `Подсеть облачной сети к которой принадлежит адрес.`,
+				MarkdownDescription: `Подсеть облачной сети к которой принадлежит адрес`,
 				Computed:            true,
 			},
 			"ip_address": schema.StringAttribute{
-				MarkdownDescription: `Желаемый IP адрес. Если не указан, то будет выделен из пула адресов подсети.`,
-				Computed:            true,
+				MarkdownDescription: `Желаемый IP адрес. Если не указан, то будет выделен из пула адресов подсети
+
+IPv4- или IPv6-адрес`,
+				Computed: true,
 			},
 			"dns": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{

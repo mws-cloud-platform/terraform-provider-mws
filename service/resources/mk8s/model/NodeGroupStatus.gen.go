@@ -46,10 +46,21 @@ func (s *NodeGroupStatus) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"memory": schema.StringAttribute{
-				MarkdownDescription: `Количество оперативной памяти на ноде`,
-				Computed:            true,
+				MarkdownDescription: `Количество оперативной памяти на ноде
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются`,
+				Computed: true,
 			},
 			"image_storage_size": schema.StringAttribute{
+				MarkdownDescription: `Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются`,
 				Computed: true,
 			},
 			"image_storage_iops": schema.Int64Attribute{
@@ -107,7 +118,7 @@ func (s *NodeGroupStatusNodeGroupStatus) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля NodeGroupStatus анонимного типа структуры NodeGroupStatus`,
 		Attributes: map[string]schema.Attribute{
 			"state": schema.StringAttribute{
-				MarkdownDescription: `текущий статус node group.`,
+				MarkdownDescription: `Текущий статус node group`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"INIT",
@@ -179,11 +190,11 @@ func (s *NodeGroupStatusScaleAutoscaling) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля Autoscaling анонимного типа структуры NodeGroupStatusScale`,
 		Attributes: map[string]schema.Attribute{
 			"min": schema.Int64Attribute{
-				MarkdownDescription: `Минимально количество нод в Node group.`,
+				MarkdownDescription: `Минимально количество нод в Node group`,
 				Computed:            true,
 			},
 			"max": schema.Int64Attribute{
-				MarkdownDescription: `Максимальное количество нод в Node group.`,
+				MarkdownDescription: `Максимальное количество нод в Node group`,
 				Computed:            true,
 			},
 		},

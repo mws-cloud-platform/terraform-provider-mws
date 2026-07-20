@@ -16,9 +16,8 @@ func (s *EncryptionSpec) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"crypto_key_id": schema.StringAttribute{
-				MarkdownDescription: `Пользовательский крипто-ключ. 
-Значение устанавливается при создании секрета и не может быть изменено.
-`,
+				MarkdownDescription: `Пользовательский крипто-ключ.
+Значение устанавливается при создании секрета и не может быть изменено`,
 				Computed: true,
 			},
 		},

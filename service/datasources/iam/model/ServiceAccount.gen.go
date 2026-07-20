@@ -48,29 +48,34 @@ func (s *ServiceAccountMetadata) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля Metadata анонимного типа структуры ServiceAccount`,
 		Attributes: map[string]schema.Attribute{
 			"display_name": schema.StringAttribute{
-				MarkdownDescription: `Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов.`,
+				MarkdownDescription: `Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов`,
 				Computed:            true,
 			},
 			"create_time": schema.StringAttribute{
-				MarkdownDescription: `Дата создания объекта.`,
-				Computed:            true,
+				MarkdownDescription: `Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"delete_time": schema.StringAttribute{
-				MarkdownDescription: `Время запроса на удаление ресурса (не фактическое время удаления).`,
-				Computed:            true,
+				MarkdownDescription: `Время запроса на удаление ресурса (не фактическое время удаления)
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"purge_time": schema.StringAttribute{
-				Computed: true,
+				MarkdownDescription: `Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed:            true,
 			},
 			"usages": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(tfcommon.TypedUsage).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены.`,
+				MarkdownDescription: `Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены`,
 				Computed:            true,
 			},
 			"description": schema.StringAttribute{
-				MarkdownDescription: `Описание ресурса.`,
+				MarkdownDescription: `Описание ресурса`,
 				Computed:            true,
 			},
 			"id": schema.StringAttribute{
@@ -78,7 +83,7 @@ func (s *ServiceAccountMetadata) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"name": schema.StringAttribute{
-				MarkdownDescription: `Обязательное уникальное, глобально или в пределах проекта, имя. Используется в качестве части составного идентификатора объекта.`,
+				MarkdownDescription: `Обязательное уникальное, глобально или в пределах проекта, имя. Используется в качестве части составного идентификатора объекта`,
 				Computed:            true,
 			},
 		},

@@ -45,7 +45,7 @@ func (m *CryptoKeyVersionDataSource) Schema(ctx context.Context, req datasource.
 		Required:            true,
 	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к проекту`,
+		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
 	}

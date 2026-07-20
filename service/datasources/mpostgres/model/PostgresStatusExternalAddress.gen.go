@@ -14,13 +14,14 @@ type PostgresStatusExternalAddress struct {
 
 func (s *PostgresStatusExternalAddress) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Описание внешнего ip адреса для доступа к кластеру`,
+		MarkdownDescription: `Описание внешнего IP-адреса для доступа к кластеру.`,
 		Attributes: map[string]schema.Attribute{
 			"address": schema.StringAttribute{
 				Computed: true,
 			},
 			"ip": schema.StringAttribute{
-				Computed: true,
+				MarkdownDescription: `IPv4- или IPv6-адрес`,
+				Computed:            true,
 			},
 		},
 	}

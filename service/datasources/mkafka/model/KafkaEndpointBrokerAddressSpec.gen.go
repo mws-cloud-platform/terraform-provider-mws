@@ -16,7 +16,7 @@ func (s *KafkaEndpointBrokerAddressSpec) GetSchema() schema.Schema {
 		MarkdownDescription: `Спецификация нового адреса. Адрес будет выделен в ходе реконсиляции кластера.`,
 		Attributes: map[string]schema.Attribute{
 			"subnet": schema.StringAttribute{
-				MarkdownDescription: `Идентификатор подсети, в которой необходимо выделить адрес.`,
+				MarkdownDescription: `Идентификатор подсети, в которой необходимо выделить адрес`,
 				Computed:            true,
 			},
 		},

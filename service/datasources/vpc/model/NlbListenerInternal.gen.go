@@ -17,7 +17,7 @@ func (s *NlbListenerInternal) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"address": schema.SingleNestedAttribute{
 				Attributes:          new(ResourceAddressSpecOrRef).GetSchema().Attributes,
-				MarkdownDescription: `Описывает ссылку на внутренний адрес или спецификацию внутреннего адреса как дополнительный ресурс.`,
+				MarkdownDescription: `Описывает ссылку на внутренний адрес или спецификацию внутреннего адреса как дополнительный ресурс`,
 				Computed:            true,
 			},
 		},

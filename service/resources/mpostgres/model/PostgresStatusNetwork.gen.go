@@ -15,7 +15,7 @@ type PostgresStatusNetwork struct {
 
 func (s *PostgresStatusNetwork) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Описание ip адресов для доступа к кластеру`,
+		MarkdownDescription: `Описание IP-адресов для доступа к кластеру.`,
 		Attributes: map[string]schema.Attribute{
 			"primary_addresses": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{

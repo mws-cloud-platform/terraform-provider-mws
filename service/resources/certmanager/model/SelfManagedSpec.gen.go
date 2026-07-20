@@ -18,23 +18,20 @@ func (s *SelfManagedSpec) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"certificate": schema.StringAttribute{
-				MarkdownDescription: `Сертификат.
-`,
-				WriteOnly: true,
-				Required:  true,
+				MarkdownDescription: `Сертификат`,
+				WriteOnly:           true,
+				Required:            true,
 			},
 			"private_key": schema.StringAttribute{
-				MarkdownDescription: `Закрытый ключ сертификата.
-`,
-				Sensitive: true,
-				WriteOnly: true,
-				Required:  true,
+				MarkdownDescription: `Закрытый ключ сертификата`,
+				Sensitive:           true,
+				WriteOnly:           true,
+				Required:            true,
 			},
 			"chained_cert": schema.StringAttribute{
-				MarkdownDescription: `Цепочка сертификатов.
-`,
-				WriteOnly: true,
-				Optional:  true,
+				MarkdownDescription: `Цепочка сертификатов`,
+				WriteOnly:           true,
+				Optional:            true,
 			},
 		},
 	}

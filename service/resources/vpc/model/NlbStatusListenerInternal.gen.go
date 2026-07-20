@@ -17,7 +17,7 @@ func (s *NlbStatusListenerInternal) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"address": schema.SingleNestedAttribute{
 				Attributes:          new(ResourceAddressStatus).GetSchema().Attributes,
-				MarkdownDescription: `Статус IP-адреса внутреннего балансировщика.`,
+				MarkdownDescription: `Статус IP-адреса внутреннего балансировщика`,
 				Computed:            true,
 			},
 		},

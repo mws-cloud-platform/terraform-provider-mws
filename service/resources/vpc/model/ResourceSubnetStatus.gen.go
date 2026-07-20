@@ -17,12 +17,14 @@ func (s *ResourceSubnetStatus) GetSchema() schema.Schema {
 		MarkdownDescription: `Описывает статус подсети как дополнительный ресурс.`,
 		Attributes: map[string]schema.Attribute{
 			"ref": schema.StringAttribute{
-				MarkdownDescription: `Абсолютная ссылка на подсеть.`,
+				MarkdownDescription: `Абсолютная ссылка на подсеть`,
 				Computed:            true,
 			},
 			"cidr": schema.StringAttribute{
-				MarkdownDescription: `Маска подсети.`,
-				Computed:            true,
+				MarkdownDescription: `Маска подсети
+
+IPv4 подсеть в CIDR нотации`,
+				Computed: true,
 			},
 		},
 	}

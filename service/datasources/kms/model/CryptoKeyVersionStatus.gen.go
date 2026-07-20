@@ -29,28 +29,24 @@ func (s *CryptoKeyVersionStatus) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"version": schema.Int64Attribute{
-				MarkdownDescription: `Порядковый номер ключа. Каждый раз при создании новой версии ключа это значение увеличивается.
-`,
-				Computed: true,
+				MarkdownDescription: `Порядковый номер ключа. Каждый раз при создании новой версии ключа это значение увеличивается`,
+				Computed:            true,
 			},
 			"algorithm": schema.StringAttribute{
-				MarkdownDescription: `Криптографический алгоритм.
-`,
-				Computed: true,
+				MarkdownDescription: `Криптографический алгоритм`,
+				Computed:            true,
 			},
 			"primary": schema.BoolAttribute{
-				MarkdownDescription: `Флаг, указывающий, является ли данная версия криптографического ключа основной. 
-Если значение установлено в "true", эта версия используется по умолчанию 
-для всех криптографических операций.
-`,
+				MarkdownDescription: `Флаг, указывающий, является ли данная версия криптографического ключа основной.
+Если значение установлено в "true", эта версия используется по умолчанию
+для всех криптографических операций`,
 				Computed: true,
 			},
 			"destruction": schema.SingleNestedAttribute{
 				Attributes: new(CryptoKeyVersionStatusDestruction).GetSchema().Attributes,
-				MarkdownDescription: `Информация о процессе уничтожения версии криптографического ключа. 
-Этот раздел присутствует только в том случае, если версия ключа запланирована к уничтожению 
-или уже уничтожена.
-`,
+				MarkdownDescription: `Информация о процессе уничтожения версии криптографического ключа.
+Этот раздел присутствует только в том случае, если версия ключа запланирована к уничтожению
+или уже уничтожена`,
 				Computed: true,
 			},
 		},
@@ -73,8 +69,7 @@ func (s *CryptoKeyVersionStatusDestruction) GetSchema() schema.Schema {
 Это поле заполняется только тогда, когда версия ключа находится в одном из статусов уничтожения.
 Возможные значения:
 - SCHEDULED_FOR_DESTRUCTION: версия ключа запланирована к уничтожению в будущем
-- DESTROYED: версия ключа была окончательно уничтожена и не может быть восстановлена
-`,
+- DESTROYED: версия ключа была окончательно уничтожена и не может быть восстановлена`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"SCHEDULED_FOR_DESTRUCTION",
@@ -84,20 +79,23 @@ func (s *CryptoKeyVersionStatusDestruction) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"scheduled_destruction_time": schema.StringAttribute{
-				MarkdownDescription: `Метка времени, указывающая, когда версия ключа должна быть уничтожена. 
-Если это поле установлено, версия ключа будет автоматически уничтожена в указанное время.
-`,
+				MarkdownDescription: `Метка времени, указывающая, когда версия ключа должна быть уничтожена.
+Если это поле установлено, версия ключа будет автоматически уничтожена в указанное время
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
 				Computed: true,
 			},
 			"destroyed_at": schema.StringAttribute{
-				MarkdownDescription: `Время уничтожения версии криптографического ключа.
-`,
+				MarkdownDescription: `Время уничтожения версии криптографического ключа
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
 				Computed:           true,
 				DeprecationMessage: `Отказываемся в пользу destroyTime.`,
 			},
 			"destroy_time": schema.StringAttribute{
-				MarkdownDescription: `Время уничтожения версии криптографического ключа.
-`,
+				MarkdownDescription: `Время уничтожения версии криптографического ключа
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
 				Computed: true,
 			},
 		},

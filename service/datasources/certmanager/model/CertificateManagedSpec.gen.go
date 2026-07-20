@@ -20,9 +20,8 @@ func (s *CertificateManagedSpec) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"preferred_challenge_type": schema.StringAttribute{
-				MarkdownDescription: `Предпочтительный тип проверки домена (challenge).  
-Возможные значения: DNS01 или HTTP01. По умолчанию используется DNS01.
-`,
+				MarkdownDescription: `Предпочтительный тип проверки домена (challenge).
+Возможные значения: DNS01 или HTTP01. По умолчанию используется DNS01`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"DNS01",
@@ -32,8 +31,7 @@ func (s *CertificateManagedSpec) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"provider": schema.StringAttribute{
-				MarkdownDescription: `Провайдер сертификатов, например Let's Encrypt или другой центр сертификации.
-`,
+				MarkdownDescription: `Провайдер сертификатов, например Let's Encrypt или другой центр сертификации`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"LETS_ENCRYPT",
@@ -42,10 +40,9 @@ func (s *CertificateManagedSpec) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"domains": schema.ListAttribute{
-				ElementType: types.StringType,
-				MarkdownDescription: `Список доменов, для которых будет выдан сертификат.
-`,
-				Computed: true,
+				ElementType:         types.StringType,
+				MarkdownDescription: `Список доменов, для которых будет выдан сертификат`,
+				Computed:            true,
 			},
 		},
 	}

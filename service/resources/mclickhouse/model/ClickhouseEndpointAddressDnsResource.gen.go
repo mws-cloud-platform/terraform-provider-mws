@@ -16,7 +16,7 @@ func (s *ClickhouseEndpointAddressDnsResource) GetSchema() schema.Schema {
 		MarkdownDescription: `Описание DNS имени, назначенного адресу в пользовательской сети.`,
 		Attributes: map[string]schema.Attribute{
 			"name": schema.StringAttribute{
-				MarkdownDescription: `DNS имя`,
+				MarkdownDescription: `DNS-имя`,
 				Computed:            true,
 			},
 		},

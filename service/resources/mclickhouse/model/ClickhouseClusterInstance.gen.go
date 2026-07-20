@@ -4,8 +4,6 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -21,11 +19,8 @@ func (s *ClickhouseClusterInstance) GetSchema() schema.Schema {
 		MarkdownDescription: `Описание инстанса кластера.`,
 		Attributes: map[string]schema.Attribute{
 			"name": schema.StringAttribute{
-				MarkdownDescription: `-> Имя инстанса в шарде. В случае count>1, имя формируется как name-{replicaIndex}, где replicaIndex имеет сквозную нумерацию в шарде.`,
-				Optional:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-				},
+				MarkdownDescription: `-> Имя инстанса в шарде. В случае count>1, имя формируется как name{replicaIndex}, где replicaIndex имеет сквозную нумерацию в рамках имени инстанса`,
+				Required:            true,
 			},
 			"count": schema.Int64Attribute{
 				MarkdownDescription: `Количество инстансов в зоне доступности`,
@@ -39,7 +34,7 @@ func (s *ClickhouseClusterInstance) GetSchema() schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(ClickhouseEndpoint).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Описание эдпойнтов инстансов.`,
+				MarkdownDescription: `Описание эдпойнтов инстансов`,
 				Optional:            true,
 			},
 		},

@@ -19,22 +19,24 @@ func (s *KafkaEndpointBrokerAddressStatus) GetSchema() schema.Schema {
 		MarkdownDescription: `Описание адреса пользовательской сети, назначенного брокеру.`,
 		Attributes: map[string]schema.Attribute{
 			"ref": schema.StringAttribute{
-				MarkdownDescription: `Идентификатор адреса.`,
+				MarkdownDescription: `Идентификатор адреса`,
 				Computed:            true,
 			},
 			"subnet": schema.StringAttribute{
-				MarkdownDescription: `Подсеть, в которой выделен адрес.`,
+				MarkdownDescription: `Подсеть, в которой выделен адрес`,
 				Computed:            true,
 			},
 			"ip_address": schema.StringAttribute{
-				MarkdownDescription: `Выделенный адрес.`,
-				Computed:            true,
+				MarkdownDescription: `Выделенный адрес
+
+IPv4- или IPv6-адрес`,
+				Computed: true,
 			},
 			"dns": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(KafkaEndpointBrokerAddressDnsStatus).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Доменные имена.`,
+				MarkdownDescription: `Доменные имена`,
 				Computed:            true,
 			},
 		},

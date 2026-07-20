@@ -5,9 +5,6 @@ package model
 import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -31,25 +28,17 @@ func (s *ClickhouseClusterCoordinator) GetSchema() schema.Schema {
 					),
 				},
 				Optional: true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-				},
 			},
 			"resources": schema.SingleNestedAttribute{
-				Attributes: new(ClickhouseCoordinatorHWResources).GetSchema().Attributes,
-				MarkdownDescription: `Параметры виртуальной машины, где будет работать Clickhouse Keeper/Zookeeper. В случае наличия только одного хоста, 
-Zookeeper/Clickhouse Keeper не поднимаются при отсутствии параметра, в противном случае, параметр должен быть задан.
-`,
-				Required: true,
+				Attributes:          new(ClickhouseCoordinatorHWResources).GetSchema().Attributes,
+				MarkdownDescription: `Параметры виртуальной машины, где будет работать Clickhouse Keeper/Zookeeper. Необязательный параметр в standalone-конфигурации`,
+				Required:            true,
 			},
 			"instances": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(ClickhouseClusterCoordinatorInstance).GetSchema().Attributes,
 				},
 				Required: true,
-				PlanModifiers: []planmodifier.List{
-					listplanmodifier.RequiresReplaceIfConfigured(),
-				},
 			},
 		},
 	}

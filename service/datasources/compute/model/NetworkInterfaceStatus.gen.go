@@ -18,14 +18,12 @@ func (s *NetworkInterfaceStatus) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"name": schema.StringAttribute{
-				MarkdownDescription: `Уникальный в рамках ВМ псевдоним (alias) сетевого интерфейса
-`,
-				Computed: true,
+				MarkdownDescription: `Уникальный в рамках ВМ псевдоним (alias) сетевого интерфейса`,
+				Computed:            true,
 			},
 			"ip_forwarding_enabled": schema.BoolAttribute{
-				MarkdownDescription: `Признак, может ли сетевой интерфейс (адаптер) принимать трафик с нецелевого ip 
-`,
-				Computed: true,
+				MarkdownDescription: `Признак, может ли сетевой интерфейс (адаптер) принимать трафик с нецелевого ip`,
+				Computed:            true,
 			},
 			"addresses": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{

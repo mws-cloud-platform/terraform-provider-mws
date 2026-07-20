@@ -26,7 +26,7 @@ func (s *CryptoKeyVersion) GetSchema() schema.Schema {
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes,
-				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров.`,
+				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров`,
 				Computed:            true,
 			},
 			"status": schema.SingleNestedAttribute{
@@ -34,16 +34,14 @@ func (s *CryptoKeyVersion) GetSchema() schema.Schema {
 				Computed:   true,
 			},
 			"usage_policy": schema.SingleNestedAttribute{
-				Attributes: new(CryptoKeyVersionSpecUsagePolicy).GetSchema().Attributes,
-				MarkdownDescription: `Политика использования версии ключа. Определяет, разрешены ли криптографические операции с этой версией.
-`,
-				Computed: true,
+				Attributes:          new(CryptoKeyVersionSpecUsagePolicy).GetSchema().Attributes,
+				MarkdownDescription: `Политика использования версии ключа. Определяет, разрешены ли криптографические операции с этой версией`,
+				Computed:            true,
 			},
 			"destruction_policy": schema.SingleNestedAttribute{
-				Attributes: new(CryptoKeyVersionSpecDestructionPolicy).GetSchema().Attributes,
-				MarkdownDescription: `Политика уничтожения версии ключа. Определяет параметры и расписание.
-`,
-				Computed: true,
+				Attributes:          new(CryptoKeyVersionSpecDestructionPolicy).GetSchema().Attributes,
+				MarkdownDescription: `Политика уничтожения версии ключа. Определяет параметры и расписание`,
+				Computed:            true,
 			},
 		},
 	}

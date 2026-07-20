@@ -26,11 +26,11 @@ func (s *ClickhouseClusterResource) GetSchema() schema.Schema {
 		MarkdownDescription: `Параметры объекта кластера.`,
 		Attributes: map[string]schema.Attribute{
 			"active": schema.BoolAttribute{
-				MarkdownDescription: `Значение включен/выключен кластер.`,
+				MarkdownDescription: `Состояние кластера — включен или выключен`,
 				Computed:            true,
 			},
 			"version": schema.StringAttribute{
-				MarkdownDescription: `Версия продукта.`,
+				MarkdownDescription: `Версия продукта`,
 				Computed:            true,
 			},
 			"endpoints": schema.ListNestedAttribute{
@@ -42,26 +42,25 @@ func (s *ClickhouseClusterResource) GetSchema() schema.Schema {
 			},
 			"coordinator": schema.SingleNestedAttribute{
 				Attributes:          new(ClickhouseClusterCoordinatorResource).GetSchema().Attributes,
-				MarkdownDescription: `Описание координаторов кластера.`,
+				MarkdownDescription: `Описание координаторов кластера`,
 				Computed:            true,
 			},
 			"shards": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(ClickhouseClusterShardResource).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Описание шардов кластера.`,
+				MarkdownDescription: `Описание шардов кластера`,
 				Computed:            true,
 			},
 			"config": schema.MapAttribute{
 				ElementType:         types.StringType,
-				MarkdownDescription: `Настройки Clickhouse.`,
+				MarkdownDescription: `Настройки Clickhouse`,
 				Computed:            true,
 			},
 			"storage": schema.SingleNestedAttribute{
-				Attributes: new(ClickhouseStorageConfiguration).GetSchema().Attributes,
-				MarkdownDescription: `Конфигурация схемы хранилищ ClickHouse.
-`,
-				Computed: true,
+				Attributes:          new(ClickhouseStorageConfiguration).GetSchema().Attributes,
+				MarkdownDescription: `Конфигурация схемы хранилищ ClickHouse`,
+				Computed:            true,
 			},
 			"maintenance_window": schema.SingleNestedAttribute{
 				Attributes: new(tfcommon.MaintenanceWindow).GetSchema().Attributes,
@@ -69,7 +68,7 @@ func (s *ClickhouseClusterResource) GetSchema() schema.Schema {
 			},
 			"backup": schema.SingleNestedAttribute{
 				Attributes:          new(ClickhouseClusterBackupResource).GetSchema().Attributes,
-				MarkdownDescription: `Спецификация работы автоматического резервного копирования.`,
+				MarkdownDescription: `Спецификация работы автоматического резервного копирования`,
 				Computed:            true,
 			},
 		},

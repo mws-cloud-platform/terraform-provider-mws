@@ -35,20 +35,8 @@ resource "mws_compute_virtual_machine" "vm" {
           ref = "%[3]s"
         }
       },
-      {
-        name = "other"
-        boot = "false" # quoted bool is also valid here
-        disk = {
-          spec = {
-            zone = "ru-central1-a"
-            disk_type = "nbs-pl2"
-            size = "10 GB"
-            iops = "1000"
-            block_size = "4 KB"
-          }
-        }
-      }
     ]
+    local_disks = []
   }
 
   network = {

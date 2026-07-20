@@ -40,7 +40,7 @@ func (s *CryptoKey) GetSchema() schema.Schema {
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes,
-				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров.`,
+				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров`,
 				Computed:            true,
 				Optional:            true,
 			},
@@ -50,8 +50,7 @@ func (s *CryptoKey) GetSchema() schema.Schema {
 			},
 			"default_algorithm": schema.StringAttribute{
 				MarkdownDescription: `Криптографический алгоритм по-умолчанию, используемый для выпуска новых версий ключа.
-Этот алгоритм будет применяться при создании новых версий ключа во время ротации.
-`,
+Этот алгоритм будет применяться при создании новых версий ключа во время ротации`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"AES_128_GCM",
@@ -65,36 +64,32 @@ func (s *CryptoKey) GetSchema() schema.Schema {
 				},
 			},
 			"destruction_policy": schema.SingleNestedAttribute{
-				Attributes: new(CryptoKeySpecDestructionPolicy).GetSchema().Attributes,
-				MarkdownDescription: `Политика уничтожения ключа. Определяет параметры и расписание.
-`,
-				Optional: true,
+				Attributes:          new(CryptoKeySpecDestructionPolicy).GetSchema().Attributes,
+				MarkdownDescription: `Политика уничтожения ключа. Определяет параметры и расписание`,
+				Optional:            true,
 				PlanModifiers: []planmodifier.Object{
 					localobjectplanmodifier.RequiresReplaceIfRemoved(),
 				},
 			},
 			"usage_policy": schema.SingleNestedAttribute{
-				Attributes: new(CryptoKeySpecUsagePolicy).GetSchema().Attributes,
-				MarkdownDescription: `Политика использования ключа. Определяет, разрешены ли криптографические операции с этим ключом.
-`,
-				Optional: true,
+				Attributes:          new(CryptoKeySpecUsagePolicy).GetSchema().Attributes,
+				MarkdownDescription: `Политика использования ключа. Определяет, разрешены ли криптографические операции с этим ключом`,
+				Optional:            true,
 				PlanModifiers: []planmodifier.Object{
 					localobjectplanmodifier.RequiresReplaceIfRemoved(),
 				},
 			},
 			"rotation_policy": schema.SingleNestedAttribute{
-				Attributes: new(CryptoKeySpecRotationPolicy).GetSchema().Attributes,
-				MarkdownDescription: `Параметры политики, управляющие ротацией криптографического ключа.
-`,
-				Optional: true,
+				Attributes:          new(CryptoKeySpecRotationPolicy).GetSchema().Attributes,
+				MarkdownDescription: `Параметры политики, управляющие ротацией криптографического ключа`,
+				Optional:            true,
 				PlanModifiers: []planmodifier.Object{
 					localobjectplanmodifier.RequiresReplaceIfRemoved(),
 				},
 			},
 			"primary_key_version_ref": schema.StringAttribute{
-				MarkdownDescription: `Идентификатор основной версии криптографического ключа. 
-Используется только когда автоматическая ротация отключена.
-`,
+				MarkdownDescription: `Идентификатор основной версии криптографического ключа.
+Используется только когда автоматическая ротация отключена`,
 				Optional: true,
 			},
 		},

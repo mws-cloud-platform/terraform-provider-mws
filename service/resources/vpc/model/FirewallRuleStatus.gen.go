@@ -11,6 +11,7 @@ import (
 
 type FirewallRuleStatus struct {
 	tfcommon.ResourceStatus
+
 	Priority types.Int64 `tfsdk:"priority"`
 	Active   types.Bool  `tfsdk:"active"`
 }
@@ -25,11 +26,11 @@ func (s *FirewallRuleStatus) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"priority": schema.Int64Attribute{
-				MarkdownDescription: `Эффективный приоритет правила.`,
+				MarkdownDescription: `Эффективный приоритет правила`,
 				Computed:            true,
 			},
 			"active": schema.BoolAttribute{
-				MarkdownDescription: `Состояние правила. True - правило активно и контролирует поведение трафика. False - правило не активно.`,
+				MarkdownDescription: `Состояние правила. True - правило активно и контролирует поведение трафика. False - правило не активно`,
 				Computed:            true,
 			},
 		},

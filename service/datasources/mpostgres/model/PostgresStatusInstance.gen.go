@@ -20,11 +20,11 @@ func (s *PostgresStatusInstance) GetSchema() schema.Schema {
 		MarkdownDescription: `Статус экземпляра postgres`,
 		Attributes: map[string]schema.Attribute{
 			"name": schema.StringAttribute{
-				MarkdownDescription: `Имя экземпляра postgres`,
+				MarkdownDescription: `Имя экземпляра PostgreSQL`,
 				Computed:            true,
 			},
 			"role": schema.StringAttribute{
-				MarkdownDescription: `Роль экземпляра postgres`,
+				MarkdownDescription: `Роль экземпляра PostgreSQL`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"PRIMARY",
@@ -35,7 +35,7 @@ func (s *PostgresStatusInstance) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"health": schema.StringAttribute{
-				MarkdownDescription: `Исправность экземпляра postgres`,
+				MarkdownDescription: `Исправность экземпляра PostgreSQL`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"ALIVE",

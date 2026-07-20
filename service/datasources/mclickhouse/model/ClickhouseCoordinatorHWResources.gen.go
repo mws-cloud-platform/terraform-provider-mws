@@ -14,17 +14,15 @@ type ClickhouseCoordinatorHWResources struct {
 
 func (s *ClickhouseCoordinatorHWResources) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Параметры виртуальной машины, где будет работать Clickhouse Keeper/Zookeeper. В случае наличия только одного хоста, 
-Zookeeper/Clickhouse Keeper не поднимаются при отсутствии параметра, в противном случае, параметр должен быть задан.
-`,
+		MarkdownDescription: `Параметры виртуальной машины, где будет работать Clickhouse Keeper/Zookeeper. Необязательный параметр в standalone-конфигурации.`,
 		Attributes: map[string]schema.Attribute{
 			"vm_type": schema.StringAttribute{
-				MarkdownDescription: `Тип виртуальной машины, описывающий ресурсы (vCPU, memory).`,
+				MarkdownDescription: `Тип виртуальной машины, описывающий ресурсы (vCPU, memory)`,
 				Computed:            true,
 			},
 			"disk": schema.SingleNestedAttribute{
 				Attributes:          new(ClickhouseInstanceDiskSpec).GetSchema().Attributes,
-				MarkdownDescription: `Параметры диска.`,
+				MarkdownDescription: `Параметры диска`,
 				Computed:            true,
 			},
 		},

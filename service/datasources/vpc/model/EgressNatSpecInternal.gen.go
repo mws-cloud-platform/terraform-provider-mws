@@ -17,7 +17,7 @@ func (s *EgressNatSpecInternal) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"subnets": schema.ListAttribute{
 				ElementType:         types.StringType,
-				MarkdownDescription: `Коллекция относительных ссылок на подсети, для которых будет осуществляться трансляция.`,
+				MarkdownDescription: `Коллекция относительных ссылок на подсети, для которых будет осуществляться трансляция`,
 				Computed:            true,
 			},
 		},

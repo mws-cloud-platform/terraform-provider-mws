@@ -29,34 +29,34 @@ data "mws_vpc_firewall_rule" "firewall_rule" {
 
 ### Optional
 
-- `project` (String) Путь к проекту
+- `project` (String) Путь к проекту.
 
 ### Read-Only
 
-- `action` (String) Действие, которое должно быть применено к трафику при срабатывании правила.
-- `active` (Boolean) Состояние правила. True - правило активно и контролирует поведение трафика. False - правило не активно.
-- `destination` (Attributes) Критерий применимости правила, описывает пункт назначения пакета. (see [below for nested schema](#nestedatt--destination))
-- `direction` (String) Направление трафика, к которому применяется правило.
+- `action` (String) Действие, которое должно быть применено к трафику при срабатывании правила
+- `active` (Boolean) Состояние правила. True - правило активно и контролирует поведение трафика. False - правило не активно
+- `destination` (Attributes) Критерий применимости правила, описывает пункт назначения пакета (see [below for nested schema](#nestedatt--destination))
+- `direction` (String) Направление трафика, к которому применяется правило
 - `kind` (String)
-- `metadata` (Attributes) Метаданные правила Firewall'а. (see [below for nested schema](#nestedatt--metadata))
-- `priority` (Number) Приоритет правила. Чем меньше число, тем больший приоритет имеет правило.
-- `proto_ports` (List of String) Критерий применимости правила. Определяет список протоколов и соответствующих портов (если применимо) назначения пакета. Значение по умолчанию - пустое значение. Означает любой протокол и порт.
-- `source` (Attributes) Критерий применимости правила, описывает источник отправления пакета. (see [below for nested schema](#nestedatt--source))
-- `status` (Attributes) Статус правила Firewall'а. (see [below for nested schema](#nestedatt--status))
+- `metadata` (Attributes) Метаданные правила Firewall'а (see [below for nested schema](#nestedatt--metadata))
+- `priority` (Number) Приоритет правила. Чем меньше число, тем больший приоритет имеет правило
+- `proto_ports` (List of String) Критерий применимости правила. Определяет список протоколов и соответствующих портов (если применимо) назначения пакета. Значение по умолчанию - пустое значение. Означает любой протокол и порт
+- `source` (Attributes) Критерий применимости правила, описывает источник отправления пакета (see [below for nested schema](#nestedatt--source))
+- `status` (Attributes) Статус правила Firewall'а (see [below for nested schema](#nestedatt--status))
 
 <a id="nestedatt--destination"></a>
 ### Nested Schema for `destination`
 
 Read-Only:
 
-- `spec` (Attributes) Спецификация группы адресов. (see [below for nested schema](#nestedatt--destination--spec))
+- `spec` (Attributes) Спецификация группы адресов (see [below for nested schema](#nestedatt--destination--spec))
 
 <a id="nestedatt--destination--spec"></a>
 ### Nested Schema for `destination.spec`
 
 Read-Only:
 
-- `cidrs` (List of String) Диапазоны IPv4 адресов, которые входят в группу.
+- `cidrs` (List of String) Диапазоны IPv4 адресов, которые входят в группу
 
 
 
@@ -66,22 +66,28 @@ Read-Only:
 Read-Only:
 
 - `create_time` (String) Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `delete_time` (String) Время запроса на удаление ресурса
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `description` (String) Описание ресурса
 - `display_name` (String) Отображаемое имя свойства
 - `id` (String) ID свойства
-- `name` (String, Deprecated) Обязательное уникальное, глобально или в пределах проекта, имя. Используется в качестве части составного идентификатора объекта.
+- `name` (String, Deprecated) Обязательное уникальное, глобально или в пределах проекта, имя. Используется в качестве части составного идентификатора объекта
 - `purge_time` (String) Время удаления ресурса
-- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
 
 <a id="nestedatt--metadata--usages"></a>
 ### Nested Schema for `metadata.usages`
 
 Read-Only:
 
-- `name` (String) Имя связи, требуется для модификации коллекции
+- `name` (String) Имя связи. Требуется для модификации коллекции
 - `resource` (String) Ссылка на ресурс
-- `usage_type` (String) Тип связи. Помимо стандартных own и use могут быть добавлены специализированные типы для конкретных сервисов
+- `usage_type` (String) Тип связи. Помимо стандартных "own" и "use" могут быть добавлены специализированные типы для конкретных сервисов
 
 
 
@@ -90,14 +96,14 @@ Read-Only:
 
 Read-Only:
 
-- `spec` (Attributes) Спецификация группы адресов. (see [below for nested schema](#nestedatt--source--spec))
+- `spec` (Attributes) Спецификация группы адресов (see [below for nested schema](#nestedatt--source--spec))
 
 <a id="nestedatt--source--spec"></a>
 ### Nested Schema for `source.spec`
 
 Read-Only:
 
-- `cidrs` (List of String) Диапазоны IPv4 адресов, которые входят в группу.
+- `cidrs` (List of String) Диапазоны IPv4 адресов, которые входят в группу
 
 
 
@@ -106,8 +112,8 @@ Read-Only:
 
 Read-Only:
 
-- `active` (Boolean) Состояние правила. True - правило активно и контролирует поведение трафика. False - правило не активно.
-- `priority` (Number) Эффективный приоритет правила.
+- `active` (Boolean) Состояние правила. True - правило активно и контролирует поведение трафика. False - правило не активно
+- `priority` (Number) Эффективный приоритет правила
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
 
 <a id="nestedatt--status--ready"></a>

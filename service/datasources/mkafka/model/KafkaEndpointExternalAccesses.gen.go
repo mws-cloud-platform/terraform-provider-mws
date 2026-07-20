@@ -17,14 +17,14 @@ func (s *KafkaEndpointExternalAccesses) GetSchema() schema.Schema {
 		MarkdownDescription: `Настройка внешнего доступа к кластеру Kafka.`,
 		Attributes: map[string]schema.Attribute{
 			"allowed": schema.BoolAttribute{
-				MarkdownDescription: `Назначить внешние адреса для кластера Kafka.`,
+				MarkdownDescription: `Назначить внешние адреса для кластера Kafka`,
 				Computed:            true,
 			},
 			"broker_addresses": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(KafkaEndpointExternalAddressSpecOrRef).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Список внешних адресов, используемых для настройки доступа к кластеру Kafka. Если флаг "allowed" установлен в true и адреса не указаны, внешние адреса будут выделены автоматически.`,
+				MarkdownDescription: `Список внешних адресов, используемых для настройки доступа к кластеру Kafka. Если флаг "allowed" установлен в true и адреса не указаны, внешние адреса будут выделены автоматически`,
 				Computed:            true,
 			},
 		},

@@ -64,7 +64,7 @@ func (m *OneToOneNatResource) Schema(ctx context.Context, req resource.SchemaReq
 		},
 	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к проекту`,
+		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{

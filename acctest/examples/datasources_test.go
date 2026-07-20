@@ -12,6 +12,12 @@ import (
 	"go.mws.cloud/terraform-provider-mws/internal/acctest"
 )
 
+var existingResources = map[string]bool{
+	"mws_resmanager_region": true,
+	"mws_resmanager_zone":   true,
+	"mws_gpt_model":         true,
+}
+
 func TestDataSourcesExamples(t *testing.T) {
 	t.Parallel()
 
@@ -30,14 +36,16 @@ func TestDataSourcesExamples(t *testing.T) {
 			data, err := os.ReadFile(filepath.Join(root, name, "data-source.tf"))
 			require.NoError(t, err)
 
+			step := resource.TestStep{
+				Config: providerConfig + "\n" + string(data),
+			}
+			if !existingResources[name] {
+				step.ExpectError = regexp.MustCompile("(?i).*not.(found|exist).*")
+			}
+
 			resource.Test(t, resource.TestCase{
 				ProtoV6ProviderFactories: utils.ProtoV6ProviderFactories(),
-				Steps: []resource.TestStep{
-					{
-						Config:      providerConfig + "\n" + string(data),
-						ExpectError: regexp.MustCompile("(?i).*not.found.*"),
-					},
-				},
+				Steps:                    []resource.TestStep{step},
 			})
 		})
 	}

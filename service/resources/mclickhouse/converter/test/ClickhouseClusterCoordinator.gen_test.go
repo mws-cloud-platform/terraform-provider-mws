@@ -10,7 +10,6 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
 	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
-	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	"go.mws.cloud/go-sdk/service/resources/references/mclickhouse"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
 )
@@ -29,7 +28,7 @@ func TestClickhouseClusterCoordinatorOptionalResponseConverters(t *testing.T) {
 			VmType: mclickhouse.NewClickhouseVmTypeRef("vmTypeID"),
 			Disk: apimodel.ClickhouseInstanceDiskSpecRequest{
 				Size: bytesize.MustParseString("0 B"),
-				Type: compute.NewDiskTypeRef("diskTypeID"),
+				Type: "",
 			},
 		},
 		Instances: []apimodel.ClickhouseClusterCoordinatorInstanceRequest{},

@@ -29,7 +29,7 @@ func (s *ClusterStatus) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"cluster_ca_certificate": schema.StringAttribute{
-				MarkdownDescription: `root сертификат кластера`,
+				MarkdownDescription: `Root сертификат кластера`,
 				Computed:            true,
 			},
 			"network": schema.SingleNestedAttribute{
@@ -58,7 +58,7 @@ func (s *ClusterStatusClusterStatus) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля ClusterStatus анонимного типа структуры ClusterStatus`,
 		Attributes: map[string]schema.Attribute{
 			"state": schema.StringAttribute{
-				MarkdownDescription: `текущий статус cluster`,
+				MarkdownDescription: `Текущий статус cluster`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"INIT",
@@ -102,19 +102,21 @@ func (s *ClusterStatusNetwork) GetSchema() schema.Schema {
 			},
 			"primary_endpoint": schema.SingleNestedAttribute{
 				Attributes:          new(ClusterStatusNetworkPrimaryEndpoint).GetSchema().Attributes,
-				MarkdownDescription: `внутренний ip-адрес`,
+				MarkdownDescription: `Внутренний ip-адрес`,
 				Computed:            true,
 			},
 			"primary_address": schema.StringAttribute{
-				Computed: true,
+				MarkdownDescription: `IPv4-адрес`,
+				Computed:            true,
 			},
 			"public_endpoint": schema.SingleNestedAttribute{
 				Attributes:          new(ClusterStatusNetworkPublicEndpoint).GetSchema().Attributes,
-				MarkdownDescription: `внешний ip-адрес`,
+				MarkdownDescription: `Внешний ip-адрес`,
 				Computed:            true,
 			},
 			"public_address": schema.StringAttribute{
-				Computed: true,
+				MarkdownDescription: `IPv4-адрес`,
+				Computed:            true,
 			},
 		},
 	}

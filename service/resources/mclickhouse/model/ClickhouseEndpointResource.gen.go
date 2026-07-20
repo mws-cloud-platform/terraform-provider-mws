@@ -14,7 +14,7 @@ type ClickhouseEndpointResource struct {
 
 func (s *ClickhouseEndpointResource) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Описание эндпойнта кластера в пользовательской сети (VPC)`,
+		MarkdownDescription: `Описание эндпойнта кластера в пользовательской сети (VPC).`,
 		Attributes: map[string]schema.Attribute{
 			"address": schema.SingleNestedAttribute{
 				Attributes:          new(ClickhouseEndpointAddressResource).GetSchema().Attributes,

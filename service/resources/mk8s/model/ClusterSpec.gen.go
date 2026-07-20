@@ -4,9 +4,6 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -23,30 +20,25 @@ func (s *ClusterSpecNetwork) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"primary_endpoint": schema.SingleNestedAttribute{
 				Attributes:          new(ClusterPrimaryEndpointSpecOrRef).GetSchema().Attributes,
-				MarkdownDescription: `ip-адрес внутри vpc`,
+				MarkdownDescription: `Ip-адрес внутри vpc`,
 				Required:            true,
-				PlanModifiers: []planmodifier.Object{
-					objectplanmodifier.RequiresReplaceIfConfigured(),
-				},
 			},
 			"public_endpoint": schema.SingleNestedAttribute{
 				Attributes:          new(ClusterPublicEndpointSpecOrRef).GetSchema().Attributes,
-				MarkdownDescription: `внешний ip-адрес`,
+				MarkdownDescription: `Внешний ip-адрес`,
 				Optional:            true,
 			},
 			"pods_cidr": schema.StringAttribute{
-				MarkdownDescription: `необходим ip-range v4`,
-				Required:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-				},
+				MarkdownDescription: `Необходим ip-range v4
+
+IPv4 подсеть в CIDR нотации`,
+				Required: true,
 			},
 			"services_cidr": schema.StringAttribute{
-				MarkdownDescription: `необходим ip-range v4`,
-				Required:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-				},
+				MarkdownDescription: `Необходим ip-range v4
+
+IPv4 подсеть в CIDR нотации`,
+				Required: true,
 			},
 		},
 	}

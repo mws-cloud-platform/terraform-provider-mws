@@ -5,8 +5,6 @@ package model
 import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -27,28 +25,29 @@ func (s *CertificateChallenge) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"domain": schema.StringAttribute{
-				MarkdownDescription: `Домен, права на который проверяются.
-`,
-				Computed: true,
+				MarkdownDescription: `Домен, права на который проверяются`,
+				Computed:            true,
 			},
 			"created_at": schema.StringAttribute{
-				MarkdownDescription: `Время создания проверки.
-`,
+				MarkdownDescription: `Время создания проверки
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
 				Computed: true,
 			},
 			"updated_at": schema.StringAttribute{
-				MarkdownDescription: `Время последнего обновления проверки.
-`,
+				MarkdownDescription: `Время последнего обновления проверки
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
 				Computed: true,
 			},
 			"last_validated_at": schema.StringAttribute{
-				MarkdownDescription: `Время последней проверки.
-`,
+				MarkdownDescription: `Время последней проверки
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
 				Computed: true,
 			},
 			"status": schema.StringAttribute{
-				MarkdownDescription: `Текущий статус проверки. Возможные значения: PENDING, VALID, INVALID, CANCELED, SUBMITTED.
-`,
+				MarkdownDescription: `Текущий статус проверки. Возможные значения: PENDING, VALID, INVALID, CANCELED, SUBMITTED`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"PENDING",
@@ -59,26 +58,20 @@ func (s *CertificateChallenge) GetSchema() schema.Schema {
 					),
 				},
 				Computed: true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-				},
 			},
 			"status_reason": schema.StringAttribute{
-				MarkdownDescription: `Причина текущего статуса проверки.
-`,
-				Computed: true,
+				MarkdownDescription: `Причина текущего статуса проверки`,
+				Computed:            true,
 			},
 			"http_challenge": schema.SingleNestedAttribute{
-				Attributes: new(Http01Challenge).GetSchema().Attributes,
-				MarkdownDescription: `Данные для прохождения проверки типа http-01.
-`,
-				Computed: true,
+				Attributes:          new(Http01Challenge).GetSchema().Attributes,
+				MarkdownDescription: `Данные для прохождения проверки типа http-01`,
+				Computed:            true,
 			},
 			"dns_challenge": schema.SingleNestedAttribute{
-				Attributes: new(Dns01Challenge).GetSchema().Attributes,
-				MarkdownDescription: `Данные для прохождения проверки типа dns-01.
-`,
-				Computed: true,
+				Attributes:          new(Dns01Challenge).GetSchema().Attributes,
+				MarkdownDescription: `Данные для прохождения проверки типа dns-01`,
+				Computed:            true,
 			},
 		},
 	}

@@ -4,7 +4,6 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -34,7 +33,7 @@ func (s *Nlb) GetSchema() schema.Schema {
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes,
-				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров.`,
+				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров`,
 				Computed:            true,
 				Optional:            true,
 			},
@@ -44,17 +43,14 @@ func (s *Nlb) GetSchema() schema.Schema {
 			},
 			"listener": schema.SingleNestedAttribute{
 				Attributes:          new(NlbListener).GetSchema().Attributes,
-				MarkdownDescription: `Конфигурация IP-адреса, на котором балансировщик будет принимать запросы.`,
+				MarkdownDescription: `Конфигурация IP-адреса, на котором балансировщик будет принимать запросы`,
 				Required:            true,
-				PlanModifiers: []planmodifier.Object{
-					objectplanmodifier.RequiresReplaceIfConfigured(),
-				},
 			},
 			"rules": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(NlbRule).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Правила балансировки нагрузки. Сочетание протокола и порта (поле protoPort) в каждом правиле должно быть уникальным в рамках одного балансировщика.`,
+				MarkdownDescription: `Правила балансировки нагрузки. Сочетание протокола и порта (поле protoPort) в каждом правиле должно быть уникальным в рамках одного балансировщика`,
 				Required:            true,
 			},
 		},

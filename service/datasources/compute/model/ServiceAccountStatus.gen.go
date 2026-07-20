@@ -25,14 +25,12 @@ func (s *ServiceAccountStatus) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"ref": schema.StringAttribute{
-				MarkdownDescription: `Ссылка на сервисный аккаунт
-`,
-				Computed: true,
+				MarkdownDescription: `Ссылка на сервисный аккаунт`,
+				Computed:            true,
 			},
 			"display_name": schema.StringAttribute{
-				MarkdownDescription: `Отображаемое имя сервисного аккаунта (может отличаться от имени в ID).
-`,
-				Computed: true,
+				MarkdownDescription: `Отображаемое имя сервисного аккаунта (может отличаться от имени в ID)`,
+				Computed:            true,
 			},
 		},
 	}

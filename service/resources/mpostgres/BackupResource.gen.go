@@ -64,7 +64,7 @@ func (m *BackupResource) Schema(ctx context.Context, req resource.SchemaRequest,
 		},
 	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к проекту`,
+		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{

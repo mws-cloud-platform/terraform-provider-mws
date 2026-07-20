@@ -15,6 +15,7 @@ type ClickhouseCluster struct {
 	Status            types.Object `tfsdk:"status"`
 	Active            types.Bool   `tfsdk:"active"`
 	Version           types.String `tfsdk:"version"`
+	Region            types.String `tfsdk:"region"`
 	Endpoints         types.List   `tfsdk:"endpoints"`
 	Coordinator       types.Object `tfsdk:"coordinator"`
 	Shards            types.List   `tfsdk:"shards"`
@@ -27,7 +28,7 @@ type ClickhouseCluster struct {
 
 func (s *ClickhouseCluster) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Кластер Managed ClickHouse — это группа узлов (виртуальных машин), объединенных для высокоскоростной обработки и хранения данных с помощью СУБД ClickHouse.`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,
@@ -41,51 +42,54 @@ func (s *ClickhouseCluster) GetSchema() schema.Schema {
 				Computed:   true,
 			},
 			"active": schema.BoolAttribute{
-				MarkdownDescription: `Значение включен/выключен кластер.`,
+				MarkdownDescription: `Состояние кластера — включен или выключен`,
 				Computed:            true,
 			},
 			"version": schema.StringAttribute{
-				MarkdownDescription: `Версия продукта.`,
+				MarkdownDescription: `Версия продукта`,
+				Computed:            true,
+			},
+			"region": schema.StringAttribute{
+				MarkdownDescription: `Регион, в котором располагается кластер`,
 				Computed:            true,
 			},
 			"endpoints": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(ClickhouseEndpoint).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Описание эдпойнтов кластера.`,
+				MarkdownDescription: `Описание эндпоинтов кластера`,
 				Computed:            true,
 			},
 			"coordinator": schema.SingleNestedAttribute{
 				Attributes:          new(ClickhouseClusterCoordinator).GetSchema().Attributes,
-				MarkdownDescription: `Описание координатора кластера.`,
+				MarkdownDescription: `Описание координатора кластера`,
 				Computed:            true,
 			},
 			"shards": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(ClickhouseClusterShard).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Описание шардов кластера.`,
+				MarkdownDescription: `Описание шардов кластера`,
 				Computed:            true,
 			},
 			"config": schema.MapAttribute{
 				ElementType:         types.StringType,
-				MarkdownDescription: `Настройки Clickhouse. Если не указаны, будут использованы настройки по-умолчанию.`,
+				MarkdownDescription: `Настройки Clickhouse. Если не указаны, будут использованы настройки по умолчанию`,
 				Computed:            true,
 			},
 			"storage": schema.SingleNestedAttribute{
-				Attributes: new(ClickhouseStorageConfiguration).GetSchema().Attributes,
-				MarkdownDescription: `Конфигурация схемы хранилищ ClickHouse.
-`,
-				Computed: true,
+				Attributes:          new(ClickhouseStorageConfiguration).GetSchema().Attributes,
+				MarkdownDescription: `Конфигурация схемы хранилищ ClickHouse`,
+				Computed:            true,
 			},
 			"bootstrap_admin": schema.SingleNestedAttribute{
 				Attributes:          new(ClickhouseClusterBootstrapAdminSpec).GetSchema().Attributes,
-				MarkdownDescription: `Добавление пользователей при создании кластера Clickhouse.`,
+				MarkdownDescription: `Добавление пользователей при создании кластера Clickhouse`,
 				Computed:            true,
 			},
 			"backup": schema.SingleNestedAttribute{
 				Attributes:          new(ClickhouseClusterBackup).GetSchema().Attributes,
-				MarkdownDescription: `Спецификация работы автоматического резервного копирования.`,
+				MarkdownDescription: `Спецификация работы автоматического резервного копирования`,
 				Computed:            true,
 			},
 			"maintenance_window": schema.SingleNestedAttribute{
@@ -106,33 +110,38 @@ func (s *ClickhouseClusterMetadata) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля Metadata анонимного типа структуры ClickhouseCluster`,
 		Attributes: map[string]schema.Attribute{
 			"display_name": schema.StringAttribute{
-				MarkdownDescription: `Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов.`,
+				MarkdownDescription: `Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов`,
 				Computed:            true,
 			},
 			"create_time": schema.StringAttribute{
-				MarkdownDescription: `Дата создания объекта.`,
-				Computed:            true,
+				MarkdownDescription: `Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"delete_time": schema.StringAttribute{
-				MarkdownDescription: `Время запроса на удаление ресурса (не фактическое время удаления).`,
-				Computed:            true,
+				MarkdownDescription: `Время запроса на удаление ресурса (не фактическое время удаления)
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"purge_time": schema.StringAttribute{
-				Computed: true,
+				MarkdownDescription: `Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed:            true,
 			},
 			"usages": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(tfcommon.TypedUsage).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены.`,
+				MarkdownDescription: `Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены`,
 				Computed:            true,
 			},
 			"description": schema.StringAttribute{
-				MarkdownDescription: `Описание ресурса.`,
+				MarkdownDescription: `Описание ресурса`,
 				Computed:            true,
 			},
 			"id": schema.StringAttribute{
-				MarkdownDescription: `ссылка на типизированный референс`,
+				MarkdownDescription: `Ссылка на типизированный референс`,
 				Computed:            true,
 			},
 		},

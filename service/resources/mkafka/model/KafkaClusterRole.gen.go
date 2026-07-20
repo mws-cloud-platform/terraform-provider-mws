@@ -17,7 +17,7 @@ func (s *KafkaClusterRole) GetSchema() schema.Schema {
 		MarkdownDescription: `Роль пользователя в кластере.`,
 		Attributes: map[string]schema.Attribute{
 			"name": schema.StringAttribute{
-				MarkdownDescription: `Название роли.`,
+				MarkdownDescription: `Название роли`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"CLUSTER_ADMIN",

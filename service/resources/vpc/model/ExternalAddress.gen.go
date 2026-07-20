@@ -32,21 +32,18 @@ func (s *ExternalAddress) GetSchema() schema.Schema {
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes,
-				MarkdownDescription: `Метаданные внешнего адреса.`,
+				MarkdownDescription: `Метаданные внешнего адреса`,
 				Computed:            true,
 				Optional:            true,
 			},
 			"status": schema.SingleNestedAttribute{
 				Attributes:          new(ExternalAddressStatus).GetSchema().Attributes,
-				MarkdownDescription: `Статус внешнего адреса.`,
+				MarkdownDescription: `Статус внешнего адреса`,
 				Computed:            true,
 			},
 			"nat_gateway": schema.StringAttribute{
 				MarkdownDescription: `Шлюз, к которому относится адрес. Если шлюз не указан, для трансляции IP-адресов используется шлюз по умолчанию для выхода в интернет (ref=natGateways/internet-gateway)`,
 				Optional:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-				},
 			},
 		},
 	}

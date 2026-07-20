@@ -12,13 +12,13 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/model"
 )
 
-func KafkaAutoRebalanceSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaAutoRebalanceSpecResponse) (*tfmodel.KafkaAutoRebalanceSpec, tfdiag.Diagnostics) {
+func KafkaBalancerSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaBalancerSpecResponse) (*tfmodel.KafkaBalancerSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var t tfmodel.KafkaAutoRebalanceSpec
+	var t tfmodel.KafkaBalancerSpec
 
 	if am.Enabled != nil {
 		t.Enabled = types.BoolPointerValue(am.Enabled)
@@ -26,19 +26,29 @@ func KafkaAutoRebalanceSpecAPIResponseToTFModel(ctx context.Context, am *apimode
 		t.Enabled = types.BoolNull()
 	}
 
+	if am.AutoRebalance != nil {
+		t.AutoRebalance = types.BoolPointerValue(am.AutoRebalance)
+	} else {
+		t.AutoRebalance = types.BoolNull()
+	}
+
 	return &t, diags
 }
 
-func KafkaAutoRebalanceSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaAutoRebalanceSpec) (*apimodel.KafkaAutoRebalanceSpecRequest, tfdiag.Diagnostics) {
+func KafkaBalancerSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaBalancerSpec) (*apimodel.KafkaBalancerSpecRequest, tfdiag.Diagnostics) {
 	if tm == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaAutoRebalanceSpecRequest
+	var am apimodel.KafkaBalancerSpecRequest
 
 	if !tm.Enabled.IsNull() && !tm.Enabled.IsUnknown() {
 		am.Enabled = tm.Enabled.ValueBoolPointer()
+	}
+
+	if !tm.AutoRebalance.IsNull() && !tm.AutoRebalance.IsUnknown() {
+		am.AutoRebalance = tm.AutoRebalance.ValueBoolPointer()
 	}
 
 	return &am, diags

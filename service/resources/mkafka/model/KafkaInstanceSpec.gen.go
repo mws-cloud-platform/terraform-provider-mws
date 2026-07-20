@@ -18,19 +18,19 @@ func (s *KafkaInstanceSpec) GetSchema() schema.Schema {
 		MarkdownDescription: `Параметры виртуальной машины, где будет работать брокер Кафки.`,
 		Attributes: map[string]schema.Attribute{
 			"vm_type": schema.StringAttribute{
-				MarkdownDescription: `Тип виртуальной машины, описывающий ресурсы (vCPU, memory).`,
+				MarkdownDescription: `Тип виртуальной машины, описывающий ресурсы (vCPU, memory)`,
 				Required:            true,
 			},
 			"disk": schema.SingleNestedAttribute{
 				Attributes:          new(KafkaDataDiskSpec).GetSchema().Attributes,
-				MarkdownDescription: `Параметры диска с данными на узле кластера.`,
+				MarkdownDescription: `Параметры диска с данными на узле кластера`,
 				Required:            true,
 			},
 			"allocation": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(KafkaAllocation).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Параметры размещения брокеров по зонам.`,
+				MarkdownDescription: `Параметры размещения брокеров по зонам`,
 				Optional:            true,
 			},
 		},

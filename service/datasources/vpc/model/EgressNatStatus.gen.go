@@ -27,17 +27,17 @@ func (s *EgressNatStatus) GetSchema() schema.Schema {
 			},
 			"internal": schema.SingleNestedAttribute{
 				Attributes:          new(EgressNatStatusInternal).GetSchema().Attributes,
-				MarkdownDescription: `Группирующий элемент для всего, что касается внутренних ресурсов.`,
+				MarkdownDescription: `Группирующий элемент для всего, что касается внутренних ресурсов`,
 				Computed:            true,
 			},
 			"external": schema.SingleNestedAttribute{
 				Attributes:          new(EgressNatStatusExternal).GetSchema().Attributes,
-				MarkdownDescription: `Группирующий элемент для всего что, касается внешней части (ресурсов, доступных извне).`,
+				MarkdownDescription: `Группирующий элемент для всего что, касается внешней части (ресурсов, доступных извне)`,
 				Computed:            true,
 			},
 			"port_allocation": schema.SingleNestedAttribute{
 				Attributes:          new(EgressNatStatusPortAllocation).GetSchema().Attributes,
-				MarkdownDescription: `Описывает примененные настройки управления портами.`,
+				MarkdownDescription: `Описывает примененные настройки управления портами`,
 				Computed:            true,
 			},
 		},

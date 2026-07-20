@@ -39,7 +39,7 @@ func (s *NlbStatusRule) GetSchema() schema.Schema {
 			},
 			"health_check": schema.SingleNestedAttribute{
 				Attributes:          new(NlbStatusHealthCheck).GetSchema().Attributes,
-				MarkdownDescription: `Конфигурация проверки работоспособности виртуальных машин.`,
+				MarkdownDescription: `Конфигурация проверки работоспособности виртуальных машин`,
 				Computed:            true,
 			},
 		},

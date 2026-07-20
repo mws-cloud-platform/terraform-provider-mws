@@ -47,7 +47,7 @@ func (s *ClickhouseBackupStatusBackup) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля Backup анонимного типа структуры ClickhouseBackupStatus`,
 		Attributes: map[string]schema.Attribute{
 			"trigger": schema.StringAttribute{
-				MarkdownDescription: `Причина создания резервной копии в CPL.`,
+				MarkdownDescription: `Причина создания резервной копии в CPL`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"AUTOMATIC",
@@ -57,7 +57,7 @@ func (s *ClickhouseBackupStatusBackup) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"type": schema.StringAttribute{
-				MarkdownDescription: `Причина создания резервной копии в CPL.`,
+				MarkdownDescription: `Причина создания резервной копии в CPL`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"FULL",
@@ -67,20 +67,36 @@ func (s *ClickhouseBackupStatusBackup) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"start_time": schema.StringAttribute{
-				MarkdownDescription: `Начало снятия резервной копии.`,
-				Computed:            true,
+				MarkdownDescription: `Начало снятия резервной копии
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"end_time": schema.StringAttribute{
-				MarkdownDescription: `Окончание снятия резервной копии.`,
-				Computed:            true,
+				MarkdownDescription: `Окончание снятия резервной копии
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"size": schema.StringAttribute{
-				MarkdownDescription: `Размер резервной копии.`,
-				Computed:            true,
+				MarkdownDescription: `Размер резервной копии
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются`,
+				Computed: true,
 			},
 			"total_size": schema.StringAttribute{
-				MarkdownDescription: `Размер всех файлов резервной копии (в распакованном и несжатом виде).`,
-				Computed:            true,
+				MarkdownDescription: `Размер всех файлов резервной копии (в распакованном и несжатом виде)
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются`,
+				Computed: true,
 			},
 		},
 	}

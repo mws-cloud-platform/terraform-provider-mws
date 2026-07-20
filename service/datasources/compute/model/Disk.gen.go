@@ -47,8 +47,14 @@ func (s *Disk) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"size": schema.StringAttribute{
-				MarkdownDescription: `Размер диска`,
-				Computed:            true,
+				MarkdownDescription: `Размер диска
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются`,
+				Computed: true,
 			},
 			"source": schema.SingleNestedAttribute{
 				Attributes:          new(DiskSpecSource).GetSchema().Attributes,
@@ -64,8 +70,14 @@ func (s *Disk) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"block_size": schema.StringAttribute{
-				MarkdownDescription: `Размер блока диска`,
-				Computed:            true,
+				MarkdownDescription: `Размер блока диска
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются`,
+				Computed: true,
 			},
 			"os_type": schema.StringAttribute{
 				MarkdownDescription: `Тип операционной системы`,

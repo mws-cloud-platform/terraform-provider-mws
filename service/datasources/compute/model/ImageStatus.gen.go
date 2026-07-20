@@ -31,8 +31,14 @@ func (s *ImageStatus) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"storage_size": schema.StringAttribute{
-				MarkdownDescription: `Размер образа`,
-				Computed:            true,
+				MarkdownDescription: `Размер образа
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются`,
+				Computed: true,
 			},
 			"source_exists": schema.BoolAttribute{
 				MarkdownDescription: `Признак, указывающий, удален ли родительский ресурс-источник`,
@@ -50,8 +56,14 @@ func (s *ImageStatus) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"min_disk_size": schema.StringAttribute{
-				MarkdownDescription: `Минимальный допустимый размер диска, создаваемого из образа`,
-				Computed:            true,
+				MarkdownDescription: `Минимальный допустимый размер диска, создаваемого из образа
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются`,
+				Computed: true,
 			},
 			"initial_source_image": schema.StringAttribute{
 				MarkdownDescription: `Ссылка на исходный образ`,

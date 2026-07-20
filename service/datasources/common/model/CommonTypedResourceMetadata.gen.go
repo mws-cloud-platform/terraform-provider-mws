@@ -27,7 +27,7 @@ func (s *CommonTypedResourceMetadata) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"name": schema.StringAttribute{
-				MarkdownDescription: `Обязательное уникальное, глобально или в пределах проекта, имя. Используется в качестве части составного идентификатора объекта.`,
+				MarkdownDescription: `Обязательное уникальное, глобально или в пределах проекта, имя. Используется в качестве части составного идентификатора объекта`,
 				Computed:            true,
 				DeprecationMessage:  `Отказываемся в пользу metadata.id`,
 			},
@@ -36,22 +36,28 @@ func (s *CommonTypedResourceMetadata) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"create_time": schema.StringAttribute{
-				MarkdownDescription: `Дата создания объекта`,
-				Computed:            true,
+				MarkdownDescription: `Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"delete_time": schema.StringAttribute{
-				MarkdownDescription: `Время запроса на удаление ресурса`,
-				Computed:            true,
+				MarkdownDescription: `Время запроса на удаление ресурса
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"purge_time": schema.StringAttribute{
-				MarkdownDescription: `Время удаления ресурса`,
-				Computed:            true,
+				MarkdownDescription: `Время удаления ресурса
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"usages": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(Usage).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены`,
+				MarkdownDescription: `Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены`,
 				Computed:            true,
 			},
 			"description": schema.StringAttribute{

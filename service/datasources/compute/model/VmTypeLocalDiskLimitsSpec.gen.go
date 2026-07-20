@@ -18,12 +18,12 @@ func (s *VmTypeLocalDiskLimitsSpec) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"disk": schema.SingleNestedAttribute{
 				Attributes:          new(SingleLocalDiskLimitsSpec).GetSchema().Attributes,
-				MarkdownDescription: `Спецификация лимитов одного локального диска доступного для ВМ указанного типа.`,
+				MarkdownDescription: `Спецификация лимитов одного локального диска доступного для ВМ указанного типа`,
 				Computed:            true,
 			},
 			"total": schema.SingleNestedAttribute{
 				Attributes:          new(TotalLocalDiskLimitsSpec).GetSchema().Attributes,
-				MarkdownDescription: `Спецификация общих лимитов локальных дисков для ВМ указанного типа.`,
+				MarkdownDescription: `Спецификация общих лимитов локальных дисков для ВМ указанного типа`,
 				Computed:            true,
 			},
 		},

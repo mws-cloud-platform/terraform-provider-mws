@@ -29,13 +29,13 @@ data "mws_vpc_route" "vpc_route" {
 
 ### Optional
 
-- `project` (String) Путь к проекту
+- `project` (String) Путь к проекту.
 
 ### Read-Only
 
 - `destination` (Attributes) Назначение (see [below for nested schema](#nestedatt--destination))
 - `kind` (String)
-- `metadata` (Attributes) Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров. (see [below for nested schema](#nestedatt--metadata))
+- `metadata` (Attributes) Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров (see [below for nested schema](#nestedatt--metadata))
 - `next_hop` (Attributes) Переход (see [below for nested schema](#nestedatt--next_hop))
 - `status` (Attributes) (see [below for nested schema](#nestedatt--status))
 
@@ -61,22 +61,28 @@ Read-Only:
 Read-Only:
 
 - `create_time` (String) Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `delete_time` (String) Время запроса на удаление ресурса
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `description` (String) Описание ресурса
 - `display_name` (String) Отображаемое имя свойства
 - `id` (String) ID свойства
-- `name` (String, Deprecated) Обязательное уникальное, глобально или в пределах проекта, имя. Используется в качестве части составного идентификатора объекта.
+- `name` (String, Deprecated) Обязательное уникальное, глобально или в пределах проекта, имя. Используется в качестве части составного идентификатора объекта
 - `purge_time` (String) Время удаления ресурса
-- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
 
 <a id="nestedatt--metadata--usages"></a>
 ### Nested Schema for `metadata.usages`
 
 Read-Only:
 
-- `name` (String) Имя связи, требуется для модификации коллекции
+- `name` (String) Имя связи. Требуется для модификации коллекции
 - `resource` (String) Ссылка на ресурс
-- `usage_type` (String) Тип связи. Помимо стандартных own и use могут быть добавлены специализированные типы для конкретных сервисов
+- `usage_type` (String) Тип связи. Помимо стандартных "own" и "use" могут быть добавлены специализированные типы для конкретных сервисов
 
 
 
@@ -85,16 +91,16 @@ Read-Only:
 
 Read-Only:
 
-- `address` (Attributes) Адрес. (see [below for nested schema](#nestedatt--next_hop--address))
-- `nat_gateway` (String) NAT шлюз.
-- `network_local` (String) Локальная сеть.
+- `address` (Attributes) Адрес (see [below for nested schema](#nestedatt--next_hop--address))
+- `nat_gateway` (String) NAT шлюз
+- `network_local` (String) Локальная сеть
 
 <a id="nestedatt--next_hop--address"></a>
 ### Nested Schema for `next_hop.address`
 
 Read-Only:
 
-- `ref` (String) ссылка на IP-Адрес назначения
+- `ref` (String) Ссылка на IP-Адрес назначения
 
 
 
@@ -120,17 +126,19 @@ Read-Only:
 
 Read-Only:
 
-- `address` (Attributes) Адрес. (see [below for nested schema](#nestedatt--status--next_hop--address))
-- `nat_gateway` (String) NAT шлюз.
-- `network_local` (String) Локальная сеть.
+- `address` (Attributes) Адрес (see [below for nested schema](#nestedatt--status--next_hop--address))
+- `nat_gateway` (String) NAT шлюз
+- `network_local` (String) Локальная сеть
 
 <a id="nestedatt--status--next_hop--address"></a>
 ### Nested Schema for `status.next_hop.address`
 
 Read-Only:
 
-- `ip_address` (String) Значение IP адреса.
-- `ref` (String) Относительная ссылка на статический адрес.
+- `ip_address` (String) Значение IP адреса
+
+IPv4- или IPv6-адрес
+- `ref` (String) Относительная ссылка на статический адрес
 
 
 

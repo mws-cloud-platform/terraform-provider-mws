@@ -22,9 +22,7 @@ func TestCertificateManagedSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 func TestCertificateManagedSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.CertificateManagedSpecRequest{
-		PreferredChallengeType: "",
-		Provider:               "",
-		Domains:                []string{},
+		Domains: []string{},
 	}
 
 	emptyApiModelResponse, err := apimodel.CertificateManagedSpecRequestToOptionalResponse(&emptyApiModelRequest)

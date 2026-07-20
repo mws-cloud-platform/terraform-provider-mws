@@ -27,19 +27,19 @@ data "mws_mpostgres_cluster" "mpostgres_cluster" {
 
 ### Optional
 
-- `project` (String) Путь к проекту
+- `project` (String) Путь к проекту.
 
 ### Read-Only
 
-- `active` (Boolean) Значение включен/выключен кластер.
+- `active` (Boolean) Состояние кластера — включен или выключен
 - `backup` (Attributes) Спецификация автоматического бэкапирования (see [below for nested schema](#nestedatt--backup))
-- `endpoints` (Attributes List) Описание эндпойнтов в сетях пользователя (VPC) для подключения к инстансам кластера. (see [below for nested schema](#nestedatt--endpoints))
+- `endpoints` (Attributes List) Описание эндпойнтов в сетях пользователя (VPC) для подключения к инстансам кластера (see [below for nested schema](#nestedatt--endpoints))
 - `instance_template` (Attributes) (see [below for nested schema](#nestedatt--instance_template))
 - `instances` (Attributes List) (see [below for nested schema](#nestedatt--instances))
 - `kind` (String)
 - `maintenance_window` (Attributes) (see [below for nested schema](#nestedatt--maintenance_window))
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
-- `postgres_parameters` (Map of String) Параметры PostgreSQL. Если не указаны, будут использованы дефолтные параметры.
+- `postgres_parameters` (Map of String) Параметры PostgreSQL. Если не указаны, будут использованы параметры по умолчанию
 - `status` (Attributes) (see [below for nested schema](#nestedatt--status))
 - `version` (String) Версия продукта
 
@@ -66,8 +66,8 @@ Read-Only:
 Read-Only:
 
 - `direct_addresses` (Attributes List) (see [below for nested schema](#nestedatt--endpoints--direct_addresses))
-- `name` (String) Имя эндпойнта.
-- `network` (String) Идентификатор пользовательской сети (VPC).
+- `name` (String) Имя эндпойнта
+- `network` (String) Идентификатор пользовательской сети (VPC)
 - `primary_addresses` (Attributes List) (see [below for nested schema](#nestedatt--endpoints--primary_addresses))
 - `read_only_addresses` (Attributes List) (see [below for nested schema](#nestedatt--endpoints--read_only_addresses))
 
@@ -76,18 +76,18 @@ Read-Only:
 
 Read-Only:
 
-- `external_access` (Attributes) Описание адреса для внешнего подключения к кластеру. (see [below for nested schema](#nestedatt--endpoints--direct_addresses--external_access))
-- `ref` (String) Идентификатор адресса, в которые будет трансляция из service-vpc.
-- `spec` (Attributes) Описание subnet пользователя, в который будет трансляция из service-vpc. (see [below for nested schema](#nestedatt--endpoints--direct_addresses--spec))
-- `zone` (String) Зона инстанса, к которому ведет адрес.
+- `external_access` (Attributes) Описание адреса для внешнего подключения к кластеру (see [below for nested schema](#nestedatt--endpoints--direct_addresses--external_access))
+- `ref` (String) Идентификатор адреса для подключения к узлу
+- `spec` (Attributes) Описание подсети пользователя, используемой для подключения к узлам (see [below for nested schema](#nestedatt--endpoints--direct_addresses--spec))
+- `zone` (String) Зона инстанса, к которому ведет адрес
 
 <a id="nestedatt--endpoints--direct_addresses--external_access"></a>
 ### Nested Schema for `endpoints.direct_addresses.external_access`
 
 Read-Only:
 
-- `allowed` (Boolean) Флаг, разрешающий внешнее подключение к кластеру.
-- `ref` (String) Идентификатор внешнего адреса.
+- `allowed` (Boolean) Флаг, разрешающий внешнее подключение к кластеру
+- `ref` (String) Идентификатор внешнего адреса
 
 
 <a id="nestedatt--endpoints--direct_addresses--spec"></a>
@@ -104,17 +104,17 @@ Read-Only:
 
 Read-Only:
 
-- `external_access` (Attributes) Описание адреса для внешнего подключения к кластеру. (see [below for nested schema](#nestedatt--endpoints--primary_addresses--external_access))
-- `ref` (String) Идентификатор адресса, в которые будет трансляция из service-vpc.
-- `spec` (Attributes) Описание subnet пользователя, в который будет трансляция из service-vpc. (see [below for nested schema](#nestedatt--endpoints--primary_addresses--spec))
+- `external_access` (Attributes) Описание адреса для внешнего подключения к кластеру (see [below for nested schema](#nestedatt--endpoints--primary_addresses--external_access))
+- `ref` (String) Идентификатор адреса для подключения к узлу
+- `spec` (Attributes) Описание подсети пользователя, используемой для подключения к узлам (see [below for nested schema](#nestedatt--endpoints--primary_addresses--spec))
 
 <a id="nestedatt--endpoints--primary_addresses--external_access"></a>
 ### Nested Schema for `endpoints.primary_addresses.external_access`
 
 Read-Only:
 
-- `allowed` (Boolean) Флаг, разрешающий внешнее подключение к кластеру.
-- `ref` (String) Идентификатор внешнего адреса.
+- `allowed` (Boolean) Флаг, разрешающий внешнее подключение к кластеру
+- `ref` (String) Идентификатор внешнего адреса
 
 
 <a id="nestedatt--endpoints--primary_addresses--spec"></a>
@@ -131,17 +131,17 @@ Read-Only:
 
 Read-Only:
 
-- `external_access` (Attributes) Описание адреса для внешнего подключения к кластеру. (see [below for nested schema](#nestedatt--endpoints--read_only_addresses--external_access))
-- `ref` (String) Идентификатор адресса, в которые будет трансляция из service-vpc.
-- `spec` (Attributes) Описание subnet пользователя, в который будет трансляция из service-vpc. (see [below for nested schema](#nestedatt--endpoints--read_only_addresses--spec))
+- `external_access` (Attributes) Описание адреса для внешнего подключения к кластеру (see [below for nested schema](#nestedatt--endpoints--read_only_addresses--external_access))
+- `ref` (String) Идентификатор адреса для подключения к узлу
+- `spec` (Attributes) Описание подсети пользователя, используемой для подключения к узлам (see [below for nested schema](#nestedatt--endpoints--read_only_addresses--spec))
 
 <a id="nestedatt--endpoints--read_only_addresses--external_access"></a>
 ### Nested Schema for `endpoints.read_only_addresses.external_access`
 
 Read-Only:
 
-- `allowed` (Boolean) Флаг, разрешающий внешнее подключение к кластеру.
-- `ref` (String) Идентификатор внешнего адреса.
+- `allowed` (Boolean) Флаг, разрешающий внешнее подключение к кластеру
+- `ref` (String) Идентификатор внешнего адреса
 
 
 <a id="nestedatt--endpoints--read_only_addresses--spec"></a>
@@ -159,8 +159,8 @@ Read-Only:
 
 Read-Only:
 
-- `disk` (Attributes) Параметры диска с данными на узле кластера. (see [below for nested schema](#nestedatt--instance_template--disk))
-- `vm_type` (String) Тип виртуальной машины, описывающий ресурсы (vCPU, memory).
+- `disk` (Attributes) Параметры диска с данными на узле кластера (see [below for nested schema](#nestedatt--instance_template--disk))
+- `vm_type` (String) Тип виртуальной машины, описывающий ресурсы (vCPU, memory)
 
 <a id="nestedatt--instance_template--disk"></a>
 ### Nested Schema for `instance_template.disk`
@@ -168,9 +168,15 @@ Read-Only:
 Read-Only:
 
 - `iops` (Number) IOPS
-- `size` (String) Размер диска.
-- `type` (String) Тип используемого диска: 
-* "NETWORK_STANDARD_SSD" — сетевой SSD
+- `size` (String) Размер диска
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
+- `type` (String) Тип используемого диска:
+* "NETWORK_STANDARD_SSD" — сетевой SSD;
 * "LOCAL" — локальный диск
 
 
@@ -196,9 +202,18 @@ Read-Only:
 
 Read-Only:
 
-- `days` (List of String) Дни недели, в который будет запущено задание на тех.обслуживание
+- `days` (List of String) Дни недели, в которые будет запущено задание на тех. обслуживание
 - `duration` (String) Допустимая продолжительность процесса обновления. Если не указано, то не ограничено по времени. Принимается только формат в часах (h)
-- `hour` (Number) Час, в который будет запущено задание на тех.обслуживание
+
+Период времени. Поддерживаются следующие форматы:
+  - ISO 8601: P(n)DT(n)H(n)M(n)S. Допустимые единицы измерения: дни ("D"), часы ("H"), минуты ("M"), секунды ("S"). Только секунды могут быть дробными
+  - Простой формат. Допустимые единицы измерения: "d", "h", "m", "s", "ms", "us", "ns".
+    Величины должны следовать по убыванию единиц измерения
+  - Число в секундах
+
+Отрицательные значения обозначаются префиксом "-", в простом формате могут быть ограничены скобками.
+Регистр и пробелы игнорируются
+- `hour` (Number) Час, в который будет запущено задание на тех. обслуживание
 
 
 
@@ -207,22 +222,26 @@ Read-Only:
 
 Read-Only:
 
-- `create_time` (String) Дата создания объекта.
-- `delete_time` (String) Время запроса на удаление ресурса (не фактическое время удаления).
-- `description` (String) Описание ресурса.
-- `display_name` (String) Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов.
-- `id` (String) ссылка на типизированный референс
-- `purge_time` (String)
-- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены. (see [below for nested schema](#nestedatt--metadata--usages))
+- `create_time` (String) Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `delete_time` (String) Время запроса на удаление ресурса (не фактическое время удаления)
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `description` (String) Описание ресурса
+- `display_name` (String) Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов
+- `id` (String) Ссылка на типизированный референс
+- `purge_time` (String) Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
 
 <a id="nestedatt--metadata--usages"></a>
 ### Nested Schema for `metadata.usages`
 
 Read-Only:
 
-- `name` (String) Имя связи, требуется для модификации коллекции
-- `resource` (String) ссылка на ресурс
-- `usage_type` (String) Тип связи. Помимо стандартных own и use могут быть добавлены специализированные типы для конкретных сервисов
+- `name` (String) Имя связи. Требуется для модификации коллекции
+- `resource` (String) Ссылка на ресурс
+- `usage_type` (String) Тип связи. Помимо стандартных "own" и "use" могут быть добавлены специализированные типы для конкретных сервисов
 
 
 
@@ -232,29 +251,29 @@ Read-Only:
 Read-Only:
 
 - `backup` (Attributes) Фактические параметры для автоматического бэкапирования (see [below for nested schema](#nestedatt--status--backup))
-- `health` (String) Работоспособность кластера
-  * "ALIVE"    - Полностью работоспособен
-  * "DEGRADED" - Деградирует (некоторые, но не все, экземпляры неработоспособны)
-  * "FAILED"   - Неработоспособен
+- `health` (String) Работоспособность кластера:
+  * "ALIVE"    - Полностью работоспособен;
+  * "DEGRADED" - Деградирует (некоторые, но не все, экземпляры неработоспособны);
+  * "FAILED"   - Неработоспособен;
   * "UNKNOWN"  - Не удается определить состояние (на этапе создания)
 - `instance_template` (Attributes) (see [below for nested schema](#nestedatt--status--instance_template))
 - `instances` (Attributes List) (see [below for nested schema](#nestedatt--status--instances))
 - `maintenance_window` (Attributes) (see [below for nested schema](#nestedatt--status--maintenance_window))
 - `message` (String)
-- `network` (Attributes) Описание ip адресов для доступа к кластеру (see [below for nested schema](#nestedatt--status--network))
+- `network` (Attributes) Описание IP-адресов для доступа к кластеру (see [below for nested schema](#nestedatt--status--network))
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
-- `state` (String) Состояние кластера
-  * "CREATING"     - Создается
-  * "RUNNING"      - Работает в штатном режиме
-  * "STOPPING"     - Останавливается
-  * "STOPPED"      - Остановлен
-  * "STARTING"     - Запуск ранее остановленного
-  * "UPDATING"     - Выполняется обновление
-  * "ERROR"        - Произошла ошибка, требуется участие команды поддержки
-  * "DELETING"     - Удаляется
-  * "DELETED"      - Удален
-  * "UNIDENTIFIED" - Не удается определить статус
-  * "RESTORING"    - Восстанавливается
+- `state` (String) Состояние кластера:
+  * "CREATING"     - Создается;
+  * "RUNNING"      - Работает в штатном режиме;
+  * "STOPPING"     - Останавливается;
+  * "STOPPED"      - Остановлен;
+  * "STARTING"     - Запуск ранее остановленного;
+  * "UPDATING"     - Выполняется обновление;
+  * "ERROR"        - Произошла ошибка, требуется участие команды поддержки;
+  * "DELETING"     - Удаляется;
+  * "DELETED"      - Удален;
+  * "UNIDENTIFIED" - Не удается определить статус;
+  * "RESTORING"    - Восстанавливается;
   * "MAINTENANCE"  - Ведутся работы по тех.обслуживанию
 
 <a id="nestedatt--status--backup"></a>
@@ -279,8 +298,8 @@ Read-Only:
 
 Read-Only:
 
-- `disk` (Attributes) Параметры диска с данными на узле кластера. (see [below for nested schema](#nestedatt--status--instance_template--disk))
-- `vm_type` (String) Тип виртуальной машины, описывающий ресурсы (vCPU, memory).
+- `disk` (Attributes) Параметры диска с данными на узле кластера (see [below for nested schema](#nestedatt--status--instance_template--disk))
+- `vm_type` (String) Тип виртуальной машины, описывающий ресурсы (vCPU, memory)
 
 <a id="nestedatt--status--instance_template--disk"></a>
 ### Nested Schema for `status.instance_template.disk`
@@ -288,8 +307,14 @@ Read-Only:
 Read-Only:
 
 - `iops` (Number) IOPS
-- `size` (String) Размер диска.
-- `type` (String) Тип диска.
+- `size` (String) Размер диска
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
+- `type` (String) Тип диска
 
 
 
@@ -298,9 +323,9 @@ Read-Only:
 
 Read-Only:
 
-- `health` (String) Исправность экземпляра postgres
-- `name` (String) Имя экземпляра postgres
-- `role` (String) Роль экземпляра postgres
+- `health` (String) Исправность экземпляра PostgreSQL
+- `name` (String) Имя экземпляра PostgreSQL
+- `role` (String) Роль экземпляра PostgreSQL
 
 
 <a id="nestedatt--status--maintenance_window"></a>
@@ -315,9 +340,18 @@ Read-Only:
 
 Read-Only:
 
-- `days` (List of String) Дни недели, в который будет запущено задание на тех.обслуживание
+- `days` (List of String) Дни недели, в которые будет запущено задание на тех. обслуживание
 - `duration` (String) Допустимая продолжительность процесса обновления. Если не указано, то не ограничено по времени. Принимается только формат в часах (h)
-- `hour` (Number) Час, в который будет запущено задание на тех.обслуживание
+
+Период времени. Поддерживаются следующие форматы:
+  - ISO 8601: P(n)DT(n)H(n)M(n)S. Допустимые единицы измерения: дни ("D"), часы ("H"), минуты ("M"), секунды ("S"). Только секунды могут быть дробными
+  - Простой формат. Допустимые единицы измерения: "d", "h", "m", "s", "ms", "us", "ns".
+    Величины должны следовать по убыванию единиц измерения
+  - Число в секундах
+
+Отрицательные значения обозначаются префиксом "-", в простом формате могут быть ограничены скобками.
+Регистр и пробелы игнорируются
+- `hour` (Number) Час, в который будет запущено задание на тех. обслуживание
 
 
 
@@ -336,11 +370,11 @@ Read-Only:
 Read-Only:
 
 - `address` (String)
-- `external` (Attributes) Описание внешнего ip адреса для доступа к кластеру (see [below for nested schema](#nestedatt--status--network--direct_addresses--external))
-- `instance` (String) Имя инстанса, к которому ведет адрес.
-- `ip` (String)
+- `external` (Attributes) Описание внешнего IP-адреса для доступа к кластеру (see [below for nested schema](#nestedatt--status--network--direct_addresses--external))
+- `instance` (String) Имя инстанса, к которому ведет адрес
+- `ip` (String) IPv4- или IPv6-адрес
 - `subnet` (String)
-- `zone` (String) Зона инстанса, к которому ведет адрес.
+- `zone` (String) Зона инстанса, к которому ведет адрес
 
 <a id="nestedatt--status--network--direct_addresses--external"></a>
 ### Nested Schema for `status.network.direct_addresses.external`
@@ -348,7 +382,7 @@ Read-Only:
 Read-Only:
 
 - `address` (String)
-- `ip` (String)
+- `ip` (String) IPv4- или IPv6-адрес
 
 
 
@@ -358,8 +392,8 @@ Read-Only:
 Read-Only:
 
 - `address` (String)
-- `external` (Attributes) Описание внешнего ip адреса для доступа к кластеру (see [below for nested schema](#nestedatt--status--network--primary_addresses--external))
-- `ip` (String)
+- `external` (Attributes) Описание внешнего IP-адреса для доступа к кластеру (see [below for nested schema](#nestedatt--status--network--primary_addresses--external))
+- `ip` (String) IPv4- или IPv6-адрес
 - `subnet` (String)
 
 <a id="nestedatt--status--network--primary_addresses--external"></a>
@@ -368,7 +402,7 @@ Read-Only:
 Read-Only:
 
 - `address` (String)
-- `ip` (String)
+- `ip` (String) IPv4- или IPv6-адрес
 
 
 
@@ -378,8 +412,8 @@ Read-Only:
 Read-Only:
 
 - `address` (String)
-- `external` (Attributes) Описание внешнего ip адреса для доступа к кластеру (see [below for nested schema](#nestedatt--status--network--read_only_addresses--external))
-- `ip` (String)
+- `external` (Attributes) Описание внешнего IP-адреса для доступа к кластеру (see [below for nested schema](#nestedatt--status--network--read_only_addresses--external))
+- `ip` (String) IPv4- или IPv6-адрес
 - `subnet` (String)
 
 <a id="nestedatt--status--network--read_only_addresses--external"></a>
@@ -388,7 +422,7 @@ Read-Only:
 Read-Only:
 
 - `address` (String)
-- `ip` (String)
+- `ip` (String) IPv4- или IPv6-адрес
 
 
 

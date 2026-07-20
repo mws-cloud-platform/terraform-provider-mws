@@ -24,8 +24,10 @@ func (s *AddressStatus) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"ip_address": schema.StringAttribute{
-				MarkdownDescription: `Присвоенный адрес. Совпадает с запрошенным ipAddress из спецификации, если последний указан при создании адреса.`,
-				Computed:            true,
+				MarkdownDescription: `Присвоенный адрес. Совпадает с запрошенным ipAddress из спецификации, если последний указан при создании адреса
+
+IPv4- или IPv6-адрес`,
+				Computed: true,
 			},
 		},
 	}

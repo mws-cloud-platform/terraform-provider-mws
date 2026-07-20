@@ -22,7 +22,7 @@ func KafkaEndpointExternalAddressStatusAPIResponseToTFModel(ctx context.Context,
 	var t tfmodel.KafkaEndpointExternalAddressStatus
 
 	if am.Ref != nil {
-		t.Ref = types.StringPointerValue(ptr.Get(am.Ref.Path()))
+		t.Ref = types.StringPointerValue(ptr.Get(am.Ref.ID()))
 	} else {
 		t.Ref = types.StringNull()
 	}

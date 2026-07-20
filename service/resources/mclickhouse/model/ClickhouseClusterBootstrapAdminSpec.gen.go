@@ -22,22 +22,24 @@ func (s *ClickhouseClusterBootstrapAdminSpec) GetSchema() schema.Schema {
 		MarkdownDescription: `Добавление пользователей при создании кластера Clickhouse.`,
 		Attributes: map[string]schema.Attribute{
 			"username": schema.StringAttribute{
-				MarkdownDescription: `Имя учетной записи администратора.`,
+				MarkdownDescription: `Имя учетной записи администратора`,
 				Required:            true,
 			},
 			"password_version": schema.Int64Attribute{
 				MarkdownDescription: `Increase this field's value if you want to force updating the associated write-only field.`,
-				Optional:            true,
 				Validators: []validator.Int64{
-					int64validator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("password"))},
+					int64validator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("password")),
+				},
+				Optional: true,
 			},
 			"password": schema.StringAttribute{
-				MarkdownDescription: `Пароль учетной записи администратора.`,
-				Sensitive:           true,
-				WriteOnly:           true,
-				Required:            true,
+				MarkdownDescription: `Пароль учетной записи администратора`,
 				Validators: []validator.String{
-					stringvalidator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("password_version"))},
+					stringvalidator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("password_version")),
+				},
+				Sensitive: true,
+				WriteOnly: true,
+				Required:  true,
 			},
 		},
 	}

@@ -11,6 +11,7 @@ import (
 
 type ClickhouseClusterInstanceResource struct {
 	Id        types.String             `tfsdk:"id"`
+	Index     types.Int64              `tfsdk:"index"`
 	Zone      types.String             `tfsdk:"zone"`
 	Endpoints types.List               `tfsdk:"endpoints"`
 	Health    ClickhouseInstanceHealth `tfsdk:"health"`
@@ -22,6 +23,10 @@ func (s *ClickhouseClusterInstanceResource) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				MarkdownDescription: `Идентификатор инстанса шарда`,
+				Computed:            true,
+			},
+			"index": schema.Int64Attribute{
+				MarkdownDescription: `Индекс реплики в шарде в кластере Clickhouse, который будет указан в настройках кластера в макросе "replica". Влияет на очередность исполнения распределенных запросов в кластере`,
 				Computed:            true,
 			},
 			"zone": schema.StringAttribute{

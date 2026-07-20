@@ -21,7 +21,7 @@ type KafkaClusterStatus struct {
 	Endpoints            types.List    `tfsdk:"endpoints"`
 	MaintenanceWindow    types.Object  `tfsdk:"maintenance_window"`
 	SchemaRegistry       types.Object  `tfsdk:"schema_registry"`
-	AutoRebalance        types.Object  `tfsdk:"auto_rebalance"`
+	Balancer             types.Object  `tfsdk:"balancer"`
 }
 
 func (s *KafkaClusterStatus) GetSchema() schema.Schema {
@@ -34,17 +34,17 @@ func (s *KafkaClusterStatus) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"state": schema.StringAttribute{
-				MarkdownDescription: `Состояние кластера
-  * "CREATING"     - Создаётся
-  * "RUNNING"      - Работает в штатном режиме
-  * "STOPPING"     - Останавливается
-  * "STOPPED"      - Остановлен
-  * "STARTING"     - Запуск ранее остановленного
-  * "UPDATING"     - Выполняется обновление
-  * "ERROR"        - Произошла ошибка, требуется участие команды поддержки
-  * "DELETING"     - Удаляется
-  * "DELETED"      - Удалён
-  * "UNIDENTIFIED" - Не удаётся определить статус
+				MarkdownDescription: `Состояние кластера:
+  * "CREATING"     - Создаётся;
+  * "RUNNING"      - Работает в штатном режиме;
+  * "STOPPING"     - Останавливается;
+  * "STOPPED"      - Остановлен;
+  * "STARTING"     - Запуск ранее остановленного;
+  * "UPDATING"     - Выполняется обновление;
+  * "ERROR"        - Произошла ошибка, требуется участие команды поддержки;
+  * "DELETING"     - Удаляется;
+  * "DELETED"      - Удалён;
+  * "UNIDENTIFIED" - Не удаётся определить статус;
   * "RESTORING"    - Восстанавливается`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
@@ -64,10 +64,10 @@ func (s *KafkaClusterStatus) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"health": schema.StringAttribute{
-				MarkdownDescription: `Работоспособность кластера
-  * "ALIVE"    - Полностью работоспособен
-  * "DEGRADED" - Деградирует (некоторые, но не все, экземпляры неработоспособны)
-  * "FAILED"   - Неработоспособен
+				MarkdownDescription: `Работоспособность кластера:
+  * "ALIVE"    - Полностью работоспособен;
+  * "DEGRADED" - Деградирует (некоторые, но не все, экземпляры неработоспособны);
+  * "FAILED"   - Неработоспособен;
   * "UNKNOWN"  - Не удаётся определить состояние (на этапе создания)`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
@@ -89,14 +89,14 @@ func (s *KafkaClusterStatus) GetSchema() schema.Schema {
 			},
 			"instances": schema.SingleNestedAttribute{
 				Attributes:          new(KafkaInstancesStatus).GetSchema().Attributes,
-				MarkdownDescription: `Описание ресурсов хостов брокеров и контроллеров.`,
+				MarkdownDescription: `Описание ресурсов хостов брокеров и контроллеров`,
 				Computed:            true,
 			},
 			"endpoints": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(KafkaEndpointStatus).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Описание эндпойнтов в сетях пользователя (VPC) для подключения к брокерам кластера.`,
+				MarkdownDescription: `Описание эндпойнтов в сетях пользователя (VPC) для подключения к брокерам кластера`,
 				Computed:            true,
 			},
 			"maintenance_window": schema.SingleNestedAttribute{
@@ -105,12 +105,12 @@ func (s *KafkaClusterStatus) GetSchema() schema.Schema {
 			},
 			"schema_registry": schema.SingleNestedAttribute{
 				Attributes:          new(KafkaSchemaRegistrySpec).GetSchema().Attributes,
-				MarkdownDescription: `Настройка Schema Registry для кластера.`,
+				MarkdownDescription: `Настройка Schema Registry для кластера`,
 				Computed:            true,
 			},
-			"auto_rebalance": schema.SingleNestedAttribute{
-				Attributes:          new(KafkaAutoRebalanceSpec).GetSchema().Attributes,
-				MarkdownDescription: `Настройка автоматической ребалансировки для кластера.`,
+			"balancer": schema.SingleNestedAttribute{
+				Attributes:          new(KafkaBalancerSpec).GetSchema().Attributes,
+				MarkdownDescription: `Настройка балансировщика кластера`,
 				Computed:            true,
 			},
 		},

@@ -19,7 +19,7 @@ func (s *EgressNatStatusInternal) GetSchema() schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(ResourceSubnetStatus).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Список статусов подсетей, для которых будет осуществляться трансляция.`,
+				MarkdownDescription: `Список статусов подсетей, для которых будет осуществляться трансляция`,
 				Computed:            true,
 			},
 		},

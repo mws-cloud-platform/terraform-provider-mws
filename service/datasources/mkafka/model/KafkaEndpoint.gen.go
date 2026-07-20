@@ -19,23 +19,23 @@ func (s *KafkaEndpoint) GetSchema() schema.Schema {
 		MarkdownDescription: `Описание эндпойнтов в пользовательской сети (VPC) для подключения к брокерам кластера.`,
 		Attributes: map[string]schema.Attribute{
 			"name": schema.StringAttribute{
-				MarkdownDescription: `Имя эндпойнта.`,
+				MarkdownDescription: `Имя эндпойнта`,
 				Computed:            true,
 			},
 			"network": schema.StringAttribute{
-				MarkdownDescription: `Идентификатор пользовательской сети (VPC).`,
+				MarkdownDescription: `Идентификатор пользовательской сети (VPC)`,
 				Computed:            true,
 			},
 			"broker_addresses": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(KafkaEndpointBrokerAddress).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Список адресов в пользовательской сети, на которые "отображаются" брокеры.`,
+				MarkdownDescription: `Список адресов в пользовательской сети, на которые "отображаются" брокеры`,
 				Computed:            true,
 			},
 			"external_access": schema.SingleNestedAttribute{
 				Attributes:          new(KafkaEndpointExternalAccesses).GetSchema().Attributes,
-				MarkdownDescription: `Настройка внешнего доступа к кластеру Kafka.`,
+				MarkdownDescription: `Настройка внешнего доступа к кластеру Kafka`,
 				Computed:            true,
 			},
 		},

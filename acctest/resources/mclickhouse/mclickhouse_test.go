@@ -8,7 +8,6 @@ import (
 	mclickhouseclient "go.mws.cloud/go-sdk/service/mclickhouse/client"
 	mclickhousemodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
 	mclickhousesdk "go.mws.cloud/go-sdk/service/mclickhouse/sdk"
-	computeref "go.mws.cloud/go-sdk/service/resources/references/compute"
 	mclickhouseref "go.mws.cloud/go-sdk/service/resources/references/mclickhouse"
 	rmref "go.mws.cloud/go-sdk/service/resources/references/rm"
 	vpcref "go.mws.cloud/go-sdk/service/resources/references/vpc"
@@ -136,12 +135,12 @@ func (s *BaseClusterSuite) SetupSuite() {
 					Resources: mclickhousemodel.ClickhouseInstanceHWResourcesRequest{
 						VmType: mclickhouseref.NewClickhouseVmTypeRef("gen-4-8"),
 						Disk: mclickhousemodel.ClickhouseInstanceDiskSpecRequest{
-							Type: computeref.NewDiskTypeRef("NETWORK_STANDARD_SSD"),
+							Type: mclickhousemodel.ClickhouseDataDiskType_NETWORK_STANDARD_SSD,
 							Size: bytesize.MustParseString("10GB"),
 						},
 					},
 					Instances: []mclickhousemodel.ClickhouseClusterInstanceRequest{{
-						Name:  new("instance-1"),
+						Name:  "instance-1",
 						Zone:  zoneRef,
 						Count: new(1),
 						Endpoints: []mclickhousemodel.ClickhouseEndpointRequest{{

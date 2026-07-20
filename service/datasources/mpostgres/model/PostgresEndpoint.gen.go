@@ -20,11 +20,11 @@ func (s *PostgresEndpoint) GetSchema() schema.Schema {
 		MarkdownDescription: `Описание эндпойнтов в пользовательской сети (VPC) для подключения к инстансам кластера.`,
 		Attributes: map[string]schema.Attribute{
 			"name": schema.StringAttribute{
-				MarkdownDescription: `Имя эндпойнта.`,
+				MarkdownDescription: `Имя эндпойнта`,
 				Computed:            true,
 			},
 			"network": schema.StringAttribute{
-				MarkdownDescription: `Идентификатор пользовательской сети (VPC).`,
+				MarkdownDescription: `Идентификатор пользовательской сети (VPC)`,
 				Computed:            true,
 			},
 			"primary_addresses": schema.ListNestedAttribute{

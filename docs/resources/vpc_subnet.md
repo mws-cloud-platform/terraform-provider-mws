@@ -47,7 +47,7 @@ variable "subnet_cidr" {
 
 ### Required
 
-- `cidr` (String)
+- `cidr` (String) IPv4 подсеть в CIDR нотации
 - `network` (String) Имя сети
 - `subnet` (String) Имя подсети
 
@@ -55,8 +55,8 @@ variable "subnet_cidr" {
 
 - `dhcp_options` (Attributes) (see [below for nested schema](#nestedatt--dhcp_options))
 - `kind` (String)
-- `metadata` (Attributes) Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров. (see [below for nested schema](#nestedatt--metadata))
-- `project` (String) Путь к проекту
+- `metadata` (Attributes) Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров (see [below for nested schema](#nestedatt--metadata))
+- `project` (String) Путь к проекту.
 - `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 
 ### Read-Only
@@ -69,9 +69,9 @@ variable "subnet_cidr" {
 
 Optional:
 
-- `domain_name` (String) Базовое доменное имя для разрешения имен.
-- `domain_name_servers` (List of String) Список адресов DNS серверов.
-- `ntp_servers` (List of String) Список адресов NTP серверов.
+- `domain_name` (String) Базовое доменное имя для разрешения имен
+- `domain_name_servers` (List of String) Список адресов DNS серверов
+- `ntp_servers` (List of String) Список адресов NTP серверов
 
 
 <a id="nestedatt--metadata"></a>
@@ -81,24 +81,30 @@ Optional:
 
 - `description` (String) Описание ресурса
 - `display_name` (String) Отображаемое имя свойства
-- `name` (String, Deprecated) Обязательное уникальное, глобально или в пределах проекта, имя. Используется в качестве части составного идентификатора объекта.
+- `name` (String, Deprecated) Обязательное уникальное, глобально или в пределах проекта, имя. Используется в качестве части составного идентификатора объекта
 
 Read-Only:
 
 - `create_time` (String) Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `delete_time` (String) Время запроса на удаление ресурса
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `id` (String) ID свойства
 - `purge_time` (String) Время удаления ресурса
-- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
 
 <a id="nestedatt--metadata--usages"></a>
 ### Nested Schema for `metadata.usages`
 
 Read-Only:
 
-- `name` (String) Имя связи, требуется для модификации коллекции
+- `name` (String) Имя связи. Требуется для модификации коллекции
 - `resource` (String) Ссылка на ресурс
-- `usage_type` (String) Тип связи. Помимо стандартных own и use могут быть добавлены специализированные типы для конкретных сервисов
+- `usage_type` (String) Тип связи. Помимо стандартных "own" и "use" могут быть добавлены специализированные типы для конкретных сервисов
 
 
 
@@ -125,9 +131,9 @@ Read-Only:
 
 Optional:
 
-- `domain_name` (String) Базовое доменное имя для разрешения имен.
-- `domain_name_servers` (List of String) Список адресов DNS серверов.
-- `ntp_servers` (List of String) Список адресов NTP серверов.
+- `domain_name` (String) Базовое доменное имя для разрешения имен
+- `domain_name_servers` (List of String) Список адресов DNS серверов
+- `ntp_servers` (List of String) Список адресов NTP серверов
 
 
 <a id="nestedatt--status--ready"></a>

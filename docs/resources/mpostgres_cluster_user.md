@@ -126,16 +126,20 @@ variable "subnet_cidr" {
 
 ### Optional
 
+- `access_control_policy` (String) - "SCOPE_BASED": Роли пользователя управляются в зависимости от области видимости роли.
+    - роли на конкретные базы данных управляются через API привязок роли;
+    - глобальные роли (роли, которые применяются во всех базах данных кластера) управляются через спецификацию пользователя.
+    Политика введена для обратной совместимости
 - `additional_roles` (Attributes List) Дополнительные роли пользователя (see [below for nested schema](#nestedatt--additional_roles))
 - `kind` (String)
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
 - `password_version` (Number) Increase this field's value if you want to force updating the associated write-only field.
-- `project` (String) Путь к проекту
+- `project` (String) Путь к проекту.
 - `role` (String) Пользовательские роли (они же роли приложений):
-- "DB_OWNER_USER": Пользователь с правами владельца базы данных. Это не суперпользователь, 
+- "DB_OWNER_USER": Пользователь с правами владельца базы данных. Это не суперпользователь,
   не имеет права создавать бд или роли, наследует разрешения db_owner.
 - "DB_WRITER_USER": Пользовательская роль, наследует разрешения групповой роли db_writer, db_reader.
-- "DB_READER_USER": Пользовательская роль, наследует разрешения групповой роли db_reader.
+- "DB_READER_USER": Пользовательская роль, наследует разрешения групповой роли db_reader
 - `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 
 ### Read-Only
@@ -149,6 +153,8 @@ variable "subnet_cidr" {
 Optional:
 
 - `expires_at` (String) Дата отзыва дополнительной роли
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `name` (String) - "DB_MIGRATOR_ROLE": Дополнительная роль, позволяющая пользователю БД управлять миграцией данных в mpostgres
 
 
@@ -157,25 +163,29 @@ Optional:
 
 Optional:
 
-- `description` (String) Описание ресурса.
-- `display_name` (String) Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов.
+- `description` (String) Описание ресурса
+- `display_name` (String) Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов
 
 Read-Only:
 
-- `create_time` (String) Дата создания объекта.
-- `delete_time` (String) Время запроса на удаление ресурса (не фактическое время удаления).
-- `id` (String) ссылка на типизированный референс
-- `purge_time` (String)
-- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены. (see [below for nested schema](#nestedatt--metadata--usages))
+- `create_time` (String) Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `delete_time` (String) Время запроса на удаление ресурса (не фактическое время удаления)
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `id` (String) Ссылка на типизированный референс
+- `purge_time` (String) Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
 
 <a id="nestedatt--metadata--usages"></a>
 ### Nested Schema for `metadata.usages`
 
 Read-Only:
 
-- `name` (String) Имя связи, требуется для модификации коллекции
-- `resource` (String) ссылка на ресурс
-- `usage_type` (String) Тип связи. Помимо стандартных own и use могут быть добавлены специализированные типы для конкретных сервисов
+- `name` (String) Имя связи. Требуется для модификации коллекции
+- `resource` (String) Ссылка на ресурс
+- `usage_type` (String) Тип связи. Помимо стандартных "own" и "use" могут быть добавлены специализированные типы для конкретных сервисов
 
 
 
@@ -195,9 +205,36 @@ Optional:
 Read-Only:
 
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
+- `role_bindings` (Attributes List) Список привязок ролей текущего пользователя (see [below for nested schema](#nestedatt--status--role_bindings))
 
 <a id="nestedatt--status--ready"></a>
 ### Nested Schema for `status.ready`
+
+Read-Only:
+
+- `message` (String) Описание статуса
+- `state` (String) Состояние ресурса
+
+
+<a id="nestedatt--status--role_bindings"></a>
+### Nested Schema for `status.role_bindings`
+
+Read-Only:
+
+- `database_id` (String) Идентификатор базы данных, в которой пользователю назначена роль; "null" — если роль глобальная
+- `expires_at` (String) Дата и время отзыва привязки роли
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--role_bindings--ready))
+- `role` (String) Пользовательские роли:
+- "READER": Роль, позволяющая пользователю производить операции чтения в базе данных кластера.
+- "WRITER": Роль, позволяющая пользователю производить операции чтения и записи в базе данных кластера.
+- "OWNER": Роль владельца базы данных. Позволяет пользователю производить операции создания и удаления объектов, записи и чтения в базе данных.
+- "MIGRATOR": Роль, позволяющая пользователю контролировать параметры репликации в базах данных кластера, в которых он является владельцем
+- `role_binding_id` (String) Идентификатор привязки роли
+
+<a id="nestedatt--status--role_bindings--ready"></a>
+### Nested Schema for `status.role_bindings.ready`
 
 Read-Only:
 

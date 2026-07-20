@@ -25,12 +25,12 @@ func (s *ExternalAddress) GetSchema() schema.Schema {
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes,
-				MarkdownDescription: `Метаданные внешнего адреса.`,
+				MarkdownDescription: `Метаданные внешнего адреса`,
 				Computed:            true,
 			},
 			"status": schema.SingleNestedAttribute{
 				Attributes:          new(ExternalAddressStatus).GetSchema().Attributes,
-				MarkdownDescription: `Статус внешнего адреса.`,
+				MarkdownDescription: `Статус внешнего адреса`,
 				Computed:            true,
 			},
 			"nat_gateway": schema.StringAttribute{

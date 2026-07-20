@@ -3,14 +3,16 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ClickhouseInstanceDiskSpec struct {
-	Size types.String `tfsdk:"size"`
-	Type types.String `tfsdk:"type"`
-	Iops Iops         `tfsdk:"iops"`
+	Size types.String           `tfsdk:"size"`
+	Type ClickhouseDataDiskType `tfsdk:"type"`
+	Iops Iops                   `tfsdk:"iops"`
 }
 
 func (s *ClickhouseInstanceDiskSpec) GetSchema() schema.Schema {
@@ -18,12 +20,24 @@ func (s *ClickhouseInstanceDiskSpec) GetSchema() schema.Schema {
 		MarkdownDescription: `Параметры диска.`,
 		Attributes: map[string]schema.Attribute{
 			"size": schema.StringAttribute{
-				MarkdownDescription: `Размер диска.`,
-				Required:            true,
+				MarkdownDescription: `Размер диска
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются`,
+				Required: true,
 			},
 			"type": schema.StringAttribute{
-				MarkdownDescription: `Тип диска.`,
-				Required:            true,
+				MarkdownDescription: `Тип используемого диска:
+* "NETWORK_STANDARD_SSD" — сетевой SSD`,
+				Validators: []validator.String{
+					stringvalidator.OneOf(
+						"NETWORK_STANDARD_SSD",
+					),
+				},
+				Required: true,
 			},
 			"iops": schema.Int64Attribute{
 				MarkdownDescription: `IOPS`,

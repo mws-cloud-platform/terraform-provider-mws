@@ -19,17 +19,17 @@ func (s *NlbHealthCheckProtocol) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"http": schema.SingleNestedAttribute{
 				Attributes:          new(NlbHealthCheckHttp).GetSchema().Attributes,
-				MarkdownDescription: `Конфигурация проверки работоспособности по протоколу HTTP.`,
+				MarkdownDescription: `Конфигурация проверки работоспособности по протоколу HTTP`,
 				Computed:            true,
 			},
 			"https": schema.SingleNestedAttribute{
 				Attributes:          new(NlbHealthCheckHttps).GetSchema().Attributes,
-				MarkdownDescription: `Конфигурация проверки работоспособности по протоколу HTTPS.`,
+				MarkdownDescription: `Конфигурация проверки работоспособности по протоколу HTTPS`,
 				Computed:            true,
 			},
 			"tcp": schema.SingleNestedAttribute{
 				Attributes:          new(NlbHealthCheckTcp).GetSchema().Attributes,
-				MarkdownDescription: `Конфигурация проверки работоспособности по протоколу TCP.`,
+				MarkdownDescription: `Конфигурация проверки работоспособности по протоколу TCP`,
 				Computed:            true,
 			},
 		},

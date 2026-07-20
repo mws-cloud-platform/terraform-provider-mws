@@ -2,11 +2,9 @@ package public
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	mwssdk "go.mws.cloud/go-sdk/mws"
@@ -37,7 +35,7 @@ func LoadSDKFromConfig(ctx context.Context, config *base.Config, env env.Env, ve
 	switch {
 	case base.IsValueSet(config.ServiceAccountAuthorizedKeyPath):
 		path := config.ServiceAccountAuthorizedKeyPath.ValueString()
-		saAuthorizedKey, err := loadServiceAccountAuthorizedKeyFile(path)
+		saAuthorizedKey, err := iam.ServiceAccountAuthorizedKeyFromFile(path)
 		if err != nil {
 			return nil, fmt.Errorf("load service account authorized key file: %w", err)
 		}
@@ -59,21 +57,6 @@ func LoadSDKFromConfig(ctx context.Context, config *base.Config, env env.Env, ve
 	}
 
 	return sdk, nil
-}
-
-func loadServiceAccountAuthorizedKeyFile(filePath string) (iam.ServiceAccountAuthorizedKey, error) {
-	var serviceAccountAuthorizedKey iam.ServiceAccountAuthorizedKey
-
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		return iam.ServiceAccountAuthorizedKey{}, fmt.Errorf("read service account authorized key file: %w", err)
-	}
-
-	if err = json.Unmarshal(data, &serviceAccountAuthorizedKey); err != nil {
-		return iam.ServiceAccountAuthorizedKey{}, fmt.Errorf("unmarshal service account authorized key: %w", err)
-	}
-
-	return serviceAccountAuthorizedKey, nil
 }
 
 func onComputeVMWithSA(ctx context.Context, env env.Env) bool {

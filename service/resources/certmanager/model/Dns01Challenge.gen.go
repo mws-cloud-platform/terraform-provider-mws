@@ -18,11 +18,11 @@ func (s *Dns01Challenge) GetSchema() schema.Schema {
 `,
 		Attributes: map[string]schema.Attribute{
 			"delegated": schema.BoolAttribute{
-				MarkdownDescription: `Указывает, настроена ли делегация корректно.`,
+				MarkdownDescription: `Указывает, настроена ли делегация корректно`,
 				Computed:            true,
 			},
 			"cname_target": schema.StringAttribute{
-				MarkdownDescription: `Целевой домен для делегации через CNAME.`,
+				MarkdownDescription: `Целевой домен для делегации через CNAME`,
 				Computed:            true,
 			},
 		},

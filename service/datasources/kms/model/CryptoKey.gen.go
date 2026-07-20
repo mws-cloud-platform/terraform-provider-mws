@@ -31,7 +31,7 @@ func (s *CryptoKey) GetSchema() schema.Schema {
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes,
-				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров.`,
+				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров`,
 				Computed:            true,
 			},
 			"status": schema.SingleNestedAttribute{
@@ -40,8 +40,7 @@ func (s *CryptoKey) GetSchema() schema.Schema {
 			},
 			"default_algorithm": schema.StringAttribute{
 				MarkdownDescription: `Криптографический алгоритм по-умолчанию, используемый для выпуска новых версий ключа.
-Этот алгоритм будет применяться при создании новых версий ключа во время ротации.
-`,
+Этот алгоритм будет применяться при создании новых версий ключа во время ротации`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"AES_128_GCM",
@@ -52,27 +51,23 @@ func (s *CryptoKey) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"destruction_policy": schema.SingleNestedAttribute{
-				Attributes: new(CryptoKeySpecDestructionPolicy).GetSchema().Attributes,
-				MarkdownDescription: `Политика уничтожения ключа. Определяет параметры и расписание.
-`,
-				Computed: true,
+				Attributes:          new(CryptoKeySpecDestructionPolicy).GetSchema().Attributes,
+				MarkdownDescription: `Политика уничтожения ключа. Определяет параметры и расписание`,
+				Computed:            true,
 			},
 			"usage_policy": schema.SingleNestedAttribute{
-				Attributes: new(CryptoKeySpecUsagePolicy).GetSchema().Attributes,
-				MarkdownDescription: `Политика использования ключа. Определяет, разрешены ли криптографические операции с этим ключом.
-`,
-				Computed: true,
+				Attributes:          new(CryptoKeySpecUsagePolicy).GetSchema().Attributes,
+				MarkdownDescription: `Политика использования ключа. Определяет, разрешены ли криптографические операции с этим ключом`,
+				Computed:            true,
 			},
 			"rotation_policy": schema.SingleNestedAttribute{
-				Attributes: new(CryptoKeySpecRotationPolicy).GetSchema().Attributes,
-				MarkdownDescription: `Параметры политики, управляющие ротацией криптографического ключа.
-`,
-				Computed: true,
+				Attributes:          new(CryptoKeySpecRotationPolicy).GetSchema().Attributes,
+				MarkdownDescription: `Параметры политики, управляющие ротацией криптографического ключа`,
+				Computed:            true,
 			},
 			"primary_key_version_ref": schema.StringAttribute{
-				MarkdownDescription: `Идентификатор основной версии криптографического ключа. 
-Используется только когда автоматическая ротация отключена.
-`,
+				MarkdownDescription: `Идентификатор основной версии криптографического ключа.
+Используется только когда автоматическая ротация отключена`,
 				Computed: true,
 			},
 		},

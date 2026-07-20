@@ -35,19 +35,21 @@ func (s *AuthorizedKey) GetSchema() schema.Schema {
 				Computed:   true,
 			},
 			"public_key": schema.StringAttribute{
-				MarkdownDescription: `Открытый ключ. Если данный параметр в запросе отсутствует, то сервис сам сгенерирует ключ для указанного алгоритма и вернет приватный ключ в поле статуса в ответе.`,
+				MarkdownDescription: `Открытый ключ. Если данный параметр в запросе отсутствует, то сервис сам сгенерирует ключ для указанного алгоритма и вернет приватный ключ в поле статуса в ответе`,
 				Computed:            true,
 			},
 			"key_algorithm": schema.StringAttribute{
-				MarkdownDescription: `Алгоритм шифрования.`,
+				MarkdownDescription: `Алгоритм шифрования`,
 				Computed:            true,
 			},
 			"expiration_time": schema.StringAttribute{
-				MarkdownDescription: `Время истечения срока действия ключа.`,
-				Computed:            true,
+				MarkdownDescription: `Время истечения срока действия ключа
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"active": schema.BoolAttribute{
-				MarkdownDescription: `Флаг активности ключа.`,
+				MarkdownDescription: `Флаг активности ключа`,
 				Computed:            true,
 			},
 		},
@@ -64,29 +66,34 @@ func (s *AuthorizedKeyMetadata) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля Metadata анонимного типа структуры AuthorizedKey`,
 		Attributes: map[string]schema.Attribute{
 			"display_name": schema.StringAttribute{
-				MarkdownDescription: `Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов.`,
+				MarkdownDescription: `Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов`,
 				Computed:            true,
 			},
 			"create_time": schema.StringAttribute{
-				MarkdownDescription: `Дата создания объекта.`,
-				Computed:            true,
+				MarkdownDescription: `Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"delete_time": schema.StringAttribute{
-				MarkdownDescription: `Время запроса на удаление ресурса (не фактическое время удаления).`,
-				Computed:            true,
+				MarkdownDescription: `Время запроса на удаление ресурса (не фактическое время удаления)
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"purge_time": schema.StringAttribute{
-				Computed: true,
+				MarkdownDescription: `Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed:            true,
 			},
 			"usages": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(tfcommon.TypedUsage).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены.`,
+				MarkdownDescription: `Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены`,
 				Computed:            true,
 			},
 			"description": schema.StringAttribute{
-				MarkdownDescription: `Описание ресурса.`,
+				MarkdownDescription: `Описание ресурса`,
 				Computed:            true,
 			},
 			"id": schema.StringAttribute{

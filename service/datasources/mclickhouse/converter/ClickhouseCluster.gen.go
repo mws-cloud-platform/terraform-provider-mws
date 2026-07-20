@@ -4,7 +4,6 @@ package converter
 
 import (
 	"context"
-	"encoding/json"
 	"time"
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
@@ -12,8 +11,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
+	jsonapimodels "go.mws.cloud/go-sdk/pkg/apimodels/json"
 	common "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/resources/references/rm"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
@@ -77,6 +78,12 @@ func ClickhouseClusterAPIOptionalResponseToTFModel(ctx context.Context, am *apim
 	}
 
 	t.Version = types.StringValue(am.Spec.Version)
+
+	if val, ok := am.Spec.Region.Get(); ok {
+		t.Region = types.StringPointerValue(ptr.Get(val.Path()))
+	} else {
+		t.Region = types.StringNull()
+	}
 
 	if val, ok := am.Spec.Endpoints.Get(); ok {
 		endpoints := make([]tfmodel.ClickhouseEndpoint, 0, len(val))
@@ -271,6 +278,15 @@ func ClickhouseClusterTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Click
 		am.Spec.Version = tm.Version.ValueString()
 	}
 
+	if !tm.Region.IsNull() && !tm.Region.IsUnknown() {
+		regionRef, err := rm.ParseRegionRef(ctx, tm.Region.ValueString())
+		if err != nil {
+			diags.AddError("reference parsing", err.Error())
+			return nil, diags
+		}
+		am.Spec.Region = &regionRef
+	}
+
 	if !tm.Endpoints.IsNull() && !tm.Endpoints.IsUnknown() {
 		endpoints := make([]tfmodel.ClickhouseEndpoint, 0)
 		dEndpoints := tm.Endpoints.ElementsAs(ctx, &endpoints, false)
@@ -333,10 +349,10 @@ func ClickhouseClusterTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Click
 			return nil, diags
 		}
 
-		am.Spec.Config = make(map[string]json.RawMessage, len(config))
+		am.Spec.Config = make(map[string]jsonapimodels.RawMessageNotNull, len(config))
 
 		for k, entity := range config {
-			am.Spec.Config[k] = json.RawMessage(entity.ValueString())
+			am.Spec.Config[k] = jsonapimodels.RawMessageNotNull(entity.ValueString())
 		}
 	}
 

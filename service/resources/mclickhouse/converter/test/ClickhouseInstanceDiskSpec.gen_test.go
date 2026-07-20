@@ -10,7 +10,6 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
 	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
-	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
 )
 
@@ -25,7 +24,7 @@ func TestClickhouseInstanceDiskSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.ClickhouseInstanceDiskSpecRequest{
 		Size: bytesize.MustParseString("0 B"),
-		Type: compute.NewDiskTypeRef("diskTypeID"),
+		Type: "",
 	}
 
 	emptyApiModelResponse, err := apimodel.ClickhouseInstanceDiskSpecRequestToOptionalResponse(&emptyApiModelRequest)
@@ -54,7 +53,7 @@ func TestClickhouseInstanceDiskSpecResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.ClickhouseInstanceDiskSpecRequest{
 		Size: bytesize.MustParseString("0 B"),
-		Type: compute.NewDiskTypeRef("diskTypeID"),
+		Type: "",
 	}
 
 	emptyApiModelResponse, err := apimodel.ClickhouseInstanceDiskSpecRequestToResponse(&emptyApiModelRequest)

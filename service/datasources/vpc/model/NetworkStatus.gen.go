@@ -11,6 +11,7 @@ import (
 
 type NetworkStatus struct {
 	tfcommon.ResourceStatus
+
 	Mtu            types.Int64 `tfsdk:"mtu"`
 	InternetAccess types.Bool  `tfsdk:"internet_access"`
 }
@@ -25,11 +26,11 @@ func (s *NetworkStatus) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"mtu": schema.Int64Attribute{
-				MarkdownDescription: `Максимальная единица передачи в байтах (maximum transmission unit - MTU).`,
+				MarkdownDescription: `Максимальная единица передачи в байтах (maximum transmission unit - MTU)`,
 				Computed:            true,
 			},
 			"internet_access": schema.BoolAttribute{
-				MarkdownDescription: `Доступ в интернет.`,
+				MarkdownDescription: `Доступ в интернет`,
 				Computed:            true,
 			},
 		},

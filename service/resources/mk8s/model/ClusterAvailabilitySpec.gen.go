@@ -4,9 +4,6 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -23,17 +20,11 @@ func (s *ClusterAvailabilitySpec) GetSchema() schema.Schema {
 				Attributes:          new(ClusterAvailabilitySpecStandalone).GetSchema().Attributes,
 				MarkdownDescription: `Кластер с одним мастером`,
 				Optional:            true,
-				PlanModifiers: []planmodifier.Object{
-					objectplanmodifier.RequiresReplaceIfConfigured(),
-				},
 			},
 			"zonal_ha": schema.SingleNestedAttribute{
 				Attributes:          new(ClusterAvailabilitySpecZonalHa).GetSchema().Attributes,
 				MarkdownDescription: `Зональный высокодоступный кластер с несколькими мастерами`,
 				Optional:            true,
-				PlanModifiers: []planmodifier.Object{
-					objectplanmodifier.RequiresReplaceIfConfigured(),
-				},
 			},
 		},
 	}
@@ -50,9 +41,6 @@ func (s *ClusterAvailabilitySpecStandalone) GetSchema() schema.Schema {
 			"zone": schema.StringAttribute{
 				MarkdownDescription: `Имя зоны для размещения cluster`,
 				Required:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-				},
 			},
 		},
 	}
@@ -69,9 +57,6 @@ func (s *ClusterAvailabilitySpecZonalHa) GetSchema() schema.Schema {
 			"zone": schema.StringAttribute{
 				MarkdownDescription: `Имя зоны для размещения cluster`,
 				Required:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-				},
 			},
 		},
 	}

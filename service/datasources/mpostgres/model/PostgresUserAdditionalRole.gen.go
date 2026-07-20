@@ -28,8 +28,10 @@ func (s *PostgresUserAdditionalRole) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"expires_at": schema.StringAttribute{
-				MarkdownDescription: `Дата отзыва дополнительной роли`,
-				Computed:            true,
+				MarkdownDescription: `Дата отзыва дополнительной роли
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 		},
 	}

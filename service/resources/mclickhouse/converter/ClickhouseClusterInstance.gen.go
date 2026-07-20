@@ -23,11 +23,7 @@ func ClickhouseClusterInstanceAPIOptionalResponseToTFModel(ctx context.Context, 
 	var diags tfdiag.Diagnostics
 	var t tfmodel.ClickhouseClusterInstance
 
-	if val, ok := am.Name.Get(); ok {
-		t.Name = types.StringValue(val)
-	} else {
-		t.Name = types.StringNull()
-	}
+	t.Name = types.StringValue(am.Name)
 
 	if val, ok := am.Count.Get(); ok {
 		t.Count = types.Int64Value(int64(val))
@@ -76,7 +72,7 @@ func ClickhouseClusterInstanceTFToAPIRequestModel(ctx context.Context, tm *tfmod
 	var am apimodel.ClickhouseClusterInstanceRequest
 
 	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		am.Name = tm.Name.ValueStringPointer()
+		am.Name = tm.Name.ValueString()
 	}
 
 	if !tm.Count.IsNull() && !tm.Count.IsUnknown() {

@@ -17,7 +17,7 @@ func (s *FirewallRuleDestination) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"spec": schema.SingleNestedAttribute{
 				Attributes:          new(FirewallRuleDestinationSpec).GetSchema().Attributes,
-				MarkdownDescription: `Спецификация группы адресов.`,
+				MarkdownDescription: `Спецификация группы адресов`,
 				Optional:            true,
 			},
 		},

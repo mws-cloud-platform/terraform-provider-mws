@@ -20,13 +20,18 @@ func (s *KafkaDataDiskSpec) GetSchema() schema.Schema {
 		MarkdownDescription: `Параметры диска с данными на узле кластера.`,
 		Attributes: map[string]schema.Attribute{
 			"size": schema.StringAttribute{
-				MarkdownDescription: `Размер диска.`,
-				Computed:            true,
+				MarkdownDescription: `Размер диска
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются`,
+				Computed: true,
 			},
 			"type": schema.StringAttribute{
-				MarkdownDescription: `Тип используемого диска: 
-* "NETWORK_STANDARD_SSD" — сетевой SSD
-`,
+				MarkdownDescription: `Тип используемого диска:
+* "NETWORK_STANDARD_SSD" — сетевой SSD`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"NETWORK_STANDARD_SSD",
@@ -35,7 +40,7 @@ func (s *KafkaDataDiskSpec) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"iops": schema.Int64Attribute{
-				MarkdownDescription: `Количество дисковых операций в секунду.`,
+				MarkdownDescription: `Количество дисковых операций в секунду`,
 				Computed:            true,
 			},
 		},

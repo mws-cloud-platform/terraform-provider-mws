@@ -25,12 +25,14 @@ func (s *AuthorizedKeyStatus) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"public_key": schema.StringAttribute{
-				MarkdownDescription: `Открытый ключ, сгенерированный на стороне сервиса.`,
+				MarkdownDescription: `Открытый ключ, сгенерированный на стороне сервиса`,
 				Computed:            true,
 			},
 			"last_auth_time": schema.StringAttribute{
-				MarkdownDescription: `Время последней аутентификации.`,
-				Computed:            true,
+				MarkdownDescription: `Время последней аутентификации
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 		},
 	}

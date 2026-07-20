@@ -17,12 +17,12 @@ func (s *VpcAddressGroupSpecOrRef) GetSchema() schema.Schema {
 		MarkdownDescription: `Описывает ссылку на группу адресов или спецификацию группы адресов.`,
 		Attributes: map[string]schema.Attribute{
 			"ref": schema.StringAttribute{
-				MarkdownDescription: `Ссылка на группу адресов.`,
+				MarkdownDescription: `Ссылка на группу адресов`,
 				Computed:            true,
 			},
 			"spec": schema.SingleNestedAttribute{
 				Attributes:          new(VpcAddressGroupSpec).GetSchema().Attributes,
-				MarkdownDescription: `Спецификация группы адресов.`,
+				MarkdownDescription: `Спецификация группы адресов`,
 				Computed:            true,
 			},
 		},

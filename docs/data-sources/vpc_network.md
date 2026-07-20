@@ -27,13 +27,13 @@ data "mws_vpc_network" "network" {
 
 ### Optional
 
-- `project` (String) Путь к проекту
+- `project` (String) Путь к проекту.
 
 ### Read-Only
 
 - `internet_access` (Boolean)
 - `kind` (String)
-- `metadata` (Attributes) Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров. (see [below for nested schema](#nestedatt--metadata))
+- `metadata` (Attributes) Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров (see [below for nested schema](#nestedatt--metadata))
 - `mtu` (Number)
 - `status` (Attributes) (see [below for nested schema](#nestedatt--status))
 
@@ -43,22 +43,28 @@ data "mws_vpc_network" "network" {
 Read-Only:
 
 - `create_time` (String) Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `delete_time` (String) Время запроса на удаление ресурса
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `description` (String) Описание ресурса
 - `display_name` (String) Отображаемое имя свойства
 - `id` (String) ID свойства
-- `name` (String, Deprecated) Обязательное уникальное, глобально или в пределах проекта, имя. Используется в качестве части составного идентификатора объекта.
+- `name` (String, Deprecated) Обязательное уникальное, глобально или в пределах проекта, имя. Используется в качестве части составного идентификатора объекта
 - `purge_time` (String) Время удаления ресурса
-- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
 
 <a id="nestedatt--metadata--usages"></a>
 ### Nested Schema for `metadata.usages`
 
 Read-Only:
 
-- `name` (String) Имя связи, требуется для модификации коллекции
+- `name` (String) Имя связи. Требуется для модификации коллекции
 - `resource` (String) Ссылка на ресурс
-- `usage_type` (String) Тип связи. Помимо стандартных own и use могут быть добавлены специализированные типы для конкретных сервисов
+- `usage_type` (String) Тип связи. Помимо стандартных "own" и "use" могут быть добавлены специализированные типы для конкретных сервисов
 
 
 
@@ -67,8 +73,8 @@ Read-Only:
 
 Read-Only:
 
-- `internet_access` (Boolean) Доступ в интернет.
-- `mtu` (Number) Максимальная единица передачи в байтах (maximum transmission unit - MTU).
+- `internet_access` (Boolean) Доступ в интернет
+- `mtu` (Number) Максимальная единица передачи в байтах (maximum transmission unit - MTU)
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
 
 <a id="nestedatt--status--ready"></a>

@@ -7,8 +7,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/mapplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -41,7 +39,7 @@ func (s *SecretVersion) GetSchema() schema.Schema {
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes,
-				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров.`,
+				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров`,
 				Computed:            true,
 				Optional:            true,
 			},
@@ -58,23 +56,19 @@ func (s *SecretVersion) GetSchema() schema.Schema {
 			},
 			"data_version": schema.Int64Attribute{
 				MarkdownDescription: `Increase this field's value if you want to force updating the associated write-only field.`,
-				Optional:            true,
 				Validators: []validator.Int64{
-					int64validator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("data"))},
-				PlanModifiers: []planmodifier.Int64{
-					int64planmodifier.RequiresReplaceIfConfigured(),
+					int64validator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("data")),
 				},
+				Optional: true,
 			},
 			"data": schema.MapAttribute{
 				ElementType:         types.StringType,
 				MarkdownDescription: `Содержимое секрета`,
-				WriteOnly:           true,
-				Optional:            true,
 				Validators: []validator.Map{
-					mapvalidator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("data_version"))},
-				PlanModifiers: []planmodifier.Map{
-					mapplanmodifier.RequiresReplaceIfConfigured(),
+					mapvalidator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("data_version")),
 				},
+				WriteOnly: true,
+				Optional:  true,
 			},
 		},
 	}

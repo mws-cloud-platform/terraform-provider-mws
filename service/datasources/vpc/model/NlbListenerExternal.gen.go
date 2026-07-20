@@ -17,7 +17,7 @@ func (s *NlbListenerExternal) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"address": schema.SingleNestedAttribute{
 				Attributes:          new(ResourceExternalAddressSpecOrRef).GetSchema().Attributes,
-				MarkdownDescription: `Описывает ссылку на внешний адрес или спецификацию внешнего адреса как дополнительный ресурс.`,
+				MarkdownDescription: `Описывает ссылку на внешний адрес или спецификацию внешнего адреса как дополнительный ресурс`,
 				Computed:            true,
 			},
 		},

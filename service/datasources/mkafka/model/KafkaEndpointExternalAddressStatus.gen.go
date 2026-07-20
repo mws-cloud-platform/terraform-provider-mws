@@ -18,12 +18,14 @@ func (s *KafkaEndpointExternalAddressStatus) GetSchema() schema.Schema {
 		MarkdownDescription: `Описание публичного адреса, назначенного брокеру.`,
 		Attributes: map[string]schema.Attribute{
 			"ref": schema.StringAttribute{
-				MarkdownDescription: `Идентификатор адреса.`,
+				MarkdownDescription: `Идентификатор адреса`,
 				Computed:            true,
 			},
 			"ip_address": schema.StringAttribute{
-				MarkdownDescription: `Выделенный адрес.`,
-				Computed:            true,
+				MarkdownDescription: `Выделенный адрес
+
+IPv4- или IPv6-адрес`,
+				Computed: true,
 			},
 			"managed": schema.BoolAttribute{
 				MarkdownDescription: `False если ссылка на внешний адрес был указана в спецификации, true если адрес был создан`,

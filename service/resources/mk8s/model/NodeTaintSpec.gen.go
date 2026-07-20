@@ -22,15 +22,15 @@ func (s *NodeTaintSpec) GetSchema() schema.Schema {
 			"key": schema.StringAttribute{
 				MarkdownDescription: `Ключ может состоять из двух частей: необязательный префикс и ключ, разделенные "/".
 Максимальная длина префикса 253 символа.
-Максимальная длина ключа 63 символа.`,
+Максимальная длина ключа 63 символа`,
 				Required: true,
 			},
 			"value": schema.StringAttribute{
-				MarkdownDescription: `Значение taint на node. Если строка пустая, то value нет.`,
+				MarkdownDescription: `Значение taint на node. Если строка пустая, то value нет`,
 				Required:            true,
 			},
 			"effect": schema.StringAttribute{
-				MarkdownDescription: `Эффект taint на node, влияющий на pod scheduling, которые под него попадают.`,
+				MarkdownDescription: `Эффект taint на node, влияющий на pod scheduling, которые под него попадают`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"NO_SCHEDULE",

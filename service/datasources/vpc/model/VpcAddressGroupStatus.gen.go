@@ -28,12 +28,12 @@ func (s *VpcAddressGroupStatus) GetSchema() schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(ResourceAddressStatus).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Список статусов внутренних IP-адресов.`,
+				MarkdownDescription: `Список статусов внутренних IP-адресов`,
 				Computed:            true,
 			},
 			"orphan_addresses": schema.ListAttribute{
 				ElementType:         types.StringType,
-				MarkdownDescription: `Список ссылок на внутренние IP-адреса, которые были удалены, но остались в спецификации группы.`,
+				MarkdownDescription: `Список ссылок на внутренние IP-адреса, которые были удалены, но остались в спецификации группы`,
 				Computed:            true,
 			},
 		},

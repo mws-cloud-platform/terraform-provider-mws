@@ -17,7 +17,7 @@ func (s *OneToOneNatSpecInternal) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"address": schema.SingleNestedAttribute{
 				Attributes:          new(ResourceAddressSpecOrRef).GetSchema().Attributes,
-				MarkdownDescription: `Спецификация внутреннего адреса, для которого будет осуществляться трансляция.`,
+				MarkdownDescription: `Спецификация внутреннего адреса, для которого будет осуществляться трансляция`,
 				Computed:            true,
 			},
 		},

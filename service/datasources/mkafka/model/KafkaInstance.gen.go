@@ -18,12 +18,12 @@ func (s *KafkaInstance) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"broker": schema.SingleNestedAttribute{
 				Attributes:          new(KafkaInstanceSpec).GetSchema().Attributes,
-				MarkdownDescription: `Параметры виртуальной машины, где будет работать брокер Кафки.`,
+				MarkdownDescription: `Параметры виртуальной машины, где будет работать брокер Кафки`,
 				Computed:            true,
 			},
 			"controller": schema.SingleNestedAttribute{
 				Attributes:          new(KafkaControllerInstanceSpec).GetSchema().Attributes,
-				MarkdownDescription: `Параметры виртуальной машины, где будет работать KRaft контроллер Кафки.`,
+				MarkdownDescription: `Параметры виртуальной машины, где будет работать KRaft контроллер Кафки`,
 				Computed:            true,
 			},
 		},

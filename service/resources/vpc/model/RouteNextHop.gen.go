@@ -18,16 +18,16 @@ func (s *RouteNextHop) GetSchema() schema.Schema {
 		MarkdownDescription: `Переход`,
 		Attributes: map[string]schema.Attribute{
 			"network_local": schema.StringAttribute{
-				MarkdownDescription: `Локальная сеть.`,
+				MarkdownDescription: `Локальная сеть`,
 				Computed:            true,
 			},
 			"nat_gateway": schema.StringAttribute{
-				MarkdownDescription: `NAT шлюз.`,
+				MarkdownDescription: `NAT шлюз`,
 				Optional:            true,
 			},
 			"address": schema.SingleNestedAttribute{
 				Attributes:          new(RouteNextHopAddress).GetSchema().Attributes,
-				MarkdownDescription: `Адрес.`,
+				MarkdownDescription: `Адрес`,
 				Optional:            true,
 			},
 		},
@@ -43,7 +43,7 @@ func (s *RouteNextHopAddress) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля Address анонимного типа структуры RouteNextHop`,
 		Attributes: map[string]schema.Attribute{
 			"ref": schema.StringAttribute{
-				MarkdownDescription: `ссылка на IP-Адрес назначения`,
+				MarkdownDescription: `Ссылка на IP-Адрес назначения`,
 				Required:            true,
 			},
 		},

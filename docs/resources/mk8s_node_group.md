@@ -191,21 +191,27 @@ variable "services_cidr" {
 - `node_group_name` (String) Имя Node-группы
 - `rollout_strategy` (Attributes) Стратегия перекатки (rollout) worker нод в нод группе (see [below for nested schema](#nestedatt--rollout_strategy))
 - `scale` (Attributes) Необходимо заполнить одно из полей fixed или auto scale (see [below for nested schema](#nestedatt--scale))
-- `service_account` (Attributes) serviceAccount необходим для поддержки функций:
+- `service_account` (Attributes) ServiceAccount необходим для поддержки функций:
  - скачивания образов из облачного registry (права на чтение образов)
  - сбор системных метрик с worker нод (права на чтение статусов worker нод) (see [below for nested schema](#nestedatt--service_account))
 - `subnet` (Attributes) (see [below for nested schema](#nestedatt--subnet))
 - `version_control` (Attributes) (see [below for nested schema](#nestedatt--version_control))
-- `vm_type` (Attributes) тип VM (see [below for nested schema](#nestedatt--vm_type))
+- `vm_type` (Attributes) Тип VM (see [below for nested schema](#nestedatt--vm_type))
 
 ### Optional
 
 - `image_storage_iops` (Number) Количество операций ввода-вывода в секунду (IOPS) для хранилища image-ей и контейнеров
-- `image_storage_size` (String) размер хранилища для image-ей и контейнеров. Размер в Gb
+- `image_storage_size` (String) Размер хранилища для image-ей и контейнеров. Размер в Gb
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
 - `kind` (String)
 - `labels` (Attributes List) (see [below for nested schema](#nestedatt--labels))
-- `metadata` (Attributes) Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров. (see [below for nested schema](#nestedatt--metadata))
-- `project` (String) Путь к проекту
+- `metadata` (Attributes) Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров (see [below for nested schema](#nestedatt--metadata))
+- `project` (String) Путь к проекту.
 - `taints` (Attributes List) (see [below for nested schema](#nestedatt--taints))
 - `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 - `zone` (String)
@@ -213,7 +219,7 @@ variable "services_cidr" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `status` (Attributes) Описывает статусную модель k8s нод групп. (see [below for nested schema](#nestedatt--status))
+- `status` (Attributes) Описывает статусную модель k8s нод групп (see [below for nested schema](#nestedatt--status))
 
 <a id="nestedatt--rollout_strategy"></a>
 ### Nested Schema for `rollout_strategy`
@@ -237,8 +243,8 @@ Optional:
 
 Required:
 
-- `max` (Number) Максимальное количество нод в Node group.
-- `min` (Number) Минимально количество нод в Node group.
+- `max` (Number) Максимальное количество нод в Node group
+- `min` (Number) Минимально количество нод в Node group
 
 
 
@@ -263,7 +269,7 @@ Required:
 
 Optional:
 
-- `auto_update` (Boolean) авто обновление версии нод группы в рамках релизного канала и окна обслуживания
+- `auto_update` (Boolean) Авто обновление версии нод группы в рамках релизного канала и окна обслуживания
 - `maintenance_window` (Attributes) Если окно обслуживания не заполнено, то время проведения работ не ограничено. Duration можно указывать. Если отсутствует, то не ограничено по времени (see [below for nested schema](#nestedatt--version_control--maintenance_window))
 - `version` (String) Минимальная версия NodeGroup. Не может быть выше версии кластера.  Автоматически обновляется до default-версии в окно обслуживания. Если указанная версия выше текущей, обновление запустится немедленно. Во время автоматического обновления это поле не изменяется, а актуальная версия указывается в статусе NodeGroup
 
@@ -279,12 +285,21 @@ Required:
 
 Required:
 
-- `days` (List of String) Дни недели, в который будет запущено задание на тех.обслуживание
-- `hour` (Number) Час, в который будет запущено задание на тех.обслуживание
+- `days` (List of String) Дни недели, в которые будет запущено задание на тех. обслуживание
+- `hour` (Number) Час, в который будет запущено задание на тех. обслуживание
 
 Optional:
 
 - `duration` (String) Допустимая продолжительность процесса обновления. Если не указано, то не ограничено по времени. Принимается только формат в часах (h)
+
+Период времени. Поддерживаются следующие форматы:
+  - ISO 8601: P(n)DT(n)H(n)M(n)S. Допустимые единицы измерения: дни ("D"), часы ("H"), минуты ("M"), секунды ("S"). Только секунды могут быть дробными
+  - Простой формат. Допустимые единицы измерения: "d", "h", "m", "s", "ms", "us", "ns".
+    Величины должны следовать по убыванию единиц измерения
+  - Число в секундах
+
+Отрицательные значения обозначаются префиксом "-", в простом формате могут быть ограничены скобками.
+Регистр и пробелы игнорируются
 
 
 
@@ -304,8 +319,8 @@ Required:
 
 - `key` (String) Ключ может состоять из двух частей: необязательный префикс и ключ, разделенные '/'
 Максимальная длина префикса 253 символа.
-Максимальная длина ключа 63 символа.
-- `value` (String) Значение метки на узле.
+Максимальная длина ключа 63 символа
+- `value` (String) Значение метки на узле
 
 
 <a id="nestedatt--metadata"></a>
@@ -315,24 +330,30 @@ Optional:
 
 - `description` (String) Описание ресурса
 - `display_name` (String) Отображаемое имя свойства
-- `name` (String, Deprecated) Обязательное уникальное, глобально или в пределах проекта, имя. Используется в качестве части составного идентификатора объекта.
+- `name` (String, Deprecated) Обязательное уникальное, глобально или в пределах проекта, имя. Используется в качестве части составного идентификатора объекта
 
 Read-Only:
 
 - `create_time` (String) Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `delete_time` (String) Время запроса на удаление ресурса
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `id` (String) ID свойства
 - `purge_time` (String) Время удаления ресурса
-- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
 
 <a id="nestedatt--metadata--usages"></a>
 ### Nested Schema for `metadata.usages`
 
 Read-Only:
 
-- `name` (String) Имя связи, требуется для модификации коллекции
+- `name` (String) Имя связи. Требуется для модификации коллекции
 - `resource` (String) Ссылка на ресурс
-- `usage_type` (String) Тип связи. Помимо стандартных own и use могут быть добавлены специализированные типы для конкретных сервисов
+- `usage_type` (String) Тип связи. Помимо стандартных "own" и "use" могут быть добавлены специализированные типы для конкретных сервисов
 
 
 
@@ -341,11 +362,11 @@ Read-Only:
 
 Required:
 
-- `effect` (String) Эффект taint на node, влияющий на pod scheduling, которые под него попадают.
+- `effect` (String) Эффект taint на node, влияющий на pod scheduling, которые под него попадают
 - `key` (String) Ключ может состоять из двух частей: необязательный префикс и ключ, разделенные "/".
 Максимальная длина префикса 253 символа.
-Максимальная длина ключа 63 символа.
-- `value` (String) Значение taint на node. Если строка пустая, то value нет.
+Максимальная длина ключа 63 символа
+- `value` (String) Значение taint на node. Если строка пустая, то value нет
 
 
 <a id="nestedatt--timeouts"></a>
@@ -365,9 +386,19 @@ Read-Only:
 
 - `cpu` (String) Количество виртуальных ядер на ноде
 - `image_storage_iops` (Number) Количество операций ввода-вывода в секунду (IOPS) для хранилища image-ей и контейнеров
-- `image_storage_size` (String)
+- `image_storage_size` (String) Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
 - `labels` (Attributes List) (see [below for nested schema](#nestedatt--status--labels))
 - `memory` (String) Количество оперативной памяти на ноде
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
 - `node_group_status` (Attributes) (see [below for nested schema](#nestedatt--status--node_group_status))
 - `nodes_ready` (Number) Текущее количество нод готовых для работы
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
@@ -385,8 +416,8 @@ Required:
 
 - `key` (String) Ключ может состоять из двух частей: необязательный префикс и ключ, разделенные '/'
 Максимальная длина префикса 253 символа.
-Максимальная длина ключа 63 символа.
-- `value` (String) Значение метки на узле.
+Максимальная длина ключа 63 символа
+- `value` (String) Значение метки на узле
 
 
 <a id="nestedatt--status--node_group_status"></a>
@@ -395,7 +426,7 @@ Required:
 Read-Only:
 
 - `message` (String)
-- `state` (String) текущий статус node group.
+- `state` (String) Текущий статус node group
 
 
 <a id="nestedatt--status--ready"></a>
@@ -429,8 +460,8 @@ Read-Only:
 
 Read-Only:
 
-- `max` (Number) Максимальное количество нод в Node group.
-- `min` (Number) Минимально количество нод в Node group.
+- `max` (Number) Максимальное количество нод в Node group
+- `min` (Number) Минимально количество нод в Node group
 
 
 
@@ -447,11 +478,11 @@ Read-Only:
 
 Required:
 
-- `effect` (String) Эффект taint на node, влияющий на pod scheduling, которые под него попадают.
+- `effect` (String) Эффект taint на node, влияющий на pod scheduling, которые под него попадают
 - `key` (String) Ключ может состоять из двух частей: необязательный префикс и ключ, разделенные "/".
 Максимальная длина префикса 253 символа.
-Максимальная длина ключа 63 символа.
-- `value` (String) Значение taint на node. Если строка пустая, то value нет.
+Максимальная длина ключа 63 символа
+- `value` (String) Значение taint на node. Если строка пустая, то value нет
 
 
 <a id="nestedatt--status--version_control"></a>
@@ -475,12 +506,21 @@ Required:
 
 Required:
 
-- `days` (List of String) Дни недели, в который будет запущено задание на тех.обслуживание
-- `hour` (Number) Час, в который будет запущено задание на тех.обслуживание
+- `days` (List of String) Дни недели, в которые будет запущено задание на тех. обслуживание
+- `hour` (Number) Час, в который будет запущено задание на тех. обслуживание
 
 Optional:
 
 - `duration` (String) Допустимая продолжительность процесса обновления. Если не указано, то не ограничено по времени. Принимается только формат в часах (h)
+
+Период времени. Поддерживаются следующие форматы:
+  - ISO 8601: P(n)DT(n)H(n)M(n)S. Допустимые единицы измерения: дни ("D"), часы ("H"), минуты ("M"), секунды ("S"). Только секунды могут быть дробными
+  - Простой формат. Допустимые единицы измерения: "d", "h", "m", "s", "ms", "us", "ns".
+    Величины должны следовать по убыванию единиц измерения
+  - Число в секундах
+
+Отрицательные значения обозначаются префиксом "-", в простом формате могут быть ограничены скобками.
+Регистр и пробелы игнорируются
 
 
 

@@ -10,6 +10,7 @@ import (
 
 	localboolplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/boolplanmodifier"
 	locallistplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/listplanmodifier"
+	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
@@ -53,23 +54,14 @@ func (s *PostgresClusterDatabase) GetSchema() schema.Schema {
 			"lc_collate": schema.StringAttribute{
 				MarkdownDescription: `Порядок сортировки строк`,
 				Optional:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-				},
 			},
 			"lc_ctype": schema.StringAttribute{
 				MarkdownDescription: `Классификация символов`,
 				Optional:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-				},
 			},
 			"template": schema.StringAttribute{
 				MarkdownDescription: `Шаблон для создания базы данных`,
 				Optional:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-				},
 			},
 			"deletion_protection": schema.BoolAttribute{
 				MarkdownDescription: `Защита от удаления`,
@@ -102,33 +94,44 @@ func (s *PostgresClusterDatabaseMetadata) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля Metadata анонимного типа структуры PostgresClusterDatabase`,
 		Attributes: map[string]schema.Attribute{
 			"display_name": schema.StringAttribute{
-				MarkdownDescription: `Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов.`,
+				MarkdownDescription: `Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"create_time": schema.StringAttribute{
-				MarkdownDescription: `Дата создания объекта.`,
-				Computed:            true,
+				MarkdownDescription: `Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"delete_time": schema.StringAttribute{
-				MarkdownDescription: `Время запроса на удаление ресурса (не фактическое время удаления).`,
-				Computed:            true,
+				MarkdownDescription: `Время запроса на удаление ресурса (не фактическое время удаления)
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"purge_time": schema.StringAttribute{
-				Computed: true,
+				MarkdownDescription: `Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed:            true,
 			},
 			"usages": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(tfcommon.TypedUsage).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены.`,
+				MarkdownDescription: `Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены`,
 				Computed:            true,
 			},
 			"description": schema.StringAttribute{
-				MarkdownDescription: `Описание ресурса.`,
+				MarkdownDescription: `Описание ресурса`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"id": schema.StringAttribute{
-				MarkdownDescription: `ссылка на типизированный референс`,
+				MarkdownDescription: `Ссылка на типизированный референс`,
 				Computed:            true,
 			},
 		},

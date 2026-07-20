@@ -18,16 +18,16 @@ func (s *RouteStatusNextHop) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"network_local": schema.StringAttribute{
-				MarkdownDescription: `Локальная сеть.`,
+				MarkdownDescription: `Локальная сеть`,
 				Computed:            true,
 			},
 			"nat_gateway": schema.StringAttribute{
-				MarkdownDescription: `NAT шлюз.`,
+				MarkdownDescription: `NAT шлюз`,
 				Computed:            true,
 			},
 			"address": schema.SingleNestedAttribute{
 				Attributes:          new(ResourceAddressStatus).GetSchema().Attributes,
-				MarkdownDescription: `Адрес.`,
+				MarkdownDescription: `Адрес`,
 				Computed:            true,
 			},
 		},

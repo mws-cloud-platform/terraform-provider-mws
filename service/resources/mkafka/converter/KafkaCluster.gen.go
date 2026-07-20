@@ -160,22 +160,22 @@ func KafkaClusterAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaClu
 		t.SchemaRegistry = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.KafkaSchemaRegistrySpec).GetSchema().Attributes))
 	}
 
-	if am.Spec.AutoRebalance != nil {
-		autoRebalanceTmp, d := KafkaAutoRebalanceSpecAPIResponseToTFModel(ctx, am.Spec.AutoRebalance)
+	if am.Spec.Balancer != nil {
+		balancerTmp, d := KafkaBalancerSpecAPIResponseToTFModel(ctx, am.Spec.Balancer)
 		diags = append(diags, d...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		autoRebalanceTfObject, d := types.ObjectValueFrom(ctx,
-			tfconv.GetAttributesTypes(new(tfmodel.KafkaAutoRebalanceSpec).GetSchema().Attributes),
-			*autoRebalanceTmp)
+		balancerTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.KafkaBalancerSpec).GetSchema().Attributes),
+			*balancerTmp)
 		diags = append(diags, d...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		t.AutoRebalance = autoRebalanceTfObject
+		t.Balancer = balancerTfObject
 	} else {
-		t.AutoRebalance = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.KafkaAutoRebalanceSpec).GetSchema().Attributes))
+		t.Balancer = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.KafkaBalancerSpec).GetSchema().Attributes))
 	}
 
 	return &t, diags
@@ -284,20 +284,20 @@ func KafkaClusterTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaClust
 		am.Spec.SchemaRegistry = schemaRegistryTmp
 	}
 
-	if !tm.AutoRebalance.IsNull() && !tm.AutoRebalance.IsUnknown() {
-		autoRebalanceTfModel := tfmodel.KafkaAutoRebalanceSpec{}
-		autoRebalanceDiag := tm.AutoRebalance.As(ctx, &autoRebalanceTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, autoRebalanceDiag...)
+	if !tm.Balancer.IsNull() && !tm.Balancer.IsUnknown() {
+		balancerTfModel := tfmodel.KafkaBalancerSpec{}
+		balancerDiag := tm.Balancer.As(ctx, &balancerTfModel, basetypes.ObjectAsOptions{})
+		diags = append(diags, balancerDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		autoRebalanceTmp, autoRebalanceDiag := KafkaAutoRebalanceSpecTFToAPIRequestModel(ctx, &autoRebalanceTfModel)
-		diags = append(diags, autoRebalanceDiag...)
+		balancerTmp, balancerDiag := KafkaBalancerSpecTFToAPIRequestModel(ctx, &balancerTfModel)
+		diags = append(diags, balancerDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.Spec.AutoRebalance = autoRebalanceTmp
+		am.Spec.Balancer = balancerTmp
 	}
 
 	return &am, diags

@@ -17,7 +17,7 @@ func (s *FirewallRuleDestinationSpec) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"cidrs": schema.ListAttribute{
 				ElementType:         types.StringType,
-				MarkdownDescription: `Диапазоны IPv4 адресов, которые входят в группу.`,
+				MarkdownDescription: `Диапазоны IPv4 адресов, которые входят в группу`,
 				Computed:            true,
 			},
 		},

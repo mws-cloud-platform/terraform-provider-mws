@@ -49,10 +49,12 @@ variable "hmac_key_name" {
 
 ### Optional
 
-- `expiration_time` (String) Время истечения срока действия ключа.
+- `expiration_time` (String) Время истечения срока действия ключа
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `kind` (String)
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
-- `project` (String) Путь к проекту
+- `project` (String) Путь к проекту.
 - `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 
 ### Read-Only
@@ -65,25 +67,29 @@ variable "hmac_key_name" {
 
 Optional:
 
-- `description` (String) Описание ресурса.
-- `display_name` (String) Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов.
+- `description` (String) Описание ресурса
+- `display_name` (String) Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов
 
 Read-Only:
 
-- `create_time` (String) Дата создания объекта.
-- `delete_time` (String) Время запроса на удаление ресурса (не фактическое время удаления).
+- `create_time` (String) Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `delete_time` (String) Время запроса на удаление ресурса (не фактическое время удаления)
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `id` (String) ID свойства
-- `purge_time` (String)
-- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены. (see [below for nested schema](#nestedatt--metadata--usages))
+- `purge_time` (String) Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
 
 <a id="nestedatt--metadata--usages"></a>
 ### Nested Schema for `metadata.usages`
 
 Read-Only:
 
-- `name` (String) Имя связи, требуется для модификации коллекции
-- `resource` (String) ссылка на ресурс
-- `usage_type` (String) Тип связи. Помимо стандартных own и use могут быть добавлены специализированные типы для конкретных сервисов
+- `name` (String) Имя связи. Требуется для модификации коллекции
+- `resource` (String) Ссылка на ресурс
+- `usage_type` (String) Тип связи. Помимо стандартных "own" и "use" могут быть добавлены специализированные типы для конкретных сервисов
 
 
 
@@ -102,10 +108,12 @@ Optional:
 
 Read-Only:
 
-- `access_key_id` (String) Идентификатор ключа (readOnly).
-- `last_auth_time` (String) Время последней аутентификации.
+- `access_key_id` (String) Идентификатор ключа (readOnly)
+- `last_auth_time` (String) Время последней аутентификации
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
-- `secret_access_key` (String, Sensitive) HMAC-ключ (readOnly).
+- `secret_access_key` (String, Sensitive) HMAC-ключ (readOnly)
 
 <a id="nestedatt--status--ready"></a>
 ### Nested Schema for `status.ready`

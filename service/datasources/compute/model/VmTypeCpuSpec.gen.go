@@ -16,7 +16,7 @@ func (s *VmTypeCpuSpec) GetSchema() schema.Schema {
 		MarkdownDescription: `Спецификация процессора, который доступен для ВМ указанного типа.`,
 		Attributes: map[string]schema.Attribute{
 			"vcpu_count": schema.Int64Attribute{
-				MarkdownDescription: `Количество виртуальных ядер.`,
+				MarkdownDescription: `Количество виртуальных ядер`,
 				Computed:            true,
 			},
 		},

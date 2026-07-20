@@ -17,11 +17,11 @@ func (s *ClickhouseClusterBackup) GetSchema() schema.Schema {
 		MarkdownDescription: `Спецификация работы автоматического резервного копирования.`,
 		Attributes: map[string]schema.Attribute{
 			"hour": schema.Int64Attribute{
-				MarkdownDescription: `Час начала окна автоматического резервного копирования.`,
+				MarkdownDescription: `Час начала окна автоматического резервного копирования`,
 				Optional:            true,
 			},
 			"retain_period_days": schema.Int64Attribute{
-				MarkdownDescription: `Количество дней хранения успешно снятой резервной копии.`,
+				MarkdownDescription: `Количество дней хранения успешно снятой резервной копии`,
 				Optional:            true,
 			},
 		},

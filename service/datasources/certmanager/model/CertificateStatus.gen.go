@@ -37,11 +37,11 @@ func (s *CertificateStatus) GetSchema() schema.Schema {
 				Computed:   true,
 			},
 			"valid": schema.BoolAttribute{
-				MarkdownDescription: `Показывает, может ли сертификат использоваться в данный момент.`,
+				MarkdownDescription: `Показывает, может ли сертификат использоваться в данный момент`,
 				Computed:            true,
 			},
 			"reason": schema.StringAttribute{
-				MarkdownDescription: `Подробная причина, по которой сертификат не может быть использован.`,
+				MarkdownDescription: `Подробная причина, по которой сертификат не может быть использован`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"VALID",
@@ -55,7 +55,7 @@ func (s *CertificateStatus) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"renewal_status": schema.StringAttribute{
-				MarkdownDescription: `Managed certificate renewal status`,
+				MarkdownDescription: `Статус обновления сертификата`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"RENEWAL_FAILED",
@@ -65,9 +65,8 @@ func (s *CertificateStatus) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"management_type": schema.StringAttribute{
-				MarkdownDescription: `Тип сертификата. Если указано SELF_MANAGED, тело запроса должно содержать данные сертификата.  
-Если указано MANAGED, сертификат будет создан центром сертификации (например, Let's Encrypt).
-`,
+				MarkdownDescription: `Тип сертификата. Если указано SELF_MANAGED, тело запроса должно содержать данные сертификата.
+Если указано MANAGED, сертификат будет создан центром сертификации (например, Let's Encrypt)`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"SELF_MANAGED",
@@ -80,18 +79,21 @@ func (s *CertificateStatus) GetSchema() schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(CertificateChallenge).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Список challenge-задач, которые необходимо выполнить для проверки сертификата.  
-Присутствует только в случае, если сертификат управляемый.
-`,
+				MarkdownDescription: `Список challenge-задач, которые необходимо выполнить для проверки сертификата.
+Присутствует только в случае, если сертификат управляемый`,
 				Computed: true,
 			},
 			"renewal_at": schema.StringAttribute{
-				MarkdownDescription: `Время следующего обновления сертификата.`,
-				Computed:            true,
+				MarkdownDescription: `Время следующего обновления сертификата
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"challenges_deadline": schema.StringAttribute{
-				MarkdownDescription: `Время, до которого необходимо настроить делегацию для прохождения проверки прав на домены.
-Присутствует только в случае, если сертификат управляемый.`,
+				MarkdownDescription: `Крайний срок настройки делегации для прохождения проверки прав на домены.
+Присутствует только в случае, если сертификат управляемый
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
 				Computed: true,
 			},
 		},

@@ -12,11 +12,12 @@ import (
 )
 
 type PostgresClusterUser struct {
-	Kind            types.String     `tfsdk:"kind"`
-	Metadata        types.Object     `tfsdk:"metadata"`
-	Status          types.Object     `tfsdk:"status"`
-	Role            PostgresUserRole `tfsdk:"role"`
-	AdditionalRoles types.List       `tfsdk:"additional_roles"`
+	Kind                types.String                    `tfsdk:"kind"`
+	Metadata            types.Object                    `tfsdk:"metadata"`
+	Status              types.Object                    `tfsdk:"status"`
+	Role                PostgresUserRole                `tfsdk:"role"`
+	AdditionalRoles     types.List                      `tfsdk:"additional_roles"`
+	AccessControlPolicy PostgresUserAccessControlPolicy `tfsdk:"access_control_policy"`
 }
 
 func (s *PostgresClusterUser) GetSchema() schema.Schema {
@@ -36,10 +37,10 @@ func (s *PostgresClusterUser) GetSchema() schema.Schema {
 			},
 			"role": schema.StringAttribute{
 				MarkdownDescription: `Пользовательские роли (они же роли приложений):
-- "DB_OWNER_USER": Пользователь с правами владельца базы данных. Это не суперпользователь, 
+- "DB_OWNER_USER": Пользователь с правами владельца базы данных. Это не суперпользователь,
   не имеет права создавать бд или роли, наследует разрешения db_owner.
 - "DB_WRITER_USER": Пользовательская роль, наследует разрешения групповой роли db_writer, db_reader.
-- "DB_READER_USER": Пользовательская роль, наследует разрешения групповой роли db_reader.`,
+- "DB_READER_USER": Пользовательская роль, наследует разрешения групповой роли db_reader`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"DB_OWNER_USER",
@@ -56,6 +57,18 @@ func (s *PostgresClusterUser) GetSchema() schema.Schema {
 				MarkdownDescription: `Дополнительные роли пользователя`,
 				Computed:            true,
 			},
+			"access_control_policy": schema.StringAttribute{
+				MarkdownDescription: `- "SCOPE_BASED": Роли пользователя управляются в зависимости от области видимости роли.
+    - роли на конкретные базы данных управляются через API привязок роли;
+    - глобальные роли (роли, которые применяются во всех базах данных кластера) управляются через спецификацию пользователя.
+    Политика введена для обратной совместимости`,
+				Validators: []validator.String{
+					stringvalidator.OneOf(
+						"SCOPE_BASED",
+					),
+				},
+				Computed: true,
+			},
 		},
 	}
 }
@@ -70,33 +83,38 @@ func (s *PostgresClusterUserMetadata) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля Metadata анонимного типа структуры PostgresClusterUser`,
 		Attributes: map[string]schema.Attribute{
 			"display_name": schema.StringAttribute{
-				MarkdownDescription: `Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов.`,
+				MarkdownDescription: `Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов`,
 				Computed:            true,
 			},
 			"create_time": schema.StringAttribute{
-				MarkdownDescription: `Дата создания объекта.`,
-				Computed:            true,
+				MarkdownDescription: `Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"delete_time": schema.StringAttribute{
-				MarkdownDescription: `Время запроса на удаление ресурса (не фактическое время удаления).`,
-				Computed:            true,
+				MarkdownDescription: `Время запроса на удаление ресурса (не фактическое время удаления)
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"purge_time": schema.StringAttribute{
-				Computed: true,
+				MarkdownDescription: `Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed:            true,
 			},
 			"usages": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(tfcommon.TypedUsage).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены.`,
+				MarkdownDescription: `Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены`,
 				Computed:            true,
 			},
 			"description": schema.StringAttribute{
-				MarkdownDescription: `Описание ресурса.`,
+				MarkdownDescription: `Описание ресурса`,
 				Computed:            true,
 			},
 			"id": schema.StringAttribute{
-				MarkdownDescription: `ссылка на типизированный референс`,
+				MarkdownDescription: `Ссылка на типизированный референс`,
 				Computed:            true,
 			},
 		},

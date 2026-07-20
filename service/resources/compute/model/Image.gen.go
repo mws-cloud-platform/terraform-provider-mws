@@ -5,7 +5,6 @@ package model
 import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -61,9 +60,6 @@ func (s *Image) GetSchema() schema.Schema {
 				Attributes:          new(ImageSpecSource).GetSchema().Attributes,
 				MarkdownDescription: `Источник для создания образа`,
 				Required:            true,
-				PlanModifiers: []planmodifier.Object{
-					objectplanmodifier.RequiresReplaceIfConfigured(),
-				},
 			},
 			"activity": schema.StringAttribute{
 				MarkdownDescription: `Актуальность образа`,
@@ -80,11 +76,14 @@ func (s *Image) GetSchema() schema.Schema {
 				},
 			},
 			"min_disk_size": schema.StringAttribute{
-				MarkdownDescription: `Минимальный допустимый размер диска, создаваемого из образа`,
-				Optional:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-				},
+				MarkdownDescription: `Минимальный допустимый размер диска, создаваемого из образа
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются`,
+				Optional: true,
 			},
 			"os_type": schema.StringAttribute{
 				MarkdownDescription: `Тип операционной системы`,

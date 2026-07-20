@@ -4,8 +4,6 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -23,11 +21,8 @@ func (s *ClickhouseClusterShard) GetSchema() schema.Schema {
 		MarkdownDescription: `Описание спецификации шарда кластера.`,
 		Attributes: map[string]schema.Attribute{
 			"name": schema.StringAttribute{
-				MarkdownDescription: `-> Имя шарда, которому будут принадлежать инстансы. В случае count>1, имя формируется как name-{shardIndex}`,
+				MarkdownDescription: `-> Имя шарда, которому будут принадлежать инстансы. В случае с несколькими шардами имя формируется как "name-{shardIndex}"`,
 				Required:            true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-				},
 			},
 			"count": schema.Int64Attribute{
 				MarkdownDescription: `Количество шардов, которые будут созданы`,
@@ -35,7 +30,7 @@ func (s *ClickhouseClusterShard) GetSchema() schema.Schema {
 			},
 			"resources": schema.SingleNestedAttribute{
 				Attributes:          new(ClickhouseInstanceHWResources).GetSchema().Attributes,
-				MarkdownDescription: `Ресурсы одной ноды Clickhouse.`,
+				MarkdownDescription: `Ресурсы одной ноды Clickhouse`,
 				Required:            true,
 			},
 			"weight": schema.Int64Attribute{
@@ -46,7 +41,7 @@ func (s *ClickhouseClusterShard) GetSchema() schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(ClickhouseEndpoint).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Описание эдпойнтов шардов.`,
+				MarkdownDescription: `Описание эдпойнтов шардов`,
 				Optional:            true,
 			},
 			"instances": schema.ListNestedAttribute{

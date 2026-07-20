@@ -17,12 +17,14 @@ func (s *ResourceExternalAddressStatus) GetSchema() schema.Schema {
 		MarkdownDescription: `Статус IP-адреса внешнего балансировщика.`,
 		Attributes: map[string]schema.Attribute{
 			"ref": schema.StringAttribute{
-				MarkdownDescription: `Относительная ссылка на статический адрес.`,
+				MarkdownDescription: `Относительная ссылка на статический адрес`,
 				Computed:            true,
 			},
 			"ip_address": schema.StringAttribute{
-				MarkdownDescription: `Значение IP адреса.`,
-				Computed:            true,
+				MarkdownDescription: `Значение IP адреса
+
+IPv4- или IPv6-адрес`,
+				Computed: true,
 			},
 		},
 	}

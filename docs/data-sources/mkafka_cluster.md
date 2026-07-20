@@ -33,28 +33,29 @@ data "mws_mkafka_cluster" "mkafka_kafka" {
 
 ### Optional
 
-- `project` (String) Путь к проекту
+- `project` (String) Путь к проекту.
 
 ### Read-Only
 
-- `active` (Boolean) Значение включен/выключен кластер.
-- `auto_rebalance` (Attributes) Настройка автоматической ребалансировки для кластера. (see [below for nested schema](#nestedatt--auto_rebalance))
-- `endpoints` (Attributes List) Описание эндпойнтов в сетях пользователя (VPC) для подключения к брокерам кластера. (see [below for nested schema](#nestedatt--endpoints))
-- `instances` (Attributes) Описание ресурсов хостов брокеров и контроллеров. (see [below for nested schema](#nestedatt--instances))
+- `active` (Boolean) Состояние кластера — включен или выключен
+- `balancer` (Attributes) Настройка балансировщика кластера (see [below for nested schema](#nestedatt--balancer))
+- `endpoints` (Attributes List) Описание эндпойнтов в сетях пользователя (VPC) для подключения к брокерам кластера (see [below for nested schema](#nestedatt--endpoints))
+- `instances` (Attributes) Описание ресурсов хостов брокеров и контроллеров (see [below for nested schema](#nestedatt--instances))
 - `kind` (String)
 - `maintenance_window` (Attributes) (see [below for nested schema](#nestedatt--maintenance_window))
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
-- `product_config` (String) Настройки Kafka. Если не указаны, будут использованы настройки по-умолчанию.
-- `schema_registry` (Attributes) Настройка Schema Registry для кластера. (see [below for nested schema](#nestedatt--schema_registry))
+- `product_config` (String) Настройки Kafka. Если не указаны, будут использованы настройки по умолчанию
+- `schema_registry` (Attributes) Настройка Schema Registry для кластера (see [below for nested schema](#nestedatt--schema_registry))
 - `status` (Attributes) (see [below for nested schema](#nestedatt--status))
-- `version` (String) Версия продукта.
+- `version` (String) Версия продукта
 
-<a id="nestedatt--auto_rebalance"></a>
-### Nested Schema for `auto_rebalance`
+<a id="nestedatt--balancer"></a>
+### Nested Schema for `balancer`
 
 Read-Only:
 
-- `enabled` (Boolean) Состояние автоматической ребалансировки — включена или выключена
+- `auto_rebalance` (Boolean) Если включено - запускать автоматическую ребалансировку во время сервисного окна
+- `enabled` (Boolean) Состояние балансировщика — включен или выключен
 
 
 <a id="nestedatt--endpoints"></a>
@@ -62,25 +63,25 @@ Read-Only:
 
 Read-Only:
 
-- `broker_addresses` (Attributes List) Список адресов в пользовательской сети, на которые "отображаются" брокеры. (see [below for nested schema](#nestedatt--endpoints--broker_addresses))
-- `external_access` (Attributes) Настройка внешнего доступа к кластеру Kafka. (see [below for nested schema](#nestedatt--endpoints--external_access))
-- `name` (String) Имя эндпойнта.
-- `network` (String) Идентификатор пользовательской сети (VPC).
+- `broker_addresses` (Attributes List) Список адресов в пользовательской сети, на которые "отображаются" брокеры (see [below for nested schema](#nestedatt--endpoints--broker_addresses))
+- `external_access` (Attributes) Настройка внешнего доступа к кластеру Kafka (see [below for nested schema](#nestedatt--endpoints--external_access))
+- `name` (String) Имя эндпойнта
+- `network` (String) Идентификатор пользовательской сети (VPC)
 
 <a id="nestedatt--endpoints--broker_addresses"></a>
 ### Nested Schema for `endpoints.broker_addresses`
 
 Read-Only:
 
-- `ref` (String) Идентификатор существующего адреса.
-- `spec` (Attributes) Спецификация нового адреса. Адрес будет выделен в ходе реконсиляции кластера. (see [below for nested schema](#nestedatt--endpoints--broker_addresses--spec))
+- `ref` (String) Идентификатор существующего адреса
+- `spec` (Attributes) Спецификация нового адреса. Адрес будет выделен в ходе реконсиляции кластера (see [below for nested schema](#nestedatt--endpoints--broker_addresses--spec))
 
 <a id="nestedatt--endpoints--broker_addresses--spec"></a>
 ### Nested Schema for `endpoints.broker_addresses.spec`
 
 Read-Only:
 
-- `subnet` (String) Идентификатор подсети, в которой необходимо выделить адрес.
+- `subnet` (String) Идентификатор подсети, в которой необходимо выделить адрес
 
 
 
@@ -89,16 +90,16 @@ Read-Only:
 
 Read-Only:
 
-- `allowed` (Boolean) Назначить внешние адреса для кластера Kafka.
-- `broker_addresses` (Attributes List) Список внешних адресов, используемых для настройки доступа к кластеру Kafka. Если флаг "allowed" установлен в true и адреса не указаны, внешние адреса будут выделены автоматически. (see [below for nested schema](#nestedatt--endpoints--external_access--broker_addresses))
+- `allowed` (Boolean) Назначить внешние адреса для кластера Kafka
+- `broker_addresses` (Attributes List) Список внешних адресов, используемых для настройки доступа к кластеру Kafka. Если флаг "allowed" установлен в true и адреса не указаны, внешние адреса будут выделены автоматически (see [below for nested schema](#nestedatt--endpoints--external_access--broker_addresses))
 
 <a id="nestedatt--endpoints--external_access--broker_addresses"></a>
 ### Nested Schema for `endpoints.external_access.broker_addresses`
 
 Read-Only:
 
-- `ref` (String) Идентификатор существующего внешнего адреса.
-- `spec` (Attributes) Спецификация нового внешнего адреса. Адрес будет выделен в ходе реконсиляции кластера. (see [below for nested schema](#nestedatt--endpoints--external_access--broker_addresses--spec))
+- `ref` (String) Идентификатор существующего внешнего адреса
+- `spec` (Attributes) Спецификация нового внешнего адреса. Адрес будет выделен в ходе реконсиляции кластера (see [below for nested schema](#nestedatt--endpoints--external_access--broker_addresses--spec))
 
 <a id="nestedatt--endpoints--external_access--broker_addresses--spec"></a>
 ### Nested Schema for `endpoints.external_access.broker_addresses.spec`
@@ -112,25 +113,25 @@ Read-Only:
 
 Read-Only:
 
-- `broker` (Attributes) Параметры виртуальной машины, где будет работать брокер Кафки. (see [below for nested schema](#nestedatt--instances--broker))
-- `controller` (Attributes) Параметры виртуальной машины, где будет работать KRaft контроллер Кафки. (see [below for nested schema](#nestedatt--instances--controller))
+- `broker` (Attributes) Параметры виртуальной машины, где будет работать брокер Кафки (see [below for nested schema](#nestedatt--instances--broker))
+- `controller` (Attributes) Параметры виртуальной машины, где будет работать KRaft контроллер Кафки (see [below for nested schema](#nestedatt--instances--controller))
 
 <a id="nestedatt--instances--broker"></a>
 ### Nested Schema for `instances.broker`
 
 Read-Only:
 
-- `allocation` (Attributes List) Параметры размещения брокеров по зонам. (see [below for nested schema](#nestedatt--instances--broker--allocation))
-- `disk` (Attributes) Параметры диска с данными на узле кластера. (see [below for nested schema](#nestedatt--instances--broker--disk))
-- `vm_type` (String) Тип виртуальной машины, описывающий ресурсы (vCPU, memory).
+- `allocation` (Attributes List) Параметры размещения брокеров по зонам (see [below for nested schema](#nestedatt--instances--broker--allocation))
+- `disk` (Attributes) Параметры диска с данными на узле кластера (see [below for nested schema](#nestedatt--instances--broker--disk))
+- `vm_type` (String) Тип виртуальной машины, описывающий ресурсы (vCPU, memory)
 
 <a id="nestedatt--instances--broker--allocation"></a>
 ### Nested Schema for `instances.broker.allocation`
 
 Read-Only:
 
-- `count` (Number) Количество брокеров в зоне/подсети.
-- `zone` (String) Зона расположения узла.
+- `count` (Number) Количество брокеров в зоне/подсети
+- `zone` (String) Зона расположения узла
 
 
 <a id="nestedatt--instances--broker--disk"></a>
@@ -138,9 +139,15 @@ Read-Only:
 
 Read-Only:
 
-- `iops` (Number) Количество дисковых операций в секунду.
-- `size` (String) Размер диска.
-- `type` (String) Тип используемого диска: 
+- `iops` (Number) Количество дисковых операций в секунду
+- `size` (String) Размер диска
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
+- `type` (String) Тип используемого диска:
 * "NETWORK_STANDARD_SSD" — сетевой SSD
 
 
@@ -150,18 +157,18 @@ Read-Only:
 
 Read-Only:
 
-- `allocation` (Attributes List) Параметры размещения контроллеров по зонам. (see [below for nested schema](#nestedatt--instances--controller--allocation))
+- `allocation` (Attributes List) Параметры размещения контроллеров по зонам (see [below for nested schema](#nestedatt--instances--controller--allocation))
 - `combined_with_broker` (Boolean) Размещать контроллеры на тех же виртуальных машинах, что и брокеры
-- `disk` (Attributes) Параметры диска с данными на узле кластера. (see [below for nested schema](#nestedatt--instances--controller--disk))
-- `vm_type` (String) Тип виртуальной машины, описывающий ресурсы (vCPU, memory).
+- `disk` (Attributes) Параметры диска с данными на узле кластера (see [below for nested schema](#nestedatt--instances--controller--disk))
+- `vm_type` (String) Тип виртуальной машины, описывающий ресурсы (vCPU, memory)
 
 <a id="nestedatt--instances--controller--allocation"></a>
 ### Nested Schema for `instances.controller.allocation`
 
 Read-Only:
 
-- `count` (Number) Количество брокеров в зоне/подсети.
-- `zone` (String) Зона расположения узла.
+- `count` (Number) Количество брокеров в зоне/подсети
+- `zone` (String) Зона расположения узла
 
 
 <a id="nestedatt--instances--controller--disk"></a>
@@ -169,9 +176,15 @@ Read-Only:
 
 Read-Only:
 
-- `iops` (Number) Количество дисковых операций в секунду.
-- `size` (String) Размер диска.
-- `type` (String) Тип используемого диска: 
+- `iops` (Number) Количество дисковых операций в секунду
+- `size` (String) Размер диска
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
+- `type` (String) Тип используемого диска:
 * "NETWORK_STANDARD_SSD" — сетевой SSD
 
 
@@ -189,9 +202,18 @@ Read-Only:
 
 Read-Only:
 
-- `days` (List of String) Дни недели, в который будет запущено задание на тех.обслуживание
+- `days` (List of String) Дни недели, в которые будет запущено задание на тех. обслуживание
 - `duration` (String) Допустимая продолжительность процесса обновления. Если не указано, то не ограничено по времени. Принимается только формат в часах (h)
-- `hour` (Number) Час, в который будет запущено задание на тех.обслуживание
+
+Период времени. Поддерживаются следующие форматы:
+  - ISO 8601: P(n)DT(n)H(n)M(n)S. Допустимые единицы измерения: дни ("D"), часы ("H"), минуты ("M"), секунды ("S"). Только секунды могут быть дробными
+  - Простой формат. Допустимые единицы измерения: "d", "h", "m", "s", "ms", "us", "ns".
+    Величины должны следовать по убыванию единиц измерения
+  - Число в секундах
+
+Отрицательные значения обозначаются префиксом "-", в простом формате могут быть ограничены скобками.
+Регистр и пробелы игнорируются
+- `hour` (Number) Час, в который будет запущено задание на тех. обслуживание
 
 
 
@@ -200,22 +222,26 @@ Read-Only:
 
 Read-Only:
 
-- `create_time` (String) Дата создания объекта.
-- `delete_time` (String) Время запроса на удаление ресурса (не фактическое время удаления).
-- `description` (String) Описание ресурса.
-- `display_name` (String) Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов.
-- `id` (String) ссылка на типизированный референс
-- `purge_time` (String)
-- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены. (see [below for nested schema](#nestedatt--metadata--usages))
+- `create_time` (String) Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `delete_time` (String) Время запроса на удаление ресурса (не фактическое время удаления)
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `description` (String) Описание ресурса
+- `display_name` (String) Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов
+- `id` (String) Ссылка на типизированный референс
+- `purge_time` (String) Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
 
 <a id="nestedatt--metadata--usages"></a>
 ### Nested Schema for `metadata.usages`
 
 Read-Only:
 
-- `name` (String) Имя связи, требуется для модификации коллекции
-- `resource` (String) ссылка на ресурс
-- `usage_type` (String) Тип связи. Помимо стандартных own и use могут быть добавлены специализированные типы для конкретных сервисов
+- `name` (String) Имя связи. Требуется для модификации коллекции
+- `resource` (String) Ссылка на ресурс
+- `usage_type` (String) Тип связи. Помимо стандартных "own" и "use" могут быть добавлены специализированные типы для конкретных сервисов
 
 
 
@@ -224,7 +250,7 @@ Read-Only:
 
 Read-Only:
 
-- `enabled` (Boolean) Включить Schema Registry в кластере.
+- `enabled` (Boolean) Включить Schema Registry в кластере
 
 
 <a id="nestedatt--status"></a>
@@ -232,38 +258,39 @@ Read-Only:
 
 Read-Only:
 
-- `auto_rebalance` (Attributes) Настройка автоматической ребалансировки для кластера. (see [below for nested schema](#nestedatt--status--auto_rebalance))
+- `balancer` (Attributes) Настройка балансировщика кластера (see [below for nested schema](#nestedatt--status--balancer))
 - `effective_kafka_config` (Map of String) Конфигурация параметров кластера после валидации и преобразования из пользователского ввода
-- `endpoints` (Attributes List) Описание эндпойнтов в сетях пользователя (VPC) для подключения к брокерам кластера. (see [below for nested schema](#nestedatt--status--endpoints))
-- `health` (String) Работоспособность кластера
-  * "ALIVE"    - Полностью работоспособен
-  * "DEGRADED" - Деградирует (некоторые, но не все, экземпляры неработоспособны)
-  * "FAILED"   - Неработоспособен
+- `endpoints` (Attributes List) Описание эндпойнтов в сетях пользователя (VPC) для подключения к брокерам кластера (see [below for nested schema](#nestedatt--status--endpoints))
+- `health` (String) Работоспособность кластера:
+  * "ALIVE"    - Полностью работоспособен;
+  * "DEGRADED" - Деградирует (некоторые, но не все, экземпляры неработоспособны);
+  * "FAILED"   - Неработоспособен;
   * "UNKNOWN"  - Не удаётся определить состояние (на этапе создания)
-- `instances` (Attributes) Описание ресурсов хостов брокеров и контроллеров. (see [below for nested schema](#nestedatt--status--instances))
+- `instances` (Attributes) Описание ресурсов хостов брокеров и контроллеров (see [below for nested schema](#nestedatt--status--instances))
 - `maintenance_window` (Attributes) (see [below for nested schema](#nestedatt--status--maintenance_window))
 - `message` (String)
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
-- `schema_registry` (Attributes) Настройка Schema Registry для кластера. (see [below for nested schema](#nestedatt--status--schema_registry))
-- `state` (String) Состояние кластера
-  * "CREATING"     - Создаётся
-  * "RUNNING"      - Работает в штатном режиме
-  * "STOPPING"     - Останавливается
-  * "STOPPED"      - Остановлен
-  * "STARTING"     - Запуск ранее остановленного
-  * "UPDATING"     - Выполняется обновление
-  * "ERROR"        - Произошла ошибка, требуется участие команды поддержки
-  * "DELETING"     - Удаляется
-  * "DELETED"      - Удалён
-  * "UNIDENTIFIED" - Не удаётся определить статус
+- `schema_registry` (Attributes) Настройка Schema Registry для кластера (see [below for nested schema](#nestedatt--status--schema_registry))
+- `state` (String) Состояние кластера:
+  * "CREATING"     - Создаётся;
+  * "RUNNING"      - Работает в штатном режиме;
+  * "STOPPING"     - Останавливается;
+  * "STOPPED"      - Остановлен;
+  * "STARTING"     - Запуск ранее остановленного;
+  * "UPDATING"     - Выполняется обновление;
+  * "ERROR"        - Произошла ошибка, требуется участие команды поддержки;
+  * "DELETING"     - Удаляется;
+  * "DELETED"      - Удалён;
+  * "UNIDENTIFIED" - Не удаётся определить статус;
   * "RESTORING"    - Восстанавливается
 
-<a id="nestedatt--status--auto_rebalance"></a>
-### Nested Schema for `status.auto_rebalance`
+<a id="nestedatt--status--balancer"></a>
+### Nested Schema for `status.balancer`
 
 Read-Only:
 
-- `enabled` (Boolean) Состояние автоматической ребалансировки — включена или выключена
+- `auto_rebalance` (Boolean) Если включено - запускать автоматическую ребалансировку во время сервисного окна
+- `enabled` (Boolean) Состояние балансировщика — включен или выключен
 
 
 <a id="nestedatt--status--endpoints"></a>
@@ -271,23 +298,25 @@ Read-Only:
 
 Read-Only:
 
-- `bootstrap_servers` (String) Список адресов для первоначального подключения к кластеру внутри пользовательской (VPC).
-- `broker_addresses` (Attributes List) Список адресов в пользовательской сети, на которые "отображаются" брокеры. (see [below for nested schema](#nestedatt--status--endpoints--broker_addresses))
-- `external_access` (Attributes) Настройка внешнего доступа к кластеру Kafka. (see [below for nested schema](#nestedatt--status--endpoints--external_access))
-- `name` (String) Имя эндпойнта.
-- `network` (String) Идентификатор пользовательской сети (VPC).
-- `port` (Number) Порт для доступа к кластеру Kafka внутри пользовательской сети (VPC).
-- `schema_registry` (Attributes) Адреса Schema Registry во внутренней сети (VPC). (see [below for nested schema](#nestedatt--status--endpoints--schema_registry))
+- `bootstrap_servers` (String) Список адресов для первоначального подключения к кластеру внутри пользовательской (VPC)
+- `broker_addresses` (Attributes List) Список адресов в пользовательской сети, на которые "отображаются" брокеры (see [below for nested schema](#nestedatt--status--endpoints--broker_addresses))
+- `external_access` (Attributes) Настройка внешнего доступа к кластеру Kafka (see [below for nested schema](#nestedatt--status--endpoints--external_access))
+- `name` (String) Имя эндпойнта
+- `network` (String) Идентификатор пользовательской сети (VPC)
+- `port` (Number) Порт для доступа к кластеру Kafka внутри пользовательской сети (VPC)
+- `schema_registry` (Attributes) Адреса Schema Registry во внутренней сети (VPC) (see [below for nested schema](#nestedatt--status--endpoints--schema_registry))
 
 <a id="nestedatt--status--endpoints--broker_addresses"></a>
 ### Nested Schema for `status.endpoints.broker_addresses`
 
 Read-Only:
 
-- `dns` (Attributes List) Доменные имена. (see [below for nested schema](#nestedatt--status--endpoints--broker_addresses--dns))
-- `ip_address` (String) Выделенный адрес.
-- `ref` (String) Идентификатор адреса.
-- `subnet` (String) Подсеть, в которой выделен адрес.
+- `dns` (Attributes List) Доменные имена (see [below for nested schema](#nestedatt--status--endpoints--broker_addresses--dns))
+- `ip_address` (String) Выделенный адрес
+
+IPv4- или IPv6-адрес
+- `ref` (String) Идентификатор адреса
+- `subnet` (String) Подсеть, в которой выделен адрес
 
 <a id="nestedatt--status--endpoints--broker_addresses--dns"></a>
 ### Nested Schema for `status.endpoints.broker_addresses.dns`
@@ -303,20 +332,22 @@ Read-Only:
 
 Read-Only:
 
-- `allowed` (Boolean) Назначить внешние адреса для кластера Kafka.
-- `bootstrap_servers` (String) Список адресов для первоначального подключения к кластеру Apache Kafka из внешней сети.
-- `broker_addresses` (Attributes List) Список внешних адресов, выделенных для брокеров Kafka. (see [below for nested schema](#nestedatt--status--endpoints--external_access--broker_addresses))
-- `port` (Number) Порт, используемый для доступа к кластеру Kafka из внешней сети.
-- `schema_registry` (Attributes) Внешние HTTPS-адреса Schema Registry. (see [below for nested schema](#nestedatt--status--endpoints--external_access--schema_registry))
+- `allowed` (Boolean) Назначить внешние адреса для кластера Kafka
+- `bootstrap_servers` (String) Список адресов для первоначального подключения к кластеру Apache Kafka из внешней сети
+- `broker_addresses` (Attributes List) Список внешних адресов, выделенных для брокеров Kafka (see [below for nested schema](#nestedatt--status--endpoints--external_access--broker_addresses))
+- `port` (Number) Порт, используемый для доступа к кластеру Kafka из внешней сети
+- `schema_registry` (Attributes) Внешние HTTPS-адреса Schema Registry (see [below for nested schema](#nestedatt--status--endpoints--external_access--schema_registry))
 
 <a id="nestedatt--status--endpoints--external_access--broker_addresses"></a>
 ### Nested Schema for `status.endpoints.external_access.broker_addresses`
 
 Read-Only:
 
-- `ip_address` (String) Выделенный адрес.
+- `ip_address` (String) Выделенный адрес
+
+IPv4- или IPv6-адрес
 - `managed` (Boolean) False если ссылка на внешний адрес был указана в спецификации, true если адрес был создан
-- `ref` (String) Идентификатор адреса.
+- `ref` (String) Идентификатор адреса
 
 
 <a id="nestedatt--status--endpoints--external_access--schema_registry"></a>
@@ -324,7 +355,7 @@ Read-Only:
 
 Read-Only:
 
-- `urls` (List of String) Список HTTPS URL Schema Registry.
+- `urls` (List of String) Список HTTPS URL Schema Registry
 
 
 
@@ -333,7 +364,7 @@ Read-Only:
 
 Read-Only:
 
-- `urls` (List of String) Список HTTPS URL Schema Registry.
+- `urls` (List of String) Список HTTPS URL Schema Registry
 
 
 
@@ -342,22 +373,22 @@ Read-Only:
 
 Read-Only:
 
-- `broker` (Attributes) Параметры виртуальной машины, где работает брокер Кафки. (see [below for nested schema](#nestedatt--status--instances--broker))
-- `controller` (Attributes) Параметры виртуальной машины, где работает контроллер. (see [below for nested schema](#nestedatt--status--instances--controller))
+- `broker` (Attributes) Параметры виртуальной машины, где работает брокер Кафки (see [below for nested schema](#nestedatt--status--instances--broker))
+- `controller` (Attributes) Параметры виртуальной машины, где работает контроллер (see [below for nested schema](#nestedatt--status--instances--controller))
 
 <a id="nestedatt--status--instances--broker"></a>
 ### Nested Schema for `status.instances.broker`
 
 Read-Only:
 
-- `disk` (Attributes) Параметры диска с данными на узле кластера Managed Kafka. (see [below for nested schema](#nestedatt--status--instances--broker--disk))
+- `disk` (Attributes) Параметры диска с данными на узле кластера Managed Kafka (see [below for nested schema](#nestedatt--status--instances--broker--disk))
 
 <a id="nestedatt--status--instances--broker--disk"></a>
 ### Nested Schema for `status.instances.broker.disk`
 
 Read-Only:
 
-- `iops` (Number) Количество дисковых операций в секунду.
+- `iops` (Number) Количество дисковых операций в секунду
 
 
 
@@ -367,14 +398,14 @@ Read-Only:
 Read-Only:
 
 - `combined_with_broker` (Boolean) Контроллеры размещаются на тех же виртуальных машинах, что и брокеры
-- `disk` (Attributes) Параметры диска с данными на узле кластера Managed Kafka. (see [below for nested schema](#nestedatt--status--instances--controller--disk))
+- `disk` (Attributes) Параметры диска с данными на узле кластера Managed Kafka (see [below for nested schema](#nestedatt--status--instances--controller--disk))
 
 <a id="nestedatt--status--instances--controller--disk"></a>
 ### Nested Schema for `status.instances.controller.disk`
 
 Read-Only:
 
-- `iops` (Number) Количество дисковых операций в секунду.
+- `iops` (Number) Количество дисковых операций в секунду
 
 
 
@@ -391,9 +422,18 @@ Read-Only:
 
 Read-Only:
 
-- `days` (List of String) Дни недели, в который будет запущено задание на тех.обслуживание
+- `days` (List of String) Дни недели, в которые будет запущено задание на тех. обслуживание
 - `duration` (String) Допустимая продолжительность процесса обновления. Если не указано, то не ограничено по времени. Принимается только формат в часах (h)
-- `hour` (Number) Час, в который будет запущено задание на тех.обслуживание
+
+Период времени. Поддерживаются следующие форматы:
+  - ISO 8601: P(n)DT(n)H(n)M(n)S. Допустимые единицы измерения: дни ("D"), часы ("H"), минуты ("M"), секунды ("S"). Только секунды могут быть дробными
+  - Простой формат. Допустимые единицы измерения: "d", "h", "m", "s", "ms", "us", "ns".
+    Величины должны следовать по убыванию единиц измерения
+  - Число в секундах
+
+Отрицательные значения обозначаются префиксом "-", в простом формате могут быть ограничены скобками.
+Регистр и пробелы игнорируются
+- `hour` (Number) Час, в который будет запущено задание на тех. обслуживание
 
 
 
@@ -411,4 +451,4 @@ Read-Only:
 
 Read-Only:
 
-- `enabled` (Boolean) Включить Schema Registry в кластере.
+- `enabled` (Boolean) Включить Schema Registry в кластере

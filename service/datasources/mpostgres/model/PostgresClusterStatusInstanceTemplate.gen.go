@@ -17,12 +17,12 @@ func (s *PostgresClusterStatusInstanceTemplate) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"vm_type": schema.StringAttribute{
-				MarkdownDescription: `Тип виртуальной машины, описывающий ресурсы (vCPU, memory).`,
+				MarkdownDescription: `Тип виртуальной машины, описывающий ресурсы (vCPU, memory)`,
 				Computed:            true,
 			},
 			"disk": schema.SingleNestedAttribute{
 				Attributes:          new(PostgresClusterStatusInstanceTemplateDataDisk).GetSchema().Attributes,
-				MarkdownDescription: `Параметры диска с данными на узле кластера.`,
+				MarkdownDescription: `Параметры диска с данными на узле кластера`,
 				Computed:            true,
 			},
 		},

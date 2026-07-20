@@ -17,12 +17,12 @@ func (s *ResourceAddressSpecOrRef) GetSchema() schema.Schema {
 		MarkdownDescription: `Описывает ссылку на внутренний адрес или спецификацию внутреннего адреса как дополнительный ресурс.`,
 		Attributes: map[string]schema.Attribute{
 			"ref": schema.StringAttribute{
-				MarkdownDescription: `Относительная ссылка на статический внутренний адрес.`,
+				MarkdownDescription: `Относительная ссылка на статический внутренний адрес`,
 				Optional:            true,
 			},
 			"spec": schema.SingleNestedAttribute{
 				Attributes:          new(ResourceAddressSpec).GetSchema().Attributes,
-				MarkdownDescription: `Спецификация внутреннего адреса.`,
+				MarkdownDescription: `Спецификация внутреннего адреса`,
 				Optional:            true,
 			},
 		},

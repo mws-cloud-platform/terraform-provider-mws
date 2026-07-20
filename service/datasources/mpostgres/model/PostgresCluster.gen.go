@@ -43,14 +43,14 @@ func (s *PostgresCluster) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"active": schema.BoolAttribute{
-				MarkdownDescription: `Значение включен/выключен кластер.`,
+				MarkdownDescription: `Состояние кластера — включен или выключен`,
 				Computed:            true,
 			},
 			"endpoints": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(PostgresEndpoint).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Описание эндпойнтов в сетях пользователя (VPC) для подключения к инстансам кластера.`,
+				MarkdownDescription: `Описание эндпойнтов в сетях пользователя (VPC) для подключения к инстансам кластера`,
 				Computed:            true,
 			},
 			"instance_template": schema.SingleNestedAttribute{
@@ -74,7 +74,7 @@ func (s *PostgresCluster) GetSchema() schema.Schema {
 			},
 			"postgres_parameters": schema.MapAttribute{
 				ElementType:         types.StringType,
-				MarkdownDescription: `Параметры PostgreSQL. Если не указаны, будут использованы дефолтные параметры.`,
+				MarkdownDescription: `Параметры PostgreSQL. Если не указаны, будут использованы параметры по умолчанию`,
 				Computed:            true,
 			},
 		},
@@ -91,33 +91,38 @@ func (s *PostgresClusterMetadata) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля Metadata анонимного типа структуры PostgresCluster`,
 		Attributes: map[string]schema.Attribute{
 			"display_name": schema.StringAttribute{
-				MarkdownDescription: `Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов.`,
+				MarkdownDescription: `Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов`,
 				Computed:            true,
 			},
 			"create_time": schema.StringAttribute{
-				MarkdownDescription: `Дата создания объекта.`,
-				Computed:            true,
+				MarkdownDescription: `Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"delete_time": schema.StringAttribute{
-				MarkdownDescription: `Время запроса на удаление ресурса (не фактическое время удаления).`,
-				Computed:            true,
+				MarkdownDescription: `Время запроса на удаление ресурса (не фактическое время удаления)
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"purge_time": schema.StringAttribute{
-				Computed: true,
+				MarkdownDescription: `Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed:            true,
 			},
 			"usages": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(tfcommon.TypedUsage).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены.`,
+				MarkdownDescription: `Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены`,
 				Computed:            true,
 			},
 			"description": schema.StringAttribute{
-				MarkdownDescription: `Описание ресурса.`,
+				MarkdownDescription: `Описание ресурса`,
 				Computed:            true,
 			},
 			"id": schema.StringAttribute{
-				MarkdownDescription: `ссылка на типизированный референс`,
+				MarkdownDescription: `Ссылка на типизированный референс`,
 				Computed:            true,
 			},
 		},

@@ -13,7 +13,7 @@ type PostgresClusterBackupDaily struct {
 
 func (s *PostgresClusterBackupDaily) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Спецификация ежедневного автоматического бэкапирования`,
+		MarkdownDescription: `Спецификация ежедневного автоматического бэкапирования.`,
 		Attributes: map[string]schema.Attribute{
 			"hour": schema.Int64Attribute{
 				MarkdownDescription: `Час начала автоматического бэкапирования`,

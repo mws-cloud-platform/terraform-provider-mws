@@ -23,13 +23,13 @@ func KafkaEndpointBrokerAddressStatusAPIResponseToTFModel(ctx context.Context, a
 	var t tfmodel.KafkaEndpointBrokerAddressStatus
 
 	if am.Ref != nil {
-		t.Ref = types.StringPointerValue(ptr.Get(am.Ref.Path()))
+		t.Ref = types.StringPointerValue(ptr.Get(am.Ref.ID()))
 	} else {
 		t.Ref = types.StringNull()
 	}
 
 	if am.Subnet != nil {
-		t.Subnet = types.StringPointerValue(ptr.Get(am.Subnet.Path()))
+		t.Subnet = types.StringPointerValue(ptr.Get(am.Subnet.ID()))
 	} else {
 		t.Subnet = types.StringNull()
 	}

@@ -164,22 +164,22 @@ func KafkaClusterStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.Ka
 		t.SchemaRegistry = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.KafkaSchemaRegistrySpec).GetSchema().Attributes))
 	}
 
-	if am.AutoRebalance != nil {
-		autoRebalanceTmp, d := KafkaAutoRebalanceSpecAPIResponseToTFModel(ctx, am.AutoRebalance)
+	if am.Balancer != nil {
+		balancerTmp, d := KafkaBalancerSpecAPIResponseToTFModel(ctx, am.Balancer)
 		diags = append(diags, d...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		autoRebalanceTfObject, d := types.ObjectValueFrom(ctx,
-			tfconv.GetAttributesTypes(new(tfmodel.KafkaAutoRebalanceSpec).GetSchema().Attributes),
-			*autoRebalanceTmp)
+		balancerTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.KafkaBalancerSpec).GetSchema().Attributes),
+			*balancerTmp)
 		diags = append(diags, d...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		t.AutoRebalance = autoRebalanceTfObject
+		t.Balancer = balancerTfObject
 	} else {
-		t.AutoRebalance = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.KafkaAutoRebalanceSpec).GetSchema().Attributes))
+		t.Balancer = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.KafkaBalancerSpec).GetSchema().Attributes))
 	}
 
 	return &t, diags

@@ -31,7 +31,7 @@ resource "mws_vpc_address" "broker_addr_1" {
 
 resource "mws_mkafka_cluster" "example" {
   cluster = var.kafka_name
-  version = "3.6.0-mws.1"
+  version = "4.0"
 
   metadata = {
     display_name = "Example Kafka Cluster"
@@ -151,8 +151,8 @@ variable "kafka_user_password" {
 > **NOTE**: [Write-only arguments](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments) are supported in Terraform 1.11 and later.
 
 - `cluster` (String) Название или идентификатор кластера.
-- `password` (String, Sensitive, [Write-only](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments)) Пароль пользователя.
-- `roles` (Attributes List) Роли пользователя. (see [below for nested schema](#nestedatt--roles))
+- `password` (String, Sensitive, [Write-only](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments)) Пароль пользователя
+- `roles` (Attributes List) Роли пользователя (see [below for nested schema](#nestedatt--roles))
 - `user` (String) Пользователь кластера.
 
 ### Optional
@@ -160,7 +160,7 @@ variable "kafka_user_password" {
 - `kind` (String)
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
 - `password_version` (Number) Increase this field's value if you want to force updating the associated write-only field.
-- `project` (String) Путь к проекту
+- `project` (String) Путь к проекту.
 - `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 
 ### Read-Only
@@ -173,7 +173,7 @@ variable "kafka_user_password" {
 
 Required:
 
-- `name` (String) Название роли.
+- `name` (String) Название роли
 
 
 <a id="nestedatt--metadata"></a>
@@ -181,25 +181,29 @@ Required:
 
 Optional:
 
-- `description` (String) Описание ресурса.
-- `display_name` (String) Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов.
+- `description` (String) Описание ресурса
+- `display_name` (String) Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов
 
 Read-Only:
 
-- `create_time` (String) Дата создания объекта.
-- `delete_time` (String) Время запроса на удаление ресурса (не фактическое время удаления).
-- `id` (String) ссылка на типизированный референс
-- `purge_time` (String)
-- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены. (see [below for nested schema](#nestedatt--metadata--usages))
+- `create_time` (String) Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `delete_time` (String) Время запроса на удаление ресурса (не фактическое время удаления)
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `id` (String) Ссылка на типизированный референс
+- `purge_time` (String) Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
 
 <a id="nestedatt--metadata--usages"></a>
 ### Nested Schema for `metadata.usages`
 
 Read-Only:
 
-- `name` (String) Имя связи, требуется для модификации коллекции
-- `resource` (String) ссылка на ресурс
-- `usage_type` (String) Тип связи. Помимо стандартных own и use могут быть добавлены специализированные типы для конкретных сервисов
+- `name` (String) Имя связи. Требуется для модификации коллекции
+- `resource` (String) Ссылка на ресурс
+- `usage_type` (String) Тип связи. Помимо стандартных "own" и "use" могут быть добавлены специализированные типы для конкретных сервисов
 
 
 

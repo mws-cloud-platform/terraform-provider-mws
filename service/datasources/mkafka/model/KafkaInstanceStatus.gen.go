@@ -17,7 +17,7 @@ func (s *KafkaInstanceStatus) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"disk": schema.SingleNestedAttribute{
 				Attributes:          new(KafkaDataDiskStatus).GetSchema().Attributes,
-				MarkdownDescription: `Параметры диска с данными на узле кластера Managed Kafka.`,
+				MarkdownDescription: `Параметры диска с данными на узле кластера Managed Kafka`,
 				Computed:            true,
 			},
 		},

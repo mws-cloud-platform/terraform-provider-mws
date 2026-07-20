@@ -17,11 +17,11 @@ func (s *PostgresExternalAccessSpec) GetSchema() schema.Schema {
 		MarkdownDescription: `Описание адреса для внешнего подключения к кластеру.`,
 		Attributes: map[string]schema.Attribute{
 			"allowed": schema.BoolAttribute{
-				MarkdownDescription: `Флаг, разрешающий внешнее подключение к кластеру.`,
+				MarkdownDescription: `Флаг, разрешающий внешнее подключение к кластеру`,
 				Required:            true,
 			},
 			"ref": schema.StringAttribute{
-				MarkdownDescription: `Идентификатор внешнего адреса.`,
+				MarkdownDescription: `Идентификатор внешнего адреса`,
 				Optional:            true,
 			},
 		},

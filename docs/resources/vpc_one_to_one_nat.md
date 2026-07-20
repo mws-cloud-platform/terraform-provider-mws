@@ -92,44 +92,44 @@ variable "one_to_one_name" {
 
 ### Required
 
-- `external` (Attributes) Группирующий элемент для всего что, касается внешней части (ресурсов, доступных извне). (see [below for nested schema](#nestedatt--external))
-- `internal` (Attributes) Группирующий элемент для всего, что касается внутренних ресурсов. (see [below for nested schema](#nestedatt--internal))
+- `external` (Attributes) Группирующий элемент для всего что, касается внешней части (ресурсов, доступных извне) (see [below for nested schema](#nestedatt--external))
+- `internal` (Attributes) Группирующий элемент для всего, что касается внутренних ресурсов (see [below for nested schema](#nestedatt--internal))
 - `network` (String) Имя сети
 - `one_to_one_nat` (String) Имя One-to-One NAT
 
 ### Optional
 
 - `kind` (String)
-- `metadata` (Attributes) Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров. (see [below for nested schema](#nestedatt--metadata))
-- `project` (String) Путь к проекту
+- `metadata` (Attributes) Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров (see [below for nested schema](#nestedatt--metadata))
+- `project` (String) Путь к проекту.
 - `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `status` (Attributes) Описывает статус One-to-One NAT-шлюза. (see [below for nested schema](#nestedatt--status))
+- `status` (Attributes) Описывает статус One-to-One NAT-шлюза (see [below for nested schema](#nestedatt--status))
 
 <a id="nestedatt--external"></a>
 ### Nested Schema for `external`
 
 Required:
 
-- `address` (Attributes) Спецификация внешнего адреса, через который будет осуществляться трансляция. (see [below for nested schema](#nestedatt--external--address))
+- `address` (Attributes) Спецификация внешнего адреса, через который будет осуществляться трансляция (see [below for nested schema](#nestedatt--external--address))
 
 <a id="nestedatt--external--address"></a>
 ### Nested Schema for `external.address`
 
 Optional:
 
-- `ref` (String) Относительная ссылка на статический внешний адрес.
-- `spec` (Attributes) Спецификация внешнего адреса. (see [below for nested schema](#nestedatt--external--address--spec))
+- `ref` (String) Относительная ссылка на статический внешний адрес
+- `spec` (Attributes) Спецификация внешнего адреса (see [below for nested schema](#nestedatt--external--address--spec))
 
 <a id="nestedatt--external--address--spec"></a>
 ### Nested Schema for `external.address.spec`
 
 Optional:
 
-- `nat_gateway` (String) Шлюз, к которому относится адрес. Если шлюз не указан, для трансляции IP-адресов используется шлюз по умолчанию для выхода в интернет (ref=natGateways/internet-gateway).
+- `nat_gateway` (String) Шлюз, к которому относится адрес. Если шлюз не указан, для трансляции IP-адресов используется шлюз по умолчанию для выхода в интернет (ref=natGateways/internet-gateway)
 
 
 
@@ -139,27 +139,29 @@ Optional:
 
 Required:
 
-- `address` (Attributes) Спецификация внутреннего адреса, для которого будет осуществляться трансляция. (see [below for nested schema](#nestedatt--internal--address))
+- `address` (Attributes) Спецификация внутреннего адреса, для которого будет осуществляться трансляция (see [below for nested schema](#nestedatt--internal--address))
 
 <a id="nestedatt--internal--address"></a>
 ### Nested Schema for `internal.address`
 
 Optional:
 
-- `ref` (String) Относительная ссылка на статический внутренний адрес.
-- `spec` (Attributes) Спецификация внутреннего адреса. (see [below for nested schema](#nestedatt--internal--address--spec))
+- `ref` (String) Относительная ссылка на статический внутренний адрес
+- `spec` (Attributes) Спецификация внутреннего адреса (see [below for nested schema](#nestedatt--internal--address--spec))
 
 <a id="nestedatt--internal--address--spec"></a>
 ### Nested Schema for `internal.address.spec`
 
 Required:
 
-- `subnet` (String) Подсеть облачной сети к которой принадлежит адрес. В случае приватного адреса, он всегда принадлежит к некоторой подсети внутри облачной сети.
+- `subnet` (String) Подсеть облачной сети к которой принадлежит адрес. В случае приватного адреса, он всегда принадлежит к некоторой подсети внутри облачной сети
 
 Optional:
 
 - `dns` (Attributes List) (see [below for nested schema](#nestedatt--internal--address--spec--dns))
-- `ip_address` (String) Значение IP адреса.
+- `ip_address` (String) Значение IP адреса
+
+IPv4- или IPv6-адрес
 
 <a id="nestedatt--internal--address--spec--dns"></a>
 ### Nested Schema for `internal.address.spec.dns`
@@ -168,7 +170,16 @@ Required:
 
 - `name` (String) DNS-имя виртуальной машины в MWS Cloud Platform
 - `ptr` (Boolean) Создать обратную DNS-запись
-- `ttl` (String) продолжительность хранения DNS записи в кеше
+- `ttl` (String) Продолжительность хранения DNS записи в кеше
+
+Период времени. Поддерживаются следующие форматы:
+  - ISO 8601: P(n)DT(n)H(n)M(n)S. Допустимые единицы измерения: дни ("D"), часы ("H"), минуты ("M"), секунды ("S"). Только секунды могут быть дробными
+  - Простой формат. Допустимые единицы измерения: "d", "h", "m", "s", "ms", "us", "ns".
+    Величины должны следовать по убыванию единиц измерения
+  - Число в секундах
+
+Отрицательные значения обозначаются префиксом "-", в простом формате могут быть ограничены скобками.
+Регистр и пробелы игнорируются
 
 
 
@@ -181,24 +192,30 @@ Optional:
 
 - `description` (String) Описание ресурса
 - `display_name` (String) Отображаемое имя свойства
-- `name` (String, Deprecated) Обязательное уникальное, глобально или в пределах проекта, имя. Используется в качестве части составного идентификатора объекта.
+- `name` (String, Deprecated) Обязательное уникальное, глобально или в пределах проекта, имя. Используется в качестве части составного идентификатора объекта
 
 Read-Only:
 
 - `create_time` (String) Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `delete_time` (String) Время запроса на удаление ресурса
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `id` (String) ID свойства
 - `purge_time` (String) Время удаления ресурса
-- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
 
 <a id="nestedatt--metadata--usages"></a>
 ### Nested Schema for `metadata.usages`
 
 Read-Only:
 
-- `name` (String) Имя связи, требуется для модификации коллекции
+- `name` (String) Имя связи. Требуется для модификации коллекции
 - `resource` (String) Ссылка на ресурс
-- `usage_type` (String) Тип связи. Помимо стандартных own и use могут быть добавлены специализированные типы для конкретных сервисов
+- `usage_type` (String) Тип связи. Помимо стандартных "own" и "use" могут быть добавлены специализированные типы для конкретных сервисов
 
 
 
@@ -217,8 +234,8 @@ Optional:
 
 Read-Only:
 
-- `external` (Attributes) Группирующий элемент для всего, что касается внешней части (ресурсов, доступных извне). (see [below for nested schema](#nestedatt--status--external))
-- `internal` (Attributes) Группирующий элемент для всего, что касается внутренних ресурсов. (see [below for nested schema](#nestedatt--status--internal))
+- `external` (Attributes) Группирующий элемент для всего, что касается внешней части (ресурсов, доступных извне) (see [below for nested schema](#nestedatt--status--external))
+- `internal` (Attributes) Группирующий элемент для всего, что касается внутренних ресурсов (see [below for nested schema](#nestedatt--status--internal))
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
 
 <a id="nestedatt--status--external"></a>
@@ -226,15 +243,17 @@ Read-Only:
 
 Read-Only:
 
-- `address` (Attributes) Спецификация внешнего адреса, через который будет осуществляться трансляция. (see [below for nested schema](#nestedatt--status--external--address))
+- `address` (Attributes) Спецификация внешнего адреса, через который будет осуществляться трансляция (see [below for nested schema](#nestedatt--status--external--address))
 
 <a id="nestedatt--status--external--address"></a>
 ### Nested Schema for `status.external.address`
 
 Read-Only:
 
-- `ip_address` (String) Значение IP адреса.
-- `ref` (String) Относительная ссылка на статический адрес.
+- `ip_address` (String) Значение IP адреса
+
+IPv4- или IPv6-адрес
+- `ref` (String) Относительная ссылка на статический адрес
 
 
 
@@ -243,15 +262,17 @@ Read-Only:
 
 Read-Only:
 
-- `address` (Attributes) Спецификация внутреннего адреса, для которого будет осуществляться трансляция. (see [below for nested schema](#nestedatt--status--internal--address))
+- `address` (Attributes) Спецификация внутреннего адреса, для которого будет осуществляться трансляция (see [below for nested schema](#nestedatt--status--internal--address))
 
 <a id="nestedatt--status--internal--address"></a>
 ### Nested Schema for `status.internal.address`
 
 Read-Only:
 
-- `ip_address` (String) Значение IP адреса.
-- `ref` (String) Относительная ссылка на статический адрес.
+- `ip_address` (String) Значение IP адреса
+
+IPv4- или IPv6-адрес
+- `ref` (String) Относительная ссылка на статический адрес
 
 
 

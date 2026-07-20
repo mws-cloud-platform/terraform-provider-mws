@@ -3,12 +3,12 @@
 page_title: "mws_mclickhouse_cluster Resource - mws"
 subcategory: ""
 description: |-
-  
+  Кластер Managed ClickHouse — это группа узлов (виртуальных машин), объединенных для высокоскоростной обработки и хранения данных с помощью СУБД ClickHouse.
 ---
 
 # mws_mclickhouse_cluster (Resource)
 
-
+Кластер Managed ClickHouse — это группа узлов (виртуальных машин), объединенных для высокоскоростной обработки и хранения данных с помощью СУБД ClickHouse.
 
 ## Примеры использования
 
@@ -126,23 +126,24 @@ variable "cluster_admin_password" {
 
 ### Required
 
-- `bootstrap_admin` (Attributes) Добавление пользователей при создании кластера Clickhouse. (see [below for nested schema](#nestedatt--bootstrap_admin))
+- `bootstrap_admin` (Attributes) Добавление пользователей при создании кластера Clickhouse (see [below for nested schema](#nestedatt--bootstrap_admin))
 - `cluster` (String) Название или идентификатор кластера.
-- `shards` (Attributes List) Описание шардов кластера. (see [below for nested schema](#nestedatt--shards))
-- `version` (String) Версия продукта.
+- `shards` (Attributes List) Описание шардов кластера (see [below for nested schema](#nestedatt--shards))
+- `version` (String) Версия продукта
 
 ### Optional
 
-- `active` (Boolean) Значение включен/выключен кластер.
-- `backup` (Attributes) Спецификация работы автоматического резервного копирования. (see [below for nested schema](#nestedatt--backup))
-- `config` (Map of String) Настройки Clickhouse. Если не указаны, будут использованы настройки по-умолчанию.
-- `coordinator` (Attributes) Описание координатора кластера. (see [below for nested schema](#nestedatt--coordinator))
-- `endpoints` (Attributes List) Описание эдпойнтов кластера. (see [below for nested schema](#nestedatt--endpoints))
+- `active` (Boolean) Состояние кластера — включен или выключен
+- `backup` (Attributes) Спецификация работы автоматического резервного копирования (see [below for nested schema](#nestedatt--backup))
+- `config` (Map of String) Настройки Clickhouse. Если не указаны, будут использованы настройки по умолчанию
+- `coordinator` (Attributes) Описание координатора кластера (see [below for nested schema](#nestedatt--coordinator))
+- `endpoints` (Attributes List) Описание эндпоинтов кластера (see [below for nested schema](#nestedatt--endpoints))
 - `kind` (String)
 - `maintenance_window` (Attributes) (see [below for nested schema](#nestedatt--maintenance_window))
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
-- `project` (String) Путь к проекту
-- `storage` (Attributes) Конфигурация схемы хранилищ ClickHouse. (see [below for nested schema](#nestedatt--storage))
+- `project` (String) Путь к проекту.
+- `region` (String) Регион, в котором располагается кластер
+- `storage` (Attributes) Конфигурация схемы хранилищ ClickHouse (see [below for nested schema](#nestedatt--storage))
 - `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 
 ### Read-Only
@@ -155,8 +156,8 @@ variable "cluster_admin_password" {
 
 Required:
 
-- `password` (String, Sensitive, [Write-only](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments)) Пароль учетной записи администратора.
-- `username` (String) Имя учетной записи администратора.
+- `password` (String, Sensitive, [Write-only](https://developer.hashicorp.com/terraform/language/resources/ephemeral#write-only-arguments)) Пароль учетной записи администратора
+- `username` (String) Имя учетной записи администратора
 
 Optional:
 
@@ -169,13 +170,13 @@ Optional:
 Required:
 
 - `instances` (Attributes List) (see [below for nested schema](#nestedatt--shards--instances))
-- `name` (String) -> Имя шарда, которому будут принадлежать инстансы. В случае count>1, имя формируется как name-{shardIndex}
-- `resources` (Attributes) Ресурсы одной ноды Clickhouse. (see [below for nested schema](#nestedatt--shards--resources))
+- `name` (String) -> Имя шарда, которому будут принадлежать инстансы. В случае с несколькими шардами имя формируется как "name-{shardIndex}"
+- `resources` (Attributes) Ресурсы одной ноды Clickhouse (see [below for nested schema](#nestedatt--shards--resources))
 
 Optional:
 
 - `count` (Number) Количество шардов, которые будут созданы
-- `endpoints` (Attributes List) Описание эдпойнтов шардов. (see [below for nested schema](#nestedatt--shards--endpoints))
+- `endpoints` (Attributes List) Описание эдпойнтов шардов (see [below for nested schema](#nestedatt--shards--endpoints))
 - `weight` (Number) Вес шарда
 
 <a id="nestedatt--shards--instances"></a>
@@ -183,31 +184,31 @@ Optional:
 
 Required:
 
+- `name` (String) -> Имя инстанса в шарде. В случае count>1, имя формируется как name{replicaIndex}, где replicaIndex имеет сквозную нумерацию в рамках имени инстанса
 - `zone` (String) Зона доступности
 
 Optional:
 
 - `count` (Number) Количество инстансов в зоне доступности
-- `endpoints` (Attributes List) Описание эдпойнтов инстансов. (see [below for nested schema](#nestedatt--shards--instances--endpoints))
-- `name` (String) -> Имя инстанса в шарде. В случае count>1, имя формируется как name-{replicaIndex}, где replicaIndex имеет сквозную нумерацию в шарде.
+- `endpoints` (Attributes List) Описание эдпойнтов инстансов (see [below for nested schema](#nestedatt--shards--instances--endpoints))
 
 <a id="nestedatt--shards--instances--endpoints"></a>
 ### Nested Schema for `shards.instances.endpoints`
 
 Required:
 
-- `address` (Attributes) Описание шаблона адреса/адресов, которые будут выделены. Для 'ref' будет выделен только один адрес, для 'spec', будет выделено  необходимое количество адресов, в зависимости от сущности, для которой выделяются адреса. (see [below for nested schema](#nestedatt--shards--instances--endpoints--address))
+- `address` (Attributes) Описание адреса эндпоинта. Если указан "ref", будет использован существующий внутренний адрес VPC. Если указан "spec", будут созданы внутренние адреса в указанной подсети: для эндпоинта кластера или шарда — по одному адресу на эндпоинт, для эндпоинтов инстансов — по одному адресу на каждый эндпоинт каждого созданного инстанса (see [below for nested schema](#nestedatt--shards--instances--endpoints--address))
 
 Optional:
 
-- `external_address` (Attributes) Описание шаблона внешнего адреса/адресов, которые будут выделены. Для 'ref' будет выделен только один адрес, для 'spec', будет выделено  необходимое количество адресов, в зависимости от сущности, для которой выделяются адреса. (see [below for nested schema](#nestedatt--shards--instances--endpoints--external_address))
+- `external_address` (Attributes) Описание шаблона внешнего адреса/адресов, которые будут выделены. Для "ref" будет выделен только один адрес, для "spec" будет выделено необходимое количество адресов в зависимости от сущности, для которой выделяются адреса (see [below for nested schema](#nestedatt--shards--instances--endpoints--external_address))
 
 <a id="nestedatt--shards--instances--endpoints--address"></a>
 ### Nested Schema for `shards.instances.endpoints.address`
 
 Optional:
 
-- `ref` (String) Ссылка на address в vpc
+- `ref` (String) Ссылка на внутренний адрес эндпоинта в VPC
 - `spec` (Attributes) Описание шаблона адреса, который будет использоваться при выделении адресов (see [below for nested schema](#nestedatt--shards--instances--endpoints--address--spec))
 
 <a id="nestedatt--shards--instances--endpoints--address--spec"></a>
@@ -215,7 +216,7 @@ Optional:
 
 Required:
 
-- `subnet` (String) Подсеть облачной сети, к которой принадлежит адрес
+- `subnet` (String) Подсеть облачной сети, которой принадлежит адрес
 
 
 
@@ -224,7 +225,7 @@ Required:
 
 Optional:
 
-- `ref` (String) Ссылка на external address в vpc
+- `ref` (String) Ссылка на внешний адрес эндпоинта в VPC
 - `spec` (Attributes) Описание шаблона внешнего адреса, который будет использоваться при выделении адресов (see [below for nested schema](#nestedatt--shards--instances--endpoints--external_address--spec))
 
 <a id="nestedatt--shards--instances--endpoints--external_address--spec"></a>
@@ -239,16 +240,23 @@ Optional:
 
 Required:
 
-- `disk` (Attributes) Параметры диска. (see [below for nested schema](#nestedatt--shards--resources--disk))
-- `vm_type` (String) Тип виртуальной машины, описывающий ресурсы (vCPU, memory).
+- `disk` (Attributes) Параметры диска (see [below for nested schema](#nestedatt--shards--resources--disk))
+- `vm_type` (String) Тип виртуальной машины, описывающий ресурсы (vCPU, memory)
 
 <a id="nestedatt--shards--resources--disk"></a>
 ### Nested Schema for `shards.resources.disk`
 
 Required:
 
-- `size` (String) Размер диска.
-- `type` (String) Тип диска.
+- `size` (String) Размер диска
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
+- `type` (String) Тип используемого диска:
+* "NETWORK_STANDARD_SSD" — сетевой SSD
 
 Optional:
 
@@ -261,18 +269,18 @@ Optional:
 
 Required:
 
-- `address` (Attributes) Описание шаблона адреса/адресов, которые будут выделены. Для 'ref' будет выделен только один адрес, для 'spec', будет выделено  необходимое количество адресов, в зависимости от сущности, для которой выделяются адреса. (see [below for nested schema](#nestedatt--shards--endpoints--address))
+- `address` (Attributes) Описание адреса эндпоинта. Если указан "ref", будет использован существующий внутренний адрес VPC. Если указан "spec", будут созданы внутренние адреса в указанной подсети: для эндпоинта кластера или шарда — по одному адресу на эндпоинт, для эндпоинтов инстансов — по одному адресу на каждый эндпоинт каждого созданного инстанса (see [below for nested schema](#nestedatt--shards--endpoints--address))
 
 Optional:
 
-- `external_address` (Attributes) Описание шаблона внешнего адреса/адресов, которые будут выделены. Для 'ref' будет выделен только один адрес, для 'spec', будет выделено  необходимое количество адресов, в зависимости от сущности, для которой выделяются адреса. (see [below for nested schema](#nestedatt--shards--endpoints--external_address))
+- `external_address` (Attributes) Описание шаблона внешнего адреса/адресов, которые будут выделены. Для "ref" будет выделен только один адрес, для "spec" будет выделено необходимое количество адресов в зависимости от сущности, для которой выделяются адреса (see [below for nested schema](#nestedatt--shards--endpoints--external_address))
 
 <a id="nestedatt--shards--endpoints--address"></a>
 ### Nested Schema for `shards.endpoints.address`
 
 Optional:
 
-- `ref` (String) Ссылка на address в vpc
+- `ref` (String) Ссылка на внутренний адрес эндпоинта в VPC
 - `spec` (Attributes) Описание шаблона адреса, который будет использоваться при выделении адресов (see [below for nested schema](#nestedatt--shards--endpoints--address--spec))
 
 <a id="nestedatt--shards--endpoints--address--spec"></a>
@@ -280,7 +288,7 @@ Optional:
 
 Required:
 
-- `subnet` (String) Подсеть облачной сети, к которой принадлежит адрес
+- `subnet` (String) Подсеть облачной сети, которой принадлежит адрес
 
 
 
@@ -289,7 +297,7 @@ Required:
 
 Optional:
 
-- `ref` (String) Ссылка на external address в vpc
+- `ref` (String) Ссылка на внешний адрес эндпоинта в VPC
 - `spec` (Attributes) Описание шаблона внешнего адреса, который будет использоваться при выделении адресов (see [below for nested schema](#nestedatt--shards--endpoints--external_address--spec))
 
 <a id="nestedatt--shards--endpoints--external_address--spec"></a>
@@ -304,8 +312,8 @@ Optional:
 
 Optional:
 
-- `hour` (Number) Час начала окна автоматического резервного копирования.
-- `retain_period_days` (Number) Количество дней хранения успешно снятой резервной копии.
+- `hour` (Number) Час начала окна автоматического резервного копирования
+- `retain_period_days` (Number) Количество дней хранения успешно снятой резервной копии
 
 
 <a id="nestedatt--coordinator"></a>
@@ -314,8 +322,7 @@ Optional:
 Required:
 
 - `instances` (Attributes List) (see [below for nested schema](#nestedatt--coordinator--instances))
-- `resources` (Attributes) Параметры виртуальной машины, где будет работать Clickhouse Keeper/Zookeeper. В случае наличия только одного хоста, 
-Zookeeper/Clickhouse Keeper не поднимаются при отсутствии параметра, в противном случае, параметр должен быть задан. (see [below for nested schema](#nestedatt--coordinator--resources))
+- `resources` (Attributes) Параметры виртуальной машины, где будет работать Clickhouse Keeper/Zookeeper. Необязательный параметр в standalone-конфигурации (see [below for nested schema](#nestedatt--coordinator--resources))
 
 Optional:
 
@@ -338,16 +345,23 @@ Optional:
 
 Required:
 
-- `disk` (Attributes) Параметры диска. (see [below for nested schema](#nestedatt--coordinator--resources--disk))
-- `vm_type` (String) Тип виртуальной машины, описывающий ресурсы (vCPU, memory).
+- `disk` (Attributes) Параметры диска (see [below for nested schema](#nestedatt--coordinator--resources--disk))
+- `vm_type` (String) Тип виртуальной машины, описывающий ресурсы (vCPU, memory)
 
 <a id="nestedatt--coordinator--resources--disk"></a>
 ### Nested Schema for `coordinator.resources.disk`
 
 Required:
 
-- `size` (String) Размер диска.
-- `type` (String) Тип диска.
+- `size` (String) Размер диска
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
+- `type` (String) Тип используемого диска:
+* "NETWORK_STANDARD_SSD" — сетевой SSD
 
 Optional:
 
@@ -361,18 +375,18 @@ Optional:
 
 Required:
 
-- `address` (Attributes) Описание шаблона адреса/адресов, которые будут выделены. Для 'ref' будет выделен только один адрес, для 'spec', будет выделено  необходимое количество адресов, в зависимости от сущности, для которой выделяются адреса. (see [below for nested schema](#nestedatt--endpoints--address))
+- `address` (Attributes) Описание адреса эндпоинта. Если указан "ref", будет использован существующий внутренний адрес VPC. Если указан "spec", будут созданы внутренние адреса в указанной подсети: для эндпоинта кластера или шарда — по одному адресу на эндпоинт, для эндпоинтов инстансов — по одному адресу на каждый эндпоинт каждого созданного инстанса (see [below for nested schema](#nestedatt--endpoints--address))
 
 Optional:
 
-- `external_address` (Attributes) Описание шаблона внешнего адреса/адресов, которые будут выделены. Для 'ref' будет выделен только один адрес, для 'spec', будет выделено  необходимое количество адресов, в зависимости от сущности, для которой выделяются адреса. (see [below for nested schema](#nestedatt--endpoints--external_address))
+- `external_address` (Attributes) Описание шаблона внешнего адреса/адресов, которые будут выделены. Для "ref" будет выделен только один адрес, для "spec" будет выделено необходимое количество адресов в зависимости от сущности, для которой выделяются адреса (see [below for nested schema](#nestedatt--endpoints--external_address))
 
 <a id="nestedatt--endpoints--address"></a>
 ### Nested Schema for `endpoints.address`
 
 Optional:
 
-- `ref` (String) Ссылка на address в vpc
+- `ref` (String) Ссылка на внутренний адрес эндпоинта в VPC
 - `spec` (Attributes) Описание шаблона адреса, который будет использоваться при выделении адресов (see [below for nested schema](#nestedatt--endpoints--address--spec))
 
 <a id="nestedatt--endpoints--address--spec"></a>
@@ -380,7 +394,7 @@ Optional:
 
 Required:
 
-- `subnet` (String) Подсеть облачной сети, к которой принадлежит адрес
+- `subnet` (String) Подсеть облачной сети, которой принадлежит адрес
 
 
 
@@ -389,7 +403,7 @@ Required:
 
 Optional:
 
-- `ref` (String) Ссылка на external address в vpc
+- `ref` (String) Ссылка на внешний адрес эндпоинта в VPC
 - `spec` (Attributes) Описание шаблона внешнего адреса, который будет использоваться при выделении адресов (see [below for nested schema](#nestedatt--endpoints--external_address--spec))
 
 <a id="nestedatt--endpoints--external_address--spec"></a>
@@ -410,12 +424,21 @@ Required:
 
 Required:
 
-- `days` (List of String) Дни недели, в который будет запущено задание на тех.обслуживание
-- `hour` (Number) Час, в который будет запущено задание на тех.обслуживание
+- `days` (List of String) Дни недели, в которые будет запущено задание на тех. обслуживание
+- `hour` (Number) Час, в который будет запущено задание на тех. обслуживание
 
 Optional:
 
 - `duration` (String) Допустимая продолжительность процесса обновления. Если не указано, то не ограничено по времени. Принимается только формат в часах (h)
+
+Период времени. Поддерживаются следующие форматы:
+  - ISO 8601: P(n)DT(n)H(n)M(n)S. Допустимые единицы измерения: дни ("D"), часы ("H"), минуты ("M"), секунды ("S"). Только секунды могут быть дробными
+  - Простой формат. Допустимые единицы измерения: "d", "h", "m", "s", "ms", "us", "ns".
+    Величины должны следовать по убыванию единиц измерения
+  - Число в секундах
+
+Отрицательные значения обозначаются префиксом "-", в простом формате могут быть ограничены скобками.
+Регистр и пробелы игнорируются
 
 
 
@@ -424,25 +447,29 @@ Optional:
 
 Optional:
 
-- `description` (String) Описание ресурса.
-- `display_name` (String) Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов.
+- `description` (String) Описание ресурса
+- `display_name` (String) Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов
 
 Read-Only:
 
-- `create_time` (String) Дата создания объекта.
-- `delete_time` (String) Время запроса на удаление ресурса (не фактическое время удаления).
-- `id` (String) ссылка на типизированный референс
-- `purge_time` (String)
-- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены. (see [below for nested schema](#nestedatt--metadata--usages))
+- `create_time` (String) Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `delete_time` (String) Время запроса на удаление ресурса (не фактическое время удаления)
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `id` (String) Ссылка на типизированный референс
+- `purge_time` (String) Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
 
 <a id="nestedatt--metadata--usages"></a>
 ### Nested Schema for `metadata.usages`
 
 Read-Only:
 
-- `name` (String) Имя связи, требуется для модификации коллекции
-- `resource` (String) ссылка на ресурс
-- `usage_type` (String) Тип связи. Помимо стандартных own и use могут быть добавлены специализированные типы для конкретных сервисов
+- `name` (String) Имя связи. Требуется для модификации коллекции
+- `resource` (String) Ссылка на ресурс
+- `usage_type` (String) Тип связи. Помимо стандартных "own" и "use" могут быть добавлены специализированные типы для конкретных сервисов
 
 
 
@@ -451,11 +478,23 @@ Read-Only:
 
 Optional:
 
-- `cache_max_size` (String) Максимальный размер кеша объектного хранилища, расположенный на SSD.
-- `data_caching_enabled` (Boolean) Включить кеширование данных с объектного хранилища на сетевых SSD дисках.
-- `hybrid_storage_enabled` (Boolean) Включить гибридное хранилище (hot SSD + cold S3).
-- `max_data_part_size_ssd` (String) Максимальный размер части данных в байтах, который может храниться на дисках тома (SSD).
-- `move_factor` (Number) Соотношение свободного дискового пространства на SSD дисках кластера (от 0.01 до 1) Когда это соотношение превышает значение параметра конфигурации, ClickHouse начинает перемещать данные в следующий том по порядку.
+- `cache_max_size` (String) Максимальный размер кеша объектного хранилища, расположенный на SSD
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
+- `data_caching_enabled` (Boolean) Включить кеширование данных с объектного хранилища на сетевых SSD дисках
+- `hybrid_storage_enabled` (Boolean) Включить гибридное хранилище (hot SSD + cold S3)
+- `max_data_part_size_ssd` (String) Максимальный размер части данных в байтах, который может храниться на дисках тома (SSD)
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
+- `move_factor` (Number) Соотношение свободного дискового пространства на SSD дисках кластера (от 0.01 до 1) Когда это соотношение превышает значение параметра конфигурации, ClickHouse начинает перемещать данные в следующий том по порядку
 
 
 <a id="nestedatt--timeouts"></a>
@@ -473,24 +512,25 @@ Optional:
 
 Read-Only:
 
-- `cluster` (Attributes) Параметры объекта кластера. (see [below for nested schema](#nestedatt--status--cluster))
-- `health` (String) Работоспособность кластера
-  * "ALIVE"    - Полностью работоспособен
-  * "DEGRADED" - Деградирует (некоторые, но не все, экземпляры неработоспособны)
-  * "FAILED"   - Неработоспособен
+- `cluster` (Attributes) Параметры объекта кластера (see [below for nested schema](#nestedatt--status--cluster))
+- `health` (String) Работоспособность кластера:
+  * "ALIVE"    - Полностью работоспособен;
+  * "DEGRADED" - Деградирует (некоторые, но не все, экземпляры неработоспособны);
+  * "FAILED"   - Неработоспособен;
   * "UNKNOWN"  - Не удаётся определить состояние (на этапе создания)
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
-- `state` (String) Состояние кластера
-  * "CREATING"     - Создаётся
-  * "RUNNING"      - Работает в штатном режиме
-  * "STOPPING"     - Останавливается
-  * "STOPPED"      - Остановлен
-  * "STARTING"     - Запуск ранее остановленного
-  * "UPDATING"     - Выполняется обновление
-  * "ERROR"        - Произошла ошибка, требуется участие команды поддержки
-  * "DELETING"     - Удаляется
-  * "DELETED"      - Удалён
-  * "UNIDENTIFIED" - Не удаётся определить статус
+- `region` (String) Регион, в котором располагается кластер
+- `state` (String) Состояние кластера:
+  * "CREATING"     - Создаётся;
+  * "RUNNING"      - Работает в штатном режиме;
+  * "STOPPING"     - Останавливается;
+  * "STOPPED"      - Остановлен;
+  * "STARTING"     - Запуск ранее остановленного;
+  * "UPDATING"     - Выполняется обновление;
+  * "ERROR"        - Произошла ошибка, требуется участие команды поддержки;
+  * "DELETING"     - Удаляется;
+  * "DELETED"      - Удалён;
+  * "UNIDENTIFIED" - Не удаётся определить статус;
   * "RESTORING"    - Восстанавливается
 
 <a id="nestedatt--status--cluster"></a>
@@ -498,23 +538,23 @@ Read-Only:
 
 Read-Only:
 
-- `active` (Boolean) Значение включен/выключен кластер.
-- `backup` (Attributes) Спецификация работы автоматического резервного копирования. (see [below for nested schema](#nestedatt--status--cluster--backup))
-- `config` (Map of String) Настройки Clickhouse.
-- `coordinator` (Attributes) Описание координаторов кластера. (see [below for nested schema](#nestedatt--status--cluster--coordinator))
+- `active` (Boolean) Состояние кластера — включен или выключен
+- `backup` (Attributes) Спецификация работы автоматического резервного копирования (see [below for nested schema](#nestedatt--status--cluster--backup))
+- `config` (Map of String) Настройки Clickhouse
+- `coordinator` (Attributes) Описание координаторов кластера (see [below for nested schema](#nestedatt--status--cluster--coordinator))
 - `endpoints` (Attributes List) Список эндпойнтов для подключения к кластеру (see [below for nested schema](#nestedatt--status--cluster--endpoints))
 - `maintenance_window` (Attributes) (see [below for nested schema](#nestedatt--status--cluster--maintenance_window))
-- `shards` (Attributes List) Описание шардов кластера. (see [below for nested schema](#nestedatt--status--cluster--shards))
-- `storage` (Attributes) Конфигурация схемы хранилищ ClickHouse. (see [below for nested schema](#nestedatt--status--cluster--storage))
-- `version` (String) Версия продукта.
+- `shards` (Attributes List) Описание шардов кластера (see [below for nested schema](#nestedatt--status--cluster--shards))
+- `storage` (Attributes) Конфигурация схемы хранилищ ClickHouse (see [below for nested schema](#nestedatt--status--cluster--storage))
+- `version` (String) Версия продукта
 
 <a id="nestedatt--status--cluster--backup"></a>
 ### Nested Schema for `status.cluster.backup`
 
 Read-Only:
 
-- `hour` (Number) Час начала окна автоматического резервного копирования.
-- `retain_period_days` (Number) Количество дней хранения успешно снятой резервной копии.
+- `hour` (Number) Час начала окна автоматического резервного копирования
+- `retain_period_days` (Number) Количество дней хранения успешно снятой резервной копии
 
 
 <a id="nestedatt--status--cluster--coordinator"></a>
@@ -522,9 +562,8 @@ Read-Only:
 
 Read-Only:
 
-- `instances` (Attributes List) Описание инстансов координатора. (see [below for nested schema](#nestedatt--status--cluster--coordinator--instances))
-- `resources` (Attributes) Параметры виртуальной машины, где будет работать Clickhouse Keeper/Zookeeper. В случае наличия только одного хоста, 
-Zookeeper/Clickhouse Keeper не поднимаются при отсутствии параметра, в противном случае, параметр должен быть задан. (see [below for nested schema](#nestedatt--status--cluster--coordinator--resources))
+- `instances` (Attributes List) Описание инстансов координатора (see [below for nested schema](#nestedatt--status--cluster--coordinator--instances))
+- `resources` (Attributes) Параметры виртуальной машины, где будет работать Clickhouse Keeper/Zookeeper. Необязательный параметр в standalone-конфигурации (see [below for nested schema](#nestedatt--status--cluster--coordinator--resources))
 - `type` (String) Тип координатора. Если не указано, то при наличии более одного хоста, используется Clickhouse Keeper
 
 <a id="nestedatt--status--cluster--coordinator--instances"></a>
@@ -542,16 +581,23 @@ Read-Only:
 
 Required:
 
-- `disk` (Attributes) Параметры диска. (see [below for nested schema](#nestedatt--status--cluster--coordinator--resources--disk))
-- `vm_type` (String) Тип виртуальной машины, описывающий ресурсы (vCPU, memory).
+- `disk` (Attributes) Параметры диска (see [below for nested schema](#nestedatt--status--cluster--coordinator--resources--disk))
+- `vm_type` (String) Тип виртуальной машины, описывающий ресурсы (vCPU, memory)
 
 <a id="nestedatt--status--cluster--coordinator--resources--disk"></a>
 ### Nested Schema for `status.cluster.coordinator.resources.disk`
 
 Required:
 
-- `size` (String) Размер диска.
-- `type` (String) Тип диска.
+- `size` (String) Размер диска
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
+- `type` (String) Тип используемого диска:
+* "NETWORK_STANDARD_SSD" — сетевой SSD
 
 Optional:
 
@@ -573,8 +619,10 @@ Read-Only:
 
 Read-Only:
 
-- `dns` (Attributes List) Доменные имена. (see [below for nested schema](#nestedatt--status--cluster--endpoints--address--dns))
-- `ip_address` (String) Выделенный адрес.
+- `dns` (Attributes List) Доменные имена (see [below for nested schema](#nestedatt--status--cluster--endpoints--address--dns))
+- `ip_address` (String) Выделенный адрес
+
+IPv4- или IPv6-адрес
 - `ref` (String) Идентификатор адреса в VPC
 - `subnet` (String) Идентификатор подсети облачной сети, к которой принадлежит адрес
 
@@ -583,7 +631,7 @@ Read-Only:
 
 Read-Only:
 
-- `name` (String) DNS имя
+- `name` (String) DNS-имя
 
 
 
@@ -592,7 +640,9 @@ Read-Only:
 
 Read-Only:
 
-- `ip_address` (String) Выделенный адрес.
+- `ip_address` (String) Выделенный адрес
+
+IPv4- или IPv6-адрес
 - `ref` (String) Идентификатор адреса в VPC
 
 
@@ -609,12 +659,21 @@ Required:
 
 Required:
 
-- `days` (List of String) Дни недели, в который будет запущено задание на тех.обслуживание
-- `hour` (Number) Час, в который будет запущено задание на тех.обслуживание
+- `days` (List of String) Дни недели, в которые будет запущено задание на тех. обслуживание
+- `hour` (Number) Час, в который будет запущено задание на тех. обслуживание
 
 Optional:
 
 - `duration` (String) Допустимая продолжительность процесса обновления. Если не указано, то не ограничено по времени. Принимается только формат в часах (h)
+
+Период времени. Поддерживаются следующие форматы:
+  - ISO 8601: P(n)DT(n)H(n)M(n)S. Допустимые единицы измерения: дни ("D"), часы ("H"), минуты ("M"), секунды ("S"). Только секунды могут быть дробными
+  - Простой формат. Допустимые единицы измерения: "d", "h", "m", "s", "ms", "us", "ns".
+    Величины должны следовать по убыванию единиц измерения
+  - Число в секундах
+
+Отрицательные значения обозначаются префиксом "-", в простом формате могут быть ограничены скобками.
+Регистр и пробелы игнорируются
 
 
 
@@ -625,9 +684,10 @@ Read-Only:
 
 - `endpoints` (Attributes List) Список эндпойнтов для подключения к шарду (see [below for nested schema](#nestedatt--status--cluster--shards--endpoints))
 - `id` (String) Идентификатор шарда
-- `instances` (Attributes List) Описание инстансов шарда. (see [below for nested schema](#nestedatt--status--cluster--shards--instances))
-- `name` (String) Имя шарда, которому будут принадлежать инстансы.
-- `resources` (Attributes) Параметры виртуальной машины, где будут работать инстансы Clickhouse данного шарда. (see [below for nested schema](#nestedatt--status--cluster--shards--resources))
+- `index` (Number) Индекс шарда в кластере Clickhouse, который будет указан в настройках кластера в макросе "shard".  Влияет на очередность исполнения распределенных запросов в кластере
+- `instances` (Attributes List) Описание инстансов шарда (see [below for nested schema](#nestedatt--status--cluster--shards--instances))
+- `name` (String) Имя шарда, которому будут принадлежать инстансы
+- `resources` (Attributes) Параметры виртуальной машины, где будут работать инстансы Clickhouse данного шарда (see [below for nested schema](#nestedatt--status--cluster--shards--resources))
 - `weight` (Number) Вес шарда
 
 <a id="nestedatt--status--cluster--shards--endpoints"></a>
@@ -643,8 +703,10 @@ Read-Only:
 
 Read-Only:
 
-- `dns` (Attributes List) Доменные имена. (see [below for nested schema](#nestedatt--status--cluster--shards--endpoints--address--dns))
-- `ip_address` (String) Выделенный адрес.
+- `dns` (Attributes List) Доменные имена (see [below for nested schema](#nestedatt--status--cluster--shards--endpoints--address--dns))
+- `ip_address` (String) Выделенный адрес
+
+IPv4- или IPv6-адрес
 - `ref` (String) Идентификатор адреса в VPC
 - `subnet` (String) Идентификатор подсети облачной сети, к которой принадлежит адрес
 
@@ -653,7 +715,7 @@ Read-Only:
 
 Read-Only:
 
-- `name` (String) DNS имя
+- `name` (String) DNS-имя
 
 
 
@@ -662,7 +724,9 @@ Read-Only:
 
 Read-Only:
 
-- `ip_address` (String) Выделенный адрес.
+- `ip_address` (String) Выделенный адрес
+
+IPv4- или IPv6-адрес
 - `ref` (String) Идентификатор адреса в VPC
 
 
@@ -675,6 +739,7 @@ Read-Only:
 - `endpoints` (Attributes List) Список эндпойнтов для подключения к инстансу (see [below for nested schema](#nestedatt--status--cluster--shards--instances--endpoints))
 - `health` (String)
 - `id` (String) Идентификатор инстанса шарда
+- `index` (Number) Индекс реплики в шарде в кластере Clickhouse, который будет указан в настройках кластера в макросе "replica". Влияет на очередность исполнения распределенных запросов в кластере
 - `zone` (String) Зона доступности
 
 <a id="nestedatt--status--cluster--shards--instances--endpoints"></a>
@@ -690,8 +755,10 @@ Read-Only:
 
 Read-Only:
 
-- `dns` (Attributes List) Доменные имена. (see [below for nested schema](#nestedatt--status--cluster--shards--instances--endpoints--address--dns))
-- `ip_address` (String) Выделенный адрес.
+- `dns` (Attributes List) Доменные имена (see [below for nested schema](#nestedatt--status--cluster--shards--instances--endpoints--address--dns))
+- `ip_address` (String) Выделенный адрес
+
+IPv4- или IPv6-адрес
 - `ref` (String) Идентификатор адреса в VPC
 - `subnet` (String) Идентификатор подсети облачной сети, к которой принадлежит адрес
 
@@ -700,7 +767,7 @@ Read-Only:
 
 Read-Only:
 
-- `name` (String) DNS имя
+- `name` (String) DNS-имя
 
 
 
@@ -709,7 +776,9 @@ Read-Only:
 
 Read-Only:
 
-- `ip_address` (String) Выделенный адрес.
+- `ip_address` (String) Выделенный адрес
+
+IPv4- или IPv6-адрес
 - `ref` (String) Идентификатор адреса в VPC
 
 
@@ -720,16 +789,23 @@ Read-Only:
 
 Required:
 
-- `disk` (Attributes) Параметры диска. (see [below for nested schema](#nestedatt--status--cluster--shards--resources--disk))
-- `vm_type` (String) Тип виртуальной машины, описывающий ресурсы (vCPU, memory).
+- `disk` (Attributes) Параметры диска (see [below for nested schema](#nestedatt--status--cluster--shards--resources--disk))
+- `vm_type` (String) Тип виртуальной машины, описывающий ресурсы (vCPU, memory)
 
 <a id="nestedatt--status--cluster--shards--resources--disk"></a>
 ### Nested Schema for `status.cluster.shards.resources.disk`
 
 Required:
 
-- `size` (String) Размер диска.
-- `type` (String) Тип диска.
+- `size` (String) Размер диска
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
+- `type` (String) Тип используемого диска:
+* "NETWORK_STANDARD_SSD" — сетевой SSD
 
 Optional:
 
@@ -743,11 +819,23 @@ Optional:
 
 Optional:
 
-- `cache_max_size` (String) Максимальный размер кеша объектного хранилища, расположенный на SSD.
-- `data_caching_enabled` (Boolean) Включить кеширование данных с объектного хранилища на сетевых SSD дисках.
-- `hybrid_storage_enabled` (Boolean) Включить гибридное хранилище (hot SSD + cold S3).
-- `max_data_part_size_ssd` (String) Максимальный размер части данных в байтах, который может храниться на дисках тома (SSD).
-- `move_factor` (Number) Соотношение свободного дискового пространства на SSD дисках кластера (от 0.01 до 1) Когда это соотношение превышает значение параметра конфигурации, ClickHouse начинает перемещать данные в следующий том по порядку.
+- `cache_max_size` (String) Максимальный размер кеша объектного хранилища, расположенный на SSD
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
+- `data_caching_enabled` (Boolean) Включить кеширование данных с объектного хранилища на сетевых SSD дисках
+- `hybrid_storage_enabled` (Boolean) Включить гибридное хранилище (hot SSD + cold S3)
+- `max_data_part_size_ssd` (String) Максимальный размер части данных в байтах, который может храниться на дисках тома (SSD)
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
+- `move_factor` (Number) Соотношение свободного дискового пространства на SSD дисках кластера (от 0.01 до 1) Когда это соотношение превышает значение параметра конфигурации, ClickHouse начинает перемещать данные в следующий том по порядку
 
 
 

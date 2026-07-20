@@ -27,27 +27,27 @@ func (s *EgressNat) GetSchema() schema.Schema {
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes,
-				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров.`,
+				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров`,
 				Computed:            true,
 			},
 			"status": schema.SingleNestedAttribute{
 				Attributes:          new(EgressNatStatus).GetSchema().Attributes,
-				MarkdownDescription: `Описывает статус Egress (Many-to-Many) NAT-шлюза.`,
+				MarkdownDescription: `Описывает статус Egress (Many-to-Many) NAT-шлюза`,
 				Computed:            true,
 			},
 			"internal": schema.SingleNestedAttribute{
 				Attributes:          new(EgressNatSpecInternal).GetSchema().Attributes,
-				MarkdownDescription: `Группирующий элемент для всего, что касается внутренних ресурсов.`,
+				MarkdownDescription: `Группирующий элемент для всего, что касается внутренних ресурсов`,
 				Computed:            true,
 			},
 			"external": schema.SingleNestedAttribute{
 				Attributes:          new(EgressNatSpecExternal).GetSchema().Attributes,
-				MarkdownDescription: `Группирующий элемент для всего, что касается внешней части (ресурсов, доступных извне).`,
+				MarkdownDescription: `Группирующий элемент для всего, что касается внешней части (ресурсов, доступных извне)`,
 				Computed:            true,
 			},
 			"port_allocation": schema.SingleNestedAttribute{
 				Attributes:          new(EgressNatSpecPortAllocation).GetSchema().Attributes,
-				MarkdownDescription: `Описывает настройки управления портами.`,
+				MarkdownDescription: `Описывает настройки управления портами`,
 				Computed:            true,
 			},
 		},

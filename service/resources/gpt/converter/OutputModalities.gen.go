@@ -26,6 +26,8 @@ func OutputModalitiesAPIResponseToTFModel(ctx context.Context, am *apimodel.Outp
 
 	t.Audio = types.BoolValue(am.Audio)
 
+	t.Image = types.BoolValue(am.Image)
+
 	t.Reranking = types.BoolValue(am.Reranking)
 
 	t.Transcription = types.BoolValue(am.Transcription)

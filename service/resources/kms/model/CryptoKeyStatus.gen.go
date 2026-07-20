@@ -32,10 +32,9 @@ func (s *CryptoKeyStatus) GetSchema() schema.Schema {
 			},
 			"destruction": schema.SingleNestedAttribute{
 				Attributes: new(CryptoKeyStatusDestruction).GetSchema().Attributes,
-				MarkdownDescription: `Информация о процессе уничтожения криптографического ключа. 
-Этот раздел присутствует только в том случае, если ключ запланирован к уничтожению 
-или уже уничтожен.
-`,
+				MarkdownDescription: `Информация о процессе уничтожения криптографического ключа.
+Этот раздел присутствует только в том случае, если ключ запланирован к уничтожению
+или уже уничтожен`,
 				Computed: true,
 			},
 		},
@@ -58,8 +57,7 @@ func (s *CryptoKeyStatusDestruction) GetSchema() schema.Schema {
 Это поле заполняется только тогда, когда ключ находится в одном из статусов уничтожения.
 Возможные значения:
 - SCHEDULED_FOR_DESTRUCTION: криптографический ключ запланирован к уничтожению в будущем
-- DESTROYED: криптографический ключ был окончательно уничтожен и не может быть восстановлен
-`,
+- DESTROYED: криптографический ключ был окончательно уничтожен и не может быть восстановлен`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"SCHEDULED_FOR_DESTRUCTION",
@@ -70,19 +68,22 @@ func (s *CryptoKeyStatusDestruction) GetSchema() schema.Schema {
 			},
 			"scheduled_destruction_time": schema.StringAttribute{
 				MarkdownDescription: `Временная метка, указывающая, когда ключ должен быть уничтожен.
-Если это поле установлено, ключ будет автоматически уничтожен в указанное время.
-`,
+Если это поле установлено, ключ будет автоматически уничтожен в указанное время
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
 				Computed: true,
 			},
 			"destroyed_at": schema.StringAttribute{
-				MarkdownDescription: `Время уничтожения криптографического ключа.
-`,
+				MarkdownDescription: `Время уничтожения криптографического ключа
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
 				Computed:           true,
 				DeprecationMessage: `Отказываемся в пользу destroyTime.`,
 			},
 			"destroy_time": schema.StringAttribute{
-				MarkdownDescription: `Время уничтожения криптографического ключа.
-`,
+				MarkdownDescription: `Время уничтожения криптографического ключа
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
 				Computed: true,
 			},
 		},
@@ -100,20 +101,21 @@ func (s *CryptoKeyStatusRotation) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля Rotation анонимного типа структуры CryptoKeyStatus`,
 		Attributes: map[string]schema.Attribute{
 			"last_time": schema.StringAttribute{
-				MarkdownDescription: `Временная метка последней ротации криптографического ключа.
-`,
+				MarkdownDescription: `Временная метка последней ротации криптографического ключа
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
 				Computed: true,
 			},
 			"next_time": schema.StringAttribute{
-				MarkdownDescription: `Временная метка следующей запланированной ротации криптографического ключа.
-`,
+				MarkdownDescription: `Временная метка следующей запланированной ротации криптографического ключа
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
 				Computed: true,
 			},
 			"primary_key_version_ref": schema.StringAttribute{
-				MarkdownDescription: `Идентификатор основной версии криптографического ключа. 
-Это значение представляет номер версии ключа, который в данный момент 
-установлен как основной для криптографических операций.
-`,
+				MarkdownDescription: `Идентификатор основной версии криптографического ключа.
+Это значение представляет номер версии ключа, который в данный момент
+установлен как основной для криптографических операций`,
 				Computed: true,
 			},
 		},

@@ -18,12 +18,14 @@ func (s *ResourceAddressSpec) GetSchema() schema.Schema {
 		MarkdownDescription: `Спецификация внутреннего адреса.`,
 		Attributes: map[string]schema.Attribute{
 			"subnet": schema.StringAttribute{
-				MarkdownDescription: `Подсеть облачной сети к которой принадлежит адрес. В случае приватного адреса, он всегда принадлежит к некоторой подсети внутри облачной сети.`,
+				MarkdownDescription: `Подсеть облачной сети к которой принадлежит адрес. В случае приватного адреса, он всегда принадлежит к некоторой подсети внутри облачной сети`,
 				Computed:            true,
 			},
 			"ip_address": schema.StringAttribute{
-				MarkdownDescription: `Значение IP адреса.`,
-				Computed:            true,
+				MarkdownDescription: `Значение IP адреса
+
+IPv4- или IPv6-адрес`,
+				Computed: true,
 			},
 			"dns": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{

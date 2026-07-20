@@ -57,7 +57,7 @@ func (m *CertificateRoleBindingResource) Schema(ctx context.Context, req resourc
 		},
 	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к проекту`,
+		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{

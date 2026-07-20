@@ -16,7 +16,7 @@ func (s *KafkaSchemaRegistrySpec) GetSchema() schema.Schema {
 		MarkdownDescription: `Настройка Schema Registry для кластера.`,
 		Attributes: map[string]schema.Attribute{
 			"enabled": schema.BoolAttribute{
-				MarkdownDescription: `Включить Schema Registry в кластере.`,
+				MarkdownDescription: `Включить Schema Registry в кластере`,
 				Optional:            true,
 			},
 		},

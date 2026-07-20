@@ -14,15 +14,17 @@ type ClickhouseEndpointExternalAddressResource struct {
 
 func (s *ClickhouseEndpointExternalAddressResource) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Описание внешнего доступа к кластеру`,
+		MarkdownDescription: `Описание внешнего доступа к кластеру.`,
 		Attributes: map[string]schema.Attribute{
 			"ref": schema.StringAttribute{
 				MarkdownDescription: `Идентификатор адреса в VPC`,
 				Computed:            true,
 			},
 			"ip_address": schema.StringAttribute{
-				MarkdownDescription: `Выделенный адрес.`,
-				Computed:            true,
+				MarkdownDescription: `Выделенный адрес
+
+IPv4- или IPv6-адрес`,
+				Computed: true,
 			},
 		},
 	}

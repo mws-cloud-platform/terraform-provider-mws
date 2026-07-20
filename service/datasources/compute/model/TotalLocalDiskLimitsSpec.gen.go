@@ -17,7 +17,7 @@ func (s *TotalLocalDiskLimitsSpec) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"size": schema.SingleNestedAttribute{
 				Attributes:          new(TotalLocalDiskSizeLimitsSpec).GetSchema().Attributes,
-				MarkdownDescription: `Спецификация лимитов на общий объем локальных дисков для ВМ указанного типа.`,
+				MarkdownDescription: `Спецификация лимитов на общий объем локальных дисков для ВМ указанного типа`,
 				Computed:            true,
 			},
 		},

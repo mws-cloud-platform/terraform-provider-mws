@@ -11,6 +11,7 @@ import (
 
 type RouteStatus struct {
 	tfcommon.ResourceStatus
+
 	NextHop     types.Object `tfsdk:"next_hop"`
 	Destination types.Object `tfsdk:"destination"`
 }

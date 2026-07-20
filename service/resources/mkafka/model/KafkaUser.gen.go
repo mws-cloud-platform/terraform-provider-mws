@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
+	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
@@ -48,23 +49,25 @@ func (s *KafkaUser) GetSchema() schema.Schema {
 			},
 			"password_version": schema.Int64Attribute{
 				MarkdownDescription: `Increase this field's value if you want to force updating the associated write-only field.`,
-				Optional:            true,
 				Validators: []validator.Int64{
-					int64validator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("password"))},
+					int64validator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("password")),
+				},
+				Optional: true,
 			},
 			"password": schema.StringAttribute{
-				MarkdownDescription: `Пароль пользователя.`,
-				Sensitive:           true,
-				WriteOnly:           true,
-				Required:            true,
+				MarkdownDescription: `Пароль пользователя`,
 				Validators: []validator.String{
-					stringvalidator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("password_version"))},
+					stringvalidator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("password_version")),
+				},
+				Sensitive: true,
+				WriteOnly: true,
+				Required:  true,
 			},
 			"roles": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(KafkaClusterRole).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Роли пользователя.`,
+				MarkdownDescription: `Роли пользователя`,
 				Required:            true,
 			},
 		},
@@ -81,33 +84,44 @@ func (s *KafkaUserMetadata) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля Metadata анонимного типа структуры KafkaUser`,
 		Attributes: map[string]schema.Attribute{
 			"display_name": schema.StringAttribute{
-				MarkdownDescription: `Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов.`,
+				MarkdownDescription: `Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"create_time": schema.StringAttribute{
-				MarkdownDescription: `Дата создания объекта.`,
-				Computed:            true,
+				MarkdownDescription: `Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"delete_time": schema.StringAttribute{
-				MarkdownDescription: `Время запроса на удаление ресурса (не фактическое время удаления).`,
-				Computed:            true,
+				MarkdownDescription: `Время запроса на удаление ресурса (не фактическое время удаления)
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"purge_time": schema.StringAttribute{
-				Computed: true,
+				MarkdownDescription: `Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed:            true,
 			},
 			"usages": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(tfcommon.TypedUsage).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены.`,
+				MarkdownDescription: `Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены`,
 				Computed:            true,
 			},
 			"description": schema.StringAttribute{
-				MarkdownDescription: `Описание ресурса.`,
+				MarkdownDescription: `Описание ресурса`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"id": schema.StringAttribute{
-				MarkdownDescription: `ссылка на типизированный референс`,
+				MarkdownDescription: `Ссылка на типизированный референс`,
 				Computed:            true,
 			},
 		},

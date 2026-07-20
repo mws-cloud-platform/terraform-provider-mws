@@ -29,7 +29,7 @@ func (s *SecretStatus) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"current_secret_version": schema.StringAttribute{
-				MarkdownDescription: `Номер текущей версии секрета.`,
+				MarkdownDescription: `Номер текущей версии секрета`,
 				Computed:            true,
 			},
 		},

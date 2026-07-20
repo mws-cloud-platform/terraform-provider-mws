@@ -24,37 +24,37 @@ func (s *VmType) GetSchema() schema.Schema {
 		MarkdownDescription: `Тип ВМ.`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
-				MarkdownDescription: `Тип объекта - vmType.`,
+				MarkdownDescription: `Тип объекта - vmType`,
 				Computed:            true,
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Attributes:          new(VmTypeMetadata).GetSchema().Attributes,
-				MarkdownDescription: `Метаданные типа ВМ.`,
+				MarkdownDescription: `Метаданные типа ВМ`,
 				Computed:            true,
 			},
 			"status": schema.SingleNestedAttribute{
 				Attributes:          new(VmTypeStatus).GetSchema().Attributes,
-				MarkdownDescription: `Статус типа ВМ.`,
+				MarkdownDescription: `Статус типа ВМ`,
 				Computed:            true,
 			},
 			"cpu": schema.SingleNestedAttribute{
 				Attributes:          new(VmTypeCpuSpec).GetSchema().Attributes,
-				MarkdownDescription: `Спецификация процессора, который доступен для ВМ указанного типа.`,
+				MarkdownDescription: `Спецификация процессора, который доступен для ВМ указанного типа`,
 				Computed:            true,
 			},
 			"memory": schema.SingleNestedAttribute{
 				Attributes:          new(VmTypeMemorySpec).GetSchema().Attributes,
-				MarkdownDescription: `Спецификация RAM, которая доступна для ВМ указанного типа.`,
+				MarkdownDescription: `Спецификация RAM, которая доступна для ВМ указанного типа`,
 				Computed:            true,
 			},
 			"disks": schema.SingleNestedAttribute{
 				Attributes:          new(VmTypeDisksSpec).GetSchema().Attributes,
-				MarkdownDescription: `Спецификация сетевых дисков, которые доступны для ВМ указанного типа.`,
+				MarkdownDescription: `Спецификация сетевых дисков, которые доступны для ВМ указанного типа`,
 				Computed:            true,
 			},
 			"local_disks": schema.SingleNestedAttribute{
 				Attributes:          new(VmTypeLocalDisksSpec).GetSchema().Attributes,
-				MarkdownDescription: `Спецификация локальных дисков, которые доступны для ВМ указанного типа.`,
+				MarkdownDescription: `Спецификация локальных дисков, которые доступны для ВМ указанного типа`,
 				Computed:            true,
 			},
 		},
@@ -71,29 +71,34 @@ func (s *VmTypeMetadata) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля Metadata анонимного типа структуры VmType`,
 		Attributes: map[string]schema.Attribute{
 			"display_name": schema.StringAttribute{
-				MarkdownDescription: `Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов.`,
+				MarkdownDescription: `Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов`,
 				Computed:            true,
 			},
 			"create_time": schema.StringAttribute{
-				MarkdownDescription: `Дата создания объекта.`,
-				Computed:            true,
+				MarkdownDescription: `Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"delete_time": schema.StringAttribute{
-				MarkdownDescription: `Время запроса на удаление ресурса (не фактическое время удаления).`,
-				Computed:            true,
+				MarkdownDescription: `Время запроса на удаление ресурса (не фактическое время удаления)
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"purge_time": schema.StringAttribute{
-				Computed: true,
+				MarkdownDescription: `Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed:            true,
 			},
 			"usages": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(tfcommon.TypedUsage).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены.`,
+				MarkdownDescription: `Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены`,
 				Computed:            true,
 			},
 			"description": schema.StringAttribute{
-				MarkdownDescription: `Описание ресурса.`,
+				MarkdownDescription: `Описание ресурса`,
 				Computed:            true,
 			},
 			"id": schema.StringAttribute{

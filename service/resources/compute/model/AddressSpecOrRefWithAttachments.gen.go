@@ -22,7 +22,7 @@ func (s *AddressSpecOrRefWithAttachments) GetSchema() schema.Schema {
 			},
 			"one_to_one_nat": schema.SingleNestedAttribute{
 				Attributes:          new(ComputeOneToOneNatSpec).GetSchema().Attributes,
-				MarkdownDescription: `NAT правило для связи внутреннего адреса с внешним адресом`,
+				MarkdownDescription: `NAT-правило для связи внутреннего адреса с внешним адресом`,
 				Optional:            true,
 			},
 		},

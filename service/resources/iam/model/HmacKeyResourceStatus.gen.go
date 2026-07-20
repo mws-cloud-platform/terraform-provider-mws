@@ -26,17 +26,19 @@ func (s *HmacKeyResourceStatus) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"access_key_id": schema.StringAttribute{
-				MarkdownDescription: `Идентификатор ключа (readOnly).`,
+				MarkdownDescription: `Идентификатор ключа (readOnly)`,
 				Computed:            true,
 			},
 			"secret_access_key": schema.StringAttribute{
-				MarkdownDescription: `HMAC-ключ (readOnly).`,
+				MarkdownDescription: `HMAC-ключ (readOnly)`,
 				Sensitive:           true,
 				Computed:            true,
 			},
 			"last_auth_time": schema.StringAttribute{
-				MarkdownDescription: `Время последней аутентификации.`,
-				Computed:            true,
+				MarkdownDescription: `Время последней аутентификации
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 		},
 	}

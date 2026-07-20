@@ -27,12 +27,12 @@ func (s *NlbStatus) GetSchema() schema.Schema {
 			},
 			"listener": schema.SingleNestedAttribute{
 				Attributes:          new(NlbStatusListener).GetSchema().Attributes,
-				MarkdownDescription: `Группирующий элемент для статуса адресов внешнего и внутреннего балансировщика.`,
+				MarkdownDescription: `Группирующий элемент для статуса адресов внешнего и внутреннего балансировщика`,
 				Computed:            true,
 			},
 			"target_address_groups": schema.SingleNestedAttribute{
 				Attributes:          new(NlbTargetAddressGroupsStatus).GetSchema().Attributes,
-				MarkdownDescription: `Группирующий элемент для статуса групп адресов балансировщика.`,
+				MarkdownDescription: `Группирующий элемент для статуса групп адресов балансировщика`,
 				Computed:            true,
 			},
 			"rules": schema.ListNestedAttribute{

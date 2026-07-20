@@ -22,7 +22,7 @@ func (s *Deployment) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
-				MarkdownDescription: `указание на тип этого ресурса.`,
+				MarkdownDescription: `Указание на тип ресурса`,
 				Computed:            true,
 			},
 			"metadata": schema.SingleNestedAttribute{
@@ -31,7 +31,7 @@ func (s *Deployment) GetSchema() schema.Schema {
 			},
 			"status": schema.SingleNestedAttribute{
 				Attributes:          new(DeploymentStatus).GetSchema().Attributes,
-				MarkdownDescription: `Текущее наблюдаемое состояние деплоймента.`,
+				MarkdownDescription: `Текущее наблюдаемое состояние деплоймента`,
 				Computed:            true,
 			},
 			"is_active": schema.BoolAttribute{
@@ -39,7 +39,7 @@ func (s *Deployment) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"model": schema.StringAttribute{
-				MarkdownDescription: `ссылка на типизированный референс базовой модели`,
+				MarkdownDescription: `Ссылка на типизированный референс базовой модели`,
 				Computed:            true,
 			},
 		},
@@ -56,33 +56,38 @@ func (s *DeploymentMetadata) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля Metadata анонимного типа структуры Deployment`,
 		Attributes: map[string]schema.Attribute{
 			"display_name": schema.StringAttribute{
-				MarkdownDescription: `Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов.`,
+				MarkdownDescription: `Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов`,
 				Computed:            true,
 			},
 			"create_time": schema.StringAttribute{
-				MarkdownDescription: `Дата создания объекта.`,
-				Computed:            true,
+				MarkdownDescription: `Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"delete_time": schema.StringAttribute{
-				MarkdownDescription: `Время запроса на удаление ресурса (не фактическое время удаления).`,
-				Computed:            true,
+				MarkdownDescription: `Время запроса на удаление ресурса (не фактическое время удаления)
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"purge_time": schema.StringAttribute{
-				Computed: true,
+				MarkdownDescription: `Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed:            true,
 			},
 			"usages": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(tfcommon.TypedUsage).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены.`,
+				MarkdownDescription: `Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены`,
 				Computed:            true,
 			},
 			"description": schema.StringAttribute{
-				MarkdownDescription: `Описание ресурса.`,
+				MarkdownDescription: `Описание ресурса`,
 				Computed:            true,
 			},
 			"id": schema.StringAttribute{
-				MarkdownDescription: `ссылка на типизированный референс`,
+				MarkdownDescription: `Ссылка на типизированный референс`,
 				Computed:            true,
 			},
 		},

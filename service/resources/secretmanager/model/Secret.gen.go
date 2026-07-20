@@ -4,7 +4,6 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -37,7 +36,7 @@ func (s *Secret) GetSchema() schema.Schema {
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes,
-				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров.`,
+				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров`,
 				Computed:            true,
 				Optional:            true,
 			},
@@ -53,7 +52,7 @@ func (s *Secret) GetSchema() schema.Schema {
 				},
 			},
 			"current_secret_version": schema.StringAttribute{
-				MarkdownDescription: `Номер текущей версии секрета.`,
+				MarkdownDescription: `Номер текущей версии секрета`,
 				Optional:            true,
 				PlanModifiers: []planmodifier.String{
 					localstringplanmodifier.RequiresReplaceIfRemoved(),
@@ -62,9 +61,6 @@ func (s *Secret) GetSchema() schema.Schema {
 			"encryption": schema.SingleNestedAttribute{
 				Attributes: new(EncryptionSpec).GetSchema().Attributes,
 				Optional:   true,
-				PlanModifiers: []planmodifier.Object{
-					objectplanmodifier.RequiresReplaceIfConfigured(),
-				},
 			},
 		},
 	}

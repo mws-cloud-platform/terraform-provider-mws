@@ -13,10 +13,10 @@ type ClickhouseEndpointAddressSpec struct {
 
 func (s *ClickhouseEndpointAddressSpec) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Описание шаблона адреса, который будет использоваться при выделении адресов`,
+		MarkdownDescription: `Описание шаблона адреса, который будет использоваться при выделении адресов.`,
 		Attributes: map[string]schema.Attribute{
 			"subnet": schema.StringAttribute{
-				MarkdownDescription: `Подсеть облачной сети, к которой принадлежит адрес`,
+				MarkdownDescription: `Подсеть облачной сети, которой принадлежит адрес`,
 				Computed:            true,
 			},
 		},

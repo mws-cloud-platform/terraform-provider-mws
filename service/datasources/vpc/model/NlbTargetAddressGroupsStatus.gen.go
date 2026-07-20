@@ -21,21 +21,21 @@ func (s *NlbTargetAddressGroupsStatus) GetSchema() schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(NlbAddressGroupStatus).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Статус групп адресов, подключенных к внутреннему балансировщику.`,
+				MarkdownDescription: `Статус групп адресов, подключенных к внутреннему балансировщику`,
 				Computed:            true,
 			},
 			"configured": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(NlbAddressGroupStatus).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Группы адресов, подключенные к балансировщику.`,
+				MarkdownDescription: `Группы адресов, подключенные к балансировщику`,
 				Computed:            true,
 			},
 			"stale": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(NlbAddressGroupStatus).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Группы адресов, которые были отключены от балансировщика.`,
+				MarkdownDescription: `Группы адресов, которые были отключены от балансировщика`,
 				Computed:            true,
 			},
 		},

@@ -16,7 +16,7 @@ func (s *NlbAddressGroupStatus) GetSchema() schema.Schema {
 		MarkdownDescription: `Статус группы адресов балансировщика.`,
 		Attributes: map[string]schema.Attribute{
 			"ref": schema.StringAttribute{
-				MarkdownDescription: `Ссылка на группу адресов.`,
+				MarkdownDescription: `Ссылка на группу адресов`,
 				Computed:            true,
 			},
 		},

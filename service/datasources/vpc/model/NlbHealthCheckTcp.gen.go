@@ -16,7 +16,7 @@ func (s *NlbHealthCheckTcp) GetSchema() schema.Schema {
 		MarkdownDescription: `Конфигурация проверки работоспособности по протоколу TCP.`,
 		Attributes: map[string]schema.Attribute{
 			"port": schema.Int64Attribute{
-				MarkdownDescription: `Порт виртуальной машины, на который будет отправляться запрос.`,
+				MarkdownDescription: `Порт виртуальной машины, на который будет отправляться запрос`,
 				Computed:            true,
 			},
 		},

@@ -37,5 +37,32 @@ func PostgresClusterUserStatusAPIResponseToTFModel(ctx context.Context, am *apim
 	}
 	t.Ready = readyTfObject
 
+	if am.RoleBindings != nil {
+		roleBindings := make([]tfmodel.PostgresUserRoleBindingStatus, 0, len(am.RoleBindings))
+
+		for _, entity := range am.RoleBindings {
+			tmp, d := PostgresUserRoleBindingStatusAPIResponseToTFModel(ctx, &entity)
+			diags = append(diags, d...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			roleBindings = append(roleBindings, *tmp)
+		}
+
+		roleBindingsList, d := types.ListValueFrom(ctx, types.ObjectType{
+			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.PostgresUserRoleBindingStatus).GetSchema().Attributes),
+		}, roleBindings)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		t.RoleBindings = roleBindingsList
+	} else {
+		t.RoleBindings = types.ListNull(types.ObjectType{
+			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.PostgresUserRoleBindingStatus).GetSchema().Attributes),
+		})
+	}
+
 	return &t, diags
 }

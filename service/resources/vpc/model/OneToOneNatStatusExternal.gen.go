@@ -17,7 +17,7 @@ func (s *OneToOneNatStatusExternal) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"address": schema.SingleNestedAttribute{
 				Attributes:          new(ResourceExternalAddressStatus).GetSchema().Attributes,
-				MarkdownDescription: `Спецификация внешнего адреса, через который будет осуществляться трансляция.`,
+				MarkdownDescription: `Спецификация внешнего адреса, через который будет осуществляться трансляция`,
 				Computed:            true,
 			},
 		},

@@ -25,11 +25,13 @@ func (s *ExternalAddressStatus) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"ip_address": schema.StringAttribute{
-				MarkdownDescription: `Присвоенный адрес.`,
-				Computed:            true,
+				MarkdownDescription: `Присвоенный адрес
+
+IPv4- или IPv6-адрес`,
+				Computed: true,
 			},
 			"active": schema.BoolAttribute{
-				MarkdownDescription: `Состояние внешнего адреса активен или не активен.`,
+				MarkdownDescription: `Состояние внешнего адреса активен или не активен`,
 				Computed:            true,
 			},
 		},

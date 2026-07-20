@@ -24,7 +24,7 @@ func (s *NodeGroupVersionControlSpec) GetSchema() schema.Schema {
 				Optional:            true,
 			},
 			"auto_update": schema.BoolAttribute{
-				MarkdownDescription: `авто обновление версии нод группы в рамках релизного канала и окна обслуживания`,
+				MarkdownDescription: `Авто обновление версии нод группы в рамках релизного канала и окна обслуживания`,
 				Optional:            true,
 			},
 			"maintenance_window": schema.SingleNestedAttribute{

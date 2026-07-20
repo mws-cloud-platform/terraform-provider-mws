@@ -134,8 +134,8 @@ variable "disk_name" {
 - `kind` (String)
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
 - `os` (Attributes) (see [below for nested schema](#nestedatt--os))
-- `project` (String) Путь к проекту
-- `service_account` (String) Ссылка на сервис аккаунт привязанный к виртуальной машине.
+- `project` (String) Путь к проекту.
+- `service_account` (String) Ссылка на сервис аккаунт привязанный к виртуальной машине
 - `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 - `zone` (String)
 
@@ -173,7 +173,7 @@ Required:
 
 Optional:
 
-- `one_to_one_nat` (Attributes) NAT правило для связи внутреннего адреса с внешним адресом (see [below for nested schema](#nestedatt--network--network_interfaces--addresses--one_to_one_nat))
+- `one_to_one_nat` (Attributes) NAT-правило для связи внутреннего адреса с внешним адресом (see [below for nested schema](#nestedatt--network--network_interfaces--addresses--one_to_one_nat))
 
 <a id="nestedatt--network--network_interfaces--addresses--address"></a>
 ### Nested Schema for `network.network_interfaces.addresses.address`
@@ -196,7 +196,9 @@ Required:
 Optional:
 
 - `dns` (Attributes List) Настройки DNS (see [below for nested schema](#nestedatt--network--network_interfaces--addresses--address--spec--dns))
-- `ip_address` (String) Желаемый адрес. Если не указан, то будет выделен из пула адресов подсети.
+- `ip_address` (String) Желаемый адрес. Если не указан, то будет выделен из пула адресов подсети
+
+IPv4- или IPv6-адрес
 
 <a id="nestedatt--network--network_interfaces--addresses--address--spec--dns"></a>
 ### Nested Schema for `network.network_interfaces.addresses.address.spec.dns`
@@ -206,6 +208,15 @@ Required:
 - `name` (String) DNS-имя виртуальной машины в MWS Cloud Platform
 - `ptr` (Boolean) Создать обратную DNS-запись
 - `ttl` (String) Продолжительность хранения DNS записи в кеше
+
+Период времени. Поддерживаются следующие форматы:
+  - ISO 8601: P(n)DT(n)H(n)M(n)S. Допустимые единицы измерения: дни ("D"), часы ("H"), минуты ("M"), секунды ("S"). Только секунды могут быть дробными
+  - Простой формат. Допустимые единицы измерения: "d", "h", "m", "s", "ms", "us", "ns".
+    Величины должны следовать по убыванию единиц измерения
+  - Число в секундах
+
+Отрицательные значения обозначаются префиксом "-", в простом формате могут быть ограничены скобками.
+Регистр и пробелы игнорируются
 
 
 
@@ -230,7 +241,7 @@ Required:
 Optional:
 
 - `ref` (String)
-- `spec` (Attributes) NAT правило для связи внутреннего адреса с внешним адресом. (see [below for nested schema](#nestedatt--network--network_interfaces--addresses--one_to_one_nat--external--address--spec))
+- `spec` (Attributes) NAT правило для связи внутреннего адреса с внешним адресом (see [below for nested schema](#nestedatt--network--network_interfaces--addresses--one_to_one_nat--external--address--spec))
 
 <a id="nestedatt--network--network_interfaces--addresses--one_to_one_nat--external--address--spec"></a>
 ### Nested Schema for `network.network_interfaces.addresses.one_to_one_nat.external.address.spec`
@@ -281,7 +292,11 @@ Optional:
 
 - `disk_type` (String) Ссылка на тип диска
 - `iops` (Number) Запрашиваемая пользователем IOPS
-- `size` (String)
+- `size` (String) Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
 - `source` (Attributes) Источник для создания диска (see [below for nested schema](#nestedatt--storage--disks--disk--spec--source))
 
 <a id="nestedatt--storage--disks--disk--spec--source"></a>
@@ -303,6 +318,12 @@ Required:
 - `name` (String) Уникальное имя диска в рамках виртуальной машины
 - `size` (String) Размер диска. Должен быть кратен 248GB
 
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
+
 Optional:
 
 - `device_name` (String) Уникальное имя устройства, которое отображается в дереве /dev/disk/by-id/mws-* Linux. Если не указано - "mws-{name}", если указано - "mws-{deviceName}"
@@ -321,6 +342,15 @@ Optional:
 2. В случае если гостевая ОС не завершила работу за заданное время, агент принудительно останавливает ВМ.
 
 При timeout=0 первый этап пропускается
+
+Период времени. Поддерживаются следующие форматы:
+  - ISO 8601: P(n)DT(n)H(n)M(n)S. Допустимые единицы измерения: дни ("D"), часы ("H"), минуты ("M"), секунды ("S"). Только секунды могут быть дробными
+  - Простой формат. Допустимые единицы измерения: "d", "h", "m", "s", "ms", "us", "ns".
+    Величины должны следовать по убыванию единиц измерения
+  - Число в секундах
+
+Отрицательные значения обозначаются префиксом "-", в простом формате могут быть ограничены скобками.
+Регистр и пробелы игнорируются
 - `power` (String) Целевое состояние питания виртуальной машины
 
 
@@ -329,25 +359,29 @@ Optional:
 
 Optional:
 
-- `description` (String) Описание ресурса.
-- `display_name` (String) Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов.
+- `description` (String) Описание ресурса
+- `display_name` (String) Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов
 
 Read-Only:
 
-- `create_time` (String) Дата создания объекта.
-- `delete_time` (String) Время запроса на удаление ресурса (не фактическое время удаления).
+- `create_time` (String) Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `delete_time` (String) Время запроса на удаление ресурса (не фактическое время удаления)
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `id` (String) ID свойства
-- `purge_time` (String)
-- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены. (see [below for nested schema](#nestedatt--metadata--usages))
+- `purge_time` (String) Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
 
 <a id="nestedatt--metadata--usages"></a>
 ### Nested Schema for `metadata.usages`
 
 Read-Only:
 
-- `name` (String) Имя связи, требуется для модификации коллекции
-- `resource` (String) ссылка на ресурс
-- `usage_type` (String) Тип связи. Помимо стандартных own и use могут быть добавлены специализированные типы для конкретных сервисов
+- `name` (String) Имя связи. Требуется для модификации коллекции
+- `resource` (String) Ссылка на ресурс
+- `usage_type` (String) Тип связи. Помимо стандартных "own" и "use" могут быть добавлены специализированные типы для конкретных сервисов
 
 
 
@@ -405,6 +439,15 @@ Read-Only:
 2. В случае если гостевая ОС не завершила работу за заданное время, агент принудительно останавливает ВМ.
 
 При timeout=0 первый этап пропускается
+
+Период времени. Поддерживаются следующие форматы:
+  - ISO 8601: P(n)DT(n)H(n)M(n)S. Допустимые единицы измерения: дни ("D"), часы ("H"), минуты ("M"), секунды ("S"). Только секунды могут быть дробными
+  - Простой формат. Допустимые единицы измерения: "d", "h", "m", "s", "ms", "us", "ns".
+    Величины должны следовать по убыванию единиц измерения
+  - Число в секундах
+
+Отрицательные значения обозначаются префиксом "-", в простом формате могут быть ограничены скобками.
+Регистр и пробелы игнорируются
 - `power` (String) Текущее состояние питания виртуальной машины
 
 
@@ -431,10 +474,12 @@ Read-Only:
 
 - `dns` (Attributes List) (see [below for nested schema](#nestedatt--status--network--network_interfaces--addresses--dns))
 - `ip_address` (String) Выделенный IP-адрес
+
+IPv4- или IPv6-адрес
 - `network` (String) Сеть, в которой был создан адрес
 - `one_to_one_nat` (Attributes) (see [below for nested schema](#nestedatt--status--network--network_interfaces--addresses--one_to_one_nat))
 - `ready` (Attributes) Статус ресурса Адрес (see [below for nested schema](#nestedatt--status--network--network_interfaces--addresses--ready))
-- `ref` (String) ref на ресурс Адрес
+- `ref` (String) Ref на ресурс Адрес
 - `standard_dns` (Attributes) (see [below for nested schema](#nestedatt--status--network--network_interfaces--addresses--standard_dns))
 - `subnet` (String) Подсеть, в которой был создан адрес
 
@@ -446,6 +491,15 @@ Read-Only:
 - `name` (String) DNS-имя виртуальной машины в MWS Cloud Platform
 - `ptr` (Boolean) Создать обратную DNS-запись
 - `ttl` (String) Продолжительность хранения DNS записи в кеше
+
+Период времени. Поддерживаются следующие форматы:
+  - ISO 8601: P(n)DT(n)H(n)M(n)S. Допустимые единицы измерения: дни ("D"), часы ("H"), минуты ("M"), секунды ("S"). Только секунды могут быть дробными
+  - Простой формат. Допустимые единицы измерения: "d", "h", "m", "s", "ms", "us", "ns".
+    Величины должны следовать по убыванию единиц измерения
+  - Число в секундах
+
+Отрицательные значения обозначаются префиксом "-", в простом формате могут быть ограничены скобками.
+Регистр и пробелы игнорируются
 
 
 <a id="nestedatt--status--network--network_interfaces--addresses--one_to_one_nat"></a>
@@ -463,7 +517,9 @@ Read-Only:
 Read-Only:
 
 - `ip_address` (String) Фактически присвоенный публичный Адрес
-- `ref` (String) ref на публичный Адрес
+
+IPv4- или IPv6-адрес
+- `ref` (String) Ref на публичный Адрес
 
 
 <a id="nestedatt--status--network--network_interfaces--addresses--one_to_one_nat--ready"></a>
@@ -494,6 +550,15 @@ Read-Only:
 - `ptr` (Boolean) Создать обратную DNS-запись
 - `ttl` (String) Продолжительность хранения DNS записи в кеше
 
+Период времени. Поддерживаются следующие форматы:
+  - ISO 8601: P(n)DT(n)H(n)M(n)S. Допустимые единицы измерения: дни ("D"), часы ("H"), минуты ("M"), секунды ("S"). Только секунды могут быть дробными
+  - Простой формат. Допустимые единицы измерения: "d", "h", "m", "s", "ms", "us", "ns".
+    Величины должны следовать по убыванию единиц измерения
+  - Число в секундах
+
+Отрицательные значения обозначаются префиксом "-", в простом формате могут быть ограничены скобками.
+Регистр и пробелы игнорируются
+
 
 
 
@@ -505,7 +570,7 @@ Read-Only:
 
 - `fqdn` (String) Предоставляет информацию о результирующем FQDN, доступном в виртуальной машине
 с помощью запуска утилиты 'hostname -f'. Результат обработки полей spec/os/hostname
-и spec/os/localDomain, а также дефолтов на основе metadata/name в случае, если эти поля не заданы.
+и spec/os/localDomain, а также дефолтов на основе metadata/name в случае, если эти поля не заданы
 - `os_type` (String) Тип гостевой операционной системы
 - `standard_dns_records` (Boolean)
 
@@ -524,7 +589,7 @@ Read-Only:
 
 Read-Only:
 
-- `display_name` (String) Отображаемое имя сервисного аккаунта (может отличаться от имени в ID).
+- `display_name` (String) Отображаемое имя сервисного аккаунта (может отличаться от имени в ID)
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--service_account--ready))
 - `ref` (String) Ссылка на сервисный аккаунт
 
@@ -556,7 +621,11 @@ Read-Only:
 - `name` (String) Уникальный в рамках ВМ псевдоним (alias) диска
 - `ready` (Attributes) Состояние ресурса Диска (see [below for nested schema](#nestedatt--status--storage--disks--ready))
 - `ref` (String) Ссылка на ресурс "Диск"
-- `size` (String)
+- `size` (String) Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
 
 <a id="nestedatt--status--storage--disks--ready"></a>
 ### Nested Schema for `status.storage.disks.ready`

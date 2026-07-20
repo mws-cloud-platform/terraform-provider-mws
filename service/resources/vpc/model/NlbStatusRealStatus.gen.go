@@ -19,11 +19,11 @@ func (s *NlbStatusRealStatus) GetSchema() schema.Schema {
 		MarkdownDescription: `Статус виртуальной машины, подключенной к сетевому балансировщику нагрузки.`,
 		Attributes: map[string]schema.Attribute{
 			"address": schema.StringAttribute{
-				MarkdownDescription: `Cсылка на IP-адрес виртуальной машины.`,
+				MarkdownDescription: `Cсылка на IP-адрес виртуальной машины`,
 				Computed:            true,
 			},
 			"state": schema.StringAttribute{
-				MarkdownDescription: `Состояние виртуальной машины.`,
+				MarkdownDescription: `Состояние виртуальной машины`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"OK",

@@ -20,19 +20,27 @@ func CertificateManagedSpecAPIOptionalResponseToTFModel(ctx context.Context, am 
 	var diags tfdiag.Diagnostics
 	var t tfmodel.CertificateManagedSpec
 
-	preferredChallengeTypeTmp, d := CertificateChallengeTypeAPIToTFModel(ctx, &am.PreferredChallengeType)
-	diags = append(diags, d...)
-	if diags.HasError() {
-		return nil, diags
+	if val, ok := am.PreferredChallengeType.Get(); ok {
+		preferredChallengeTypeTmp, d := CertificateChallengeTypeAPIToTFModel(ctx, &val)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.PreferredChallengeType = preferredChallengeTypeTmp
+	} else {
+		t.PreferredChallengeType = types.StringNull()
 	}
-	t.PreferredChallengeType = preferredChallengeTypeTmp
 
-	providerTmp, d := CertificateProviderAPIToTFModel(ctx, &am.Provider)
-	diags = append(diags, d...)
-	if diags.HasError() {
-		return nil, diags
+	if val, ok := am.Provider.Get(); ok {
+		providerTmp, d := CertificateProviderAPIToTFModel(ctx, &val)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.Provider = providerTmp
+	} else {
+		t.Provider = types.StringNull()
 	}
-	t.Provider = providerTmp
 
 	if am.Domains != nil {
 		domains := make([]types.String, 0, len(am.Domains))
@@ -69,7 +77,7 @@ func CertificateManagedSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.PreferredChallengeType = *preferredChallengeTypeTmp
+		am.PreferredChallengeType = preferredChallengeTypeTmp
 	}
 
 	if !tm.Provider.IsNull() && !tm.Provider.IsUnknown() {
@@ -78,7 +86,7 @@ func CertificateManagedSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.Provider = *providerTmp
+		am.Provider = providerTmp
 	}
 
 	if !tm.Domains.IsNull() && !tm.Domains.IsUnknown() {

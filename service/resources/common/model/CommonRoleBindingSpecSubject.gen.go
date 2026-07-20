@@ -21,28 +21,28 @@ func (s *CommonRoleBindingSpecSubject) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"user": schema.StringAttribute{
-				MarkdownDescription: `Идентификатор пользователя.`,
+				MarkdownDescription: `Идентификатор пользователя`,
 				Optional:            true,
 			},
 			"service_account": schema.StringAttribute{
-				MarkdownDescription: `Идентификатор сервисного аккаунта, принадлежащего проекту.`,
+				MarkdownDescription: `Идентификатор сервисного аккаунта, принадлежащего проекту`,
 				Optional:            true,
 			},
 			"service_agent": schema.StringAttribute{
-				MarkdownDescription: `Идентификатор сервисного агента, связанного с проектом.`,
+				MarkdownDescription: `Идентификатор сервисного агента, связанного с проектом`,
 				Optional:            true,
 			},
 			"user_federation": schema.SingleNestedAttribute{
 				Attributes:          new(CommonRoleBindingFederation).GetSchema().Attributes,
-				MarkdownDescription: `Субъект федерации пользователей.`,
+				MarkdownDescription: `Субъект федерации пользователей`,
 				Optional:            true,
 			},
 			"user_group": schema.StringAttribute{
-				MarkdownDescription: `Идентификатор группы пользователей.`,
+				MarkdownDescription: `Идентификатор группы пользователей`,
 				Optional:            true,
 			},
 			"employee": schema.StringAttribute{
-				MarkdownDescription: `Идентификатор пользователя backoffice.`,
+				MarkdownDescription: `Идентификатор пользователя backoffice`,
 				Optional:            true,
 			},
 		},

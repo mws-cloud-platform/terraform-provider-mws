@@ -30,12 +30,12 @@ Plane (управляющего слоя) и групп рабочих узло�
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes,
-				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров.`,
+				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров`,
 				Computed:            true,
 			},
 			"status": schema.SingleNestedAttribute{
 				Attributes:          new(ClusterStatus).GetSchema().Attributes,
-				MarkdownDescription: `Описывает статусную модель k8s cluster.`,
+				MarkdownDescription: `Описывает статусную модель k8s cluster`,
 				Computed:            true,
 			},
 			"availability": schema.SingleNestedAttribute{

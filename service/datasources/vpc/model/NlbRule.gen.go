@@ -19,23 +19,23 @@ func (s *NlbRule) GetSchema() schema.Schema {
 		MarkdownDescription: `Правило балансировки нагрузки.`,
 		Attributes: map[string]schema.Attribute{
 			"proto_port": schema.StringAttribute{
-				MarkdownDescription: `Порт балансировщика и протокол по который клиенты отправляют запросы в рамках этого правила. Поддерживаются протоколы TCP и UDP. В рамках одного балансировщика это поле должно быть уникальным среди всех его правил.`,
+				MarkdownDescription: `Порт балансировщика и протокол по который клиенты отправляют запросы в рамках этого правила. Поддерживаются протоколы TCP и UDP. В рамках одного балансировщика это поле должно быть уникальным среди всех его правил`,
 				Computed:            true,
 			},
 			"target_port": schema.Int64Attribute{
-				MarkdownDescription: `Целевой порт бэкенд-серверов, на которые балансировщик перенаправляет запросы. Если не указан, то считается равным порту балансировщика.`,
+				MarkdownDescription: `Целевой порт бэкенд-серверов, на которые балансировщик перенаправляет запросы. Если не указан, то считается равным порту балансировщика`,
 				Computed:            true,
 			},
 			"target_address_groups": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(VpcAddressGroupSpecOrRef).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Адреса бэкенд-серверов, на которые балансировщик направляет запросы.`,
+				MarkdownDescription: `Адреса бэкенд-серверов, на которые балансировщик направляет запросы`,
 				Computed:            true,
 			},
 			"health_check": schema.SingleNestedAttribute{
 				Attributes:          new(NlbHealthCheck).GetSchema().Attributes,
-				MarkdownDescription: `Настройка проверки работоспособности виртуальных машин.`,
+				MarkdownDescription: `Настройка проверки работоспособности виртуальных машин`,
 				Computed:            true,
 			},
 		},

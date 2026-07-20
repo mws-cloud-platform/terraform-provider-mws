@@ -23,6 +23,7 @@ func TestClickhouseClusterInstanceAPIOptionalResponseToTFModelEmpty(t *testing.T
 func TestClickhouseClusterInstanceOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.ClickhouseClusterInstanceRequest{
+		Name: "name",
 		Zone: rm.NewZoneRef("zoneID"),
 	}
 

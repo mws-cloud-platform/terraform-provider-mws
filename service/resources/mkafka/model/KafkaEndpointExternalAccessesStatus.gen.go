@@ -20,27 +20,27 @@ func (s *KafkaEndpointExternalAccessesStatus) GetSchema() schema.Schema {
 		MarkdownDescription: `Настройка внешнего доступа к кластеру Kafka.`,
 		Attributes: map[string]schema.Attribute{
 			"allowed": schema.BoolAttribute{
-				MarkdownDescription: `Назначить внешние адреса для кластера Kafka.`,
+				MarkdownDescription: `Назначить внешние адреса для кластера Kafka`,
 				Computed:            true,
 			},
 			"port": schema.Int64Attribute{
-				MarkdownDescription: `Порт, используемый для доступа к кластеру Kafka из внешней сети.`,
+				MarkdownDescription: `Порт, используемый для доступа к кластеру Kafka из внешней сети`,
 				Computed:            true,
 			},
 			"bootstrap_servers": schema.StringAttribute{
-				MarkdownDescription: `Список адресов для первоначального подключения к кластеру Apache Kafka из внешней сети.`,
+				MarkdownDescription: `Список адресов для первоначального подключения к кластеру Apache Kafka из внешней сети`,
 				Computed:            true,
 			},
 			"broker_addresses": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(KafkaEndpointExternalAddressStatus).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Список внешних адресов, выделенных для брокеров Kafka.`,
+				MarkdownDescription: `Список внешних адресов, выделенных для брокеров Kafka`,
 				Computed:            true,
 			},
 			"schema_registry": schema.SingleNestedAttribute{
 				Attributes:          new(KafkaSchemaRegistryUrls).GetSchema().Attributes,
-				MarkdownDescription: `Внешние HTTPS-адреса Schema Registry.`,
+				MarkdownDescription: `Внешние HTTPS-адреса Schema Registry`,
 				Computed:            true,
 			},
 		},

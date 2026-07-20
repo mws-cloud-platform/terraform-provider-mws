@@ -22,8 +22,7 @@ func (s *OsStatus) GetSchema() schema.Schema {
 			"fqdn": schema.StringAttribute{
 				MarkdownDescription: `Предоставляет информацию о результирующем FQDN, доступном в виртуальной машине
 с помощью запуска утилиты 'hostname -f'. Результат обработки полей spec/os/hostname
-и spec/os/localDomain, а также дефолтов на основе metadata/name в случае, если эти поля не заданы.
-`,
+и spec/os/localDomain, а также дефолтов на основе metadata/name в случае, если эти поля не заданы`,
 				Computed: true,
 			},
 			"standard_dns_records": schema.BoolAttribute{

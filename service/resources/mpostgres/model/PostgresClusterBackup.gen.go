@@ -14,7 +14,7 @@ type PostgresClusterBackup struct {
 
 func (s *PostgresClusterBackup) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Спецификация автоматического бэкапирования`,
+		MarkdownDescription: `Спецификация автоматического бэкапирования.`,
 		Attributes: map[string]schema.Attribute{
 			"daily": schema.SingleNestedAttribute{
 				Attributes:          new(PostgresClusterBackupDaily).GetSchema().Attributes,

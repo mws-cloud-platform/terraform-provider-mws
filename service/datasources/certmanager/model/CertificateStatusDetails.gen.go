@@ -21,28 +21,32 @@ func (s *CertificateStatusDetails) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"serial": schema.StringAttribute{
-				MarkdownDescription: `Серийный номер сертификата.`,
+				MarkdownDescription: `Серийный номер сертификата`,
 				Computed:            true,
 			},
 			"issuer": schema.StringAttribute{
-				MarkdownDescription: `Издатель сертификата.`,
+				MarkdownDescription: `Издатель сертификата`,
 				Computed:            true,
 			},
 			"subject": schema.StringAttribute{
-				MarkdownDescription: `Владелец сертификата.`,
+				MarkdownDescription: `Владелец сертификата`,
 				Computed:            true,
 			},
 			"not_after": schema.StringAttribute{
-				MarkdownDescription: `Дата окончания срока действия сертификата.`,
-				Computed:            true,
+				MarkdownDescription: `Дата окончания срока действия сертификата
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"not_before": schema.StringAttribute{
-				MarkdownDescription: `Дата, с которой сертификат становится действительным.`,
-				Computed:            true,
+				MarkdownDescription: `Дата, с которой сертификат становится действительным
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"domains": schema.ListAttribute{
 				ElementType:         types.StringType,
-				MarkdownDescription: `Домены, к которым относится сертификат.`,
+				MarkdownDescription: `Домены, к которым относится сертификат`,
 				Computed:            true,
 			},
 		},

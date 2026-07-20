@@ -33,20 +33,19 @@ func (s *PostgresClusterStatus) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"state": schema.StringAttribute{
-				MarkdownDescription: `Состояние кластера
-  * "CREATING"     - Создается
-  * "RUNNING"      - Работает в штатном режиме
-  * "STOPPING"     - Останавливается
-  * "STOPPED"      - Остановлен
-  * "STARTING"     - Запуск ранее остановленного
-  * "UPDATING"     - Выполняется обновление
-  * "ERROR"        - Произошла ошибка, требуется участие команды поддержки
-  * "DELETING"     - Удаляется
-  * "DELETED"      - Удален
-  * "UNIDENTIFIED" - Не удается определить статус
-  * "RESTORING"    - Восстанавливается
-  * "MAINTENANCE"  - Ведутся работы по тех.обслуживанию
-`,
+				MarkdownDescription: `Состояние кластера:
+  * "CREATING"     - Создается;
+  * "RUNNING"      - Работает в штатном режиме;
+  * "STOPPING"     - Останавливается;
+  * "STOPPED"      - Остановлен;
+  * "STARTING"     - Запуск ранее остановленного;
+  * "UPDATING"     - Выполняется обновление;
+  * "ERROR"        - Произошла ошибка, требуется участие команды поддержки;
+  * "DELETING"     - Удаляется;
+  * "DELETED"      - Удален;
+  * "UNIDENTIFIED" - Не удается определить статус;
+  * "RESTORING"    - Восстанавливается;
+  * "MAINTENANCE"  - Ведутся работы по тех.обслуживанию`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"CREATING",
@@ -66,12 +65,11 @@ func (s *PostgresClusterStatus) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"health": schema.StringAttribute{
-				MarkdownDescription: `Работоспособность кластера
-  * "ALIVE"    - Полностью работоспособен
-  * "DEGRADED" - Деградирует (некоторые, но не все, экземпляры неработоспособны)
-  * "FAILED"   - Неработоспособен
-  * "UNKNOWN"  - Не удается определить состояние (на этапе создания)
-`,
+				MarkdownDescription: `Работоспособность кластера:
+  * "ALIVE"    - Полностью работоспособен;
+  * "DEGRADED" - Деградирует (некоторые, но не все, экземпляры неработоспособны);
+  * "FAILED"   - Неработоспособен;
+  * "UNKNOWN"  - Не удается определить состояние (на этапе создания)`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"ALIVE",
@@ -87,7 +85,7 @@ func (s *PostgresClusterStatus) GetSchema() schema.Schema {
 			},
 			"network": schema.SingleNestedAttribute{
 				Attributes:          new(PostgresStatusNetwork).GetSchema().Attributes,
-				MarkdownDescription: `Описание ip адресов для доступа к кластеру`,
+				MarkdownDescription: `Описание IP-адресов для доступа к кластеру`,
 				Computed:            true,
 			},
 			"instances": schema.ListNestedAttribute{

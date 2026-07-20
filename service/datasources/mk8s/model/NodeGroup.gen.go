@@ -37,12 +37,12 @@ Compute, на которых запускаются контейнеры с пр
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes,
-				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров.`,
+				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров`,
 				Computed:            true,
 			},
 			"status": schema.SingleNestedAttribute{
 				Attributes:          new(NodeGroupStatus).GetSchema().Attributes,
-				MarkdownDescription: `Описывает статусную модель k8s нод групп.`,
+				MarkdownDescription: `Описывает статусную модель k8s нод групп`,
 				Computed:            true,
 			},
 			"zone": schema.StringAttribute{
@@ -54,12 +54,18 @@ Compute, на которых запускаются контейнеры с пр
 			},
 			"vm_type": schema.SingleNestedAttribute{
 				Attributes:          new(NodeGroupSpecVmType).GetSchema().Attributes,
-				MarkdownDescription: `тип VM`,
+				MarkdownDescription: `Тип VM`,
 				Computed:            true,
 			},
 			"image_storage_size": schema.StringAttribute{
-				MarkdownDescription: `размер хранилища для image-ей и контейнеров. Размер в Gb`,
-				Computed:            true,
+				MarkdownDescription: `Размер хранилища для image-ей и контейнеров. Размер в Gb
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются`,
+				Computed: true,
 			},
 			"image_storage_iops": schema.Int64Attribute{
 				MarkdownDescription: `Количество операций ввода-вывода в секунду (IOPS) для хранилища image-ей и контейнеров`,
@@ -93,10 +99,9 @@ Compute, на которых запускаются контейнеры с пр
 			},
 			"service_account": schema.SingleNestedAttribute{
 				Attributes: new(NodeGroupSpecServiceAccount).GetSchema().Attributes,
-				MarkdownDescription: `serviceAccount необходим для поддержки функций:
+				MarkdownDescription: `ServiceAccount необходим для поддержки функций:
  - скачивания образов из облачного registry (права на чтение образов)
- - сбор системных метрик с worker нод (права на чтение статусов worker нод)
-`,
+ - сбор системных метрик с worker нод (права на чтение статусов worker нод)`,
 				Computed: true,
 			},
 		},

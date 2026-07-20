@@ -17,8 +17,10 @@ func (s *ClusterPrimaryEndpointSpec) GetSchema() schema.Schema {
 		MarkdownDescription: `Описание subnet пользователя, из которого будет выделен ip-адрес`,
 		Attributes: map[string]schema.Attribute{
 			"ip_address": schema.StringAttribute{
-				MarkdownDescription: `Желаемый IP адрес. Если не указан, то будет выделен из пула адресов подсети.`,
-				Computed:            true,
+				MarkdownDescription: `Желаемый IP адрес. Если не указан, то будет выделен из пула адресов подсети
+
+IPv4-адрес`,
+				Computed: true,
 			},
 			"subnet": schema.StringAttribute{
 				Computed: true,

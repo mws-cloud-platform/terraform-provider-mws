@@ -13,7 +13,7 @@ type ComputeOneToOneNatSpec struct {
 
 func (s *ComputeOneToOneNatSpec) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `NAT правило для связи внутреннего адреса с внешним адресом`,
+		MarkdownDescription: `NAT-правило для связи внутреннего адреса с внешним адресом.`,
 		Attributes: map[string]schema.Attribute{
 			"external": schema.SingleNestedAttribute{
 				Attributes:          new(ComputeOneToOneNatSpecExternal).GetSchema().Attributes,

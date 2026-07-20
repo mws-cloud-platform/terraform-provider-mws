@@ -7,7 +7,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -41,7 +40,7 @@ func (s *Certificate) GetSchema() schema.Schema {
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes,
-				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров.`,
+				MarkdownDescription: `Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров`,
 				Computed:            true,
 				Optional:            true,
 			},
@@ -51,19 +50,21 @@ func (s *Certificate) GetSchema() schema.Schema {
 			},
 			"self_managed_version": schema.Int64Attribute{
 				MarkdownDescription: `Increase this field's value if you want to force updating the associated write-only field.`,
-				Optional:            true,
 				Validators: []validator.Int64{
-					int64validator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("self_managed"))},
+					int64validator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("self_managed")),
+				},
+				Optional: true,
 				PlanModifiers: []planmodifier.Int64{
 					localint64planmodifier.RequiresReplaceIfRemoved(),
 				},
 			},
 			"self_managed": schema.SingleNestedAttribute{
 				Attributes: new(SelfManagedSpec).GetSchema().Attributes,
-				WriteOnly:  true,
-				Optional:   true,
 				Validators: []validator.Object{
-					objectvalidator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("self_managed_version"))},
+					objectvalidator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("self_managed_version")),
+				},
+				WriteOnly: true,
+				Optional:  true,
 				PlanModifiers: []planmodifier.Object{
 					localobjectplanmodifier.RequiresReplaceIfRemoved(),
 				},
@@ -71,9 +72,6 @@ func (s *Certificate) GetSchema() schema.Schema {
 			"managed": schema.SingleNestedAttribute{
 				Attributes: new(CertificateManagedSpec).GetSchema().Attributes,
 				Optional:   true,
-				PlanModifiers: []planmodifier.Object{
-					objectplanmodifier.RequiresReplaceIfConfigured(),
-				},
 			},
 		},
 	}

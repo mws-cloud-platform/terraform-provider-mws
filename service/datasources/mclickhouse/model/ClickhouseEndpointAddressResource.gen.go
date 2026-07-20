@@ -16,7 +16,7 @@ type ClickhouseEndpointAddressResource struct {
 
 func (s *ClickhouseEndpointAddressResource) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Описание эндпойнта кластера в пользовательской сети (VPC)`,
+		MarkdownDescription: `Описание эндпойнта кластера в пользовательской сети (VPC).`,
 		Attributes: map[string]schema.Attribute{
 			"ref": schema.StringAttribute{
 				MarkdownDescription: `Идентификатор адреса в VPC`,
@@ -27,14 +27,16 @@ func (s *ClickhouseEndpointAddressResource) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"ip_address": schema.StringAttribute{
-				MarkdownDescription: `Выделенный адрес.`,
-				Computed:            true,
+				MarkdownDescription: `Выделенный адрес
+
+IPv4- или IPv6-адрес`,
+				Computed: true,
 			},
 			"dns": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(ClickhouseEndpointAddressDnsResource).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Доменные имена.`,
+				MarkdownDescription: `Доменные имена`,
 				Computed:            true,
 			},
 		},

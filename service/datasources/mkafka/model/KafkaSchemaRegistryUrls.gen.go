@@ -17,7 +17,7 @@ func (s *KafkaSchemaRegistryUrls) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"urls": schema.ListAttribute{
 				ElementType:         types.StringType,
-				MarkdownDescription: `Список HTTPS URL Schema Registry.`,
+				MarkdownDescription: `Список HTTPS URL Schema Registry`,
 				Computed:            true,
 			},
 		},

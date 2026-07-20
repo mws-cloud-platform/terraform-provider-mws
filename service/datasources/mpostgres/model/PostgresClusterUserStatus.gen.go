@@ -4,12 +4,14 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 )
 
 type PostgresClusterUserStatus struct {
 	tfcommon.ResourceStatus
+	RoleBindings types.List `tfsdk:"role_bindings"`
 }
 
 func (s *PostgresClusterUserStatus) GetSchema() schema.Schema {
@@ -19,6 +21,13 @@ func (s *PostgresClusterUserStatus) GetSchema() schema.Schema {
 			"ready": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.ResourceStatusReady).GetSchema().Attributes,
 				MarkdownDescription: `Информация о статусе реконсиляции`,
+				Computed:            true,
+			},
+			"role_bindings": schema.ListNestedAttribute{
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: new(PostgresUserRoleBindingStatus).GetSchema().Attributes,
+				},
+				MarkdownDescription: `Список привязок ролей текущего пользователя`,
 				Computed:            true,
 			},
 		},

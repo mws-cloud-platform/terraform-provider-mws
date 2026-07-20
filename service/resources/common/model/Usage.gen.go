@@ -18,11 +18,11 @@ func (s *Usage) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"usage_type": schema.StringAttribute{
-				MarkdownDescription: `Тип связи. Помимо стандартных own и use могут быть добавлены специализированные типы для конкретных сервисов`,
+				MarkdownDescription: `Тип связи. Помимо стандартных "own" и "use" могут быть добавлены специализированные типы для конкретных сервисов`,
 				Computed:            true,
 			},
 			"name": schema.StringAttribute{
-				MarkdownDescription: `Имя связи, требуется для модификации коллекции`,
+				MarkdownDescription: `Имя связи. Требуется для модификации коллекции`,
 				Computed:            true,
 			},
 			"resource": schema.StringAttribute{

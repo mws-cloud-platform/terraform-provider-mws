@@ -42,11 +42,11 @@ func (m *DeploymentDataSource) Schema(ctx context.Context, req datasource.Schema
 	resp.Schema = new(tfmodel.Deployment).GetSchema()
 	resp.Schema.DeprecationMessage = `Отказываемся из-за разделения на input и output модальности`
 	resp.Schema.Attributes["deployment_name"] = schema.StringAttribute{
-		MarkdownDescription: `Параметр пути для имени деплоймента, уникальный в рамках проекта`,
+		MarkdownDescription: `Параметр пути для имени деплоймента, уникальный в рамках проекта.`,
 		Required:            true,
 	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к проекту`,
+		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
 	}

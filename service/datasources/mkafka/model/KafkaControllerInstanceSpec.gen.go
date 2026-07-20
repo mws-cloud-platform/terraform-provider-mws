@@ -23,19 +23,19 @@ func (s *KafkaControllerInstanceSpec) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"vm_type": schema.StringAttribute{
-				MarkdownDescription: `Тип виртуальной машины, описывающий ресурсы (vCPU, memory).`,
+				MarkdownDescription: `Тип виртуальной машины, описывающий ресурсы (vCPU, memory)`,
 				Computed:            true,
 			},
 			"disk": schema.SingleNestedAttribute{
 				Attributes:          new(KafkaDataDiskSpec).GetSchema().Attributes,
-				MarkdownDescription: `Параметры диска с данными на узле кластера.`,
+				MarkdownDescription: `Параметры диска с данными на узле кластера`,
 				Computed:            true,
 			},
 			"allocation": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(KafkaAllocation).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Параметры размещения контроллеров по зонам.`,
+				MarkdownDescription: `Параметры размещения контроллеров по зонам`,
 				Computed:            true,
 			},
 		},

@@ -11,7 +11,6 @@ import (
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
-	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
@@ -25,7 +24,12 @@ func ClickhouseInstanceDiskSpecAPIOptionalResponseToTFModel(ctx context.Context,
 
 	t.Size = types.StringValue(ptr.Value(am.Size.RawValue()))
 
-	t.Type = types.StringValue(am.Type.Path())
+	typeTmp, d := ClickhouseDataDiskTypeAPIToTFModel(ctx, &am.Type)
+	diags = append(diags, d...)
+	if diags.HasError() {
+		return nil, diags
+	}
+	t.Type = typeTmp
 
 	if val, ok := am.Iops.Get(); ok {
 		iopsTmp, d := IopsAPIToTFModel(ctx, &val)
@@ -51,7 +55,12 @@ func ClickhouseInstanceDiskSpecAPIResponseToTFModel(ctx context.Context, am *api
 
 	t.Size = types.StringValue(ptr.Value(am.Size.RawValue()))
 
-	t.Type = types.StringValue(am.Type.Path())
+	typeTmp, d := ClickhouseDataDiskTypeAPIToTFModel(ctx, &am.Type)
+	diags = append(diags, d...)
+	if diags.HasError() {
+		return nil, diags
+	}
+	t.Type = typeTmp
 
 	if am.Iops != nil {
 		iopsTmp, d := IopsAPIToTFModel(ctx, am.Iops)
@@ -85,12 +94,12 @@ func ClickhouseInstanceDiskSpecTFToAPIRequestModel(ctx context.Context, tm *tfmo
 	}
 
 	if !tm.Type.IsNull() && !tm.Type.IsUnknown() {
-		typeRef, err := compute.ParseDiskTypeRef(ctx, tm.Type.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
+		typeTmp, typeDiag := ClickhouseDataDiskTypeTFToAPIModel(ctx, tm.Type)
+		diags = append(diags, typeDiag...)
+		if diags.HasError() {
 			return nil, diags
 		}
-		am.Type = typeRef
+		am.Type = *typeTmp
 	}
 
 	if !tm.Iops.IsNull() && !tm.Iops.IsUnknown() {

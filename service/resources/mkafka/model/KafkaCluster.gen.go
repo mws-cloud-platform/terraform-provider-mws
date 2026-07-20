@@ -25,7 +25,7 @@ type KafkaCluster struct {
 	ProductConfig     types.String `tfsdk:"product_config"`
 	MaintenanceWindow types.Object `tfsdk:"maintenance_window"`
 	SchemaRegistry    types.Object `tfsdk:"schema_registry"`
-	AutoRebalance     types.Object `tfsdk:"auto_rebalance"`
+	Balancer          types.Object `tfsdk:"balancer"`
 }
 
 func (s *KafkaCluster) GetSchema() schema.Schema {
@@ -54,30 +54,30 @@ func (s *KafkaCluster) GetSchema() schema.Schema {
 				Computed:   true,
 			},
 			"active": schema.BoolAttribute{
-				MarkdownDescription: `Значение включен/выключен кластер.`,
+				MarkdownDescription: `Состояние кластера — включен или выключен`,
 				Optional:            true,
 				PlanModifiers: []planmodifier.Bool{
 					localboolplanmodifier.RequiresReplaceIfRemoved(),
 				},
 			},
 			"version": schema.StringAttribute{
-				MarkdownDescription: `Версия продукта.`,
+				MarkdownDescription: `Версия продукта`,
 				Required:            true,
 			},
 			"endpoints": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(KafkaEndpoint).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Описание эндпойнтов в сетях пользователя (VPC) для подключения к брокерам кластера.`,
+				MarkdownDescription: `Описание эндпойнтов в сетях пользователя (VPC) для подключения к брокерам кластера`,
 				Required:            true,
 			},
 			"instances": schema.SingleNestedAttribute{
 				Attributes:          new(KafkaInstance).GetSchema().Attributes,
-				MarkdownDescription: `Описание ресурсов хостов брокеров и контроллеров.`,
+				MarkdownDescription: `Описание ресурсов хостов брокеров и контроллеров`,
 				Required:            true,
 			},
 			"product_config": schema.StringAttribute{
-				MarkdownDescription: `Настройки Kafka. Если не указаны, будут использованы настройки по-умолчанию.`,
+				MarkdownDescription: `Настройки Kafka. Если не указаны, будут использованы настройки по умолчанию`,
 				Optional:            true,
 				PlanModifiers: []planmodifier.String{
 					localstringplanmodifier.RequiresReplaceIfRemoved(),
@@ -92,15 +92,15 @@ func (s *KafkaCluster) GetSchema() schema.Schema {
 			},
 			"schema_registry": schema.SingleNestedAttribute{
 				Attributes:          new(KafkaSchemaRegistrySpec).GetSchema().Attributes,
-				MarkdownDescription: `Настройка Schema Registry для кластера.`,
+				MarkdownDescription: `Настройка Schema Registry для кластера`,
 				Optional:            true,
 				PlanModifiers: []planmodifier.Object{
 					localobjectplanmodifier.RequiresReplaceIfRemoved(),
 				},
 			},
-			"auto_rebalance": schema.SingleNestedAttribute{
-				Attributes:          new(KafkaAutoRebalanceSpec).GetSchema().Attributes,
-				MarkdownDescription: `Настройка автоматической ребалансировки для кластера.`,
+			"balancer": schema.SingleNestedAttribute{
+				Attributes:          new(KafkaBalancerSpec).GetSchema().Attributes,
+				MarkdownDescription: `Настройка балансировщика кластера`,
 				Optional:            true,
 				PlanModifiers: []planmodifier.Object{
 					localobjectplanmodifier.RequiresReplaceIfRemoved(),
@@ -120,33 +120,44 @@ func (s *KafkaClusterMetadata) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля Metadata анонимного типа структуры KafkaCluster`,
 		Attributes: map[string]schema.Attribute{
 			"display_name": schema.StringAttribute{
-				MarkdownDescription: `Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов.`,
+				MarkdownDescription: `Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"create_time": schema.StringAttribute{
-				MarkdownDescription: `Дата создания объекта.`,
-				Computed:            true,
+				MarkdownDescription: `Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"delete_time": schema.StringAttribute{
-				MarkdownDescription: `Время запроса на удаление ресурса (не фактическое время удаления).`,
-				Computed:            true,
+				MarkdownDescription: `Время запроса на удаление ресурса (не фактическое время удаления)
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"purge_time": schema.StringAttribute{
-				Computed: true,
+				MarkdownDescription: `Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed:            true,
 			},
 			"usages": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(tfcommon.TypedUsage).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены.`,
+				MarkdownDescription: `Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены`,
 				Computed:            true,
 			},
 			"description": schema.StringAttribute{
-				MarkdownDescription: `Описание ресурса.`,
+				MarkdownDescription: `Описание ресурса`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"id": schema.StringAttribute{
-				MarkdownDescription: `ссылка на типизированный референс`,
+				MarkdownDescription: `Ссылка на типизированный референс`,
 				Computed:            true,
 			},
 		},

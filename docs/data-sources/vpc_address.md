@@ -29,16 +29,18 @@ data "mws_vpc_address" "address" {
 
 ### Optional
 
-- `project` (String) Путь к проекту
+- `project` (String) Путь к проекту.
 
 ### Read-Only
 
 - `dns` (Attributes List) (see [below for nested schema](#nestedatt--dns))
-- `ip_address` (String) Желаемый IP адрес. Если не указан, то будет выделен из пула адресов подсети.
+- `ip_address` (String) Желаемый IP адрес. Если не указан, то будет выделен из пула адресов подсети
+
+IPv4- или IPv6-адрес
 - `kind` (String)
-- `metadata` (Attributes) Метаданные адреса. (see [below for nested schema](#nestedatt--metadata))
-- `status` (Attributes) Статус адреса. (see [below for nested schema](#nestedatt--status))
-- `subnet` (String) Подсеть облачной сети к которой принадлежит адрес.
+- `metadata` (Attributes) Метаданные адреса (see [below for nested schema](#nestedatt--metadata))
+- `status` (Attributes) Статус адреса (see [below for nested schema](#nestedatt--status))
+- `subnet` (String) Подсеть облачной сети к которой принадлежит адрес
 
 <a id="nestedatt--dns"></a>
 ### Nested Schema for `dns`
@@ -47,7 +49,16 @@ Read-Only:
 
 - `name` (String) DNS-имя виртуальной машины в MWS Cloud Platform
 - `ptr` (Boolean) Создать обратную DNS-запись
-- `ttl` (String) продолжительность хранения DNS записи в кеше
+- `ttl` (String) Продолжительность хранения DNS записи в кеше
+
+Период времени. Поддерживаются следующие форматы:
+  - ISO 8601: P(n)DT(n)H(n)M(n)S. Допустимые единицы измерения: дни ("D"), часы ("H"), минуты ("M"), секунды ("S"). Только секунды могут быть дробными
+  - Простой формат. Допустимые единицы измерения: "d", "h", "m", "s", "ms", "us", "ns".
+    Величины должны следовать по убыванию единиц измерения
+  - Число в секундах
+
+Отрицательные значения обозначаются префиксом "-", в простом формате могут быть ограничены скобками.
+Регистр и пробелы игнорируются
 
 
 <a id="nestedatt--metadata"></a>
@@ -56,22 +67,28 @@ Read-Only:
 Read-Only:
 
 - `create_time` (String) Дата создания объекта
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `delete_time` (String) Время запроса на удаление ресурса
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `description` (String) Описание ресурса
 - `display_name` (String) Отображаемое имя свойства
 - `id` (String) ID свойства
-- `name` (String, Deprecated) Обязательное уникальное, глобально или в пределах проекта, имя. Используется в качестве части составного идентификатора объекта.
+- `name` (String, Deprecated) Обязательное уникальное, глобально или в пределах проекта, имя. Используется в качестве части составного идентификатора объекта
 - `purge_time` (String) Время удаления ресурса
-- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи, операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
 
 <a id="nestedatt--metadata--usages"></a>
 ### Nested Schema for `metadata.usages`
 
 Read-Only:
 
-- `name` (String) Имя связи, требуется для модификации коллекции
+- `name` (String) Имя связи. Требуется для модификации коллекции
 - `resource` (String) Ссылка на ресурс
-- `usage_type` (String) Тип связи. Помимо стандартных own и use могут быть добавлены специализированные типы для конкретных сервисов
+- `usage_type` (String) Тип связи. Помимо стандартных "own" и "use" могут быть добавлены специализированные типы для конкретных сервисов
 
 
 
@@ -80,7 +97,9 @@ Read-Only:
 
 Read-Only:
 
-- `ip_address` (String) Присвоенный адрес. Совпадает с запрошенным ipAddress из спецификации, если последний указан при создании адреса.
+- `ip_address` (String) Присвоенный адрес. Совпадает с запрошенным ipAddress из спецификации, если последний указан при создании адреса
+
+IPv4- или IPv6-адрес
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
 
 <a id="nestedatt--status--ready"></a>

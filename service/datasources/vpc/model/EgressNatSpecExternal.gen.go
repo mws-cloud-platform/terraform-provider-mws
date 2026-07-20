@@ -19,7 +19,7 @@ func (s *EgressNatSpecExternal) GetSchema() schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(ResourceExternalAddressSpecOrRef).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Список спецификаций внешних адресов, через которых будет осуществляться трансляция.`,
+				MarkdownDescription: `Список спецификаций внешних адресов, через которых будет осуществляться трансляция`,
 				Computed:            true,
 			},
 		},

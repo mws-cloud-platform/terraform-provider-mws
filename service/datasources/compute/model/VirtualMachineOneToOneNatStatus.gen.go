@@ -20,21 +20,18 @@ func (s *VirtualMachineOneToOneNatStatus) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"ref": schema.StringAttribute{
-				MarkdownDescription: `Ссылка на ресурс OneToOneNat
-`,
-				Computed: true,
+				MarkdownDescription: `Ссылка на ресурс OneToOneNat`,
+				Computed:            true,
 			},
 			"ready": schema.SingleNestedAttribute{
-				Attributes: new(tfcommon.ResourceStatusReady).GetSchema().Attributes,
-				MarkdownDescription: `Ссылка на ресурс состояние ресурса OneToOneNat
-`,
-				Computed: true,
+				Attributes:          new(tfcommon.ResourceStatusReady).GetSchema().Attributes,
+				MarkdownDescription: `Ссылка на ресурс состояние ресурса OneToOneNat`,
+				Computed:            true,
 			},
 			"external": schema.SingleNestedAttribute{
-				Attributes: new(OneToOneNatExternalAddressStatus).GetSchema().Attributes,
-				MarkdownDescription: `Статус внешнего (публичного) Адреса
-`,
-				Computed: true,
+				Attributes:          new(OneToOneNatExternalAddressStatus).GetSchema().Attributes,
+				MarkdownDescription: `Статус внешнего (публичного) Адреса`,
+				Computed:            true,
 			},
 		},
 	}

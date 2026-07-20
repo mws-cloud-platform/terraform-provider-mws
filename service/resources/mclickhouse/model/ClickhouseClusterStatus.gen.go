@@ -15,6 +15,7 @@ type ClickhouseClusterStatus struct {
 	tfcommon.ResourceStatus
 	Health  ClusterHealth `tfsdk:"health"`
 	State   ClusterState  `tfsdk:"state"`
+	Region  types.String  `tfsdk:"region"`
 	Cluster types.Object  `tfsdk:"cluster"`
 }
 
@@ -28,12 +29,11 @@ func (s *ClickhouseClusterStatus) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"health": schema.StringAttribute{
-				MarkdownDescription: `Работоспособность кластера
-  * "ALIVE"    - Полностью работоспособен
-  * "DEGRADED" - Деградирует (некоторые, но не все, экземпляры неработоспособны)
-  * "FAILED"   - Неработоспособен
-  * "UNKNOWN"  - Не удаётся определить состояние (на этапе создания)
-`,
+				MarkdownDescription: `Работоспособность кластера:
+  * "ALIVE"    - Полностью работоспособен;
+  * "DEGRADED" - Деградирует (некоторые, но не все, экземпляры неработоспособны);
+  * "FAILED"   - Неработоспособен;
+  * "UNKNOWN"  - Не удаётся определить состояние (на этапе создания)`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"ALIVE",
@@ -45,19 +45,18 @@ func (s *ClickhouseClusterStatus) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"state": schema.StringAttribute{
-				MarkdownDescription: `Состояние кластера
-  * "CREATING"     - Создаётся
-  * "RUNNING"      - Работает в штатном режиме
-  * "STOPPING"     - Останавливается
-  * "STOPPED"      - Остановлен
-  * "STARTING"     - Запуск ранее остановленного
-  * "UPDATING"     - Выполняется обновление
-  * "ERROR"        - Произошла ошибка, требуется участие команды поддержки
-  * "DELETING"     - Удаляется
-  * "DELETED"      - Удалён
-  * "UNIDENTIFIED" - Не удаётся определить статус
-  * "RESTORING"    - Восстанавливается
-`,
+				MarkdownDescription: `Состояние кластера:
+  * "CREATING"     - Создаётся;
+  * "RUNNING"      - Работает в штатном режиме;
+  * "STOPPING"     - Останавливается;
+  * "STOPPED"      - Остановлен;
+  * "STARTING"     - Запуск ранее остановленного;
+  * "UPDATING"     - Выполняется обновление;
+  * "ERROR"        - Произошла ошибка, требуется участие команды поддержки;
+  * "DELETING"     - Удаляется;
+  * "DELETED"      - Удалён;
+  * "UNIDENTIFIED" - Не удаётся определить статус;
+  * "RESTORING"    - Восстанавливается`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"CREATING",
@@ -75,9 +74,13 @@ func (s *ClickhouseClusterStatus) GetSchema() schema.Schema {
 				},
 				Computed: true,
 			},
+			"region": schema.StringAttribute{
+				MarkdownDescription: `Регион, в котором располагается кластер`,
+				Computed:            true,
+			},
 			"cluster": schema.SingleNestedAttribute{
 				Attributes:          new(ClickhouseClusterResource).GetSchema().Attributes,
-				MarkdownDescription: `Параметры объекта кластера.`,
+				MarkdownDescription: `Параметры объекта кластера`,
 				Computed:            true,
 			},
 		},

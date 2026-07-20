@@ -17,12 +17,12 @@ func (s *ClickhouseInstanceHWResources) GetSchema() schema.Schema {
 		MarkdownDescription: `Параметры виртуальной машины, где будут работать инстансы Clickhouse данного шарда.`,
 		Attributes: map[string]schema.Attribute{
 			"vm_type": schema.StringAttribute{
-				MarkdownDescription: `Тип виртуальной машины, описывающий ресурсы (vCPU, memory).`,
+				MarkdownDescription: `Тип виртуальной машины, описывающий ресурсы (vCPU, memory)`,
 				Required:            true,
 			},
 			"disk": schema.SingleNestedAttribute{
 				Attributes:          new(ClickhouseInstanceDiskSpec).GetSchema().Attributes,
-				MarkdownDescription: `Параметры диска.`,
+				MarkdownDescription: `Параметры диска`,
 				Required:            true,
 			},
 		},

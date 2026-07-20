@@ -24,7 +24,7 @@ func KafkaEndpointStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.K
 
 	t.Name = types.StringValue(am.Name)
 
-	t.Network = types.StringValue(am.Network.Path())
+	t.Network = types.StringValue(am.Network.ID())
 
 	if am.BootstrapServers != nil {
 		t.BootstrapServers = types.StringPointerValue(am.BootstrapServers)

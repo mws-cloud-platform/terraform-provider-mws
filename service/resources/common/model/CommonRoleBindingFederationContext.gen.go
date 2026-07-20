@@ -17,7 +17,7 @@ func (s *CommonRoleBindingFederationContext) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"subject": schema.StringAttribute{
-				MarkdownDescription: `Идентификатор субъекта федерации.`,
+				MarkdownDescription: `Идентификатор субъекта федерации`,
 				Optional:            true,
 			},
 			"attribute": schema.SingleNestedAttribute{

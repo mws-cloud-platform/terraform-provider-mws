@@ -16,7 +16,7 @@ resource "mws_vpc_address" "broker_addr_1" {
 
 resource "mws_mkafka_cluster" "example" {
   cluster = var.kafka_name
-  version = "3.6.0-mws.1"
+  version = "4.0"
 
   metadata = {
     display_name = "Example Kafka Cluster"

@@ -18,7 +18,7 @@ func (s *ClusterPublicEndpointSpec) GetSchema() schema.Schema {
 		MarkdownDescription: `Ожидаем пустой объект в случае автоматического выделения внешнего ip-адреса`,
 		Attributes: map[string]schema.Attribute{
 			"version": schema.StringAttribute{
-				MarkdownDescription: `Версия IP протокола.`,
+				MarkdownDescription: `Версия IP протокола`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"IPV4",
