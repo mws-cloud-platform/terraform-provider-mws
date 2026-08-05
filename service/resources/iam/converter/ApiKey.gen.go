@@ -75,6 +75,12 @@ func ApiKeyAPIResponseToTFModel(ctx context.Context, am *apimodel.ApiKeyResponse
 		t.ExpireTime = types.StringNull()
 	}
 
+	if am.Spec.Active != nil {
+		t.Active = types.BoolPointerValue(am.Spec.Active)
+	} else {
+		t.Active = types.BoolNull()
+	}
+
 	return &t, diags
 }
 
@@ -109,6 +115,10 @@ func ApiKeyTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ApiKey) (*apimod
 			return nil, diags
 		}
 		am.Spec.ExpireTime = &tmpExpireTime
+	}
+
+	if !tm.Active.IsNull() && !tm.Active.IsUnknown() {
+		am.Spec.Active = tm.Active.ValueBoolPointer()
 	}
 
 	return &am, diags

@@ -51,5 +51,11 @@ func AuthorizedKeyStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.A
 		t.LastAuthTime = types.StringNull()
 	}
 
+	if am.Active != nil {
+		t.Active = types.BoolPointerValue(am.Active)
+	} else {
+		t.Active = types.BoolNull()
+	}
+
 	return &t, diags
 }

@@ -28,7 +28,7 @@ type ResmanagerRegionSuite struct {
 }
 
 func (s *ResmanagerRegionSuite) TestResmanagerRegionDataSource() {
-	regionName := "ru-central1"
+	const regionName = "ru-central1"
 
 	steps := []resource.TestStep{
 		{

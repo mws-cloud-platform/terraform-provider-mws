@@ -1,0 +1,56 @@
+package resmanager
+
+import (
+	_ "embed"
+	"fmt"
+	"testing"
+
+	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
+	"github.com/stretchr/testify/suite"
+
+	"go.mws.cloud/terraform-provider-mws/acctest/utils"
+)
+
+var (
+	//go:embed testdata/enabled_service.tf
+	enabledServiceResourceTF string
+)
+
+func TestResmanagerEnabledServiceSuite(t *testing.T) {
+	t.Parallel()
+	suite.Run(t, new(ResmanagerEnabledServiceSuite))
+}
+
+type ResmanagerEnabledServiceSuite struct {
+	utils.Suite
+}
+
+func (s *ResmanagerEnabledServiceSuite) TestResmanagerEnabledServiceDataSource() {
+	const enabledServiceName = "compute"
+
+	steps := []resource.TestStep{
+		{
+			Config: fmt.Sprintf(enabledServiceResourceTF, enabledServiceName),
+			// verify that no changes are planned for the same config
+			ConfigPlanChecks: resource.ConfigPlanChecks{
+				PreApply: []plancheck.PlanCheck{
+					plancheck.ExpectEmptyPlan(),
+				},
+			},
+			Check: func(state *terraform.State) error {
+				return resource.TestCheckResourceAttr(
+					"mws_resmanager_enabled_service.service",
+					"service",
+					enabledServiceName,
+				)(state)
+			},
+		},
+	}
+	tc := resource.TestCase{
+		Steps:                    steps,
+		ProtoV6ProviderFactories: utils.ProtoV6ProviderFactories(),
+	}
+	resource.Test(s.T(), tc)
+}

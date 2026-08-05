@@ -45,6 +45,7 @@ data "mws_mkafka_cluster" "mkafka_kafka" {
 - `maintenance_window` (Attributes) (see [below for nested schema](#nestedatt--maintenance_window))
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
 - `product_config` (String) Настройки Kafka. Если не указаны, будут использованы настройки по умолчанию
+- `region` (String) Регион, которому принадлежит кластер
 - `schema_registry` (Attributes) Настройка Schema Registry для кластера (see [below for nested schema](#nestedatt--schema_registry))
 - `status` (Attributes) (see [below for nested schema](#nestedatt--status))
 - `version` (String) Версия продукта
@@ -270,6 +271,7 @@ Read-Only:
 - `maintenance_window` (Attributes) (see [below for nested schema](#nestedatt--status--maintenance_window))
 - `message` (String)
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
+- `region` (String) Регион, которому принадлежит кластер
 - `schema_registry` (Attributes) Настройка Schema Registry для кластера (see [below for nested schema](#nestedatt--status--schema_registry))
 - `state` (String) Состояние кластера:
   * "CREATING"     - Создаётся;

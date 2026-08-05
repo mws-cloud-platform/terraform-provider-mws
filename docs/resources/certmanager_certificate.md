@@ -72,9 +72,32 @@ Required:
 
 Optional:
 
+- `issuer` (Attributes) Конфигурация провайдера выпуска сертификата (see [below for nested schema](#nestedatt--managed--issuer))
 - `preferred_challenge_type` (String) Предпочтительный тип проверки домена (challenge).
 Возможные значения: DNS01 или HTTP01. По умолчанию используется DNS01
 - `provider` (String) Провайдер сертификатов, например Let's Encrypt или другой центр сертификации
+
+<a id="nestedatt--managed--issuer"></a>
+### Nested Schema for `managed.issuer`
+
+Optional:
+
+- `acme` (Attributes) (see [below for nested schema](#nestedatt--managed--issuer--acme))
+
+<a id="nestedatt--managed--issuer--acme"></a>
+### Nested Schema for `managed.issuer.acme`
+
+Required:
+
+- `challenge_type` (String) Предпочтительный тип проверки домена (challenge).
+Возможные значения: DNS01 или HTTP01. По умолчанию используется DNS01
+- `server` (String) ACME-сервер для выпуска сертификата
+
+Optional:
+
+- `profile` (String) Профиль сертификата
+
+
 
 
 <a id="nestedatt--metadata"></a>

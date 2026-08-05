@@ -37,6 +37,7 @@ data "mws_mpostgres_cluster" "mpostgres_cluster" {
 - `instance_template` (Attributes) (see [below for nested schema](#nestedatt--instance_template))
 - `instances` (Attributes List) (see [below for nested schema](#nestedatt--instances))
 - `kind` (String)
+- `logging_enabled` (Boolean) Выгрузка пользовательских логов кластера — включена или выключена
 - `maintenance_window` (Attributes) (see [below for nested schema](#nestedatt--maintenance_window))
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
 - `postgres_parameters` (Map of String) Параметры PostgreSQL. Если не указаны, будут использованы параметры по умолчанию

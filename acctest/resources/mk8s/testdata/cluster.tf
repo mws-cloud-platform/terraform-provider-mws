@@ -32,6 +32,6 @@ resource "mws_mk8s_cluster" "cluster" {
         hour    = 3
       }
     }
-    version = "v1.34.1-mws.1"
+    version = "v1.35.6-mws.4"
   }
 }

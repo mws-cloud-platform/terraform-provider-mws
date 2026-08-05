@@ -42,9 +42,29 @@ data "mws_certmanager_certificate" "certificate" {
 Read-Only:
 
 - `domains` (List of String) Список доменов, для которых будет выдан сертификат
+- `issuer` (Attributes) Конфигурация провайдера выпуска сертификата (see [below for nested schema](#nestedatt--managed--issuer))
 - `preferred_challenge_type` (String) Предпочтительный тип проверки домена (challenge).
 Возможные значения: DNS01 или HTTP01. По умолчанию используется DNS01
 - `provider` (String) Провайдер сертификатов, например Let's Encrypt или другой центр сертификации
+
+<a id="nestedatt--managed--issuer"></a>
+### Nested Schema for `managed.issuer`
+
+Read-Only:
+
+- `acme` (Attributes) (see [below for nested schema](#nestedatt--managed--issuer--acme))
+
+<a id="nestedatt--managed--issuer--acme"></a>
+### Nested Schema for `managed.issuer.acme`
+
+Read-Only:
+
+- `challenge_type` (String) Предпочтительный тип проверки домена (challenge).
+Возможные значения: DNS01 или HTTP01. По умолчанию используется DNS01
+- `profile` (String) Профиль сертификата
+- `server` (String) ACME-сервер для выпуска сертификата
+
+
 
 
 <a id="nestedatt--metadata"></a>

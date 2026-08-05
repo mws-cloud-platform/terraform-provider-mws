@@ -98,6 +98,24 @@ func ClusterStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.Cluster
 		t.ClusterStatus = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.ClusterStatusClusterStatus).GetSchema().Attributes))
 	}
 
+	if am.Plugins != nil {
+		pluginsTmp, d := PluginsStatusAPIResponseToTFModel(ctx, am.Plugins)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		pluginsTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.PluginsStatus).GetSchema().Attributes),
+			*pluginsTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.Plugins = pluginsTfObject
+	} else {
+		t.Plugins = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.PluginsStatus).GetSchema().Attributes))
+	}
+
 	return &t, diags
 }
 

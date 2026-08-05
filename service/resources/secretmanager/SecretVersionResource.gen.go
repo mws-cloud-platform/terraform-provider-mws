@@ -196,7 +196,7 @@ func (m *SecretVersionResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.SecretVersionAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -251,7 +251,7 @@ func (m *SecretVersionResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.SecretVersionAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -353,7 +353,7 @@ func (m *SecretVersionResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.SecretVersionAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -444,7 +444,7 @@ func (m *SecretVersionResource) ImportState(ctx context.Context, req resource.Im
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.SecretVersionAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)

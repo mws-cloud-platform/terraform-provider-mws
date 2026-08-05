@@ -72,7 +72,7 @@ resource "mws_mk8s_cluster" "example" {
         hour = 3
       }
     }
-    version = "v1.34.1-mws.1" // or actual
+    version = "v1.35.6-mws.4" // or actual
   }
 }
 
@@ -139,6 +139,7 @@ variable "services_cidr" {
 
 - `kind` (String)
 - `metadata` (Attributes) Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров (see [below for nested schema](#nestedatt--metadata))
+- `plugins` (Attributes) (see [below for nested schema](#nestedatt--plugins))
 - `project` (String) Путь к проекту.
 - `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 
@@ -307,6 +308,23 @@ Read-Only:
 
 
 
+<a id="nestedatt--plugins"></a>
+### Nested Schema for `plugins`
+
+Optional:
+
+- `cni` (Attributes) Настройка CNI-плагина для кластера; для создания кластера без CNI передайте пустой объект (see [below for nested schema](#nestedatt--plugins--cni))
+
+<a id="nestedatt--plugins--cni"></a>
+### Nested Schema for `plugins.cni`
+
+Optional:
+
+- `calico` (String) Настройка CNI-плагина Calico
+- `cilium` (String) Настройка CNI-плагина Cilium
+
+
+
 <a id="nestedatt--timeouts"></a>
 ### Nested Schema for `timeouts`
 
@@ -325,6 +343,7 @@ Read-Only:
 - `cluster_ca_certificate` (String) Root сертификат кластера
 - `cluster_status` (Attributes) (see [below for nested schema](#nestedatt--status--cluster_status))
 - `network` (Attributes) (see [below for nested schema](#nestedatt--status--network))
+- `plugins` (Attributes) (see [below for nested schema](#nestedatt--status--plugins))
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
 - `version_control` (Attributes) (see [below for nested schema](#nestedatt--status--version_control))
 
@@ -379,6 +398,23 @@ Read-Only:
 Read-Only:
 
 - `ref` (String)
+
+
+
+<a id="nestedatt--status--plugins"></a>
+### Nested Schema for `status.plugins`
+
+Read-Only:
+
+- `cni` (Attributes) (see [below for nested schema](#nestedatt--status--plugins--cni))
+
+<a id="nestedatt--status--plugins--cni"></a>
+### Nested Schema for `status.plugins.cni`
+
+Read-Only:
+
+- `calico` (String) Настройка CNI-плагина Calico
+- `cilium` (String) Настройка CNI-плагина Cilium
 
 
 

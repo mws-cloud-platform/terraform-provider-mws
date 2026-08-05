@@ -15,6 +15,7 @@ type KafkaCluster struct {
 	Status            types.Object `tfsdk:"status"`
 	Active            types.Bool   `tfsdk:"active"`
 	Version           types.String `tfsdk:"version"`
+	Region            types.String `tfsdk:"region"`
 	Endpoints         types.List   `tfsdk:"endpoints"`
 	Instances         types.Object `tfsdk:"instances"`
 	ProductConfig     types.String `tfsdk:"product_config"`
@@ -48,6 +49,10 @@ func (s *KafkaCluster) GetSchema() schema.Schema {
 			},
 			"version": schema.StringAttribute{
 				MarkdownDescription: `Версия продукта`,
+				Computed:            true,
+			},
+			"region": schema.StringAttribute{
+				MarkdownDescription: `Регион, которому принадлежит кластер`,
 				Computed:            true,
 			},
 			"endpoints": schema.ListNestedAttribute{

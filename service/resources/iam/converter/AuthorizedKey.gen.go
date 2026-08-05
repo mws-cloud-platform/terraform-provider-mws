@@ -12,21 +12,20 @@ import (
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	common "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
-	"go.mws.cloud/go-sdk/service/resources/references/mpostgres"
+	apimodel "go.mws.cloud/go-sdk/service/iam/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
-	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/iam/model"
 )
 
-func PostgresRoleBindingAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresRoleBindingResponse) (*tfmodel.PostgresRoleBinding, tfdiag.Diagnostics) {
+func AuthorizedKeyAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.AuthorizedKeyOptionalResponse) (*tfmodel.AuthorizedKey, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var t tfmodel.PostgresRoleBinding
+	var t tfmodel.AuthorizedKey
 
 	if am.Kind != nil {
 		t.Kind = types.StringPointerValue(am.Kind)
@@ -34,14 +33,14 @@ func PostgresRoleBindingAPIResponseToTFModel(ctx context.Context, am *apimodel.P
 		t.Kind = types.StringNull()
 	}
 
-	if am.Metadata != nil {
-		metadataTmp, d := PostgresRoleBindingMetadataAPIResponseToTFModel(ctx, am.Metadata)
+	if val, ok := am.Metadata.Get(); ok {
+		metadataTmp, d := AuthorizedKeyMetadataAPIOptionalResponseToTFModel(ctx, &val)
 		diags = append(diags, d...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		metadataTfObject, d := types.ObjectValueFrom(ctx,
-			tfconv.GetAttributesTypes(new(tfmodel.PostgresRoleBindingMetadata).GetSchema().Attributes),
+			tfconv.GetAttributesTypes(new(tfmodel.AuthorizedKeyMetadata).GetSchema().Attributes),
 			*metadataTmp)
 		diags = append(diags, d...)
 		if diags.HasError() {
@@ -49,17 +48,17 @@ func PostgresRoleBindingAPIResponseToTFModel(ctx context.Context, am *apimodel.P
 		}
 		t.Metadata = metadataTfObject
 	} else {
-		t.Metadata = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.PostgresRoleBindingMetadata).GetSchema().Attributes))
+		t.Metadata = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.AuthorizedKeyMetadata).GetSchema().Attributes))
 	}
 
 	if am.Status != nil {
-		statusTmp, d := PostgresRoleBindingStatusAPIResponseToTFModel(ctx, am.Status)
+		statusTmp, d := AuthorizedKeyStatusAPIResponseToTFModel(ctx, am.Status)
 		diags = append(diags, d...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		statusTfObject, d := types.ObjectValueFrom(ctx,
-			tfconv.GetAttributesTypes(new(tfmodel.PostgresRoleBindingStatus).GetSchema().Attributes),
+			tfconv.GetAttributesTypes(new(tfmodel.AuthorizedKeyStatus).GetSchema().Attributes),
 			*statusTmp)
 		diags = append(diags, d...)
 		if diags.HasError() {
@@ -67,50 +66,49 @@ func PostgresRoleBindingAPIResponseToTFModel(ctx context.Context, am *apimodel.P
 		}
 		t.Status = statusTfObject
 	} else {
-		t.Status = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.PostgresRoleBindingStatus).GetSchema().Attributes))
+		t.Status = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.AuthorizedKeyStatus).GetSchema().Attributes))
 	}
 
-	t.UserId = types.StringValue(am.Spec.UserId.Path())
-
-	if am.Spec.DatabaseId != nil {
-		t.DatabaseId = types.StringPointerValue(ptr.Get(am.Spec.DatabaseId.Path()))
+	if val, ok := am.Spec.PublicKey.Get(); ok {
+		t.PublicKey = types.StringValue(val)
 	} else {
-		t.DatabaseId = types.StringNull()
+		t.PublicKey = types.StringNull()
 	}
 
-	roleTmp, d := PostgresRoleBindingRoleAPIToTFModel(ctx, &am.Spec.Role)
-	diags = append(diags, d...)
-	if diags.HasError() {
-		return nil, diags
-	}
-	t.Role = roleTmp
+	t.KeyAlgorithm = types.StringValue(am.Spec.KeyAlgorithm)
 
-	if am.Spec.ExpiresAt != nil {
-		t.ExpiresAt = types.StringPointerValue(ptr.Get(am.Spec.ExpiresAt.Format(time.RFC3339)))
+	if val, ok := am.Spec.ExpirationTime.Get(); ok {
+		t.ExpirationTime = types.StringPointerValue(ptr.Get(val.Format(time.RFC3339)))
 	} else {
-		t.ExpiresAt = types.StringNull()
+		t.ExpirationTime = types.StringNull()
+	}
+
+	if val, ok := am.Spec.Active.Get(); ok {
+		t.Active = types.BoolValue(val)
+	} else {
+		t.Active = types.BoolNull()
 	}
 
 	return &t, diags
 }
 
-func PostgresRoleBindingTFToAPIRequestModel(ctx context.Context, tm *tfmodel.PostgresRoleBinding) (*apimodel.PostgresRoleBindingRequest, tfdiag.Diagnostics) {
+func AuthorizedKeyTFToAPIRequestModel(ctx context.Context, tm *tfmodel.AuthorizedKey) (*apimodel.AuthorizedKeyRequest, tfdiag.Diagnostics) {
 	if tm == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresRoleBindingRequest
+	var am apimodel.AuthorizedKeyRequest
 
 	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfmodel.PostgresRoleBindingMetadata{}
+		metadataTfModel := tfmodel.AuthorizedKeyMetadata{}
 		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := PostgresRoleBindingMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := AuthorizedKeyMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -118,55 +116,40 @@ func PostgresRoleBindingTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Pos
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.UserId.IsNull() && !tm.UserId.IsUnknown() {
-		userIdRef, err := mpostgres.ParsePostgresClusterUserRef(ctx, tm.UserId.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Spec.UserId = userIdRef
+	if !tm.PublicKey.IsNull() && !tm.PublicKey.IsUnknown() {
+		am.Spec.PublicKey = tm.PublicKey.ValueStringPointer()
 	}
 
-	if !tm.DatabaseId.IsNull() && !tm.DatabaseId.IsUnknown() {
-		databaseIdRef, err := mpostgres.ParsePostgresClusterDatabaseRef(ctx, tm.DatabaseId.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Spec.DatabaseId = &databaseIdRef
+	if !tm.KeyAlgorithm.IsNull() && !tm.KeyAlgorithm.IsUnknown() {
+		am.Spec.KeyAlgorithm = tm.KeyAlgorithm.ValueString()
 	}
 
-	if !tm.Role.IsNull() && !tm.Role.IsUnknown() {
-		roleTmp, roleDiag := PostgresRoleBindingRoleTFToAPIModel(ctx, tm.Role)
-		diags = append(diags, roleDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Role = *roleTmp
-	}
-
-	if !tm.ExpiresAt.IsNull() && !tm.ExpiresAt.IsUnknown() {
-		tmpExpiresAt, err := time.Parse(time.RFC3339, tm.ExpiresAt.ValueString())
+	if !tm.ExpirationTime.IsNull() && !tm.ExpirationTime.IsUnknown() {
+		tmpExpirationTime, err := time.Parse(time.RFC3339, tm.ExpirationTime.ValueString())
 		if err != nil {
 			diags.AddError("time string parsing", err.Error())
 			return nil, diags
 		}
-		am.Spec.ExpiresAt = &tmpExpiresAt
+		am.Spec.ExpirationTime = &tmpExpirationTime
+	}
+
+	if !tm.Active.IsNull() && !tm.Active.IsUnknown() {
+		am.Spec.Active = tm.Active.ValueBoolPointer()
 	}
 
 	return &am, diags
 }
 
-func PostgresRoleBindingMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresRoleBindingMetadataResponse) (*tfmodel.PostgresRoleBindingMetadata, tfdiag.Diagnostics) {
+func AuthorizedKeyMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.AuthorizedKeyMetadataOptionalResponse) (*tfmodel.AuthorizedKeyMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var t tfmodel.PostgresRoleBindingMetadata
+	var t tfmodel.AuthorizedKeyMetadata
 
-	if am.DisplayName != nil {
-		t.DisplayName = types.StringPointerValue(am.DisplayName)
+	if val, ok := am.DisplayName.Get(); ok {
+		t.DisplayName = types.StringValue(val)
 	} else {
 		t.DisplayName = types.StringNull()
 	}
@@ -189,11 +172,11 @@ func PostgresRoleBindingMetadataAPIResponseToTFModel(ctx context.Context, am *ap
 		t.PurgeTime = types.StringNull()
 	}
 
-	if am.Usages != nil {
-		usages := make([]tfcommon.TypedUsage, 0, len(am.Usages))
+	if val, ok := am.Usages.Get(); ok {
+		usages := make([]tfcommon.TypedUsage, 0, len(val))
 
-		for _, entity := range am.Usages {
-			tmp, d := commonconv.TypedUsageAPIResponseToTFModel(ctx, &entity)
+		for _, entity := range val {
+			tmp, d := commonconv.TypedUsageAPIOptionalResponseToTFModel(ctx, &entity)
 			diags = append(diags, d...)
 			if diags.HasError() {
 				return nil, diags
@@ -216,8 +199,8 @@ func PostgresRoleBindingMetadataAPIResponseToTFModel(ctx context.Context, am *ap
 		})
 	}
 
-	if am.Description != nil {
-		t.Description = types.StringPointerValue(am.Description)
+	if val, ok := am.Description.Get(); ok {
+		t.Description = types.StringValue(val)
 	} else {
 		t.Description = types.StringNull()
 	}
@@ -231,13 +214,13 @@ func PostgresRoleBindingMetadataAPIResponseToTFModel(ctx context.Context, am *ap
 	return &t, diags
 }
 
-func PostgresRoleBindingMetadataTFToAPIRequestModel(ctx context.Context, tm *tfmodel.PostgresRoleBindingMetadata) (*apimodel.PostgresRoleBindingMetadataRequest, tfdiag.Diagnostics) {
+func AuthorizedKeyMetadataTFToAPIRequestModel(ctx context.Context, tm *tfmodel.AuthorizedKeyMetadata) (*apimodel.AuthorizedKeyMetadataRequest, tfdiag.Diagnostics) {
 	if tm == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresRoleBindingMetadataRequest
+	var am apimodel.AuthorizedKeyMetadataRequest
 
 	if !tm.DisplayName.IsNull() && !tm.DisplayName.IsUnknown() {
 		am.DisplayName = tm.DisplayName.ValueStringPointer()

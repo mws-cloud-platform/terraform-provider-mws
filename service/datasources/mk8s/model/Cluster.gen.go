@@ -16,6 +16,7 @@ type Cluster struct {
 	Availability   types.Object `tfsdk:"availability"`
 	Network        types.Object `tfsdk:"network"`
 	VersionControl types.Object `tfsdk:"version_control"`
+	Plugins        types.Object `tfsdk:"plugins"`
 }
 
 func (s *Cluster) GetSchema() schema.Schema {
@@ -48,6 +49,10 @@ Plane (управляющего слоя) и групп рабочих узло�
 			},
 			"version_control": schema.SingleNestedAttribute{
 				Attributes: new(ClusterVersionControlSpec).GetSchema().Attributes,
+				Computed:   true,
+			},
+			"plugins": schema.SingleNestedAttribute{
+				Attributes: new(PluginsSpec).GetSchema().Attributes,
 				Computed:   true,
 			},
 		},

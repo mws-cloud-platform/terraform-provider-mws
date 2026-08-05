@@ -18,7 +18,7 @@ type Zone struct {
 
 func (s *Zone) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Зона доступности — это изолированный сегмент облачной инфраструктуры в пределах региона`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,

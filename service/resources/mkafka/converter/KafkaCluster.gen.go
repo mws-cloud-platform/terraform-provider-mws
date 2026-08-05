@@ -13,6 +13,7 @@ import (
 
 	common "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/resources/references/rm"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
@@ -76,6 +77,12 @@ func KafkaClusterAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaClu
 	}
 
 	t.Version = types.StringValue(am.Spec.Version)
+
+	if am.Spec.Region != nil {
+		t.Region = types.StringPointerValue(ptr.Get(am.Spec.Region.Path()))
+	} else {
+		t.Region = types.StringNull()
+	}
 
 	if am.Spec.Endpoints != nil {
 		endpoints := make([]tfmodel.KafkaEndpoint, 0, len(am.Spec.Endpoints))
@@ -211,6 +218,15 @@ func KafkaClusterTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaClust
 
 	if !tm.Version.IsNull() && !tm.Version.IsUnknown() {
 		am.Spec.Version = tm.Version.ValueString()
+	}
+
+	if !tm.Region.IsNull() && !tm.Region.IsUnknown() {
+		regionRef, err := rm.ParseRegionRef(ctx, tm.Region.ValueString())
+		if err != nil {
+			diags.AddError("reference parsing", err.Error())
+			return nil, diags
+		}
+		am.Spec.Region = &regionRef
 	}
 
 	if !tm.Endpoints.IsNull() && !tm.Endpoints.IsUnknown() {

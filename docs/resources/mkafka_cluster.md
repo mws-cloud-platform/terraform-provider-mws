@@ -169,6 +169,7 @@ variable "kafka_name" {
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
 - `product_config` (String) Настройки Kafka. Если не указаны, будут использованы настройки по умолчанию
 - `project` (String) Путь к проекту.
+- `region` (String) Регион, которому принадлежит кластер
 - `schema_registry` (Attributes) Настройка Schema Registry для кластера (see [below for nested schema](#nestedatt--schema_registry))
 - `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 
@@ -429,6 +430,7 @@ Read-Only:
 - `maintenance_window` (Attributes) (see [below for nested schema](#nestedatt--status--maintenance_window))
 - `message` (String)
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
+- `region` (String) Регион, которому принадлежит кластер
 - `schema_registry` (Attributes) Настройка Schema Registry для кластера (see [below for nested schema](#nestedatt--status--schema_registry))
 - `state` (String) Состояние кластера:
   * "CREATING"     - Создаётся;

@@ -122,6 +122,7 @@ variable "subnet_cidr" {
 
 - `backup` (Attributes) Спецификация автоматического бэкапирования (see [below for nested schema](#nestedatt--backup))
 - `kind` (String)
+- `logging_enabled` (Boolean) Выгрузка пользовательских логов кластера — включена или выключена
 - `maintenance_window` (Attributes) (see [below for nested schema](#nestedatt--maintenance_window))
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
 - `postgres_parameters` (Map of String) Параметры PostgreSQL. Если не указаны, будут использованы параметры по умолчанию

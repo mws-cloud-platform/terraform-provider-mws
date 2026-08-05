@@ -3,30 +3,29 @@
 package model
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
+	localboolplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/boolplanmodifier"
 	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
-type PostgresRoleBinding struct {
-	Kind       types.String            `tfsdk:"kind"`
-	Metadata   types.Object            `tfsdk:"metadata"`
-	Status     types.Object            `tfsdk:"status"`
-	UserId     types.String            `tfsdk:"user_id"`
-	DatabaseId types.String            `tfsdk:"database_id"`
-	Role       PostgresRoleBindingRole `tfsdk:"role"`
-	ExpiresAt  types.String            `tfsdk:"expires_at"`
+type AuthorizedKey struct {
+	Kind           types.String `tfsdk:"kind"`
+	Metadata       types.Object `tfsdk:"metadata"`
+	Status         types.Object `tfsdk:"status"`
+	PublicKey      types.String `tfsdk:"public_key"`
+	KeyAlgorithm   types.String `tfsdk:"key_algorithm"`
+	ExpirationTime types.String `tfsdk:"expiration_time"`
+	Active         types.Bool   `tfsdk:"active"`
 }
 
-func (s *PostgresRoleBinding) GetSchema() schema.Schema {
+func (s *AuthorizedKey) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Привязка роли, определяющей права доступа пользователя к базе данных.`,
+		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,
@@ -37,59 +36,47 @@ func (s *PostgresRoleBinding) GetSchema() schema.Schema {
 				},
 			},
 			"metadata": schema.SingleNestedAttribute{
-				Attributes: new(PostgresRoleBindingMetadata).GetSchema().Attributes,
+				Attributes: new(AuthorizedKeyMetadata).GetSchema().Attributes,
 				Computed:   true,
 				Optional:   true,
 			},
 			"status": schema.SingleNestedAttribute{
-				Attributes: new(PostgresRoleBindingStatus).GetSchema().Attributes,
+				Attributes: new(AuthorizedKeyStatus).GetSchema().Attributes,
 				Computed:   true,
 			},
-			"user_id": schema.StringAttribute{
-				MarkdownDescription: `Идентификатор пользователя, которому назначается роль`,
-				Required:            true,
-			},
-			"database_id": schema.StringAttribute{
-				MarkdownDescription: `Идентификатор базы данных, в которой пользователю назначена роль; "null" — если роль глобальная`,
+			"public_key": schema.StringAttribute{
+				MarkdownDescription: `Открытый ключ. Если данный параметр в запросе отсутствует, то сервис сам сгенерирует ключ для указанного алгоритма и вернет приватный ключ в поле статуса в ответе`,
 				Optional:            true,
 			},
-			"role": schema.StringAttribute{
-				MarkdownDescription: `Пользовательские роли:
-- "READER": Роль, позволяющая пользователю производить операции чтения в базе данных кластера.
-- "WRITER": Роль, позволяющая пользователю производить операции чтения и записи в базе данных кластера.
-- "OWNER": Роль владельца базы данных. Позволяет пользователю производить операции создания и удаления объектов, записи и чтения в базе данных.
-- "MIGRATOR": Роль, позволяющая пользователю контролировать параметры репликации в базах данных кластера, в которых он является владельцем`,
-				Validators: []validator.String{
-					stringvalidator.OneOf(
-						"READER",
-						"WRITER",
-						"OWNER",
-						"MIGRATOR",
-					),
-				},
-				Required: true,
+			"key_algorithm": schema.StringAttribute{
+				MarkdownDescription: `Алгоритм шифрования`,
+				Required:            true,
 			},
-			"expires_at": schema.StringAttribute{
-				MarkdownDescription: `Дата и время отзыва привязки роли
+			"expiration_time": schema.StringAttribute{
+				MarkdownDescription: `Время истечения срока действия ключа
 
 Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
 				Optional: true,
-				PlanModifiers: []planmodifier.String{
-					localstringplanmodifier.RequiresReplaceIfRemoved(),
+			},
+			"active": schema.BoolAttribute{
+				MarkdownDescription: `Флаг активности ключа`,
+				Optional:            true,
+				PlanModifiers: []planmodifier.Bool{
+					localboolplanmodifier.RequiresReplaceIfRemoved(),
 				},
 			},
 		},
 	}
 }
 
-type PostgresRoleBindingMetadata struct {
+type AuthorizedKeyMetadata struct {
 	tfcommon.TypedResourceMetadata
 	Id types.String `tfsdk:"id"`
 }
 
-func (s *PostgresRoleBindingMetadata) GetSchema() schema.Schema {
+func (s *AuthorizedKeyMetadata) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Представление поля Metadata анонимного типа структуры PostgresRoleBinding`,
+		MarkdownDescription: `Представление поля Metadata анонимного типа структуры AuthorizedKey`,
 		Attributes: map[string]schema.Attribute{
 			"display_name": schema.StringAttribute{
 				MarkdownDescription: `Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов`,
@@ -129,7 +116,7 @@ func (s *PostgresRoleBindingMetadata) GetSchema() schema.Schema {
 				},
 			},
 			"id": schema.StringAttribute{
-				MarkdownDescription: `Ссылка на типизированный референс`,
+				MarkdownDescription: `ID свойства`,
 				Computed:            true,
 			},
 		},

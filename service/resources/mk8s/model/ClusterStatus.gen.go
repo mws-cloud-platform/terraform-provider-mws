@@ -17,6 +17,7 @@ type ClusterStatus struct {
 	Network              types.Object `tfsdk:"network"`
 	VersionControl       types.Object `tfsdk:"version_control"`
 	ClusterStatus        types.Object `tfsdk:"cluster_status"`
+	Plugins              types.Object `tfsdk:"plugins"`
 }
 
 func (s *ClusterStatus) GetSchema() schema.Schema {
@@ -42,6 +43,10 @@ func (s *ClusterStatus) GetSchema() schema.Schema {
 			},
 			"cluster_status": schema.SingleNestedAttribute{
 				Attributes: new(ClusterStatusClusterStatus).GetSchema().Attributes,
+				Computed:   true,
+			},
+			"plugins": schema.SingleNestedAttribute{
+				Attributes: new(PluginsStatus).GetSchema().Attributes,
 				Computed:   true,
 			},
 		},

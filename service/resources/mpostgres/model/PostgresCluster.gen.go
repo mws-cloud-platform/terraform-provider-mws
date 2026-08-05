@@ -26,6 +26,7 @@ type PostgresCluster struct {
 	Backup             types.Object `tfsdk:"backup"`
 	MaintenanceWindow  types.Object `tfsdk:"maintenance_window"`
 	PostgresParameters types.Map    `tfsdk:"postgres_parameters"`
+	LoggingEnabled     types.Bool   `tfsdk:"logging_enabled"`
 }
 
 func (s *PostgresCluster) GetSchema() schema.Schema {
@@ -96,6 +97,10 @@ func (s *PostgresCluster) GetSchema() schema.Schema {
 				PlanModifiers: []planmodifier.Map{
 					localmapplanmodifier.RequiresReplaceIfRemoved(),
 				},
+			},
+			"logging_enabled": schema.BoolAttribute{
+				MarkdownDescription: `Выгрузка пользовательских логов кластера — включена или выключена`,
+				Optional:            true,
 			},
 		},
 	}

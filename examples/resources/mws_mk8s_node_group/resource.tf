@@ -54,7 +54,7 @@ resource "mws_mk8s_cluster" "example" {
         hour = 3
       }
     }
-    version = "v1.34.1-mws.1"
+    version = "v1.35.6-mws.4"
   }
 }
 
@@ -88,7 +88,7 @@ resource "mws_mk8s_node_group" "example" {
 
   version_control = {
     auto_update = true
-    version     = "v1.34.1-mws.1"
+    version     = "v1.35.6-mws.4"
     maintenance_window = {
       weekly = {
         days     = ["MONDAY", "WEDNESDAY"]

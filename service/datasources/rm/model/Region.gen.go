@@ -18,7 +18,7 @@ type Region struct {
 
 func (s *Region) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Регион — это географическая область, которая объединяет несколько зон доступности, связанных между собой высокоскоростными сетями`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,

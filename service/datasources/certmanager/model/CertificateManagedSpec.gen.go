@@ -12,6 +12,7 @@ import (
 type CertificateManagedSpec struct {
 	PreferredChallengeType CertificateChallengeType `tfsdk:"preferred_challenge_type"`
 	Provider               CertificateProvider      `tfsdk:"provider"`
+	Issuer                 types.Object             `tfsdk:"issuer"`
 	Domains                types.List               `tfsdk:"domains"`
 }
 
@@ -38,6 +39,11 @@ func (s *CertificateManagedSpec) GetSchema() schema.Schema {
 					),
 				},
 				Computed: true,
+			},
+			"issuer": schema.SingleNestedAttribute{
+				Attributes:          new(CertificateManagedSpecIssuer).GetSchema().Attributes,
+				MarkdownDescription: `Конфигурация провайдера выпуска сертификата`,
+				Computed:            true,
 			},
 			"domains": schema.ListAttribute{
 				ElementType:         types.StringType,

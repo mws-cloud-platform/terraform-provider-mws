@@ -28,7 +28,7 @@ type ResmanagerZoneSuite struct {
 }
 
 func (s *ResmanagerZoneSuite) TestResmanagerZoneDataSource() {
-	zoneName := "ru-central1-a"
+	const zoneName = "ru-central1-a"
 
 	steps := []resource.TestStep{
 		{

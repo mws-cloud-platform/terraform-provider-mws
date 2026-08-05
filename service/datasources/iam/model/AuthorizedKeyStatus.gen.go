@@ -13,6 +13,7 @@ type AuthorizedKeyStatus struct {
 	tfcommon.ResourceStatus
 	PublicKey    types.String `tfsdk:"public_key"`
 	LastAuthTime types.String `tfsdk:"last_auth_time"`
+	Active       types.Bool   `tfsdk:"active"`
 }
 
 func (s *AuthorizedKeyStatus) GetSchema() schema.Schema {
@@ -33,6 +34,10 @@ func (s *AuthorizedKeyStatus) GetSchema() schema.Schema {
 
 Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
 				Computed: true,
+			},
+			"active": schema.BoolAttribute{
+				MarkdownDescription: `Флаг активности ключа`,
+				Computed:            true,
 			},
 		},
 	}

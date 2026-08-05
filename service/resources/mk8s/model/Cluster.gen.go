@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
+	localobjectplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/objectplanmodifier"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
@@ -18,6 +19,7 @@ type Cluster struct {
 	Availability   types.Object `tfsdk:"availability"`
 	Network        types.Object `tfsdk:"network"`
 	VersionControl types.Object `tfsdk:"version_control"`
+	Plugins        types.Object `tfsdk:"plugins"`
 }
 
 func (s *Cluster) GetSchema() schema.Schema {
@@ -57,6 +59,13 @@ Plane (управляющего слоя) и групп рабочих узло�
 			"version_control": schema.SingleNestedAttribute{
 				Attributes: new(ClusterVersionControlSpec).GetSchema().Attributes,
 				Required:   true,
+			},
+			"plugins": schema.SingleNestedAttribute{
+				Attributes: new(PluginsSpec).GetSchema().Attributes,
+				Optional:   true,
+				PlanModifiers: []planmodifier.Object{
+					localobjectplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

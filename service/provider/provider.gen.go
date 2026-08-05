@@ -9,6 +9,7 @@ import (
 
 	baseprovider "go.mws.cloud/terraform-provider-mws/internal/provider"
 	provider "go.mws.cloud/terraform-provider-mws/internal/provider/public"
+	crsrm "go.mws.cloud/terraform-provider-mws/service/custom/resources/rm"
 	dscertmanager "go.mws.cloud/terraform-provider-mws/service/datasources/certmanager"
 	dscompute "go.mws.cloud/terraform-provider-mws/service/datasources/compute"
 	dsgpt "go.mws.cloud/terraform-provider-mws/service/datasources/gpt"
@@ -54,6 +55,7 @@ func resources() []func() resource.Resource {
 		rsgpt.NewDeploymentResource,
 		rsiam.NewServiceAccountResource,
 		rsiam.NewHmacKeyResource,
+		rsiam.NewAuthorizedKeyResource,
 		rsiam.NewApiKeyResource,
 		rskms.NewCryptoKeyResource,
 		rsmclickhouse.NewClusterResource,
@@ -67,6 +69,7 @@ func resources() []func() resource.Resource {
 		rsmpostgres.NewClusterUserResource,
 		rsmpostgres.NewClusterDatabaseResource,
 		rsmpostgres.NewBackupResource,
+		crsrm.NewEnabledServiceResource,
 		rssecretmanager.NewSecretResource,
 		rsvpc.NewNetworkResource,
 		rsvpc.NewExternalAddressResource,
@@ -91,6 +94,7 @@ func dataSources() []func() datasource.DataSource {
 		dsgpt.NewDeploymentDataSource,
 		dsiam.NewServiceAccountDataSource,
 		dsiam.NewHmacKeyDataSource,
+		dsiam.NewAuthorizedKeyDataSource,
 		dsiam.NewApiKeyDataSource,
 		dskms.NewCryptoKeyDataSource,
 		dsmclickhouse.NewClusterDataSource,

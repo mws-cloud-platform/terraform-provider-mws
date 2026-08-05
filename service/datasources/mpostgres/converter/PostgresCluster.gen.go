@@ -195,6 +195,12 @@ func PostgresClusterAPIResponseToTFModel(ctx context.Context, am *apimodel.Postg
 		t.PostgresParameters = types.MapNull(types.StringType)
 	}
 
+	if am.Spec.LoggingEnabled != nil {
+		t.LoggingEnabled = types.BoolPointerValue(am.Spec.LoggingEnabled)
+	} else {
+		t.LoggingEnabled = types.BoolNull()
+	}
+
 	return &t, diags
 }
 
@@ -329,6 +335,10 @@ func PostgresClusterTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Postgre
 		for k, entity := range postgresParameters {
 			am.Spec.PostgresParameters[k] = entity.ValueString()
 		}
+	}
+
+	if !tm.LoggingEnabled.IsNull() && !tm.LoggingEnabled.IsUnknown() {
+		am.Spec.LoggingEnabled = tm.LoggingEnabled.ValueBoolPointer()
 	}
 
 	return &am, diags

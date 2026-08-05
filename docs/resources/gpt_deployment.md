@@ -15,7 +15,7 @@ description: |-
 ```terraform
 resource "mws_gpt_deployment" "deployment" {
   deployment_name = var.deployment_name
-  model           = "glm-4.6-357b"
+  model           = "glm-5.2"
   is_active       = true
 
   metadata = {

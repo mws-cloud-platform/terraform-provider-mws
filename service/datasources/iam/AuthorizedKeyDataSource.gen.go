@@ -98,9 +98,9 @@ func (m *AuthorizedKeyDataSource) Read(ctx context.Context, req datasource.ReadR
 	data.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	apiRes, err := m.sdk.GetAuthorizedKey(
+	apiRes, err := m.sdk.GetAuthorizedKeyV2(
 		ctx,
-		client.GetAuthorizedKeyRequest{
+		client.GetAuthorizedKeyV2Request{
 			ServiceAccount: data.ServiceAccountParam.ValueString(),
 			AuthorizedKey:  data.AuthorizedKeyParam.ValueString(),
 			Project:        data.ProjectParam.ValueString(),

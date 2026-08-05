@@ -108,6 +108,24 @@ func ClusterAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Clust
 	}
 	t.VersionControl = versionControlTfObject
 
+	if val, ok := am.Spec.Plugins.Get(); ok {
+		pluginsTmp, d := PluginsSpecAPIOptionalResponseToTFModel(ctx, &val)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		pluginsTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.PluginsSpec).GetSchema().Attributes),
+			*pluginsTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.Plugins = pluginsTfObject
+	} else {
+		t.Plugins = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.PluginsSpec).GetSchema().Attributes))
+	}
+
 	return &t, diags
 }
 
@@ -181,6 +199,22 @@ func ClusterTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Cluster) (*apim
 			return nil, diags
 		}
 		am.Spec.VersionControl = *versionControlTmp
+	}
+
+	if !tm.Plugins.IsNull() && !tm.Plugins.IsUnknown() {
+		pluginsTfModel := tfmodel.PluginsSpec{}
+		pluginsDiag := tm.Plugins.As(ctx, &pluginsTfModel, basetypes.ObjectAsOptions{})
+		diags = append(diags, pluginsDiag...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		pluginsTmp, pluginsDiag := PluginsSpecTFToAPIRequestModel(ctx, &pluginsTfModel)
+		diags = append(diags, pluginsDiag...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		am.Spec.Plugins = pluginsTmp
 	}
 
 	return &am, diags

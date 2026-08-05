@@ -9,15 +9,15 @@ import (
 	"go.mws.cloud/go-sdk/mws"
 	commonerrors "go.mws.cloud/go-sdk/mws/errors"
 	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	"go.mws.cloud/go-sdk/service/mpostgres/client"
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
-	resourcesdk "go.mws.cloud/go-sdk/service/mpostgres/sdk"
-	mpostgresref "go.mws.cloud/go-sdk/service/resources/references/mpostgres"
+	"go.mws.cloud/go-sdk/service/iam/client"
+	apimodel "go.mws.cloud/go-sdk/service/iam/model"
+	resourcesdk "go.mws.cloud/go-sdk/service/iam/sdk"
+	iamref "go.mws.cloud/go-sdk/service/resources/references/iam"
 	"go.mws.cloud/terraform-provider-mws/internal/acctest"
 )
 
-func PostgresRoleBindingTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleResourceTestCase, error) {
-	resourceSDK, err := resourcesdk.NewPostgresRoleBinding(ctx, sdk)
+func AuthorizedKeyTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleResourceTestCase, error) {
+	resourceSDK, err := resourcesdk.NewAuthorizedKey(ctx, sdk)
 	if err != nil {
 		return acctest.SingleResourceTestCase{}, fmt.Errorf("init resource sdk: %w", err)
 	}
@@ -26,7 +26,7 @@ func PostgresRoleBindingTestCase(ctx context.Context, sdk *mws.SDK) (acctest.Sin
 	return acctest.SingleResourceTestCase{
 		ProviderConfig: string(providerConfig.Bytes()),
 		ResourceExists: func(ctx context.Context, id string) error {
-			r, err := GetPostgresRoleBinding(ctx, resourceSDK, id)
+			r, err := GetAuthorizedKey(ctx, resourceSDK, id)
 			if err != nil {
 				return fmt.Errorf("get: %w", err)
 			}
@@ -40,7 +40,7 @@ func PostgresRoleBindingTestCase(ctx context.Context, sdk *mws.SDK) (acctest.Sin
 			return nil
 		},
 		ResourceNotExists: func(ctx context.Context, id string) error {
-			_, err := GetPostgresRoleBinding(ctx, resourceSDK, id)
+			_, err := GetAuthorizedKey(ctx, resourceSDK, id)
 			if err != nil {
 				if commonerrors.IsAPIErrorNotFoundStatus(err) {
 					return nil
@@ -52,14 +52,14 @@ func PostgresRoleBindingTestCase(ctx context.Context, sdk *mws.SDK) (acctest.Sin
 	}, nil
 }
 
-func GetPostgresRoleBinding(ctx context.Context, sdk *resourcesdk.PostgresRoleBinding, id string) (*apimodel.PostgresRoleBindingResponse, error) {
-	ref, err := mpostgresref.ParsePostgresRoleBindingRef(ctx, id)
+func GetAuthorizedKey(ctx context.Context, sdk *resourcesdk.AuthorizedKey, id string) (*apimodel.AuthorizedKeyOptionalResponse, error) {
+	ref, err := iamref.ParseAuthorizedKeyRef(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("parse reference: %w", err)
 	}
-	return sdk.GetPostgresRoleBinding(ctx, client.GetPostgresRoleBindingRequest{
-		Project:     ref.GetProject(),
-		Cluster:     ref.GetCluster(),
-		RoleBinding: ref.GetRoleBinding(),
+	return sdk.GetAuthorizedKeyV2(ctx, client.GetAuthorizedKeyV2Request{
+		Project:        ref.GetProject(),
+		ServiceAccount: ref.GetServiceAccount(),
+		AuthorizedKey:  ref.GetAuthorizedKey(),
 	})
 }

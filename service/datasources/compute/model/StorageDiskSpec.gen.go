@@ -36,7 +36,7 @@ func (s *StorageDiskSpec) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"iops": schema.Int64Attribute{
-				MarkdownDescription: `Запрашиваемая пользователем IOPS`,
+				MarkdownDescription: `Запрашиваемое пользователем значение IOPS`,
 				Computed:            true,
 			},
 		},
@@ -44,7 +44,8 @@ func (s *StorageDiskSpec) GetSchema() schema.Schema {
 }
 
 type StorageDiskSpecSource struct {
-	Image types.String `tfsdk:"image"`
+	Image      types.String `tfsdk:"image"`
+	DiskBackup types.String `tfsdk:"disk_backup"`
 }
 
 func (s *StorageDiskSpecSource) GetSchema() schema.Schema {
@@ -53,6 +54,10 @@ func (s *StorageDiskSpecSource) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"image": schema.StringAttribute{
 				MarkdownDescription: `Ссылка на образ`,
+				Computed:            true,
+			},
+			"disk_backup": schema.StringAttribute{
+				MarkdownDescription: `Ссылка на резервную копию диска`,
 				Computed:            true,
 			},
 		},

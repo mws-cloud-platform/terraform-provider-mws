@@ -26,23 +26,19 @@ func SecretVersionAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel
 
 	t.Kind = types.StringValue(am.Kind)
 
-	if val, ok := am.Metadata.Get(); ok {
-		metadataTmp, d := commonconv.CommonTypedResourceMetadataAPIOptionalResponseToTFModel(ctx, &val)
-		diags = append(diags, d...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		metadataTfObject, d := types.ObjectValueFrom(ctx,
-			tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes),
-			*metadataTmp)
-		diags = append(diags, d...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		t.Metadata = metadataTfObject
-	} else {
-		t.Metadata = types.ObjectNull(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
+	metadataTmp, d := commonconv.CommonTypedResourceMetadataAPIOptionalResponseToTFModel(ctx, &am.Metadata)
+	diags = append(diags, d...)
+	if diags.HasError() {
+		return nil, diags
 	}
+	metadataTfObject, d := types.ObjectValueFrom(ctx,
+		tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes),
+		*metadataTmp)
+	diags = append(diags, d...)
+	if diags.HasError() {
+		return nil, diags
+	}
+	t.Metadata = metadataTfObject
 
 	statusTmp, d := SecretVersionStatusAPIResponseToTFModel(ctx, &am.Status)
 	diags = append(diags, d...)

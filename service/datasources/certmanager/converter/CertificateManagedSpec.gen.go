@@ -7,8 +7,10 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
 	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/certmanager/model"
 )
 
@@ -40,6 +42,24 @@ func CertificateManagedSpecAPIOptionalResponseToTFModel(ctx context.Context, am 
 		t.Provider = providerTmp
 	} else {
 		t.Provider = types.StringNull()
+	}
+
+	if val, ok := am.Issuer.Get(); ok {
+		issuerTmp, d := CertificateManagedSpecIssuerAPIOptionalResponseToTFModel(ctx, &val)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		issuerTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.CertificateManagedSpecIssuer).GetSchema().Attributes),
+			*issuerTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.Issuer = issuerTfObject
+	} else {
+		t.Issuer = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.CertificateManagedSpecIssuer).GetSchema().Attributes))
 	}
 
 	if am.Domains != nil {
@@ -87,6 +107,22 @@ func CertificateManagedSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.
 			return nil, diags
 		}
 		am.Provider = providerTmp
+	}
+
+	if !tm.Issuer.IsNull() && !tm.Issuer.IsUnknown() {
+		issuerTfModel := tfmodel.CertificateManagedSpecIssuer{}
+		issuerDiag := tm.Issuer.As(ctx, &issuerTfModel, basetypes.ObjectAsOptions{})
+		diags = append(diags, issuerDiag...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		issuerTmp, issuerDiag := CertificateManagedSpecIssuerTFToAPIRequestModel(ctx, &issuerTfModel)
+		diags = append(diags, issuerDiag...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		am.Issuer = issuerTmp
 	}
 
 	if !tm.Domains.IsNull() && !tm.Domains.IsUnknown() {

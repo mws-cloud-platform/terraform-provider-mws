@@ -58,7 +58,7 @@ type NodeGroupSuite struct {
 }
 
 func (s *NodeGroupSuite) SetupSuite() {
-	var version = "v1.34.1-mws.1"
+	var version = "v1.35.6-mws.4"
 	var err error
 	ctx := s.T().Context()
 	s.Mk8sTestSuite.SetupSuite()
@@ -128,7 +128,7 @@ func (s *NodeGroupSuite) TestCluster() {
 		}{0, 1},
 		StorageSize: "20Gb",
 		SubnetID:    s.subnetPod.GetMetadata().GetId().ID(),
-		Version:     "v1.34.1-mws.1",
+		Version:     "v1.35.6-mws.4",
 	}
 	tpl := template.Must(template.New("nodeGroupTF").Parse(nodeGroupTF))
 	sb := new(strings.Builder)

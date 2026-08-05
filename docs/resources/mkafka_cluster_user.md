@@ -65,17 +65,7 @@ resource "mws_mkafka_cluster" "example" {
       ]
     }
     controller = {
-      vm_type = "compute/vmTypes/gen-2-4"
-      disk = {
-        size = "10Gb"
-        type = "NETWORK_STANDARD_SSD"
-      }
-      allocation = [
-        {
-          zone  = "ru-central1-a"
-          count = 1
-        }
-      ]
+      combined_with_broker = true
     }
   }
 

@@ -21,6 +21,7 @@ type PostgresCluster struct {
 	Backup             types.Object `tfsdk:"backup"`
 	MaintenanceWindow  types.Object `tfsdk:"maintenance_window"`
 	PostgresParameters types.Map    `tfsdk:"postgres_parameters"`
+	LoggingEnabled     types.Bool   `tfsdk:"logging_enabled"`
 }
 
 func (s *PostgresCluster) GetSchema() schema.Schema {
@@ -75,6 +76,10 @@ func (s *PostgresCluster) GetSchema() schema.Schema {
 			"postgres_parameters": schema.MapAttribute{
 				ElementType:         types.StringType,
 				MarkdownDescription: `Параметры PostgreSQL. Если не указаны, будут использованы параметры по умолчанию`,
+				Computed:            true,
+			},
+			"logging_enabled": schema.BoolAttribute{
+				MarkdownDescription: `Выгрузка пользовательских логов кластера — включена или выключена`,
 				Computed:            true,
 			},
 		},
