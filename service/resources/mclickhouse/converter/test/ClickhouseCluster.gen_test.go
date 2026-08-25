@@ -8,9 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/pkg/optional"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
 func TestClickhouseClusterAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -47,6 +51,48 @@ func TestClickhouseClusterOptionalResponseConverters(t *testing.T) {
 	require.Equal(t, *emptyApiModelResponse, *result)
 }
 
+func TestUpdateClickhouseClusterRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ClickhouseCluster
+	var stateTfModel tfmodel.ClickhouseCluster
+	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.ClickhouseClusterMetadata).GetSchema().Attributes))
+	stateTfModel.Coordinator = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.ClickhouseClusterCoordinator).GetSchema().Attributes))
+	stateTfModel.Storage = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.ClickhouseStorageConfiguration).GetSchema().Attributes))
+	stateTfModel.Backup = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.ClickhouseClusterBackup).GetSchema().Attributes))
+	stateTfModel.MaintenanceWindow = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.MaintenanceWindow).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateClickhouseClusterRequest{
+		Metadata: optional.OptionalNil[apimodel.UpdateClickhouseClusterMetadataRequest]{
+			Set:  true,
+			Null: true,
+		},
+		Spec: optional.NewOptional(apimodel.UpdateClickhouseClusterSpecRequest{
+			Coordinator: optional.OptionalNil[apimodel.UpdateClickhouseClusterCoordinatorRequest]{
+				Set:  true,
+				Null: true,
+			},
+			Storage: optional.OptionalNil[apimodel.UpdateClickhouseStorageConfigurationRequest]{
+				Set:  true,
+				Null: true,
+			},
+			Backup: optional.OptionalNil[apimodel.UpdateClickhouseClusterBackupRequest]{
+				Set:  true,
+				Null: true,
+			},
+			MaintenanceWindow: optional.OptionalNil[commonapimodel.UpdateMaintenanceWindowRequest]{
+				Set:  true,
+				Null: true,
+			},
+		}),
+	}
+
+	result, diags := conv.ClickhouseClusterTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
+}
+
 func TestClickhouseClusterMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
 	emptyApiModel := apimodel.ClickhouseClusterMetadataOptionalResponse{}
@@ -57,7 +103,7 @@ func TestClickhouseClusterMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T
 func TestClickhouseClusterMetadataOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.ClickhouseClusterMetadataRequest{
-		TypedResourceMetadataRequest: common.TypedResourceMetadataRequest{},
+		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
 	}
 
 	emptyApiModelResponse, err := apimodel.ClickhouseClusterMetadataRequestToOptionalResponse(&emptyApiModelRequest)
@@ -73,4 +119,18 @@ func TestClickhouseClusterMetadataOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateClickhouseClusterMetadataRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ClickhouseClusterMetadata
+	var stateTfModel tfmodel.ClickhouseClusterMetadata
+
+	expectedUpdateModel := &apimodel.UpdateClickhouseClusterMetadataRequest{}
+
+	result, diags := conv.ClickhouseClusterMetadataTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

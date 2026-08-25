@@ -8,8 +8,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
 func TestFirewallRuleSourceAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -36,4 +39,24 @@ func TestFirewallRuleSourceOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateFirewallRuleSourceRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.FirewallRuleSource
+	var stateTfModel tfmodel.FirewallRuleSource
+	stateTfModel.Spec = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.FirewallRuleSourceSpec).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateFirewallRuleSourceRequest{
+		Spec: optional.OptionalNil[apimodel.UpdateFirewallRuleSourceSpecRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.FirewallRuleSourceTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

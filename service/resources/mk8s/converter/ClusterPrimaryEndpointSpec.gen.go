@@ -34,16 +34,16 @@ func ClusterPrimaryEndpointSpecAPIOptionalResponseToTFModel(ctx context.Context,
 	return &t, diags
 }
 
-func ClusterPrimaryEndpointSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClusterPrimaryEndpointSpec) (*apimodel.ClusterPrimaryEndpointSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClusterPrimaryEndpointSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterPrimaryEndpointSpec) (*apimodel.ClusterPrimaryEndpointSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClusterPrimaryEndpointSpecRequest
 
-	if !tm.IpAddress.IsNull() && !tm.IpAddress.IsUnknown() {
-		tmpIpAddress, err := ipaddress.ParseIP4AddressString(tm.IpAddress.ValueString())
+	if !plan.IpAddress.IsNull() && !plan.IpAddress.IsUnknown() {
+		tmpIpAddress, err := ipaddress.ParseIP4AddressString(plan.IpAddress.ValueString())
 		if err != nil {
 			diags.AddError("IP4Address string parsing", err.Error())
 			return nil, diags
@@ -51,13 +51,51 @@ func ClusterPrimaryEndpointSpecTFToAPIRequestModel(ctx context.Context, tm *tfmo
 		am.IpAddress = &tmpIpAddress
 	}
 
-	if !tm.Subnet.IsNull() && !tm.Subnet.IsUnknown() {
-		subnetRef, err := vpc.ParseSubnetRef(ctx, tm.Subnet.ValueString())
+	if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {
+		subnetRef, err := vpc.ParseSubnetRef(ctx, plan.Subnet.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
 		}
 		am.Subnet = subnetRef
+	}
+
+	return &am, diags
+}
+
+func ClusterPrimaryEndpointSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClusterPrimaryEndpointSpec) (*apimodel.UpdateClusterPrimaryEndpointSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.ClusterPrimaryEndpointSpec{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateClusterPrimaryEndpointSpecRequest
+
+	if !plan.IpAddress.Equal(state.IpAddress) {
+		if !plan.IpAddress.IsNull() && !plan.IpAddress.IsUnknown() {
+			tmpIpAddress, err := ipaddress.ParseIP4AddressString(plan.IpAddress.ValueString())
+			if err != nil {
+				diags.AddError("IP4Address string parsing", err.Error())
+				return nil, diags
+			}
+			am.IpAddress.SetTo(tmpIpAddress)
+		} else if plan.IpAddress.IsNull() {
+			am.IpAddress.SetToNull()
+		}
+	}
+
+	if !plan.Subnet.Equal(state.Subnet) {
+		if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {
+			subnetRef, err := vpc.ParseSubnetRef(ctx, plan.Subnet.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.Subnet.SetTo(subnetRef)
+		}
 	}
 
 	return &am, diags

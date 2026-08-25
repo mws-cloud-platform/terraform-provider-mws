@@ -24,47 +24,35 @@ func CryptoKeyVersionAPIOptionalResponseToTFModel(ctx context.Context, am *apimo
 	var diags tfdiag.Diagnostics
 	var t tfmodel.CryptoKeyVersion
 
-	if am.Kind != nil {
-		t.Kind = types.StringPointerValue(am.Kind)
-	} else {
-		t.Kind = types.StringNull()
-	}
+	t.Kind = types.StringValue(am.Kind)
 
-	if val, ok := am.Metadata.Get(); ok {
-		metadataTmp, d := commonconv.CommonTypedResourceMetadataAPIOptionalResponseToTFModel(ctx, &val)
-		diags = append(diags, d...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		metadataTfObject, d := types.ObjectValueFrom(ctx,
-			tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes),
-			*metadataTmp)
-		diags = append(diags, d...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		t.Metadata = metadataTfObject
-	} else {
-		t.Metadata = types.ObjectNull(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
+	metadataTmp, d := commonconv.CommonTypedResourceMetadataAPIOptionalResponseToTFModel(ctx, &am.Metadata)
+	diags = append(diags, d...)
+	if diags.HasError() {
+		return nil, diags
 	}
+	metadataTfObject, d := types.ObjectValueFrom(ctx,
+		tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes),
+		*metadataTmp)
+	diags = append(diags, d...)
+	if diags.HasError() {
+		return nil, diags
+	}
+	t.Metadata = metadataTfObject
 
-	if am.Status != nil {
-		statusTmp, d := CryptoKeyVersionStatusAPIResponseToTFModel(ctx, am.Status)
-		diags = append(diags, d...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		statusTfObject, d := types.ObjectValueFrom(ctx,
-			tfconv.GetAttributesTypes(new(tfmodel.CryptoKeyVersionStatus).GetSchema().Attributes),
-			*statusTmp)
-		diags = append(diags, d...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		t.Status = statusTfObject
-	} else {
-		t.Status = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.CryptoKeyVersionStatus).GetSchema().Attributes))
+	statusTmp, d := CryptoKeyVersionStatusAPIResponseToTFModel(ctx, &am.Status)
+	diags = append(diags, d...)
+	if diags.HasError() {
+		return nil, diags
 	}
+	statusTfObject, d := types.ObjectValueFrom(ctx,
+		tfconv.GetAttributesTypes(new(tfmodel.CryptoKeyVersionStatus).GetSchema().Attributes),
+		*statusTmp)
+	diags = append(diags, d...)
+	if diags.HasError() {
+		return nil, diags
+	}
+	t.Status = statusTfObject
 
 	if val, ok := am.Spec.UsagePolicy.Get(); ok {
 		usagePolicyTmp, d := CryptoKeyVersionSpecUsagePolicyAPIOptionalResponseToTFModel(ctx, &val)
@@ -105,23 +93,23 @@ func CryptoKeyVersionAPIOptionalResponseToTFModel(ctx context.Context, am *apimo
 	return &t, diags
 }
 
-func CryptoKeyVersionTFToAPIRequestModel(ctx context.Context, tm *tfmodel.CryptoKeyVersion) (*apimodel.CryptoKeyVersionRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func CryptoKeyVersionTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CryptoKeyVersion) (*apimodel.CryptoKeyVersionRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.CryptoKeyVersionRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfcommon.CommonTypedResourceMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -129,15 +117,15 @@ func CryptoKeyVersionTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Crypto
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.UsagePolicy.IsNull() && !tm.UsagePolicy.IsUnknown() {
-		usagePolicyTfModel := tfmodel.CryptoKeyVersionSpecUsagePolicy{}
-		usagePolicyDiag := tm.UsagePolicy.As(ctx, &usagePolicyTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, usagePolicyDiag...)
+	if !plan.UsagePolicy.IsNull() && !plan.UsagePolicy.IsUnknown() {
+		usagePolicyPlan := tfmodel.CryptoKeyVersionSpecUsagePolicy{}
+		usagePolicyPlanDiag := plan.UsagePolicy.As(ctx, &usagePolicyPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, usagePolicyPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		usagePolicyTmp, usagePolicyDiag := CryptoKeyVersionSpecUsagePolicyTFToAPIRequestModel(ctx, &usagePolicyTfModel)
+		usagePolicyTmp, usagePolicyDiag := CryptoKeyVersionSpecUsagePolicyTFToAPIRequestModel(ctx, &usagePolicyPlan)
 		diags = append(diags, usagePolicyDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -145,15 +133,15 @@ func CryptoKeyVersionTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Crypto
 		am.Spec.UsagePolicy = usagePolicyTmp
 	}
 
-	if !tm.DestructionPolicy.IsNull() && !tm.DestructionPolicy.IsUnknown() {
-		destructionPolicyTfModel := tfmodel.CryptoKeyVersionSpecDestructionPolicy{}
-		destructionPolicyDiag := tm.DestructionPolicy.As(ctx, &destructionPolicyTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, destructionPolicyDiag...)
+	if !plan.DestructionPolicy.IsNull() && !plan.DestructionPolicy.IsUnknown() {
+		destructionPolicyPlan := tfmodel.CryptoKeyVersionSpecDestructionPolicy{}
+		destructionPolicyPlanDiag := plan.DestructionPolicy.As(ctx, &destructionPolicyPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, destructionPolicyPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		destructionPolicyTmp, destructionPolicyDiag := CryptoKeyVersionSpecDestructionPolicyTFToAPIRequestModel(ctx, &destructionPolicyTfModel)
+		destructionPolicyTmp, destructionPolicyDiag := CryptoKeyVersionSpecDestructionPolicyTFToAPIRequestModel(ctx, &destructionPolicyPlan)
 		diags = append(diags, destructionPolicyDiag...)
 		if diags.HasError() {
 			return nil, diags

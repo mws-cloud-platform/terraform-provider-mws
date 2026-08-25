@@ -14,6 +14,7 @@ type EgressNatStatus struct {
 	Internal       types.Object `tfsdk:"internal"`
 	External       types.Object `tfsdk:"external"`
 	PortAllocation types.Object `tfsdk:"port_allocation"`
+	Region         types.String `tfsdk:"region"`
 }
 
 func (s *EgressNatStatus) GetSchema() schema.Schema {
@@ -38,6 +39,10 @@ func (s *EgressNatStatus) GetSchema() schema.Schema {
 			"port_allocation": schema.SingleNestedAttribute{
 				Attributes:          new(EgressNatStatusPortAllocation).GetSchema().Attributes,
 				MarkdownDescription: `Описывает примененные настройки управления портами`,
+				Computed:            true,
+			},
+			"region": schema.StringAttribute{
+				MarkdownDescription: `Регион, которому принадлежит Egress NAT-шлюз`,
 				Computed:            true,
 			},
 		},

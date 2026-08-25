@@ -28,16 +28,16 @@ func KafkaAllocationAPIResponseToTFModel(ctx context.Context, am *apimodel.Kafka
 	return &t, diags
 }
 
-func KafkaAllocationTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaAllocation) (*apimodel.KafkaAllocationRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func KafkaAllocationTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaAllocation) (*apimodel.KafkaAllocationRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaAllocationRequest
 
-	if !tm.Zone.IsNull() && !tm.Zone.IsUnknown() {
-		zoneRef, err := rm.ParseZoneRef(ctx, tm.Zone.ValueString())
+	if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
+		zoneRef, err := rm.ParseZoneRef(ctx, plan.Zone.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -45,8 +45,8 @@ func KafkaAllocationTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaAl
 		am.Zone = zoneRef
 	}
 
-	if !tm.Count.IsNull() && !tm.Count.IsUnknown() {
-		am.Count = int32(tm.Count.ValueInt64())
+	if !plan.Count.IsNull() && !plan.Count.IsUnknown() {
+		am.Count = int32(plan.Count.ValueInt64())
 	}
 
 	return &am, diags

@@ -53,25 +53,26 @@ func KafkaEndpointExternalAccessesAPIResponseToTFModel(ctx context.Context, am *
 	return &t, diags
 }
 
-func KafkaEndpointExternalAccessesTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaEndpointExternalAccesses) (*apimodel.KafkaEndpointExternalAccessesRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func KafkaEndpointExternalAccessesTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaEndpointExternalAccesses) (*apimodel.KafkaEndpointExternalAccessesRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaEndpointExternalAccessesRequest
 
-	if !tm.Allowed.IsNull() && !tm.Allowed.IsUnknown() {
-		am.Allowed = tm.Allowed.ValueBool()
+	if !plan.Allowed.IsNull() && !plan.Allowed.IsUnknown() {
+		am.Allowed = plan.Allowed.ValueBool()
 	}
 
-	if !tm.BrokerAddresses.IsNull() && !tm.BrokerAddresses.IsUnknown() {
+	if !plan.BrokerAddresses.IsNull() && !plan.BrokerAddresses.IsUnknown() {
 		brokerAddresses := make([]tfmodel.KafkaEndpointExternalAddressSpecOrRef, 0)
-		dBrokerAddresses := tm.BrokerAddresses.ElementsAs(ctx, &brokerAddresses, false)
+		dBrokerAddresses := plan.BrokerAddresses.ElementsAs(ctx, &brokerAddresses, false)
 		diags = append(diags, dBrokerAddresses...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.BrokerAddresses = make([]apimodel.KafkaEndpointExternalAddressSpecOrRefRequest, 0, len(brokerAddresses))
 
 		for _, entity := range brokerAddresses {
@@ -81,6 +82,50 @@ func KafkaEndpointExternalAccessesTFToAPIRequestModel(ctx context.Context, tm *t
 				return nil, diags
 			}
 			am.BrokerAddresses = append(am.BrokerAddresses, *tmp)
+		}
+	}
+
+	return &am, diags
+}
+
+func KafkaEndpointExternalAccessesTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaEndpointExternalAccesses) (*apimodel.UpdateKafkaEndpointExternalAccessesRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.KafkaEndpointExternalAccesses{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateKafkaEndpointExternalAccessesRequest
+
+	if !plan.Allowed.Equal(state.Allowed) {
+		if !plan.Allowed.IsNull() && !plan.Allowed.IsUnknown() {
+			am.Allowed.SetTo(plan.Allowed.ValueBool())
+		}
+	}
+
+	if !plan.BrokerAddresses.Equal(state.BrokerAddresses) {
+		if !plan.BrokerAddresses.IsNull() && !plan.BrokerAddresses.IsUnknown() {
+			brokerAddresses := make([]tfmodel.KafkaEndpointExternalAddressSpecOrRef, 0)
+			dBrokerAddresses := plan.BrokerAddresses.ElementsAs(ctx, &brokerAddresses, false)
+			diags = append(diags, dBrokerAddresses...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			brokerAddressesTmp := make([]apimodel.UpdateKafkaEndpointExternalAddressSpecOrRefRequest, 0, len(brokerAddresses))
+
+			for _, entity := range brokerAddresses {
+				stateEntity := tfmodel.KafkaEndpointExternalAddressSpecOrRef{}
+				tmp, d := KafkaEndpointExternalAddressSpecOrRefTFToAPIUpdateRequestModel(ctx, &entity, &stateEntity)
+				diags = append(diags, d...)
+				if diags.HasError() {
+					return nil, diags
+				}
+				brokerAddressesTmp = append(brokerAddressesTmp, *tmp)
+			}
+			am.BrokerAddresses.SetTo(brokerAddressesTmp)
 		}
 	}
 

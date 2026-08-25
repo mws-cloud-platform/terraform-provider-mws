@@ -9,10 +9,14 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/pkg/optional"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
 func TestPostgresClusterAPIResponseToTFModelEmpty(t *testing.T) {
@@ -30,7 +34,7 @@ func TestPostgresClusterResponseConverters(t *testing.T) {
 			Active:    false,
 			Endpoints: []apimodel.PostgresEndpointRequest{},
 			InstanceTemplate: apimodel.PostgresInstanceTemplateRequest{
-				VmType: compute.NewVmTypeRef("vmTypeID"),
+				VmType: compute.NewMustVmTypeRef("vmTypeID"),
 				Disk: apimodel.DataDiskSpecRequest{
 					Size: bytesize.MustParseString("0 B"),
 					Type: "",
@@ -55,6 +59,38 @@ func TestPostgresClusterResponseConverters(t *testing.T) {
 	require.Equal(t, *emptyApiModelResponse, *result)
 }
 
+func TestUpdatePostgresClusterRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.PostgresCluster
+	var stateTfModel tfmodel.PostgresCluster
+	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.PostgresClusterMetadata).GetSchema().Attributes))
+	stateTfModel.Backup = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.PostgresClusterBackup).GetSchema().Attributes))
+	stateTfModel.MaintenanceWindow = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.MaintenanceWindow).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdatePostgresClusterRequest{
+		Metadata: optional.OptionalNil[apimodel.UpdatePostgresClusterMetadataRequest]{
+			Set:  true,
+			Null: true,
+		},
+		Spec: optional.NewOptional(apimodel.UpdatePostgresClusterSpecRequest{
+			Backup: optional.OptionalNil[apimodel.UpdatePostgresClusterBackupRequest]{
+				Set:  true,
+				Null: true,
+			},
+			MaintenanceWindow: optional.OptionalNil[commonapimodel.UpdateMaintenanceWindowRequest]{
+				Set:  true,
+				Null: true,
+			},
+		}),
+	}
+
+	result, diags := conv.PostgresClusterTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
+}
+
 func TestPostgresClusterMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
 	emptyApiModel := apimodel.PostgresClusterMetadataResponse{}
@@ -65,7 +101,7 @@ func TestPostgresClusterMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 func TestPostgresClusterMetadataResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.PostgresClusterMetadataRequest{
-		TypedResourceMetadataRequest: common.TypedResourceMetadataRequest{},
+		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
 	}
 
 	emptyApiModelResponse, err := apimodel.PostgresClusterMetadataRequestToResponse(&emptyApiModelRequest)
@@ -81,4 +117,18 @@ func TestPostgresClusterMetadataResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdatePostgresClusterMetadataRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.PostgresClusterMetadata
+	var stateTfModel tfmodel.PostgresClusterMetadata
+
+	expectedUpdateModel := &apimodel.UpdatePostgresClusterMetadataRequest{}
+
+	result, diags := conv.PostgresClusterMetadataTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

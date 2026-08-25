@@ -9,37 +9,37 @@ import (
 	"github.com/stretchr/testify/require"
 
 	resmodels "go.mws.cloud/go-sdk/pkg/resources/models"
-	apimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
 func TestTypedUsageAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.TypedUsage{}
+	emptyApiModel := commonapimodel.TypedUsage{}
 	_, diags := commonconv.TypedUsageAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestTypedUsageAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.TypedUsageResponse{}
+	emptyApiModel := commonapimodel.TypedUsageResponse{}
 	_, diags := commonconv.TypedUsageAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestTypedUsageAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.TypedUsageOptionalResponse{}
+	emptyApiModel := commonapimodel.TypedUsageOptionalResponse{}
 	_, diags := commonconv.TypedUsageAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestTypedUsageConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.TypedUsage{
+	emptyApiModel := commonapimodel.TypedUsage{
 		UsageType: "usageType",
 		Name:      "name",
-		Resource:  resmodels.NewAnyResourceID("ID"),
+		Resource:  resmodels.NewMustAnyResourceID("ID"),
 	}
 
 	tfModel, diags := commonconv.TypedUsageAPIToTFModel(context.Background(), &emptyApiModel)
@@ -53,13 +53,13 @@ func TestTypedUsageConverters(t *testing.T) {
 
 func TestTypedUsageResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.TypedUsageRequest{
+	emptyApiModelRequest := commonapimodel.TypedUsageRequest{
 		UsageType: "usageType",
 		Name:      "name",
-		Resource:  resmodels.NewAnyResourceID("ID"),
+		Resource:  resmodels.NewMustAnyResourceID("ID"),
 	}
 
-	emptyApiModelResponse, err := apimodel.TypedUsageRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonapimodel.TypedUsageRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.TypedUsageAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -68,7 +68,7 @@ func TestTypedUsageResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := commonconv.TypedUsageTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.TypedUsageRequestToResponse(filledApiModelRequest)
+	result, err := commonapimodel.TypedUsageRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -76,13 +76,13 @@ func TestTypedUsageResponseConverters(t *testing.T) {
 
 func TestTypedUsageOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.TypedUsageRequest{
+	emptyApiModelRequest := commonapimodel.TypedUsageRequest{
 		UsageType: "usageType",
 		Name:      "name",
-		Resource:  resmodels.NewAnyResourceID("ID"),
+		Resource:  resmodels.NewMustAnyResourceID("ID"),
 	}
 
-	emptyApiModelResponse, err := apimodel.TypedUsageRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonapimodel.TypedUsageRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.TypedUsageAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -91,7 +91,7 @@ func TestTypedUsageOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := commonconv.TypedUsageTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.TypedUsageRequestToOptionalResponse(filledApiModelRequest)
+	result, err := commonapimodel.TypedUsageRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)

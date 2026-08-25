@@ -25,11 +25,11 @@ func PostgresInstanceRoleAPIToTFModel(ctx context.Context, am *apimodel.Postgres
 	return t, diags
 }
 
-func PostgresInstanceRoleTFToAPIModel(ctx context.Context, tm tfmodel.PostgresInstanceRole) (*apimodel.PostgresInstanceRole, tfdiag.Diagnostics) {
+func PostgresInstanceRoleTFToAPIModel(ctx context.Context, plan tfmodel.PostgresInstanceRole) (*apimodel.PostgresInstanceRole, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am apimodel.PostgresInstanceRole
 
-	var tmp = types.String(tm)
+	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}

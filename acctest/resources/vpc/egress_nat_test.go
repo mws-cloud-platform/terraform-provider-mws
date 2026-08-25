@@ -7,7 +7,6 @@ import (
 	"text/template"
 
 	"github.com/stretchr/testify/suite"
-	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 	vpcclient "go.mws.cloud/go-sdk/service/vpc/client"
 	vpcmodel "go.mws.cloud/go-sdk/service/vpc/model"
 	vpcsdk "go.mws.cloud/go-sdk/service/vpc/sdk"
@@ -32,58 +31,27 @@ type egressNatTemplateData struct {
 }
 
 type EgressNatSuite struct {
-	utils.ResourceSuite
+	BaseSubnetSuite
 
-	networkSDK *vpcsdk.Network
-	subnetSDK  *vpcsdk.Subnet
 	addressSDK *vpcsdk.ExternalAddress
 
-	networkName         string
-	subnetName          string
-	subnetID            string
 	externalAddressName string
 	externalAddressID   string
 	egressNatName       string
 }
 
 func (s *EgressNatSuite) SetupSuite() {
-	ctx := s.T().Context()
-	s.ResourceSuite.SetupSuite()
-
 	var err error
 
-	s.networkSDK, err = vpcsdk.NewNetwork(ctx, s.SDK)
-	s.Require().NoError(err)
-
-	s.subnetSDK, err = vpcsdk.NewSubnet(ctx, s.SDK)
-	s.Require().NoError(err)
+	ctx := s.T().Context()
+	s.BaseSubnetSuite.SetupSuite()
 
 	s.addressSDK, err = vpcsdk.NewExternalAddress(ctx, s.SDK)
 	s.Require().NoError(err)
 
-	s.networkName = utils.RandResourceName("egress-nat-network")
-	s.subnetName = utils.RandResourceName("egress-nat-subnet")
 	s.externalAddressName = utils.RandResourceName("egress-nat-addr")
 	s.egressNatName = utils.RandResourceName("egress-nat")
 
-	_, err = s.networkSDK.CreateNetwork(ctx, vpcclient.UpsertNetworkRequest{
-		Network: s.networkName,
-	})
-	s.Require().NoError(err)
-	s.T().Logf("network %q created", s.networkName)
-
-	subnet, err := s.subnetSDK.CreateSubnet(ctx, vpcclient.UpsertSubnetRequest{
-		Network: s.networkName,
-		Subnet:  s.subnetName,
-		Body: vpcmodel.SubnetRequest{
-			Spec: vpcmodel.SubnetSpecRequest{
-				Cidr: cidraddress.MustParseCIDR4AddressString("192.168.0.0/17"),
-			},
-		},
-	})
-	s.Require().NoError(err)
-	s.T().Logf("subnet %q created", s.subnetName)
-	s.subnetID = subnet.GetMetadata().GetId().ID()
 	addr, err := s.addressSDK.CreateExternalAddress(ctx, vpcclient.UpsertExternalAddressRequest{
 		ExternalAddress: s.externalAddressName,
 		Body: &vpcmodel.ExternalAddressRequest{
@@ -106,24 +74,7 @@ func (s *EgressNatSuite) TearDownSuite() {
 		s.T().Logf("external address %q deleted", s.externalAddressName)
 	}
 
-	if err := s.subnetSDK.DeleteSubnet(ctx, vpcclient.DeleteSubnetRequest{
-		Network: s.networkName,
-		Subnet:  s.subnetName,
-	}, vpcclient.WithWait()); err != nil {
-		s.T().Logf("subnet %q deletion failed: %v", s.subnetName, err)
-	} else {
-		s.T().Logf("subnet %q deleted", s.subnetName)
-	}
-
-	if err := s.networkSDK.DeleteNetwork(ctx, vpcclient.DeleteNetworkRequest{
-		Network: s.networkName,
-	}, vpcclient.WithWait()); err != nil {
-		s.T().Logf("network %q deletion failed: %v", s.networkName, err)
-	} else {
-		s.T().Logf("network %q deleted", s.networkName)
-	}
-
-	s.ResourceSuite.TearDownSuite()
+	s.BaseSubnetSuite.TearDownSuite()
 }
 
 func (s *EgressNatSuite) TestEgressNat() {
@@ -133,8 +84,8 @@ func (s *EgressNatSuite) TestEgressNat() {
 	s.Require().NoError(err)
 
 	templateData := egressNatTemplateData{
-		Network:         s.networkName,
-		Subnet:          s.subnetID,
+		Network:         s.NetworkName,
+		Subnet:          s.Subnet.GetMetadata().GetId().ID(),
 		ExternalAddress: s.externalAddressID,
 		Name:            s.egressNatName,
 	}

@@ -25,16 +25,16 @@ func ClickhouseClusterBootstrapAdminSpecAPIOptionalResponseToTFModel(ctx context
 	return &t, diags
 }
 
-func ClickhouseClusterBootstrapAdminSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClickhouseClusterBootstrapAdminSpec) (*apimodel.ClickhouseClusterBootstrapAdminSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClickhouseClusterBootstrapAdminSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterBootstrapAdminSpec) (*apimodel.ClickhouseClusterBootstrapAdminSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClickhouseClusterBootstrapAdminSpecRequest
 
-	if !tm.Username.IsNull() && !tm.Username.IsUnknown() {
-		am.Username = tm.Username.ValueString()
+	if !plan.Username.IsNull() && !plan.Username.IsUnknown() {
+		am.Username = plan.Username.ValueString()
 	}
 
 	return &am, diags

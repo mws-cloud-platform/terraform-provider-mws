@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	localobjectplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/objectplanmodifier"
 	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
@@ -57,16 +56,10 @@ func (s *VirtualMachine) GetSchema() schema.Schema {
 			"hardware": schema.SingleNestedAttribute{
 				Attributes: new(HardwareSpec).GetSchema().Attributes,
 				Optional:   true,
-				PlanModifiers: []planmodifier.Object{
-					localobjectplanmodifier.RequiresReplaceIfRemoved(),
-				},
 			},
 			"os": schema.SingleNestedAttribute{
 				Attributes: new(OsSpec).GetSchema().Attributes,
 				Optional:   true,
-				PlanModifiers: []planmodifier.Object{
-					localobjectplanmodifier.RequiresReplaceIfRemoved(),
-				},
 			},
 			"storage": schema.SingleNestedAttribute{
 				Attributes: new(StorageSpec).GetSchema().Attributes,
@@ -113,8 +106,10 @@ func (s *VirtualMachineMetadata) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"purge_time": schema.StringAttribute{
-				MarkdownDescription: `Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
-				Computed:            true,
+				MarkdownDescription: `Время удаления ресурса
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"usages": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{

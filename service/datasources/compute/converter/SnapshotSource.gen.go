@@ -44,23 +44,23 @@ func SnapshotSourceAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func SnapshotSourceTFToAPIRequestModel(ctx context.Context, tm *tfmodel.SnapshotSource) (*apimodel.SnapshotSourceRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func SnapshotSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SnapshotSource) (*apimodel.SnapshotSourceRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.SnapshotSourceRequest
 
-	if !tm.Disk.IsNull() && !tm.Disk.IsUnknown() {
-		diskTfModel := tfmodel.SnapshotSourceDisk{}
-		diskDiag := tm.Disk.As(ctx, &diskTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, diskDiag...)
+	if !plan.Disk.IsNull() && !plan.Disk.IsUnknown() {
+		diskPlan := tfmodel.SnapshotSourceDisk{}
+		diskPlanDiag := plan.Disk.As(ctx, &diskPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, diskPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		diskTmp, diskDiag := SnapshotSourceDiskTFToAPIRequestModel(ctx, &diskTfModel)
+		diskTmp, diskDiag := SnapshotSourceDiskTFToAPIRequestModel(ctx, &diskPlan)
 		diags = append(diags, diskDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -84,16 +84,16 @@ func SnapshotSourceDiskAPIOptionalResponseToTFModel(ctx context.Context, am *api
 	return &t, diags
 }
 
-func SnapshotSourceDiskTFToAPIRequestModel(ctx context.Context, tm *tfmodel.SnapshotSourceDisk) (*apimodel.SnapshotSourceDiskRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func SnapshotSourceDiskTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SnapshotSourceDisk) (*apimodel.SnapshotSourceDiskRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.SnapshotSourceDiskRequest
 
-	if !tm.Id.IsNull() && !tm.Id.IsUnknown() {
-		idRef, err := compute.ParseDiskRef(ctx, tm.Id.ValueString())
+	if !plan.Id.IsNull() && !plan.Id.IsUnknown() {
+		idRef, err := compute.ParseDiskRef(ctx, plan.Id.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags

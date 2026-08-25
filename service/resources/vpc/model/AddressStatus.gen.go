@@ -11,6 +11,7 @@ import (
 
 type AddressStatus struct {
 	tfcommon.ResourceStatus
+	Region    types.String `tfsdk:"region"`
 	IpAddress types.String `tfsdk:"ip_address"`
 }
 
@@ -21,6 +22,10 @@ func (s *AddressStatus) GetSchema() schema.Schema {
 			"ready": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.ResourceStatusReady).GetSchema().Attributes,
 				MarkdownDescription: `Информация о статусе реконсиляции`,
+				Computed:            true,
+			},
+			"region": schema.StringAttribute{
+				MarkdownDescription: `Регион, которому принадлежит адрес; берется из подсети`,
 				Computed:            true,
 			},
 			"ip_address": schema.StringAttribute{

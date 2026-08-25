@@ -50,23 +50,23 @@ func PostgresClusterBackupAPIResponseToTFModel(ctx context.Context, am *apimodel
 	return &t, diags
 }
 
-func PostgresClusterBackupTFToAPIRequestModel(ctx context.Context, tm *tfmodel.PostgresClusterBackup) (*apimodel.PostgresClusterBackupRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func PostgresClusterBackupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresClusterBackup) (*apimodel.PostgresClusterBackupRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.PostgresClusterBackupRequest
 
-	if !tm.Daily.IsNull() && !tm.Daily.IsUnknown() {
-		dailyTfModel := tfmodel.PostgresClusterBackupDaily{}
-		dailyDiag := tm.Daily.As(ctx, &dailyTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, dailyDiag...)
+	if !plan.Daily.IsNull() && !plan.Daily.IsUnknown() {
+		dailyPlan := tfmodel.PostgresClusterBackupDaily{}
+		dailyPlanDiag := plan.Daily.As(ctx, &dailyPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, dailyPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		dailyTmp, dailyDiag := PostgresClusterBackupDailyTFToAPIRequestModel(ctx, &dailyTfModel)
+		dailyTmp, dailyDiag := PostgresClusterBackupDailyTFToAPIRequestModel(ctx, &dailyPlan)
 		diags = append(diags, dailyDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -74,8 +74,8 @@ func PostgresClusterBackupTFToAPIRequestModel(ctx context.Context, tm *tfmodel.P
 		am.Daily = dailyTmp
 	}
 
-	if !tm.RetainPeriodDays.IsNull() && !tm.RetainPeriodDays.IsUnknown() {
-		am.RetainPeriodDays = ptr.Get(int(tm.RetainPeriodDays.ValueInt64()))
+	if !plan.RetainPeriodDays.IsNull() && !plan.RetainPeriodDays.IsUnknown() {
+		am.RetainPeriodDays = ptr.Get(int(plan.RetainPeriodDays.ValueInt64()))
 	}
 
 	return &am, diags

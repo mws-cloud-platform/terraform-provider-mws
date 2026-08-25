@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/converter"
 )
@@ -57,7 +57,7 @@ func TestClickhouseClusterMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T
 func TestClickhouseClusterMetadataOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.ClickhouseClusterMetadataRequest{
-		TypedResourceMetadataRequest: common.TypedResourceMetadataRequest{},
+		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
 	}
 
 	emptyApiModelResponse, err := apimodel.ClickhouseClusterMetadataRequestToOptionalResponse(&emptyApiModelRequest)

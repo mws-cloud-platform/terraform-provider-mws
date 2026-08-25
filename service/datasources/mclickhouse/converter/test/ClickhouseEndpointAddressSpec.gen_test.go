@@ -23,7 +23,7 @@ func TestClickhouseEndpointAddressSpecAPIOptionalResponseToTFModelEmpty(t *testi
 func TestClickhouseEndpointAddressSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.ClickhouseEndpointAddressSpecRequest{
-		Subnet: vpc.NewSubnetRef("projectID", "networkID", "subnetID"),
+		Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
 	}
 
 	emptyApiModelResponse, err := apimodel.ClickhouseEndpointAddressSpecRequestToOptionalResponse(&emptyApiModelRequest)

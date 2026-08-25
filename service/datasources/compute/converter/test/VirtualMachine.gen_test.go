@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/compute/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
@@ -26,7 +26,7 @@ func TestVirtualMachineOptionalResponseConverters(t *testing.T) {
 	emptyApiModelRequest := apimodel.VirtualMachineRequest{
 		Spec: apimodel.VirtualMachineSpecRequest{
 			Zone:   "zone",
-			VmType: compute.NewVmTypeRef("vmTypeID"),
+			VmType: compute.NewMustVmTypeRef("vmTypeID"),
 			Storage: apimodel.StorageSpecRequest{
 				Disks: []apimodel.StorageDiskSpecOrRefWithAttachmentsRequest{},
 			},
@@ -61,7 +61,7 @@ func TestVirtualMachineMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 func TestVirtualMachineMetadataOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.VirtualMachineMetadataRequest{
-		TypedResourceMetadataRequest: common.TypedResourceMetadataRequest{},
+		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
 	}
 
 	emptyApiModelResponse, err := apimodel.VirtualMachineMetadataRequestToOptionalResponse(&emptyApiModelRequest)

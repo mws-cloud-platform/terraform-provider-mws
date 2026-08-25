@@ -6,12 +6,17 @@ import (
 	"context"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/stretchr/testify/require"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/pkg/optional"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/compute/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
+	"go.mws.cloud/go-sdk/service/resources/references/iam"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
 func TestVirtualMachineAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -26,7 +31,7 @@ func TestVirtualMachineOptionalResponseConverters(t *testing.T) {
 	emptyApiModelRequest := apimodel.VirtualMachineRequest{
 		Spec: apimodel.VirtualMachineSpecRequest{
 			Zone:   "zone",
-			VmType: compute.NewVmTypeRef("vmTypeID"),
+			VmType: compute.NewMustVmTypeRef("vmTypeID"),
 			Storage: apimodel.StorageSpecRequest{
 				Disks: []apimodel.StorageDiskSpecOrRefWithAttachmentsRequest{},
 			},
@@ -51,6 +56,43 @@ func TestVirtualMachineOptionalResponseConverters(t *testing.T) {
 	require.Equal(t, *emptyApiModelResponse, *result)
 }
 
+func TestUpdateVirtualMachineRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.VirtualMachine
+	var stateTfModel tfmodel.VirtualMachine
+	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.VirtualMachineMetadata).GetSchema().Attributes))
+	stateTfModel.Hardware = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.HardwareSpec).GetSchema().Attributes))
+	stateTfModel.Os = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.OsSpec).GetSchema().Attributes))
+	stateTfModel.ServiceAccount = types.StringValue("")
+
+	expectedUpdateModel := &apimodel.UpdateVirtualMachineRequest{
+		Metadata: optional.OptionalNil[apimodel.UpdateVirtualMachineMetadataRequest]{
+			Set:  true,
+			Null: true,
+		},
+		Spec: optional.NewOptional(apimodel.UpdateVirtualMachineSpecRequest{
+			Hardware: optional.OptionalNil[apimodel.UpdateHardwareSpecRequest]{
+				Set:  true,
+				Null: true,
+			},
+			Os: optional.OptionalNil[apimodel.UpdateOsSpecRequest]{
+				Set:  true,
+				Null: true,
+			},
+			ServiceAccount: optional.OptionalNil[iam.ServiceAccountRef]{
+				Set:  true,
+				Null: true,
+			},
+		}),
+	}
+
+	result, diags := conv.VirtualMachineTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
+}
+
 func TestVirtualMachineMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
 	emptyApiModel := apimodel.VirtualMachineMetadataOptionalResponse{}
@@ -61,7 +103,7 @@ func TestVirtualMachineMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 func TestVirtualMachineMetadataOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.VirtualMachineMetadataRequest{
-		TypedResourceMetadataRequest: common.TypedResourceMetadataRequest{},
+		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
 	}
 
 	emptyApiModelResponse, err := apimodel.VirtualMachineMetadataRequestToOptionalResponse(&emptyApiModelRequest)
@@ -77,4 +119,18 @@ func TestVirtualMachineMetadataOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateVirtualMachineMetadataRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.VirtualMachineMetadata
+	var stateTfModel tfmodel.VirtualMachineMetadata
+
+	expectedUpdateModel := &apimodel.UpdateVirtualMachineMetadataRequest{}
+
+	result, diags := conv.VirtualMachineMetadataTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

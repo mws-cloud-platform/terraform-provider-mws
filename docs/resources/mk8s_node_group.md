@@ -189,19 +189,19 @@ variable "services_cidr" {
 
 - `cluster_name` (String) Имя Cluster
 - `node_group_name` (String) Имя Node-группы
-- `rollout_strategy` (Attributes) Стратегия перекатки (rollout) worker нод в нод группе (see [below for nested schema](#nestedatt--rollout_strategy))
-- `scale` (Attributes) Необходимо заполнить одно из полей fixed или auto scale (see [below for nested schema](#nestedatt--scale))
-- `service_account` (Attributes) ServiceAccount необходим для поддержки функций:
- - скачивания образов из облачного registry (права на чтение образов)
- - сбор системных метрик с worker нод (права на чтение статусов worker нод) (see [below for nested schema](#nestedatt--service_account))
+- `rollout_strategy` (Attributes) Стратегия обновления (rollout) узлов в группе узлов (see [below for nested schema](#nestedatt--rollout_strategy))
+- `scale` (Attributes) Необходимо заполнить одно из полей — "fixed" или "autoscaling" (see [below for nested schema](#nestedatt--scale))
+- `service_account` (Attributes) Сервисный аккаунт для выполнения функций:
+- скачивание образов из Artifact Registry (требуются права на чтение образов);
+- сбор системных метрик с узлов (требуются права на чтение статусов узлов) (see [below for nested schema](#nestedatt--service_account))
 - `subnet` (Attributes) (see [below for nested schema](#nestedatt--subnet))
 - `version_control` (Attributes) (see [below for nested schema](#nestedatt--version_control))
 - `vm_type` (Attributes) Тип VM (see [below for nested schema](#nestedatt--vm_type))
 
 ### Optional
 
-- `image_storage_iops` (Number) Количество операций ввода-вывода в секунду (IOPS) для хранилища image-ей и контейнеров
-- `image_storage_size` (String) Размер хранилища для image-ей и контейнеров. Размер в Gb
+- `image_storage_iops` (Number) Количество операций ввода-вывода в секунду (IOPS) для хранилища образов и контейнеров
+- `image_storage_size` (String) Размер хранилища для образов и контейнеров, в Gb
 
 Размер в байтах. Формат: <число> [единица измерения].
 Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
@@ -210,6 +210,7 @@ variable "services_cidr" {
 Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
 - `kind` (String)
 - `labels` (Attributes List) (see [below for nested schema](#nestedatt--labels))
+- `local_disks` (Attributes List) Параметры локальных дисков для каждого узла в группе узлов (see [below for nested schema](#nestedatt--local_disks))
 - `metadata` (Attributes) Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров (see [below for nested schema](#nestedatt--metadata))
 - `project` (String) Путь к проекту.
 - `taints` (Attributes List) (see [below for nested schema](#nestedatt--taints))
@@ -219,7 +220,7 @@ variable "services_cidr" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `status` (Attributes) Описывает статусную модель k8s нод групп (see [below for nested schema](#nestedatt--status))
+- `status` (Attributes) Описывает статусную модель групп узлов Kubernetes (see [below for nested schema](#nestedatt--status))
 
 <a id="nestedatt--rollout_strategy"></a>
 ### Nested Schema for `rollout_strategy`
@@ -236,15 +237,15 @@ Optional:
 Optional:
 
 - `autoscaling` (Attributes) (see [below for nested schema](#nestedatt--scale--autoscaling))
-- `fixed` (Number) Количество узлов в node group
+- `fixed` (Number) Количество узлов в группе узлов
 
 <a id="nestedatt--scale--autoscaling"></a>
 ### Nested Schema for `scale.autoscaling`
 
 Required:
 
-- `max` (Number) Максимальное количество нод в Node group
-- `min` (Number) Минимально количество нод в Node group
+- `max` (Number) Максимальное количество узлов в группе узлов
+- `min` (Number) Минимально количество узлов в группе узлов
 
 
 
@@ -323,6 +324,25 @@ Required:
 - `value` (String) Значение метки на узле
 
 
+<a id="nestedatt--local_disks"></a>
+### Nested Schema for `local_disks`
+
+Required:
+
+- `name` (String) Уникальное имя диска в рамках виртуальной машины
+- `size` (String) Размер диска. Должен быть кратен 248GB
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
+
+Optional:
+
+- `device_name` (String) Имя устройства в /dev/disk/by-id/mws-*. Если не указано — mws-{name}
+
+
 <a id="nestedatt--metadata"></a>
 ### Nested Schema for `metadata`
 
@@ -384,15 +404,16 @@ Optional:
 
 Read-Only:
 
-- `cpu` (String) Количество виртуальных ядер на ноде
-- `image_storage_iops` (Number) Количество операций ввода-вывода в секунду (IOPS) для хранилища image-ей и контейнеров
+- `cpu` (String) Количество ядер vCPU на узле
+- `image_storage_iops` (Number) Количество операций ввода-вывода в секунду (IOPS) для хранилища образов и контейнеров
 - `image_storage_size` (String) Размер в байтах. Формат: <число> [единица измерения].
 Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
 Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
 Значение базовой единицы измерения (в байтах) должно оставаться целым.
 Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
 - `labels` (Attributes List) (see [below for nested schema](#nestedatt--status--labels))
-- `memory` (String) Количество оперативной памяти на ноде
+- `local_disks` (Attributes List) Параметры локальных дисков для каждого узла в группе узлов (see [below for nested schema](#nestedatt--status--local_disks))
+- `memory` (String) Объем оперативной памяти на узле
 
 Размер в байтах. Формат: <число> [единица измерения].
 Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
@@ -400,9 +421,9 @@ Read-Only:
 Значение базовой единицы измерения (в байтах) должно оставаться целым.
 Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
 - `node_group_status` (Attributes) (see [below for nested schema](#nestedatt--status--node_group_status))
-- `nodes_ready` (Number) Текущее количество нод готовых для работы
+- `nodes_ready` (Number) Текущее количество узлов, готовых для работы
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
-- `rollout_strategy` (Attributes) Стратегия перекатки (rollout) worker нод в нод группе (see [below for nested schema](#nestedatt--status--rollout_strategy))
+- `rollout_strategy` (Attributes) Стратегия обновления (rollout) узлов в группе узлов (see [below for nested schema](#nestedatt--status--rollout_strategy))
 - `scale` (Attributes) (see [below for nested schema](#nestedatt--status--scale))
 - `service_account` (Attributes) (see [below for nested schema](#nestedatt--status--service_account))
 - `taints` (Attributes List) (see [below for nested schema](#nestedatt--status--taints))
@@ -420,13 +441,29 @@ Required:
 - `value` (String) Значение метки на узле
 
 
+<a id="nestedatt--status--local_disks"></a>
+### Nested Schema for `status.local_disks`
+
+Read-Only:
+
+- `device_name` (String) Имя устройства в "/dev/disk/by-id/mws-*". Если не указано — "mws-{name}"
+- `name` (String) Уникальное имя диска в рамках виртуальной машины
+- `size` (String) Размер диска
+
+Размер в байтах. Формат: <число> [единица измерения].
+Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
+Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
+Значение базовой единицы измерения (в байтах) должно оставаться целым.
+Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
+
+
 <a id="nestedatt--status--node_group_status"></a>
 ### Nested Schema for `status.node_group_status`
 
 Read-Only:
 
 - `message` (String)
-- `state` (String) Текущий статус node group
+- `state` (String) Текущий статус группы узлов
 
 
 <a id="nestedatt--status--ready"></a>
@@ -460,8 +497,8 @@ Read-Only:
 
 Read-Only:
 
-- `max` (Number) Максимальное количество нод в Node group
-- `min` (Number) Минимально количество нод в Node group
+- `max` (Number) Максимальное количество узлов в группе узлов
+- `min` (Number) Минимальное количество узлов в группе узлов
 
 
 

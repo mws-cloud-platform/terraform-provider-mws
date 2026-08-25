@@ -8,9 +8,14 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
 func TestEgressNatAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -28,7 +33,7 @@ func TestEgressNatOptionalResponseConverters(t *testing.T) {
 				Subnets: []vpc.SubnetRef{},
 			},
 			External: apimodel.EgressNatSpecExternalRequest{
-				Addresses: []apimodel.ResourceExternalAddressSpecOrRefRequest{},
+				Addresses: []commonapimodel.ResourceExternalAddressSpecOrRefRequest{},
 			},
 		},
 	}
@@ -46,4 +51,31 @@ func TestEgressNatOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateEgressNatRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.EgressNat
+	var stateTfModel tfmodel.EgressNat
+	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
+	stateTfModel.PortAllocation = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.EgressNatSpecPortAllocation).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateEgressNatRequest{
+		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+			Set:  true,
+			Null: true,
+		},
+		Spec: optional.NewOptional(apimodel.UpdateEgressNatSpecRequest{
+			PortAllocation: optional.OptionalNil[apimodel.UpdateEgressNatSpecPortAllocationRequest]{
+				Set:  true,
+				Null: true,
+			},
+		}),
+	}
+
+	result, diags := conv.EgressNatTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

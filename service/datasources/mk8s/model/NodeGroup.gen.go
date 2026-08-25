@@ -18,6 +18,7 @@ type NodeGroup struct {
 	VmType           types.Object `tfsdk:"vm_type"`
 	ImageStorageSize types.String `tfsdk:"image_storage_size"`
 	ImageStorageIops types.Int64  `tfsdk:"image_storage_iops"`
+	LocalDisks       types.List   `tfsdk:"local_disks"`
 	Scale            types.Object `tfsdk:"scale"`
 	Labels           types.List   `tfsdk:"labels"`
 	Taints           types.List   `tfsdk:"taints"`
@@ -42,7 +43,7 @@ Compute, на которых запускаются контейнеры с пр
 			},
 			"status": schema.SingleNestedAttribute{
 				Attributes:          new(NodeGroupStatus).GetSchema().Attributes,
-				MarkdownDescription: `Описывает статусную модель k8s нод групп`,
+				MarkdownDescription: `Описывает статусную модель групп узлов Kubernetes`,
 				Computed:            true,
 			},
 			"zone": schema.StringAttribute{
@@ -58,7 +59,7 @@ Compute, на которых запускаются контейнеры с пр
 				Computed:            true,
 			},
 			"image_storage_size": schema.StringAttribute{
-				MarkdownDescription: `Размер хранилища для image-ей и контейнеров. Размер в Gb
+				MarkdownDescription: `Размер хранилища для образов и контейнеров, в Gb
 
 Размер в байтах. Формат: <число> [единица измерения].
 Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
@@ -68,12 +69,19 @@ Compute, на которых запускаются контейнеры с пр
 				Computed: true,
 			},
 			"image_storage_iops": schema.Int64Attribute{
-				MarkdownDescription: `Количество операций ввода-вывода в секунду (IOPS) для хранилища image-ей и контейнеров`,
+				MarkdownDescription: `Количество операций ввода-вывода в секунду (IOPS) для хранилища образов и контейнеров`,
+				Computed:            true,
+			},
+			"local_disks": schema.ListNestedAttribute{
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: new(LocalDiskSpec).GetSchema().Attributes,
+				},
+				MarkdownDescription: `Параметры локальных дисков для каждого узла в группе узлов`,
 				Computed:            true,
 			},
 			"scale": schema.SingleNestedAttribute{
 				Attributes:          new(NodeGroupSpecScale).GetSchema().Attributes,
-				MarkdownDescription: `Необходимо заполнить одно из полей fixed или auto scale`,
+				MarkdownDescription: `Необходимо заполнить одно из полей — "fixed" или "autoscaling"`,
 				Computed:            true,
 			},
 			"labels": schema.ListNestedAttribute{
@@ -94,14 +102,14 @@ Compute, на которых запускаются контейнеры с пр
 			},
 			"rollout_strategy": schema.SingleNestedAttribute{
 				Attributes:          new(NodeGroupSpecRolloutStrategy).GetSchema().Attributes,
-				MarkdownDescription: `Стратегия перекатки (rollout) worker нод в нод группе`,
+				MarkdownDescription: `Стратегия обновления (rollout) узлов в группе узлов`,
 				Computed:            true,
 			},
 			"service_account": schema.SingleNestedAttribute{
 				Attributes: new(NodeGroupSpecServiceAccount).GetSchema().Attributes,
-				MarkdownDescription: `ServiceAccount необходим для поддержки функций:
- - скачивания образов из облачного registry (права на чтение образов)
- - сбор системных метрик с worker нод (права на чтение статусов worker нод)`,
+				MarkdownDescription: `Сервисный аккаунт для выполнения функций:
+- скачивание образов из Artifact Registry (требуются права на чтение образов);
+- сбор системных метрик с узлов (требуются права на чтение статусов узлов)`,
 				Computed: true,
 			},
 		},

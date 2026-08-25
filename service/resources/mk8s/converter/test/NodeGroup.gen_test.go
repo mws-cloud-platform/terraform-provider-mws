@@ -6,13 +6,20 @@ import (
 	"context"
 	"testing"
 
+	tfattr "github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	"go.mws.cloud/go-sdk/service/resources/references/iam"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
 func TestNodeGroupAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -28,16 +35,16 @@ func TestNodeGroupOptionalResponseConverters(t *testing.T) {
 		Spec: apimodel.NodeGroupSpecRequest{
 			Zone: "zone",
 			Subnet: apimodel.NodeGroupSpecSubnetRequest{
-				Ref: vpc.NewSubnetRef("projectID", "networkID", "subnetID"),
+				Ref: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
 			},
 			VmType: apimodel.NodeGroupSpecVmTypeRequest{
-				Ref: compute.NewVmTypeRef("vmTypeID"),
+				Ref: compute.NewMustVmTypeRef("vmTypeID"),
 			},
 			Scale:           apimodel.NodeGroupSpecScaleRequest{},
 			VersionControl:  apimodel.NodeGroupVersionControlSpecRequest{},
 			RolloutStrategy: apimodel.NodeGroupSpecRolloutStrategyRequest{},
 			ServiceAccount: apimodel.NodeGroupSpecServiceAccountRequest{
-				Ref: iam.NewServiceAccountRef("projectID", "serviceAccountID"),
+				Ref: iam.NewMustServiceAccountRef("projectID", "serviceAccountID"),
 			},
 		},
 	}
@@ -55,4 +62,47 @@ func TestNodeGroupOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateNodeGroupRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.NodeGroup
+	var stateTfModel tfmodel.NodeGroup
+	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
+	stateTfModel.LocalDisks = types.ListValueMust(types.ObjectType{
+		AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.LocalDiskSpec).GetSchema().Attributes),
+	}, []tfattr.Value{})
+	stateTfModel.Labels = types.ListValueMust(types.ObjectType{
+		AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.NodeLabelSpec).GetSchema().Attributes),
+	}, []tfattr.Value{})
+	stateTfModel.Taints = types.ListValueMust(types.ObjectType{
+		AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.NodeTaintSpec).GetSchema().Attributes),
+	}, []tfattr.Value{})
+
+	expectedUpdateModel := &apimodel.UpdateNodeGroupRequest{
+		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+			Set:  true,
+			Null: true,
+		},
+		Spec: optional.NewOptional(apimodel.UpdateNodeGroupSpecRequest{
+			LocalDisks: optional.OptionalNil[[]apimodel.UpdateLocalDiskSpecRequest]{
+				Set:  true,
+				Null: true,
+			},
+			Labels: optional.OptionalNil[[]apimodel.UpdateNodeLabelSpecRequest]{
+				Set:  true,
+				Null: true,
+			},
+			Taints: optional.OptionalNil[[]apimodel.UpdateNodeTaintSpecRequest]{
+				Set:  true,
+				Null: true,
+			},
+		}),
+	}
+
+	result, diags := conv.NodeGroupTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

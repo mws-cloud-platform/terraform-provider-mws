@@ -8,9 +8,12 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/pkg/optional"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/iam/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/iam/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/iam/model"
 )
 
 func TestServiceAccountAPIResponseToTFModelEmpty(t *testing.T) {
@@ -41,6 +44,26 @@ func TestServiceAccountResponseConverters(t *testing.T) {
 	require.Equal(t, *emptyApiModelResponse, *result)
 }
 
+func TestUpdateServiceAccountRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ServiceAccount
+	var stateTfModel tfmodel.ServiceAccount
+	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.ServiceAccountMetadata).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateServiceAccountRequest{
+		Metadata: optional.OptionalNil[apimodel.UpdateServiceAccountMetadataRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.ServiceAccountTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
+}
+
 func TestServiceAccountMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
 	emptyApiModel := apimodel.ServiceAccountMetadataResponse{}
@@ -51,7 +74,7 @@ func TestServiceAccountMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 func TestServiceAccountMetadataResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.ServiceAccountMetadataRequest{
-		TypedResourceMetadataRequest: common.TypedResourceMetadataRequest{},
+		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
 	}
 
 	emptyApiModelResponse, err := apimodel.ServiceAccountMetadataRequestToResponse(&emptyApiModelRequest)
@@ -67,6 +90,20 @@ func TestServiceAccountMetadataResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateServiceAccountMetadataRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ServiceAccountMetadata
+	var stateTfModel tfmodel.ServiceAccountMetadata
+
+	expectedUpdateModel := &apimodel.UpdateServiceAccountMetadataRequest{}
+
+	result, diags := conv.ServiceAccountMetadataTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }
 
 func TestServiceAccountSpecAPIResponseToTFModelEmpty(t *testing.T) {
@@ -93,4 +130,18 @@ func TestServiceAccountSpecResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateServiceAccountSpecRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ServiceAccountSpec
+	var stateTfModel tfmodel.ServiceAccountSpec
+
+	expectedUpdateModel := &apimodel.UpdateServiceAccountSpecRequest{}
+
+	result, diags := conv.ServiceAccountSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

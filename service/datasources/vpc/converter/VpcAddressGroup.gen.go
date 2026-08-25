@@ -8,7 +8,10 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/resources/references/rm"
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
@@ -66,11 +69,17 @@ func VpcAddressGroupAPIOptionalResponseToTFModel(ctx context.Context, am *apimod
 		t.Status = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.VpcAddressGroupStatus).GetSchema().Attributes))
 	}
 
+	if val, ok := am.Spec.Region.Get(); ok {
+		t.Region = types.StringPointerValue(ptr.Get(val.Path()))
+	} else {
+		t.Region = types.StringNull()
+	}
+
 	if am.Spec.Addresses != nil {
-		addresses := make([]tfmodel.ResourceAddressSpecOrRef, 0, len(am.Spec.Addresses))
+		addresses := make([]tfcommon.ResourceAddressSpecOrRef, 0, len(am.Spec.Addresses))
 
 		for _, entity := range am.Spec.Addresses {
-			tmp, d := ResourceAddressSpecOrRefAPIOptionalResponseToTFModel(ctx, &entity)
+			tmp, d := commonconv.ResourceAddressSpecOrRefAPIOptionalResponseToTFModel(ctx, &entity)
 			diags = append(diags, d...)
 			if diags.HasError() {
 				return nil, diags
@@ -79,7 +88,7 @@ func VpcAddressGroupAPIOptionalResponseToTFModel(ctx context.Context, am *apimod
 		}
 
 		addressesList, d := types.ListValueFrom(ctx, types.ObjectType{
-			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.ResourceAddressSpecOrRef).GetSchema().Attributes),
+			AttrTypes: tfconv.GetAttributesTypes(new(tfcommon.ResourceAddressSpecOrRef).GetSchema().Attributes),
 		}, addresses)
 		diags = append(diags, d...)
 		if diags.HasError() {
@@ -89,30 +98,30 @@ func VpcAddressGroupAPIOptionalResponseToTFModel(ctx context.Context, am *apimod
 		t.Addresses = addressesList
 	} else {
 		t.Addresses = types.ListNull(types.ObjectType{
-			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.ResourceAddressSpecOrRef).GetSchema().Attributes),
+			AttrTypes: tfconv.GetAttributesTypes(new(tfcommon.ResourceAddressSpecOrRef).GetSchema().Attributes),
 		})
 	}
 
 	return &t, diags
 }
 
-func VpcAddressGroupTFToAPIRequestModel(ctx context.Context, tm *tfmodel.VpcAddressGroup) (*apimodel.VpcAddressGroupRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func VpcAddressGroupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.VpcAddressGroup) (*apimodel.VpcAddressGroupRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.VpcAddressGroupRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfcommon.CommonTypedResourceMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -120,17 +129,27 @@ func VpcAddressGroupTFToAPIRequestModel(ctx context.Context, tm *tfmodel.VpcAddr
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.Addresses.IsNull() && !tm.Addresses.IsUnknown() {
-		addresses := make([]tfmodel.ResourceAddressSpecOrRef, 0)
-		dAddresses := tm.Addresses.ElementsAs(ctx, &addresses, false)
+	if !plan.Region.IsNull() && !plan.Region.IsUnknown() {
+		regionRef, err := rm.ParseRegionRef(ctx, plan.Region.ValueString())
+		if err != nil {
+			diags.AddError("reference parsing", err.Error())
+			return nil, diags
+		}
+		am.Spec.Region = &regionRef
+	}
+
+	if !plan.Addresses.IsNull() && !plan.Addresses.IsUnknown() {
+		addresses := make([]tfcommon.ResourceAddressSpecOrRef, 0)
+		dAddresses := plan.Addresses.ElementsAs(ctx, &addresses, false)
 		diags = append(diags, dAddresses...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.Spec.Addresses = make([]apimodel.ResourceAddressSpecOrRefRequest, 0, len(addresses))
+
+		am.Spec.Addresses = make([]commonapimodel.ResourceAddressSpecOrRefRequest, 0, len(addresses))
 
 		for _, entity := range addresses {
-			tmp, d := ResourceAddressSpecOrRefTFToAPIRequestModel(ctx, &entity)
+			tmp, d := commonconv.ResourceAddressSpecOrRefTFToAPIRequestModel(ctx, &entity)
 			diags = append(diags, d...)
 			if diags.HasError() {
 				return nil, diags

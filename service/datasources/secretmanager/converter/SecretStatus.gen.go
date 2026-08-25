@@ -38,11 +38,7 @@ func SecretStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.SecretSt
 	}
 	t.Ready = readyTfObject
 
-	if am.Active != nil {
-		t.Active = types.BoolPointerValue(am.Active)
-	} else {
-		t.Active = types.BoolNull()
-	}
+	t.Active = types.BoolValue(am.Active)
 
 	if am.CurrentSecretVersion != nil {
 		t.CurrentSecretVersion = types.StringPointerValue(ptr.Get(am.CurrentSecretVersion.Path()))

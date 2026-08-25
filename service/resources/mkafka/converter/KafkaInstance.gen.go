@@ -53,23 +53,23 @@ func KafkaInstanceAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaIn
 	return &t, diags
 }
 
-func KafkaInstanceTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaInstance) (*apimodel.KafkaInstanceRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func KafkaInstanceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaInstance) (*apimodel.KafkaInstanceRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaInstanceRequest
 
-	if !tm.Broker.IsNull() && !tm.Broker.IsUnknown() {
-		brokerTfModel := tfmodel.KafkaInstanceSpec{}
-		brokerDiag := tm.Broker.As(ctx, &brokerTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, brokerDiag...)
+	if !plan.Broker.IsNull() && !plan.Broker.IsUnknown() {
+		brokerPlan := tfmodel.KafkaInstanceSpec{}
+		brokerPlanDiag := plan.Broker.As(ctx, &brokerPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, brokerPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		brokerTmp, brokerDiag := KafkaInstanceSpecTFToAPIRequestModel(ctx, &brokerTfModel)
+		brokerTmp, brokerDiag := KafkaInstanceSpecTFToAPIRequestModel(ctx, &brokerPlan)
 		diags = append(diags, brokerDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -77,20 +77,88 @@ func KafkaInstanceTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaInst
 		am.Broker = *brokerTmp
 	}
 
-	if !tm.Controller.IsNull() && !tm.Controller.IsUnknown() {
-		controllerTfModel := tfmodel.KafkaControllerInstanceSpec{}
-		controllerDiag := tm.Controller.As(ctx, &controllerTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, controllerDiag...)
+	if !plan.Controller.IsNull() && !plan.Controller.IsUnknown() {
+		controllerPlan := tfmodel.KafkaControllerInstanceSpec{}
+		controllerPlanDiag := plan.Controller.As(ctx, &controllerPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, controllerPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		controllerTmp, controllerDiag := KafkaControllerInstanceSpecTFToAPIRequestModel(ctx, &controllerTfModel)
+		controllerTmp, controllerDiag := KafkaControllerInstanceSpecTFToAPIRequestModel(ctx, &controllerPlan)
 		diags = append(diags, controllerDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.Controller = *controllerTmp
+	}
+
+	return &am, diags
+}
+
+func KafkaInstanceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaInstance) (*apimodel.UpdateKafkaInstanceRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.KafkaInstance{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateKafkaInstanceRequest
+
+	if !plan.Broker.Equal(state.Broker) {
+		if !plan.Broker.IsNull() && !plan.Broker.IsUnknown() {
+			brokerPlan := tfmodel.KafkaInstanceSpec{}
+			brokerPlanDiag := plan.Broker.As(ctx, &brokerPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, brokerPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			brokerState := tfmodel.KafkaInstanceSpec{}
+			if !state.Broker.IsNull() && !state.Broker.IsUnknown() {
+				brokerStateDiag := state.Broker.As(ctx, &brokerState, basetypes.ObjectAsOptions{})
+				diags = append(diags, brokerStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			brokerTmp, brokerDiag := KafkaInstanceSpecTFToAPIUpdateRequestModel(ctx, &brokerPlan, &brokerState)
+			diags = append(diags, brokerDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Broker.SetTo(*brokerTmp)
+		}
+	}
+
+	if !plan.Controller.Equal(state.Controller) {
+		if !plan.Controller.IsNull() && !plan.Controller.IsUnknown() {
+			controllerPlan := tfmodel.KafkaControllerInstanceSpec{}
+			controllerPlanDiag := plan.Controller.As(ctx, &controllerPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, controllerPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			controllerState := tfmodel.KafkaControllerInstanceSpec{}
+			if !state.Controller.IsNull() && !state.Controller.IsUnknown() {
+				controllerStateDiag := state.Controller.As(ctx, &controllerState, basetypes.ObjectAsOptions{})
+				diags = append(diags, controllerStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			controllerTmp, controllerDiag := KafkaControllerInstanceSpecTFToAPIUpdateRequestModel(ctx, &controllerPlan, &controllerState)
+			diags = append(diags, controllerDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Controller.SetTo(*controllerTmp)
+		}
 	}
 
 	return &am, diags

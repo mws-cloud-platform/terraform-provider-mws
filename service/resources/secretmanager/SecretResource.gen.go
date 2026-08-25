@@ -106,13 +106,13 @@ func (m *SecretResource) Configure(ctx context.Context, req resource.ConfigureRe
 func (m *SecretResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "SecretResource.Create")
 
-	var data tfmodel.SecretModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.SecretModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -120,17 +120,17 @@ func (m *SecretResource) Create(ctx context.Context, req resource.CreateRequest,
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SecretResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.SecretTFToAPIRequestModel(ctx, &data.Secret)
+	body, diags := conv.SecretTFToAPIRequestModel(ctx, &plan.Secret)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SecretResource.TFToAPI")
@@ -140,8 +140,8 @@ func (m *SecretResource) Create(ctx context.Context, req resource.CreateRequest,
 	apiRes, err := m.sdk.CreateSecret(
 		ctx,
 		client.UpsertSecretRequest{
-			Project: data.ProjectParam.ValueString(),
-			Name:    data.NameParam.ValueString(),
+			Project: plan.ProjectParam.ValueString(),
+			Name:    plan.NameParam.ValueString(),
 			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
@@ -154,7 +154,7 @@ func (m *SecretResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.SecretAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -163,21 +163,21 @@ func (m *SecretResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	data.Secret = *tfRes
+	plan.Secret = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *SecretResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "SecretResource.Read")
 
-	var data tfmodel.SecretModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.SecretModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -185,14 +185,14 @@ func (m *SecretResource) Read(ctx context.Context, req resource.ReadRequest, res
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetSecret(
 		ctx,
 		client.GetSecretRequest{
-			Project: data.ProjectParam.ValueString(),
-			Name:    data.NameParam.ValueString(),
+			Project: state.ProjectParam.ValueString(),
+			Name:    state.NameParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -203,7 +203,7 @@ func (m *SecretResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.SecretAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -212,21 +212,27 @@ func (m *SecretResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
-	data.Secret = *tfRes
+	state.Secret = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 func (m *SecretResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "SecretResource.Update")
 
-	var data tfmodel.SecretModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.SecretModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	var state tfmodel.SecretModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -234,17 +240,17 @@ func (m *SecretResource) Update(ctx context.Context, req resource.UpdateRequest,
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SecretResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.SecretTFToAPIRequestModel(ctx, &data.Secret)
+	body, diags := conv.SecretTFToAPIUpdateRequestModel(ctx, &plan.Secret, &state.Secret)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SecretResource.TFToAPI")
@@ -254,9 +260,9 @@ func (m *SecretResource) Update(ctx context.Context, req resource.UpdateRequest,
 	apiRes, err := m.sdk.UpdateSecret(
 		ctx,
 		client.UpdateSecretRequest{
-			Project: data.ProjectParam.ValueString(),
-			Name:    data.NameParam.ValueString(),
-			Body:    body.AsUpdateModel(),
+			Project: plan.ProjectParam.ValueString(),
+			Name:    plan.NameParam.ValueString(),
+			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -268,7 +274,7 @@ func (m *SecretResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.SecretAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -277,21 +283,21 @@ func (m *SecretResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	data.Secret = *tfRes
+	plan.Secret = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *SecretResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "SecretResource.Delete")
 
-	var data tfmodel.SecretModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.SecretModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -299,10 +305,10 @@ func (m *SecretResource) Delete(ctx context.Context, req resource.DeleteRequest,
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := state.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SecretResource.Timeouts")
@@ -312,8 +318,8 @@ func (m *SecretResource) Delete(ctx context.Context, req resource.DeleteRequest,
 	err := m.sdk.DeleteSecret(
 		ctx,
 		client.DeleteSecretRequest{
-			Project: data.ProjectParam.ValueString(),
-			Name:    data.NameParam.ValueString(),
+			Project: state.ProjectParam.ValueString(),
+			Name:    state.NameParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -329,7 +335,7 @@ func (m *SecretResource) Delete(ctx context.Context, req resource.DeleteRequest,
 func (m *SecretResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "SecretResource.ImportState")
 
-	var data tfmodel.SecretModel
+	var state tfmodel.SecretModel
 
 	ref, err := secretmanagerref.ParseSecretRef(ctx, req.ID)
 	if err != nil {
@@ -354,7 +360,7 @@ func (m *SecretResource) ImportState(ctx context.Context, req resource.ImportSta
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.SecretAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -363,10 +369,10 @@ func (m *SecretResource) ImportState(ctx context.Context, req resource.ImportSta
 		return
 	}
 
-	data.Secret = *tfRes
+	state.Secret = *tfRes
 
-	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.NameParam = types.StringValue(ref.GetName())
+	state.ProjectParam = types.StringValue(ref.GetProject())
+	state.NameParam = types.StringValue(ref.GetName())
 
 	var rwTimeouts timeouts.Value
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
@@ -374,7 +380,7 @@ func (m *SecretResource) ImportState(ctx context.Context, req resource.ImportSta
 		tflog.Debug(ctx, "SecretResource.timeouts.GetAttribute")
 		return
 	}
-	data.Timeouts = rwTimeouts
+	state.Timeouts = rwTimeouts
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

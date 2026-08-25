@@ -25,7 +25,7 @@ func TestKafkaInstanceResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.KafkaInstanceRequest{
 		Broker: apimodel.KafkaInstanceSpecRequest{
-			VmType: compute.NewVmTypeRef("vmTypeID"),
+			VmType: compute.NewMustVmTypeRef("vmTypeID"),
 			Disk: apimodel.KafkaDataDiskSpecRequest{
 				Size: bytesize.MustParseString("0 B"),
 			},

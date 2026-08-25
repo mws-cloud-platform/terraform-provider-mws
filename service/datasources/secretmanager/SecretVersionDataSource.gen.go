@@ -83,13 +83,13 @@ func (m *SecretVersionDataSource) Configure(ctx context.Context, req datasource.
 func (m *SecretVersionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "SecretVersionDataSource.Read")
 
-	var data tfmodel.SecretVersionModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.SecretVersionModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -97,15 +97,15 @@ func (m *SecretVersionDataSource) Read(ctx context.Context, req datasource.ReadR
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetSecretVersion(
 		ctx,
 		client.GetSecretVersionRequest{
-			Project: data.ProjectParam.ValueString(),
-			Name:    data.NameParam.ValueString(),
-			Version: data.VersionParam.ValueString(),
+			Project: config.ProjectParam.ValueString(),
+			Name:    config.NameParam.ValueString(),
+			Version: config.VersionParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -123,7 +123,7 @@ func (m *SecretVersionDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
-	data.SecretVersion = *tfRes
+	config.SecretVersion = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

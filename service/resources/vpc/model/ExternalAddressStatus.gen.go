@@ -13,6 +13,7 @@ type ExternalAddressStatus struct {
 	tfcommon.ResourceStatus
 	IpAddress types.String `tfsdk:"ip_address"`
 	Active    types.Bool   `tfsdk:"active"`
+	Region    types.String `tfsdk:"region"`
 }
 
 func (s *ExternalAddressStatus) GetSchema() schema.Schema {
@@ -31,7 +32,11 @@ IPv4- или IPv6-адрес`,
 				Computed: true,
 			},
 			"active": schema.BoolAttribute{
-				MarkdownDescription: `Состояние внешнего адреса активен или не активен`,
+				MarkdownDescription: `Состояние внешнего адреса: активен или не активен`,
+				Computed:            true,
+			},
+			"region": schema.StringAttribute{
+				MarkdownDescription: `Регион, которому принадлежит адрес`,
 				Computed:            true,
 			},
 		},

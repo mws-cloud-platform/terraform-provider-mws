@@ -37,25 +37,56 @@ func PostgresUserAdditionalRoleAPIResponseToTFModel(ctx context.Context, am *api
 	return &t, diags
 }
 
-func PostgresUserAdditionalRoleTFToAPIRequestModel(ctx context.Context, tm *tfmodel.PostgresUserAdditionalRole) (*apimodel.PostgresUserAdditionalRoleRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func PostgresUserAdditionalRoleTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresUserAdditionalRole) (*apimodel.PostgresUserAdditionalRoleRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.PostgresUserAdditionalRoleRequest
 
-	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		am.Name = ptr.Get(apimodel.PostgresUserAdditionalRoleNameRequest(tm.Name.ValueString()))
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		am.Name = ptr.Get(apimodel.PostgresUserAdditionalRoleNameRequest(plan.Name.ValueString()))
 	}
 
-	if !tm.ExpiresAt.IsNull() && !tm.ExpiresAt.IsUnknown() {
-		tmpExpiresAt, err := time.Parse(time.RFC3339, tm.ExpiresAt.ValueString())
+	if !plan.ExpiresAt.IsNull() && !plan.ExpiresAt.IsUnknown() {
+		tmpExpiresAt, err := time.Parse(time.RFC3339, plan.ExpiresAt.ValueString())
 		if err != nil {
 			diags.AddError("time string parsing", err.Error())
 			return nil, diags
 		}
 		am.ExpiresAt = &tmpExpiresAt
+	}
+
+	return &am, diags
+}
+
+func PostgresUserAdditionalRoleTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresUserAdditionalRole) (*apimodel.UpdatePostgresUserAdditionalRoleRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.PostgresUserAdditionalRole{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdatePostgresUserAdditionalRoleRequest
+
+	if !plan.Name.Equal(state.Name) {
+		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+			am.Name.SetTo(apimodel.PostgresUserAdditionalRoleNameRequest(plan.Name.ValueString()))
+		}
+	}
+
+	if !plan.ExpiresAt.Equal(state.ExpiresAt) {
+		if !plan.ExpiresAt.IsNull() && !plan.ExpiresAt.IsUnknown() {
+			tmpExpiresAt, err := time.Parse(time.RFC3339, plan.ExpiresAt.ValueString())
+			if err != nil {
+				diags.AddError("time string parsing", err.Error())
+				return nil, diags
+			}
+			am.ExpiresAt.SetTo(tmpExpiresAt)
+		}
 	}
 
 	return &am, diags

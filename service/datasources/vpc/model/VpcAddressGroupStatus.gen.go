@@ -11,8 +11,9 @@ import (
 
 type VpcAddressGroupStatus struct {
 	tfcommon.ResourceStatus
-	Addresses       types.List `tfsdk:"addresses"`
-	OrphanAddresses types.List `tfsdk:"orphan_addresses"`
+	Addresses       types.List   `tfsdk:"addresses"`
+	OrphanAddresses types.List   `tfsdk:"orphan_addresses"`
+	Region          types.String `tfsdk:"region"`
 }
 
 func (s *VpcAddressGroupStatus) GetSchema() schema.Schema {
@@ -26,7 +27,7 @@ func (s *VpcAddressGroupStatus) GetSchema() schema.Schema {
 			},
 			"addresses": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
-					Attributes: new(ResourceAddressStatus).GetSchema().Attributes,
+					Attributes: new(tfcommon.ResourceAddressStatus).GetSchema().Attributes,
 				},
 				MarkdownDescription: `Список статусов внутренних IP-адресов`,
 				Computed:            true,
@@ -34,6 +35,10 @@ func (s *VpcAddressGroupStatus) GetSchema() schema.Schema {
 			"orphan_addresses": schema.ListAttribute{
 				ElementType:         types.StringType,
 				MarkdownDescription: `Список ссылок на внутренние IP-адреса, которые были удалены, но остались в спецификации группы`,
+				Computed:            true,
+			},
+			"region": schema.StringAttribute{
+				MarkdownDescription: `Регион, которому принадлежит группа IP-адресов`,
 				Computed:            true,
 			},
 		},

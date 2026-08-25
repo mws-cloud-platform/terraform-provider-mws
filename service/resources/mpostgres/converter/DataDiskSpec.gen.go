@@ -45,16 +45,16 @@ func DataDiskSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.DataDisk
 	return &t, diags
 }
 
-func DataDiskSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.DataDiskSpec) (*apimodel.DataDiskSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func DataDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DataDiskSpec) (*apimodel.DataDiskSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.DataDiskSpecRequest
 
-	if !tm.Size.IsNull() && !tm.Size.IsUnknown() {
-		tmpSize, err := bytesize.ParseString(tm.Size.ValueString())
+	if !plan.Size.IsNull() && !plan.Size.IsUnknown() {
+		tmpSize, err := bytesize.ParseString(plan.Size.ValueString())
 		if err != nil {
 			diags.AddError("ByteSize string parsing", err.Error())
 			return nil, diags
@@ -62,8 +62,8 @@ func DataDiskSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.DataDiskSp
 		am.Size = tmpSize
 	}
 
-	if !tm.Type.IsNull() && !tm.Type.IsUnknown() {
-		typeTmp, typeDiag := DataDiskTypeTFToAPIModel(ctx, tm.Type)
+	if !plan.Type.IsNull() && !plan.Type.IsUnknown() {
+		typeTmp, typeDiag := DataDiskTypeTFToAPIModel(ctx, plan.Type)
 		diags = append(diags, typeDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -71,13 +71,60 @@ func DataDiskSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.DataDiskSp
 		am.Type = *typeTmp
 	}
 
-	if !tm.Iops.IsNull() && !tm.Iops.IsUnknown() {
-		iopsTmp, iopsDiag := IopsTFToAPIModel(ctx, tm.Iops)
+	if !plan.Iops.IsNull() && !plan.Iops.IsUnknown() {
+		iopsTmp, iopsDiag := IopsTFToAPIModel(ctx, plan.Iops)
 		diags = append(diags, iopsDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.Iops = iopsTmp
+	}
+
+	return &am, diags
+}
+
+func DataDiskSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.DataDiskSpec) (*apimodel.UpdateDataDiskSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.DataDiskSpec{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateDataDiskSpecRequest
+
+	if !plan.Size.Equal(state.Size) {
+		if !plan.Size.IsNull() && !plan.Size.IsUnknown() {
+			tmpSize, err := bytesize.ParseString(plan.Size.ValueString())
+			if err != nil {
+				diags.AddError("ByteSize string parsing", err.Error())
+				return nil, diags
+			}
+			am.Size.SetTo(tmpSize)
+		}
+	}
+
+	if !plan.Type.Equal(state.Type) {
+		if !plan.Type.IsNull() && !plan.Type.IsUnknown() {
+			typeTmp, typeDiag := DataDiskTypeTFToAPIModel(ctx, plan.Type)
+			diags = append(diags, typeDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Type.SetTo(*typeTmp)
+		}
+	}
+
+	if !plan.Iops.Equal(state.Iops) {
+		if !plan.Iops.IsNull() && !plan.Iops.IsUnknown() {
+			iopsTmp, iopsDiag := IopsTFToAPIModel(ctx, plan.Iops)
+			diags = append(diags, iopsDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Iops.SetTo(*iopsTmp)
+		}
 	}
 
 	return &am, diags

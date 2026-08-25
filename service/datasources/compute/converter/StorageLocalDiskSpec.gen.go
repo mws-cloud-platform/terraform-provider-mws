@@ -35,24 +35,24 @@ func StorageLocalDiskSpecAPIOptionalResponseToTFModel(ctx context.Context, am *a
 	return &t, diags
 }
 
-func StorageLocalDiskSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.StorageLocalDiskSpec) (*apimodel.StorageLocalDiskSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func StorageLocalDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.StorageLocalDiskSpec) (*apimodel.StorageLocalDiskSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.StorageLocalDiskSpecRequest
 
-	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		am.Name = tm.Name.ValueString()
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		am.Name = plan.Name.ValueString()
 	}
 
-	if !tm.DeviceName.IsNull() && !tm.DeviceName.IsUnknown() {
-		am.DeviceName = tm.DeviceName.ValueStringPointer()
+	if !plan.DeviceName.IsNull() && !plan.DeviceName.IsUnknown() {
+		am.DeviceName = plan.DeviceName.ValueStringPointer()
 	}
 
-	if !tm.Size.IsNull() && !tm.Size.IsUnknown() {
-		tmpSize, err := bytesize.ParseString(tm.Size.ValueString())
+	if !plan.Size.IsNull() && !plan.Size.IsUnknown() {
+		tmpSize, err := bytesize.ParseString(plan.Size.ValueString())
 		if err != nil {
 			diags.AddError("ByteSize string parsing", err.Error())
 			return nil, diags

@@ -11,6 +11,7 @@ import (
 	apimodel "go.mws.cloud/go-sdk/service/compute/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
 func TestAddressSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -23,7 +24,7 @@ func TestAddressSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 func TestAddressSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.AddressSpecRequest{
-		Subnet: vpc.NewSubnetRef("projectID", "networkID", "subnetID"),
+		Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
 	}
 
 	emptyApiModelResponse, err := apimodel.AddressSpecRequestToOptionalResponse(&emptyApiModelRequest)
@@ -39,4 +40,18 @@ func TestAddressSpecOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateAddressSpecRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.AddressSpec
+	var stateTfModel tfmodel.AddressSpec
+
+	expectedUpdateModel := &apimodel.UpdateAddressSpecRequest{}
+
+	result, diags := conv.AddressSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

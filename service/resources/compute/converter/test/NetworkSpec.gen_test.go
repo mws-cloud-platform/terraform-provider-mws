@@ -10,6 +10,7 @@ import (
 
 	apimodel "go.mws.cloud/go-sdk/service/compute/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
 func TestNetworkSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -38,4 +39,18 @@ func TestNetworkSpecOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateNetworkSpecRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.NetworkSpec
+	var stateTfModel tfmodel.NetworkSpec
+
+	expectedUpdateModel := &apimodel.UpdateNetworkSpecRequest{}
+
+	result, diags := conv.NetworkSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

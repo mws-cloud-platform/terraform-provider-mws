@@ -25,11 +25,11 @@ func DayOfWeekAPIToTFModel(ctx context.Context, am *commonapimodel.DayOfWeek) (t
 	return t, diags
 }
 
-func DayOfWeekTFToAPIModel(ctx context.Context, tm tfcommon.DayOfWeek) (*commonapimodel.DayOfWeek, tfdiag.Diagnostics) {
+func DayOfWeekTFToAPIModel(ctx context.Context, plan tfcommon.DayOfWeek) (*commonapimodel.DayOfWeek, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.DayOfWeek
 
-	var tmp = types.String(tm)
+	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}

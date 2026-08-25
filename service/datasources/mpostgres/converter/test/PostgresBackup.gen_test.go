@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
 )
@@ -49,7 +49,7 @@ func TestPostgresBackupMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 func TestPostgresBackupMetadataResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.PostgresBackupMetadataRequest{
-		TypedResourceMetadataRequest: common.TypedResourceMetadataRequest{},
+		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
 	}
 
 	emptyApiModelResponse, err := apimodel.PostgresBackupMetadataRequestToResponse(&emptyApiModelRequest)

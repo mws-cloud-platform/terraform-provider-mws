@@ -57,6 +57,7 @@ variable "subnet_cidr" {
 - `kind` (String)
 - `metadata` (Attributes) Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров (see [below for nested schema](#nestedatt--metadata))
 - `project` (String) Путь к проекту.
+- `region` (String) Регион, которому принадлежит подсеть
 - `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 
 ### Read-Only
@@ -70,7 +71,7 @@ variable "subnet_cidr" {
 Optional:
 
 - `domain_name` (String) Базовое доменное имя для разрешения имен
-- `domain_name_servers` (List of String) Список адресов DNS серверов
+- `domain_name_servers` (List of String) Список адресов DNS-серверов
 - `ntp_servers` (List of String) Список адресов NTP серверов
 
 
@@ -125,6 +126,7 @@ Read-Only:
 
 - `dhcp_options` (Attributes) (see [below for nested schema](#nestedatt--status--dhcp_options))
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
+- `region` (String) Регион, которому принадлежит подсеть
 
 <a id="nestedatt--status--dhcp_options"></a>
 ### Nested Schema for `status.dhcp_options`
@@ -132,7 +134,7 @@ Read-Only:
 Optional:
 
 - `domain_name` (String) Базовое доменное имя для разрешения имен
-- `domain_name_servers` (List of String) Список адресов DNS серверов
+- `domain_name_servers` (List of String) Список адресов DNS-серверов
 - `ntp_servers` (List of String) Список адресов NTP серверов
 
 

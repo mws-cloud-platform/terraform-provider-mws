@@ -13,6 +13,7 @@ type OneToOneNatStatus struct {
 	tfcommon.ResourceStatus
 	Internal types.Object `tfsdk:"internal"`
 	External types.Object `tfsdk:"external"`
+	Region   types.String `tfsdk:"region"`
 }
 
 func (s *OneToOneNatStatus) GetSchema() schema.Schema {
@@ -32,6 +33,10 @@ func (s *OneToOneNatStatus) GetSchema() schema.Schema {
 			"external": schema.SingleNestedAttribute{
 				Attributes:          new(OneToOneNatStatusExternal).GetSchema().Attributes,
 				MarkdownDescription: `Группирующий элемент для всего, что касается внешней части (ресурсов, доступных извне)`,
+				Computed:            true,
+			},
+			"region": schema.StringAttribute{
+				MarkdownDescription: `Регион, которому принадлежит One-to-One NAT`,
 				Computed:            true,
 			},
 		},

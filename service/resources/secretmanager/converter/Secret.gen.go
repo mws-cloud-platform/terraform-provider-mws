@@ -89,23 +89,23 @@ func SecretAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Secret
 	return &t, diags
 }
 
-func SecretTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Secret) (*apimodel.SecretRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func SecretTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Secret) (*apimodel.SecretRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.SecretRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfcommon.CommonTypedResourceMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -113,12 +113,12 @@ func SecretTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Secret) (*apimod
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.Active.IsNull() && !tm.Active.IsUnknown() {
-		am.Spec.Active = tm.Active.ValueBoolPointer()
+	if !plan.Active.IsNull() && !plan.Active.IsUnknown() {
+		am.Spec.Active = plan.Active.ValueBoolPointer()
 	}
 
-	if !tm.CurrentSecretVersion.IsNull() && !tm.CurrentSecretVersion.IsUnknown() {
-		currentSecretVersionRef, err := secretmanager.ParseSecretVersionRef(ctx, tm.CurrentSecretVersion.ValueString())
+	if !plan.CurrentSecretVersion.IsNull() && !plan.CurrentSecretVersion.IsUnknown() {
+		currentSecretVersionRef, err := secretmanager.ParseSecretVersionRef(ctx, plan.CurrentSecretVersion.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -126,20 +126,126 @@ func SecretTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Secret) (*apimod
 		am.Spec.CurrentSecretVersion = &currentSecretVersionRef
 	}
 
-	if !tm.Encryption.IsNull() && !tm.Encryption.IsUnknown() {
-		encryptionTfModel := tfmodel.EncryptionSpec{}
-		encryptionDiag := tm.Encryption.As(ctx, &encryptionTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, encryptionDiag...)
+	if !plan.Encryption.IsNull() && !plan.Encryption.IsUnknown() {
+		encryptionPlan := tfmodel.EncryptionSpec{}
+		encryptionPlanDiag := plan.Encryption.As(ctx, &encryptionPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, encryptionPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		encryptionTmp, encryptionDiag := EncryptionSpecTFToAPIRequestModel(ctx, &encryptionTfModel)
+		encryptionTmp, encryptionDiag := EncryptionSpecTFToAPIRequestModel(ctx, &encryptionPlan)
 		diags = append(diags, encryptionDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.Spec.Encryption = encryptionTmp
+	}
+
+	return &am, diags
+}
+
+func SecretTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Secret) (*apimodel.UpdateSecretRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.Secret{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateSecretRequest
+
+	if !plan.Metadata.Equal(state.Metadata) {
+		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+			metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+			metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, metadataPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			metadataState := tfcommon.CommonTypedResourceMetadata{}
+			if !state.Metadata.IsNull() && !state.Metadata.IsUnknown() {
+				metadataStateDiag := state.Metadata.As(ctx, &metadataState, basetypes.ObjectAsOptions{})
+				diags = append(diags, metadataStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIUpdateRequestModel(ctx, &metadataPlan, &metadataState)
+			diags = append(diags, metadataDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Metadata.SetTo(*metadataTmp)
+		} else if plan.Metadata.IsNull() {
+			am.Metadata.SetToNull()
+		}
+	}
+
+	if !plan.Active.Equal(state.Active) {
+		if !plan.Active.IsNull() && !plan.Active.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateSecretSpecRequest{})
+			}
+			am.Spec.Value.Active.SetTo(plan.Active.ValueBool())
+		}
+	}
+
+	if !plan.CurrentSecretVersion.Equal(state.CurrentSecretVersion) {
+		if !plan.CurrentSecretVersion.IsNull() && !plan.CurrentSecretVersion.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateSecretSpecRequest{})
+			}
+			currentSecretVersionRef, err := secretmanager.ParseSecretVersionRef(ctx, plan.CurrentSecretVersion.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.Spec.Value.CurrentSecretVersion.SetTo(currentSecretVersionRef)
+		} else if plan.CurrentSecretVersion.IsNull() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateSecretSpecRequest{})
+			}
+			am.Spec.Value.CurrentSecretVersion.SetToNull()
+		}
+	}
+
+	if !plan.Encryption.Equal(state.Encryption) {
+		if !plan.Encryption.IsNull() && !plan.Encryption.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateSecretSpecRequest{})
+			}
+			encryptionPlan := tfmodel.EncryptionSpec{}
+			encryptionPlanDiag := plan.Encryption.As(ctx, &encryptionPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, encryptionPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			encryptionState := tfmodel.EncryptionSpec{}
+			if !state.Encryption.IsNull() && !state.Encryption.IsUnknown() {
+				encryptionStateDiag := state.Encryption.As(ctx, &encryptionState, basetypes.ObjectAsOptions{})
+				diags = append(diags, encryptionStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			encryptionTmp, encryptionDiag := EncryptionSpecTFToAPIUpdateRequestModel(ctx, &encryptionPlan, &encryptionState)
+			diags = append(diags, encryptionDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Spec.Value.Encryption.SetTo(*encryptionTmp)
+		} else if plan.Encryption.IsNull() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateSecretSpecRequest{})
+			}
+			am.Spec.Value.Encryption.SetToNull()
+		}
 	}
 
 	return &am, diags

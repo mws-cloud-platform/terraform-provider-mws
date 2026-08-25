@@ -43,21 +43,22 @@ func FirewallRuleDestinationSpecAPIOptionalResponseToTFModel(ctx context.Context
 	return &t, diags
 }
 
-func FirewallRuleDestinationSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.FirewallRuleDestinationSpec) (*apimodel.FirewallRuleDestinationSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func FirewallRuleDestinationSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.FirewallRuleDestinationSpec) (*apimodel.FirewallRuleDestinationSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.FirewallRuleDestinationSpecRequest
 
-	if !tm.Cidrs.IsNull() && !tm.Cidrs.IsUnknown() {
+	if !plan.Cidrs.IsNull() && !plan.Cidrs.IsUnknown() {
 		cidrs := make([]types.String, 0)
-		dCidrs := tm.Cidrs.ElementsAs(ctx, &cidrs, false)
+		dCidrs := plan.Cidrs.ElementsAs(ctx, &cidrs, false)
 		diags = append(diags, dCidrs...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.Cidrs = make([]cidraddress.CIDR4Address, 0, len(cidrs))
 
 		for _, entity := range cidrs {
@@ -67,6 +68,43 @@ func FirewallRuleDestinationSpecTFToAPIRequestModel(ctx context.Context, tm *tfm
 				return nil, diags
 			}
 			am.Cidrs = append(am.Cidrs, tmp)
+		}
+	}
+
+	return &am, diags
+}
+
+func FirewallRuleDestinationSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.FirewallRuleDestinationSpec) (*apimodel.UpdateFirewallRuleDestinationSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.FirewallRuleDestinationSpec{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateFirewallRuleDestinationSpecRequest
+
+	if !plan.Cidrs.Equal(state.Cidrs) {
+		if !plan.Cidrs.IsNull() && !plan.Cidrs.IsUnknown() {
+			cidrs := make([]types.String, 0)
+			dCidrs := plan.Cidrs.ElementsAs(ctx, &cidrs, false)
+			diags = append(diags, dCidrs...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			cidrsTmp := make([]cidraddress.CIDR4Address, 0, len(cidrs))
+
+			for _, entity := range cidrs {
+				tmp, err := cidraddress.ParseCIDR4AddressString(entity.ValueString())
+				if err != nil {
+					diags.AddError("CIDR4Address string parsing", err.Error())
+					return nil, diags
+				}
+				cidrsTmp = append(cidrsTmp, tmp)
+			}
+			am.Cidrs.SetTo(cidrsTmp)
 		}
 	}
 

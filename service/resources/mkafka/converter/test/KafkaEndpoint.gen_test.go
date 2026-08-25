@@ -8,9 +8,12 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
 	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
 func TestKafkaEndpointAPIResponseToTFModelEmpty(t *testing.T) {
@@ -24,7 +27,7 @@ func TestKafkaEndpointResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.KafkaEndpointRequest{
 		Name:            "name",
-		Network:         vpc.NewNetworkRef("projectID", "networkID"),
+		Network:         vpc.NewMustNetworkRef("projectID", "networkID"),
 		BrokerAddresses: []apimodel.KafkaEndpointBrokerAddressRequest{},
 	}
 
@@ -41,4 +44,24 @@ func TestKafkaEndpointResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateKafkaEndpointRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.KafkaEndpoint
+	var stateTfModel tfmodel.KafkaEndpoint
+	stateTfModel.ExternalAccess = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.KafkaEndpointExternalAccesses).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateKafkaEndpointRequest{
+		ExternalAccess: optional.OptionalNil[apimodel.UpdateKafkaEndpointExternalAccessesRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.KafkaEndpointTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

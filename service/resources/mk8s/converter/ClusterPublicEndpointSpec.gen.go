@@ -30,16 +30,36 @@ func ClusterPublicEndpointSpecAPIOptionalResponseToTFModel(ctx context.Context, 
 	return &t, diags
 }
 
-func ClusterPublicEndpointSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClusterPublicEndpointSpec) (*apimodel.ClusterPublicEndpointSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClusterPublicEndpointSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterPublicEndpointSpec) (*apimodel.ClusterPublicEndpointSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClusterPublicEndpointSpecRequest
 
-	if !tm.Version.IsNull() && !tm.Version.IsUnknown() {
-		am.Version = ptr.Get(apimodel.ClusterPublicEndpointSpecVersionRequest(tm.Version.ValueString()))
+	if !plan.Version.IsNull() && !plan.Version.IsUnknown() {
+		am.Version = ptr.Get(apimodel.ClusterPublicEndpointSpecVersionRequest(plan.Version.ValueString()))
+	}
+
+	return &am, diags
+}
+
+func ClusterPublicEndpointSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClusterPublicEndpointSpec) (*apimodel.UpdateClusterPublicEndpointSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.ClusterPublicEndpointSpec{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateClusterPublicEndpointSpecRequest
+
+	if !plan.Version.Equal(state.Version) {
+		if !plan.Version.IsNull() && !plan.Version.IsUnknown() {
+			am.Version.SetTo(apimodel.ClusterPublicEndpointSpecVersionRequest(plan.Version.ValueString()))
+		}
 	}
 
 	return &am, diags

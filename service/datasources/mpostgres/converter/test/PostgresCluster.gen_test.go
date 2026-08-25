@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
@@ -30,7 +30,7 @@ func TestPostgresClusterResponseConverters(t *testing.T) {
 			Active:    false,
 			Endpoints: []apimodel.PostgresEndpointRequest{},
 			InstanceTemplate: apimodel.PostgresInstanceTemplateRequest{
-				VmType: compute.NewVmTypeRef("vmTypeID"),
+				VmType: compute.NewMustVmTypeRef("vmTypeID"),
 				Disk: apimodel.DataDiskSpecRequest{
 					Size: bytesize.MustParseString("0 B"),
 					Type: "",
@@ -65,7 +65,7 @@ func TestPostgresClusterMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 func TestPostgresClusterMetadataResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.PostgresClusterMetadataRequest{
-		TypedResourceMetadataRequest: common.TypedResourceMetadataRequest{},
+		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
 	}
 
 	emptyApiModelResponse, err := apimodel.PostgresClusterMetadataRequestToResponse(&emptyApiModelRequest)

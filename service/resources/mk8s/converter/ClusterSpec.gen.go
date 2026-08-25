@@ -63,23 +63,23 @@ func ClusterSpecNetworkAPIOptionalResponseToTFModel(ctx context.Context, am *api
 	return &t, diags
 }
 
-func ClusterSpecNetworkTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClusterSpecNetwork) (*apimodel.ClusterSpecNetworkRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClusterSpecNetworkTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterSpecNetwork) (*apimodel.ClusterSpecNetworkRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClusterSpecNetworkRequest
 
-	if !tm.PrimaryEndpoint.IsNull() && !tm.PrimaryEndpoint.IsUnknown() {
-		primaryEndpointTfModel := tfmodel.ClusterPrimaryEndpointSpecOrRef{}
-		primaryEndpointDiag := tm.PrimaryEndpoint.As(ctx, &primaryEndpointTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, primaryEndpointDiag...)
+	if !plan.PrimaryEndpoint.IsNull() && !plan.PrimaryEndpoint.IsUnknown() {
+		primaryEndpointPlan := tfmodel.ClusterPrimaryEndpointSpecOrRef{}
+		primaryEndpointPlanDiag := plan.PrimaryEndpoint.As(ctx, &primaryEndpointPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, primaryEndpointPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		primaryEndpointTmp, primaryEndpointDiag := ClusterPrimaryEndpointSpecOrRefTFToAPIRequestModel(ctx, &primaryEndpointTfModel)
+		primaryEndpointTmp, primaryEndpointDiag := ClusterPrimaryEndpointSpecOrRefTFToAPIRequestModel(ctx, &primaryEndpointPlan)
 		diags = append(diags, primaryEndpointDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -87,15 +87,15 @@ func ClusterSpecNetworkTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Clus
 		am.PrimaryEndpoint = *primaryEndpointTmp
 	}
 
-	if !tm.PublicEndpoint.IsNull() && !tm.PublicEndpoint.IsUnknown() {
-		publicEndpointTfModel := tfmodel.ClusterPublicEndpointSpecOrRef{}
-		publicEndpointDiag := tm.PublicEndpoint.As(ctx, &publicEndpointTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, publicEndpointDiag...)
+	if !plan.PublicEndpoint.IsNull() && !plan.PublicEndpoint.IsUnknown() {
+		publicEndpointPlan := tfmodel.ClusterPublicEndpointSpecOrRef{}
+		publicEndpointPlanDiag := plan.PublicEndpoint.As(ctx, &publicEndpointPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, publicEndpointPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		publicEndpointTmp, publicEndpointDiag := ClusterPublicEndpointSpecOrRefTFToAPIRequestModel(ctx, &publicEndpointTfModel)
+		publicEndpointTmp, publicEndpointDiag := ClusterPublicEndpointSpecOrRefTFToAPIRequestModel(ctx, &publicEndpointPlan)
 		diags = append(diags, publicEndpointDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -103,8 +103,8 @@ func ClusterSpecNetworkTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Clus
 		am.PublicEndpoint = publicEndpointTmp
 	}
 
-	if !tm.PodsCidr.IsNull() && !tm.PodsCidr.IsUnknown() {
-		tmpPodsCidr, err := cidraddress.ParseCIDR4AddressString(tm.PodsCidr.ValueString())
+	if !plan.PodsCidr.IsNull() && !plan.PodsCidr.IsUnknown() {
+		tmpPodsCidr, err := cidraddress.ParseCIDR4AddressString(plan.PodsCidr.ValueString())
 		if err != nil {
 			diags.AddError("CIDR4Address string parsing", err.Error())
 			return nil, diags
@@ -112,13 +112,105 @@ func ClusterSpecNetworkTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Clus
 		am.PodsCidr = tmpPodsCidr
 	}
 
-	if !tm.ServicesCidr.IsNull() && !tm.ServicesCidr.IsUnknown() {
-		tmpServicesCidr, err := cidraddress.ParseCIDR4AddressString(tm.ServicesCidr.ValueString())
+	if !plan.ServicesCidr.IsNull() && !plan.ServicesCidr.IsUnknown() {
+		tmpServicesCidr, err := cidraddress.ParseCIDR4AddressString(plan.ServicesCidr.ValueString())
 		if err != nil {
 			diags.AddError("CIDR4Address string parsing", err.Error())
 			return nil, diags
 		}
 		am.ServicesCidr = tmpServicesCidr
+	}
+
+	return &am, diags
+}
+
+func ClusterSpecNetworkTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClusterSpecNetwork) (*apimodel.UpdateClusterSpecNetworkRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.ClusterSpecNetwork{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateClusterSpecNetworkRequest
+
+	if !plan.PrimaryEndpoint.Equal(state.PrimaryEndpoint) {
+		if !plan.PrimaryEndpoint.IsNull() && !plan.PrimaryEndpoint.IsUnknown() {
+			primaryEndpointPlan := tfmodel.ClusterPrimaryEndpointSpecOrRef{}
+			primaryEndpointPlanDiag := plan.PrimaryEndpoint.As(ctx, &primaryEndpointPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, primaryEndpointPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			primaryEndpointState := tfmodel.ClusterPrimaryEndpointSpecOrRef{}
+			if !state.PrimaryEndpoint.IsNull() && !state.PrimaryEndpoint.IsUnknown() {
+				primaryEndpointStateDiag := state.PrimaryEndpoint.As(ctx, &primaryEndpointState, basetypes.ObjectAsOptions{})
+				diags = append(diags, primaryEndpointStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			primaryEndpointTmp, primaryEndpointDiag := ClusterPrimaryEndpointSpecOrRefTFToAPIUpdateRequestModel(ctx, &primaryEndpointPlan, &primaryEndpointState)
+			diags = append(diags, primaryEndpointDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.PrimaryEndpoint.SetTo(*primaryEndpointTmp)
+		}
+	}
+
+	if !plan.PublicEndpoint.Equal(state.PublicEndpoint) {
+		if !plan.PublicEndpoint.IsNull() && !plan.PublicEndpoint.IsUnknown() {
+			publicEndpointPlan := tfmodel.ClusterPublicEndpointSpecOrRef{}
+			publicEndpointPlanDiag := plan.PublicEndpoint.As(ctx, &publicEndpointPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, publicEndpointPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			publicEndpointState := tfmodel.ClusterPublicEndpointSpecOrRef{}
+			if !state.PublicEndpoint.IsNull() && !state.PublicEndpoint.IsUnknown() {
+				publicEndpointStateDiag := state.PublicEndpoint.As(ctx, &publicEndpointState, basetypes.ObjectAsOptions{})
+				diags = append(diags, publicEndpointStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			publicEndpointTmp, publicEndpointDiag := ClusterPublicEndpointSpecOrRefTFToAPIUpdateRequestModel(ctx, &publicEndpointPlan, &publicEndpointState)
+			diags = append(diags, publicEndpointDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.PublicEndpoint.SetTo(*publicEndpointTmp)
+		} else if plan.PublicEndpoint.IsNull() {
+			am.PublicEndpoint.SetToNull()
+		}
+	}
+
+	if !plan.PodsCidr.Equal(state.PodsCidr) {
+		if !plan.PodsCidr.IsNull() && !plan.PodsCidr.IsUnknown() {
+			tmpPodsCidr, err := cidraddress.ParseCIDR4AddressString(plan.PodsCidr.ValueString())
+			if err != nil {
+				diags.AddError("CIDR4Address string parsing", err.Error())
+				return nil, diags
+			}
+			am.PodsCidr.SetTo(tmpPodsCidr)
+		}
+	}
+
+	if !plan.ServicesCidr.Equal(state.ServicesCidr) {
+		if !plan.ServicesCidr.IsNull() && !plan.ServicesCidr.IsUnknown() {
+			tmpServicesCidr, err := cidraddress.ParseCIDR4AddressString(plan.ServicesCidr.ValueString())
+			if err != nil {
+				diags.AddError("CIDR4Address string parsing", err.Error())
+				return nil, diags
+			}
+			am.ServicesCidr.SetTo(tmpServicesCidr)
+		}
 	}
 
 	return &am, diags

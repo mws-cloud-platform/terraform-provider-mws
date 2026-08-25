@@ -25,11 +25,11 @@ func PostgresRoleBindingRoleAPIToTFModel(ctx context.Context, am *apimodel.Postg
 	return t, diags
 }
 
-func PostgresRoleBindingRoleTFToAPIModel(ctx context.Context, tm tfmodel.PostgresRoleBindingRole) (*apimodel.PostgresRoleBindingRole, tfdiag.Diagnostics) {
+func PostgresRoleBindingRoleTFToAPIModel(ctx context.Context, plan tfmodel.PostgresRoleBindingRole) (*apimodel.PostgresRoleBindingRole, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am apimodel.PostgresRoleBindingRole
 
-	var tmp = types.String(tm)
+	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}

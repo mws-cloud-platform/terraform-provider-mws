@@ -15,6 +15,7 @@ type ExternalAddress struct {
 	Kind       types.String `tfsdk:"kind"`
 	Metadata   types.Object `tfsdk:"metadata"`
 	Status     types.Object `tfsdk:"status"`
+	Region     types.String `tfsdk:"region"`
 	NatGateway types.String `tfsdk:"nat_gateway"`
 }
 
@@ -40,6 +41,10 @@ func (s *ExternalAddress) GetSchema() schema.Schema {
 				Attributes:          new(ExternalAddressStatus).GetSchema().Attributes,
 				MarkdownDescription: `Статус внешнего адреса`,
 				Computed:            true,
+			},
+			"region": schema.StringAttribute{
+				MarkdownDescription: `Регион, которому принадлежит адрес`,
+				Optional:            true,
 			},
 			"nat_gateway": schema.StringAttribute{
 				MarkdownDescription: `Шлюз, к которому относится адрес. Если шлюз не указан, для трансляции IP-адресов используется шлюз по умолчанию для выхода в интернет (ref=natGateways/internet-gateway)`,

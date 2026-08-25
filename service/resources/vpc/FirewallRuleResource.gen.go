@@ -113,13 +113,13 @@ func (m *FirewallRuleResource) Configure(ctx context.Context, req resource.Confi
 func (m *FirewallRuleResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "FirewallRuleResource.Create")
 
-	var data tfmodel.FirewallRuleModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.FirewallRuleModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -127,17 +127,17 @@ func (m *FirewallRuleResource) Create(ctx context.Context, req resource.CreateRe
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "FirewallRuleResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.FirewallRuleTFToAPIRequestModel(ctx, &data.FirewallRule)
+	body, diags := conv.FirewallRuleTFToAPIRequestModel(ctx, &plan.FirewallRule)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "FirewallRuleResource.TFToAPI")
@@ -147,9 +147,9 @@ func (m *FirewallRuleResource) Create(ctx context.Context, req resource.CreateRe
 	apiRes, err := m.sdk.CreateFirewallRule(
 		ctx,
 		client.UpsertFirewallRuleRequest{
-			Project:      data.ProjectParam.ValueString(),
-			Network:      data.NetworkParam.ValueString(),
-			FirewallRule: data.FirewallRuleParam.ValueString(),
+			Project:      plan.ProjectParam.ValueString(),
+			Network:      plan.NetworkParam.ValueString(),
+			FirewallRule: plan.FirewallRuleParam.ValueString(),
 			Body:         *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
@@ -162,7 +162,7 @@ func (m *FirewallRuleResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.FirewallRuleAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -171,21 +171,21 @@ func (m *FirewallRuleResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
-	data.FirewallRule = *tfRes
+	plan.FirewallRule = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *FirewallRuleResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "FirewallRuleResource.Read")
 
-	var data tfmodel.FirewallRuleModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.FirewallRuleModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -193,15 +193,15 @@ func (m *FirewallRuleResource) Read(ctx context.Context, req resource.ReadReques
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetFirewallRule(
 		ctx,
 		client.GetFirewallRuleRequest{
-			Project:      data.ProjectParam.ValueString(),
-			Network:      data.NetworkParam.ValueString(),
-			FirewallRule: data.FirewallRuleParam.ValueString(),
+			Project:      state.ProjectParam.ValueString(),
+			Network:      state.NetworkParam.ValueString(),
+			FirewallRule: state.FirewallRuleParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -212,7 +212,7 @@ func (m *FirewallRuleResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.FirewallRuleAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -221,21 +221,27 @@ func (m *FirewallRuleResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 
-	data.FirewallRule = *tfRes
+	state.FirewallRule = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 func (m *FirewallRuleResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "FirewallRuleResource.Update")
 
-	var data tfmodel.FirewallRuleModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.FirewallRuleModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	var state tfmodel.FirewallRuleModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -243,17 +249,17 @@ func (m *FirewallRuleResource) Update(ctx context.Context, req resource.UpdateRe
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "FirewallRuleResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.FirewallRuleTFToAPIRequestModel(ctx, &data.FirewallRule)
+	body, diags := conv.FirewallRuleTFToAPIUpdateRequestModel(ctx, &plan.FirewallRule, &state.FirewallRule)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "FirewallRuleResource.TFToAPI")
@@ -263,10 +269,10 @@ func (m *FirewallRuleResource) Update(ctx context.Context, req resource.UpdateRe
 	apiRes, err := m.sdk.UpdateFirewallRule(
 		ctx,
 		client.UpdateFirewallRuleRequest{
-			Project:      data.ProjectParam.ValueString(),
-			Network:      data.NetworkParam.ValueString(),
-			FirewallRule: data.FirewallRuleParam.ValueString(),
-			Body:         body.AsUpdateModel(),
+			Project:      plan.ProjectParam.ValueString(),
+			Network:      plan.NetworkParam.ValueString(),
+			FirewallRule: plan.FirewallRuleParam.ValueString(),
+			Body:         *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -278,7 +284,7 @@ func (m *FirewallRuleResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.FirewallRuleAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -287,21 +293,21 @@ func (m *FirewallRuleResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
-	data.FirewallRule = *tfRes
+	plan.FirewallRule = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *FirewallRuleResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "FirewallRuleResource.Delete")
 
-	var data tfmodel.FirewallRuleModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.FirewallRuleModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -309,10 +315,10 @@ func (m *FirewallRuleResource) Delete(ctx context.Context, req resource.DeleteRe
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := state.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "FirewallRuleResource.Timeouts")
@@ -322,9 +328,9 @@ func (m *FirewallRuleResource) Delete(ctx context.Context, req resource.DeleteRe
 	err := m.sdk.DeleteFirewallRule(
 		ctx,
 		client.DeleteFirewallRuleRequest{
-			Project:      data.ProjectParam.ValueString(),
-			Network:      data.NetworkParam.ValueString(),
-			FirewallRule: data.FirewallRuleParam.ValueString(),
+			Project:      state.ProjectParam.ValueString(),
+			Network:      state.NetworkParam.ValueString(),
+			FirewallRule: state.FirewallRuleParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -340,7 +346,7 @@ func (m *FirewallRuleResource) Delete(ctx context.Context, req resource.DeleteRe
 func (m *FirewallRuleResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "FirewallRuleResource.ImportState")
 
-	var data tfmodel.FirewallRuleModel
+	var state tfmodel.FirewallRuleModel
 
 	ref, err := vpcref.ParseFirewallRuleRef(ctx, req.ID)
 	if err != nil {
@@ -366,7 +372,7 @@ func (m *FirewallRuleResource) ImportState(ctx context.Context, req resource.Imp
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.FirewallRuleAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -375,11 +381,11 @@ func (m *FirewallRuleResource) ImportState(ctx context.Context, req resource.Imp
 		return
 	}
 
-	data.FirewallRule = *tfRes
+	state.FirewallRule = *tfRes
 
-	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.NetworkParam = types.StringValue(ref.GetNetwork())
-	data.FirewallRuleParam = types.StringValue(ref.GetFirewallRule())
+	state.ProjectParam = types.StringValue(ref.GetProject())
+	state.NetworkParam = types.StringValue(ref.GetNetwork())
+	state.FirewallRuleParam = types.StringValue(ref.GetFirewallRule())
 
 	var rwTimeouts timeouts.Value
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
@@ -387,7 +393,7 @@ func (m *FirewallRuleResource) ImportState(ctx context.Context, req resource.Imp
 		tflog.Debug(ctx, "FirewallRuleResource.timeouts.GetAttribute")
 		return
 	}
-	data.Timeouts = rwTimeouts
+	state.Timeouts = rwTimeouts
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/iam/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
@@ -92,23 +92,23 @@ func AuthorizedKeyAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel
 	return &t, diags
 }
 
-func AuthorizedKeyTFToAPIRequestModel(ctx context.Context, tm *tfmodel.AuthorizedKey) (*apimodel.AuthorizedKeyRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func AuthorizedKeyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.AuthorizedKey) (*apimodel.AuthorizedKeyRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.AuthorizedKeyRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfmodel.AuthorizedKeyMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfmodel.AuthorizedKeyMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := AuthorizedKeyMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := AuthorizedKeyMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -116,16 +116,16 @@ func AuthorizedKeyTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Authorize
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.PublicKey.IsNull() && !tm.PublicKey.IsUnknown() {
-		am.Spec.PublicKey = tm.PublicKey.ValueStringPointer()
+	if !plan.PublicKey.IsNull() && !plan.PublicKey.IsUnknown() {
+		am.Spec.PublicKey = plan.PublicKey.ValueStringPointer()
 	}
 
-	if !tm.KeyAlgorithm.IsNull() && !tm.KeyAlgorithm.IsUnknown() {
-		am.Spec.KeyAlgorithm = tm.KeyAlgorithm.ValueString()
+	if !plan.KeyAlgorithm.IsNull() && !plan.KeyAlgorithm.IsUnknown() {
+		am.Spec.KeyAlgorithm = plan.KeyAlgorithm.ValueString()
 	}
 
-	if !tm.ExpirationTime.IsNull() && !tm.ExpirationTime.IsUnknown() {
-		tmpExpirationTime, err := time.Parse(time.RFC3339, tm.ExpirationTime.ValueString())
+	if !plan.ExpirationTime.IsNull() && !plan.ExpirationTime.IsUnknown() {
+		tmpExpirationTime, err := time.Parse(time.RFC3339, plan.ExpirationTime.ValueString())
 		if err != nil {
 			diags.AddError("time string parsing", err.Error())
 			return nil, diags
@@ -133,8 +133,8 @@ func AuthorizedKeyTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Authorize
 		am.Spec.ExpirationTime = &tmpExpirationTime
 	}
 
-	if !tm.Active.IsNull() && !tm.Active.IsUnknown() {
-		am.Spec.Active = tm.Active.ValueBoolPointer()
+	if !plan.Active.IsNull() && !plan.Active.IsUnknown() {
+		am.Spec.Active = plan.Active.ValueBoolPointer()
 	}
 
 	return &am, diags
@@ -214,26 +214,27 @@ func AuthorizedKeyMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *
 	return &t, diags
 }
 
-func AuthorizedKeyMetadataTFToAPIRequestModel(ctx context.Context, tm *tfmodel.AuthorizedKeyMetadata) (*apimodel.AuthorizedKeyMetadataRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func AuthorizedKeyMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.AuthorizedKeyMetadata) (*apimodel.AuthorizedKeyMetadataRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.AuthorizedKeyMetadataRequest
 
-	if !tm.DisplayName.IsNull() && !tm.DisplayName.IsUnknown() {
-		am.DisplayName = tm.DisplayName.ValueStringPointer()
+	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
+		am.DisplayName = plan.DisplayName.ValueStringPointer()
 	}
 
-	if !tm.Usages.IsNull() && !tm.Usages.IsUnknown() {
+	if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
 		usages := make([]tfcommon.TypedUsage, 0)
-		dUsages := tm.Usages.ElementsAs(ctx, &usages, false)
+		dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
 		diags = append(diags, dUsages...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.Usages = make([]common.TypedUsageRequest, 0, len(usages))
+
+		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
@@ -245,8 +246,8 @@ func AuthorizedKeyMetadataTFToAPIRequestModel(ctx context.Context, tm *tfmodel.A
 		}
 	}
 
-	if !tm.Description.IsNull() && !tm.Description.IsUnknown() {
-		am.Description = tm.Description.ValueStringPointer()
+	if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
+		am.Description = plan.Description.ValueStringPointer()
 	}
 
 	return &am, diags

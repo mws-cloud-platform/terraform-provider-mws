@@ -129,26 +129,44 @@ func DiskAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.DiskOpti
 		t.OsType = types.StringNull()
 	}
 
+	if val, ok := am.Spec.Encryption.Get(); ok {
+		encryptionTmp, d := EncryptionSpecAPIOptionalResponseToTFModel(ctx, &val)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		encryptionTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.EncryptionSpec).GetSchema().Attributes),
+			*encryptionTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.Encryption = encryptionTfObject
+	} else {
+		t.Encryption = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.EncryptionSpec).GetSchema().Attributes))
+	}
+
 	return &t, diags
 }
 
-func DiskTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Disk) (*apimodel.DiskRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func DiskTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Disk) (*apimodel.DiskRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.DiskRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfcommon.CommonTypedResourceMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -156,12 +174,12 @@ func DiskTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Disk) (*apimodel.D
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.Zone.IsNull() && !tm.Zone.IsUnknown() {
-		am.Spec.Zone = tm.Zone.ValueString()
+	if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
+		am.Spec.Zone = plan.Zone.ValueString()
 	}
 
-	if !tm.Size.IsNull() && !tm.Size.IsUnknown() {
-		tmpSize, err := bytesize.ParseString(tm.Size.ValueString())
+	if !plan.Size.IsNull() && !plan.Size.IsUnknown() {
+		tmpSize, err := bytesize.ParseString(plan.Size.ValueString())
 		if err != nil {
 			diags.AddError("ByteSize string parsing", err.Error())
 			return nil, diags
@@ -169,15 +187,15 @@ func DiskTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Disk) (*apimodel.D
 		am.Spec.Size = &tmpSize
 	}
 
-	if !tm.Source.IsNull() && !tm.Source.IsUnknown() {
-		sourceTfModel := tfmodel.DiskSpecSource{}
-		sourceDiag := tm.Source.As(ctx, &sourceTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, sourceDiag...)
+	if !plan.Source.IsNull() && !plan.Source.IsUnknown() {
+		sourcePlan := tfmodel.DiskSpecSource{}
+		sourcePlanDiag := plan.Source.As(ctx, &sourcePlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, sourcePlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		sourceTmp, sourceDiag := DiskSpecSourceTFToAPIRequestModel(ctx, &sourceTfModel)
+		sourceTmp, sourceDiag := DiskSpecSourceTFToAPIRequestModel(ctx, &sourcePlan)
 		diags = append(diags, sourceDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -185,8 +203,8 @@ func DiskTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Disk) (*apimodel.D
 		am.Spec.Source = sourceTmp
 	}
 
-	if !tm.DiskType.IsNull() && !tm.DiskType.IsUnknown() {
-		diskTypeRef, err := compute.ParseDiskTypeRef(ctx, tm.DiskType.ValueString())
+	if !plan.DiskType.IsNull() && !plan.DiskType.IsUnknown() {
+		diskTypeRef, err := compute.ParseDiskTypeRef(ctx, plan.DiskType.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -194,8 +212,8 @@ func DiskTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Disk) (*apimodel.D
 		am.Spec.DiskType = &diskTypeRef
 	}
 
-	if !tm.Iops.IsNull() && !tm.Iops.IsUnknown() {
-		iopsTmp, iopsDiag := IopsTFToAPIModel(ctx, tm.Iops)
+	if !plan.Iops.IsNull() && !plan.Iops.IsUnknown() {
+		iopsTmp, iopsDiag := IopsTFToAPIModel(ctx, plan.Iops)
 		diags = append(diags, iopsDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -203,8 +221,8 @@ func DiskTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Disk) (*apimodel.D
 		am.Spec.Iops = iopsTmp
 	}
 
-	if !tm.BlockSize.IsNull() && !tm.BlockSize.IsUnknown() {
-		tmpBlockSize, err := bytesize.ParseString(tm.BlockSize.ValueString())
+	if !plan.BlockSize.IsNull() && !plan.BlockSize.IsUnknown() {
+		tmpBlockSize, err := bytesize.ParseString(plan.BlockSize.ValueString())
 		if err != nil {
 			diags.AddError("ByteSize string parsing", err.Error())
 			return nil, diags
@@ -212,13 +230,29 @@ func DiskTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Disk) (*apimodel.D
 		am.Spec.BlockSize = &tmpBlockSize
 	}
 
-	if !tm.OsType.IsNull() && !tm.OsType.IsUnknown() {
-		osTypeTmp, osTypeDiag := OsTypeTFToAPIModel(ctx, tm.OsType)
+	if !plan.OsType.IsNull() && !plan.OsType.IsUnknown() {
+		osTypeTmp, osTypeDiag := OsTypeTFToAPIModel(ctx, plan.OsType)
 		diags = append(diags, osTypeDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.Spec.OsType = osTypeTmp
+	}
+
+	if !plan.Encryption.IsNull() && !plan.Encryption.IsUnknown() {
+		encryptionPlan := tfmodel.EncryptionSpec{}
+		encryptionPlanDiag := plan.Encryption.As(ctx, &encryptionPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, encryptionPlanDiag...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		encryptionTmp, encryptionDiag := EncryptionSpecTFToAPIRequestModel(ctx, &encryptionPlan)
+		diags = append(diags, encryptionDiag...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		am.Spec.Encryption = encryptionTmp
 	}
 
 	return &am, diags

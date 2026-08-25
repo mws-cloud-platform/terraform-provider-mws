@@ -77,16 +77,16 @@ func ClickhouseClusterCoordinatorAPIOptionalResponseToTFModel(ctx context.Contex
 	return &t, diags
 }
 
-func ClickhouseClusterCoordinatorTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClickhouseClusterCoordinator) (*apimodel.ClickhouseClusterCoordinatorRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClickhouseClusterCoordinatorTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterCoordinator) (*apimodel.ClickhouseClusterCoordinatorRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClickhouseClusterCoordinatorRequest
 
-	if !tm.Type.IsNull() && !tm.Type.IsUnknown() {
-		typeTmp, typeDiag := ClickhouseCoordinatorTypeTFToAPIModel(ctx, tm.Type)
+	if !plan.Type.IsNull() && !plan.Type.IsUnknown() {
+		typeTmp, typeDiag := ClickhouseCoordinatorTypeTFToAPIModel(ctx, plan.Type)
 		diags = append(diags, typeDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -94,15 +94,15 @@ func ClickhouseClusterCoordinatorTFToAPIRequestModel(ctx context.Context, tm *tf
 		am.Type = typeTmp
 	}
 
-	if !tm.Resources.IsNull() && !tm.Resources.IsUnknown() {
-		resourcesTfModel := tfmodel.ClickhouseCoordinatorHWResources{}
-		resourcesDiag := tm.Resources.As(ctx, &resourcesTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, resourcesDiag...)
+	if !plan.Resources.IsNull() && !plan.Resources.IsUnknown() {
+		resourcesPlan := tfmodel.ClickhouseCoordinatorHWResources{}
+		resourcesPlanDiag := plan.Resources.As(ctx, &resourcesPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, resourcesPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		resourcesTmp, resourcesDiag := ClickhouseCoordinatorHWResourcesTFToAPIRequestModel(ctx, &resourcesTfModel)
+		resourcesTmp, resourcesDiag := ClickhouseCoordinatorHWResourcesTFToAPIRequestModel(ctx, &resourcesPlan)
 		diags = append(diags, resourcesDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -110,13 +110,14 @@ func ClickhouseClusterCoordinatorTFToAPIRequestModel(ctx context.Context, tm *tf
 		am.Resources = *resourcesTmp
 	}
 
-	if !tm.Instances.IsNull() && !tm.Instances.IsUnknown() {
+	if !plan.Instances.IsNull() && !plan.Instances.IsUnknown() {
 		instances := make([]tfmodel.ClickhouseClusterCoordinatorInstance, 0)
-		dInstances := tm.Instances.ElementsAs(ctx, &instances, false)
+		dInstances := plan.Instances.ElementsAs(ctx, &instances, false)
 		diags = append(diags, dInstances...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.Instances = make([]apimodel.ClickhouseClusterCoordinatorInstanceRequest, 0, len(instances))
 
 		for _, entity := range instances {
@@ -126,6 +127,82 @@ func ClickhouseClusterCoordinatorTFToAPIRequestModel(ctx context.Context, tm *tf
 				return nil, diags
 			}
 			am.Instances = append(am.Instances, *tmp)
+		}
+	}
+
+	return &am, diags
+}
+
+func ClickhouseClusterCoordinatorTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseClusterCoordinator) (*apimodel.UpdateClickhouseClusterCoordinatorRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.ClickhouseClusterCoordinator{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateClickhouseClusterCoordinatorRequest
+
+	if !plan.Type.Equal(state.Type) {
+		if !plan.Type.IsNull() && !plan.Type.IsUnknown() {
+			typeTmp, typeDiag := ClickhouseCoordinatorTypeTFToAPIModel(ctx, plan.Type)
+			diags = append(diags, typeDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Type.SetTo(*typeTmp)
+		}
+	}
+
+	if !plan.Resources.Equal(state.Resources) {
+		if !plan.Resources.IsNull() && !plan.Resources.IsUnknown() {
+			resourcesPlan := tfmodel.ClickhouseCoordinatorHWResources{}
+			resourcesPlanDiag := plan.Resources.As(ctx, &resourcesPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, resourcesPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			resourcesState := tfmodel.ClickhouseCoordinatorHWResources{}
+			if !state.Resources.IsNull() && !state.Resources.IsUnknown() {
+				resourcesStateDiag := state.Resources.As(ctx, &resourcesState, basetypes.ObjectAsOptions{})
+				diags = append(diags, resourcesStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			resourcesTmp, resourcesDiag := ClickhouseCoordinatorHWResourcesTFToAPIUpdateRequestModel(ctx, &resourcesPlan, &resourcesState)
+			diags = append(diags, resourcesDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Resources.SetTo(*resourcesTmp)
+		}
+	}
+
+	if !plan.Instances.Equal(state.Instances) {
+		if !plan.Instances.IsNull() && !plan.Instances.IsUnknown() {
+			instances := make([]tfmodel.ClickhouseClusterCoordinatorInstance, 0)
+			dInstances := plan.Instances.ElementsAs(ctx, &instances, false)
+			diags = append(diags, dInstances...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			instancesTmp := make([]apimodel.UpdateClickhouseClusterCoordinatorInstanceRequest, 0, len(instances))
+
+			for _, entity := range instances {
+				stateEntity := tfmodel.ClickhouseClusterCoordinatorInstance{}
+				tmp, d := ClickhouseClusterCoordinatorInstanceTFToAPIUpdateRequestModel(ctx, &entity, &stateEntity)
+				diags = append(diags, d...)
+				if diags.HasError() {
+					return nil, diags
+				}
+				instancesTmp = append(instancesTmp, *tmp)
+			}
+			am.Instances.SetTo(instancesTmp)
 		}
 	}
 

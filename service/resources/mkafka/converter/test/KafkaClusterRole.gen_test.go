@@ -10,6 +10,7 @@ import (
 
 	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
 func TestKafkaClusterRoleAPIResponseToTFModelEmpty(t *testing.T) {
@@ -38,4 +39,18 @@ func TestKafkaClusterRoleResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateKafkaClusterRoleRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.KafkaClusterRole
+	var stateTfModel tfmodel.KafkaClusterRole
+
+	expectedUpdateModel := &apimodel.UpdateKafkaClusterRoleRequest{}
+
+	result, diags := conv.KafkaClusterRoleTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

@@ -11,6 +11,8 @@ import (
 
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
+	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/model"
 )
 
@@ -22,13 +24,13 @@ func OneToOneNatSpecInternalAPIOptionalResponseToTFModel(ctx context.Context, am
 	var diags tfdiag.Diagnostics
 	var t tfmodel.OneToOneNatSpecInternal
 
-	addressTmp, d := ResourceAddressSpecOrRefAPIOptionalResponseToTFModel(ctx, &am.Address)
+	addressTmp, d := commonconv.ResourceAddressSpecOrRefAPIOptionalResponseToTFModel(ctx, &am.Address)
 	diags = append(diags, d...)
 	if diags.HasError() {
 		return nil, diags
 	}
 	addressTfObject, d := types.ObjectValueFrom(ctx,
-		tfconv.GetAttributesTypes(new(tfmodel.ResourceAddressSpecOrRef).GetSchema().Attributes),
+		tfconv.GetAttributesTypes(new(tfcommon.ResourceAddressSpecOrRef).GetSchema().Attributes),
 		*addressTmp)
 	diags = append(diags, d...)
 	if diags.HasError() {
@@ -39,23 +41,23 @@ func OneToOneNatSpecInternalAPIOptionalResponseToTFModel(ctx context.Context, am
 	return &t, diags
 }
 
-func OneToOneNatSpecInternalTFToAPIRequestModel(ctx context.Context, tm *tfmodel.OneToOneNatSpecInternal) (*apimodel.OneToOneNatSpecInternalRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func OneToOneNatSpecInternalTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OneToOneNatSpecInternal) (*apimodel.OneToOneNatSpecInternalRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.OneToOneNatSpecInternalRequest
 
-	if !tm.Address.IsNull() && !tm.Address.IsUnknown() {
-		addressTfModel := tfmodel.ResourceAddressSpecOrRef{}
-		addressDiag := tm.Address.As(ctx, &addressTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, addressDiag...)
+	if !plan.Address.IsNull() && !plan.Address.IsUnknown() {
+		addressPlan := tfcommon.ResourceAddressSpecOrRef{}
+		addressPlanDiag := plan.Address.As(ctx, &addressPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, addressPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		addressTmp, addressDiag := ResourceAddressSpecOrRefTFToAPIRequestModel(ctx, &addressTfModel)
+		addressTmp, addressDiag := commonconv.ResourceAddressSpecOrRefTFToAPIRequestModel(ctx, &addressPlan)
 		diags = append(diags, addressDiag...)
 		if diags.HasError() {
 			return nil, diags

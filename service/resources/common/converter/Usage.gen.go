@@ -63,47 +63,111 @@ func UsageAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.U
 	return &t, diags
 }
 
-func UsageTFToAPIModel(ctx context.Context, tm *tfcommon.Usage) (*commonapimodel.Usage, tfdiag.Diagnostics) {
-	if tm == nil {
+func UsageTFToAPIModel(ctx context.Context, plan *tfcommon.Usage) (*commonapimodel.Usage, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.Usage
 
-	if !tm.UsageType.IsNull() && !tm.UsageType.IsUnknown() {
-		am.UsageType = tm.UsageType.ValueString()
+	if !plan.UsageType.IsNull() && !plan.UsageType.IsUnknown() {
+		am.UsageType = plan.UsageType.ValueString()
 	}
 
-	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		am.Name = tm.Name.ValueString()
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		am.Name = plan.Name.ValueString()
 	}
 
-	if !tm.Resource.IsNull() && !tm.Resource.IsUnknown() {
-		am.Resource = tm.Resource.ValueString()
+	if !plan.Resource.IsNull() && !plan.Resource.IsUnknown() {
+		am.Resource = plan.Resource.ValueString()
 	}
 
 	return &am, diags
 }
 
-func UsageTFToAPIRequestModel(ctx context.Context, tm *tfcommon.Usage) (*commonapimodel.UsageRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func UsageTFToAPIRequestModel(ctx context.Context, plan *tfcommon.Usage) (*commonapimodel.UsageRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.UsageRequest
 
-	if !tm.UsageType.IsNull() && !tm.UsageType.IsUnknown() {
-		am.UsageType = tm.UsageType.ValueString()
+	if !plan.UsageType.IsNull() && !plan.UsageType.IsUnknown() {
+		am.UsageType = plan.UsageType.ValueString()
 	}
 
-	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		am.Name = tm.Name.ValueString()
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		am.Name = plan.Name.ValueString()
 	}
 
-	if !tm.Resource.IsNull() && !tm.Resource.IsUnknown() {
-		am.Resource = tm.Resource.ValueString()
+	if !plan.Resource.IsNull() && !plan.Resource.IsUnknown() {
+		am.Resource = plan.Resource.ValueString()
+	}
+
+	return &am, diags
+}
+
+func UsageTFToAPIUpdateModel(ctx context.Context, plan, state *tfcommon.Usage) (*commonapimodel.UpdateUsage, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfcommon.Usage{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am commonapimodel.UpdateUsage
+
+	if !plan.UsageType.Equal(state.UsageType) {
+		if !plan.UsageType.IsNull() && !plan.UsageType.IsUnknown() {
+			am.UsageType.SetTo(plan.UsageType.ValueString())
+		}
+	}
+
+	if !plan.Name.Equal(state.Name) {
+		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+			am.Name.SetTo(plan.Name.ValueString())
+		}
+	}
+
+	if !plan.Resource.Equal(state.Resource) {
+		if !plan.Resource.IsNull() && !plan.Resource.IsUnknown() {
+			am.Resource.SetTo(plan.Resource.ValueString())
+		}
+	}
+
+	return &am, diags
+}
+
+func UsageTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfcommon.Usage) (*commonapimodel.UpdateUsageRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfcommon.Usage{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am commonapimodel.UpdateUsageRequest
+
+	if !plan.UsageType.Equal(state.UsageType) {
+		if !plan.UsageType.IsNull() && !plan.UsageType.IsUnknown() {
+			am.UsageType.SetTo(plan.UsageType.ValueString())
+		}
+	}
+
+	if !plan.Name.Equal(state.Name) {
+		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+			am.Name.SetTo(plan.Name.ValueString())
+		}
+	}
+
+	if !plan.Resource.Equal(state.Resource) {
+		if !plan.Resource.IsNull() && !plan.Resource.IsUnknown() {
+			am.Resource.SetTo(plan.Resource.ValueString())
+		}
 	}
 
 	return &am, diags

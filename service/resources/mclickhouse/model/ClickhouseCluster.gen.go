@@ -11,7 +11,6 @@ import (
 	localboolplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/boolplanmodifier"
 	locallistplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/listplanmodifier"
 	localmapplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/mapplanmodifier"
-	localobjectplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/objectplanmodifier"
 	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
@@ -83,9 +82,6 @@ func (s *ClickhouseCluster) GetSchema() schema.Schema {
 				Attributes:          new(ClickhouseClusterCoordinator).GetSchema().Attributes,
 				MarkdownDescription: `Описание координатора кластера`,
 				Optional:            true,
-				PlanModifiers: []planmodifier.Object{
-					localobjectplanmodifier.RequiresReplaceIfRemoved(),
-				},
 			},
 			"shards": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
@@ -106,9 +102,6 @@ func (s *ClickhouseCluster) GetSchema() schema.Schema {
 				Attributes:          new(ClickhouseStorageConfiguration).GetSchema().Attributes,
 				MarkdownDescription: `Конфигурация схемы хранилищ ClickHouse`,
 				Optional:            true,
-				PlanModifiers: []planmodifier.Object{
-					localobjectplanmodifier.RequiresReplaceIfRemoved(),
-				},
 			},
 			"bootstrap_admin": schema.SingleNestedAttribute{
 				Attributes:          new(ClickhouseClusterBootstrapAdminSpec).GetSchema().Attributes,
@@ -119,16 +112,10 @@ func (s *ClickhouseCluster) GetSchema() schema.Schema {
 				Attributes:          new(ClickhouseClusterBackup).GetSchema().Attributes,
 				MarkdownDescription: `Спецификация работы автоматического резервного копирования`,
 				Optional:            true,
-				PlanModifiers: []planmodifier.Object{
-					localobjectplanmodifier.RequiresReplaceIfRemoved(),
-				},
 			},
 			"maintenance_window": schema.SingleNestedAttribute{
 				Attributes: new(tfcommon.MaintenanceWindow).GetSchema().Attributes,
 				Optional:   true,
-				PlanModifiers: []planmodifier.Object{
-					localobjectplanmodifier.RequiresReplaceIfRemoved(),
-				},
 			},
 		},
 	}
@@ -163,8 +150,10 @@ func (s *ClickhouseClusterMetadata) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"purge_time": schema.StringAttribute{
-				MarkdownDescription: `Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
-				Computed:            true,
+				MarkdownDescription: `Время удаления ресурса
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"usages": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{

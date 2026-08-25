@@ -83,13 +83,13 @@ func (m *CryptoKeyVersionDataSource) Configure(ctx context.Context, req datasour
 func (m *CryptoKeyVersionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "CryptoKeyVersionDataSource.Read")
 
-	var data tfmodel.CryptoKeyVersionModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.CryptoKeyVersionModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -97,15 +97,15 @@ func (m *CryptoKeyVersionDataSource) Read(ctx context.Context, req datasource.Re
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetCryptoKeyVersion(
 		ctx,
 		client.GetCryptoKeyVersionRequest{
-			Project: data.ProjectParam.ValueString(),
-			Key:     data.KeyParam.ValueString(),
-			Version: data.VersionParam.ValueString(),
+			Project: config.ProjectParam.ValueString(),
+			Key:     config.KeyParam.ValueString(),
+			Version: config.VersionParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -123,7 +123,7 @@ func (m *CryptoKeyVersionDataSource) Read(ctx context.Context, req datasource.Re
 		return
 	}
 
-	data.CryptoKeyVersion = *tfRes
+	config.CryptoKeyVersion = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

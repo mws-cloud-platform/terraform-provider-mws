@@ -109,7 +109,7 @@ func (s *SecretWithEncryptionSuite) TestSecretWithEncryption() {
 
 	secretName := utils.RandResourceName("secret")
 
-	tc.ResourceConfig = fmt.Sprintf(secretWithEncryptionTF, secretName, s.cryptoKey.GetMetadata().GetId().ID())
+	tc.ResourceConfig = fmt.Sprintf(secretWithEncryptionTF, secretName, s.cryptoKey.GetMetadata().Id.ID())
 	tc.DataSourceConfig = fmt.Sprintf(secretDataSourceTF, secretName)
 	s.BuildAndRun(ctx, tc)
 }

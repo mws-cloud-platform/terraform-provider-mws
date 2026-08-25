@@ -14,7 +14,7 @@ type CommonRoleBindingFederationContextAttribute struct {
 
 func (s *CommonRoleBindingFederationContextAttribute) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Атрибут пользователя федерации в виде пары «имя — значение».`,
 		Attributes: map[string]schema.Attribute{
 			"name": schema.StringAttribute{
 				MarkdownDescription: `Имя атрибута`,

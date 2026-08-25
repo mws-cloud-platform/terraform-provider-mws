@@ -83,13 +83,13 @@ func (m *OneToOneNatDataSource) Configure(ctx context.Context, req datasource.Co
 func (m *OneToOneNatDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "OneToOneNatDataSource.Read")
 
-	var data tfmodel.OneToOneNatModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.OneToOneNatModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -97,15 +97,15 @@ func (m *OneToOneNatDataSource) Read(ctx context.Context, req datasource.ReadReq
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetOneToOneNat(
 		ctx,
 		client.GetOneToOneNatRequest{
-			Project:     data.ProjectParam.ValueString(),
-			Network:     data.NetworkParam.ValueString(),
-			OneToOneNat: data.OneToOneNatParam.ValueString(),
+			Project:     config.ProjectParam.ValueString(),
+			Network:     config.NetworkParam.ValueString(),
+			OneToOneNat: config.OneToOneNatParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -123,7 +123,7 @@ func (m *OneToOneNatDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	data.OneToOneNat = *tfRes
+	config.OneToOneNat = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

@@ -43,28 +43,71 @@ func CertificateManagedSpecIssuerAPIOptionalResponseToTFModel(ctx context.Contex
 	return &t, diags
 }
 
-func CertificateManagedSpecIssuerTFToAPIRequestModel(ctx context.Context, tm *tfmodel.CertificateManagedSpecIssuer) (*apimodel.CertificateManagedSpecIssuerRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func CertificateManagedSpecIssuerTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CertificateManagedSpecIssuer) (*apimodel.CertificateManagedSpecIssuerRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.CertificateManagedSpecIssuerRequest
 
-	if !tm.Acme.IsNull() && !tm.Acme.IsUnknown() {
-		acmeTfModel := tfmodel.CertificateManagedSpecIssuerAcme{}
-		acmeDiag := tm.Acme.As(ctx, &acmeTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, acmeDiag...)
+	if !plan.Acme.IsNull() && !plan.Acme.IsUnknown() {
+		acmePlan := tfmodel.CertificateManagedSpecIssuerAcme{}
+		acmePlanDiag := plan.Acme.As(ctx, &acmePlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, acmePlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		acmeTmp, acmeDiag := CertificateManagedSpecIssuerAcmeTFToAPIRequestModel(ctx, &acmeTfModel)
+		acmeTmp, acmeDiag := CertificateManagedSpecIssuerAcmeTFToAPIRequestModel(ctx, &acmePlan)
 		diags = append(diags, acmeDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.Acme = acmeTmp
+	}
+
+	return &am, diags
+}
+
+func CertificateManagedSpecIssuerTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.CertificateManagedSpecIssuer) (*apimodel.UpdateCertificateManagedSpecIssuerRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.CertificateManagedSpecIssuer{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateCertificateManagedSpecIssuerRequest
+
+	if !plan.Acme.Equal(state.Acme) {
+		if !plan.Acme.IsNull() && !plan.Acme.IsUnknown() {
+			acmePlan := tfmodel.CertificateManagedSpecIssuerAcme{}
+			acmePlanDiag := plan.Acme.As(ctx, &acmePlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, acmePlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			acmeState := tfmodel.CertificateManagedSpecIssuerAcme{}
+			if !state.Acme.IsNull() && !state.Acme.IsUnknown() {
+				acmeStateDiag := state.Acme.As(ctx, &acmeState, basetypes.ObjectAsOptions{})
+				diags = append(diags, acmeStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			acmeTmp, acmeDiag := CertificateManagedSpecIssuerAcmeTFToAPIUpdateRequestModel(ctx, &acmePlan, &acmeState)
+			diags = append(diags, acmeDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Acme.SetTo(*acmeTmp)
+		} else if plan.Acme.IsNull() {
+			am.Acme.SetToNull()
+		}
 	}
 
 	return &am, diags
@@ -101,16 +144,16 @@ func CertificateManagedSpecIssuerAcmeAPIOptionalResponseToTFModel(ctx context.Co
 	return &t, diags
 }
 
-func CertificateManagedSpecIssuerAcmeTFToAPIRequestModel(ctx context.Context, tm *tfmodel.CertificateManagedSpecIssuerAcme) (*apimodel.CertificateManagedSpecIssuerAcmeRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func CertificateManagedSpecIssuerAcmeTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CertificateManagedSpecIssuerAcme) (*apimodel.CertificateManagedSpecIssuerAcmeRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.CertificateManagedSpecIssuerAcmeRequest
 
-	if !tm.Server.IsNull() && !tm.Server.IsUnknown() {
-		serverTmp, serverDiag := CertificateManagedSpecAcmeServerTFToAPIModel(ctx, tm.Server)
+	if !plan.Server.IsNull() && !plan.Server.IsUnknown() {
+		serverTmp, serverDiag := CertificateManagedSpecAcmeServerTFToAPIModel(ctx, plan.Server)
 		diags = append(diags, serverDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -118,8 +161,8 @@ func CertificateManagedSpecIssuerAcmeTFToAPIRequestModel(ctx context.Context, tm
 		am.Server = *serverTmp
 	}
 
-	if !tm.ChallengeType.IsNull() && !tm.ChallengeType.IsUnknown() {
-		challengeTypeTmp, challengeTypeDiag := CertificateChallengeTypeTFToAPIModel(ctx, tm.ChallengeType)
+	if !plan.ChallengeType.IsNull() && !plan.ChallengeType.IsUnknown() {
+		challengeTypeTmp, challengeTypeDiag := CertificateChallengeTypeTFToAPIModel(ctx, plan.ChallengeType)
 		diags = append(diags, challengeTypeDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -127,8 +170,50 @@ func CertificateManagedSpecIssuerAcmeTFToAPIRequestModel(ctx context.Context, tm
 		am.ChallengeType = *challengeTypeTmp
 	}
 
-	if !tm.Profile.IsNull() && !tm.Profile.IsUnknown() {
-		am.Profile = tm.Profile.ValueStringPointer()
+	if !plan.Profile.IsNull() && !plan.Profile.IsUnknown() {
+		am.Profile = plan.Profile.ValueStringPointer()
+	}
+
+	return &am, diags
+}
+
+func CertificateManagedSpecIssuerAcmeTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.CertificateManagedSpecIssuerAcme) (*apimodel.UpdateCertificateManagedSpecIssuerAcmeRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.CertificateManagedSpecIssuerAcme{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateCertificateManagedSpecIssuerAcmeRequest
+
+	if !plan.Server.Equal(state.Server) {
+		if !plan.Server.IsNull() && !plan.Server.IsUnknown() {
+			serverTmp, serverDiag := CertificateManagedSpecAcmeServerTFToAPIModel(ctx, plan.Server)
+			diags = append(diags, serverDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Server.SetTo(*serverTmp)
+		}
+	}
+
+	if !plan.ChallengeType.Equal(state.ChallengeType) {
+		if !plan.ChallengeType.IsNull() && !plan.ChallengeType.IsUnknown() {
+			challengeTypeTmp, challengeTypeDiag := CertificateChallengeTypeTFToAPIModel(ctx, plan.ChallengeType)
+			diags = append(diags, challengeTypeDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.ChallengeType.SetTo(*challengeTypeTmp)
+		}
+	}
+
+	if !plan.Profile.Equal(state.Profile) {
+		if !plan.Profile.IsNull() && !plan.Profile.IsUnknown() {
+			am.Profile.SetTo(plan.Profile.ValueString())
+		}
 	}
 
 	return &am, diags

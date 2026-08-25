@@ -8,9 +8,12 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/pkg/optional"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/gpt/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/gpt/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/gpt/model"
 )
 
 func TestDeploymentAPIResponseToTFModelEmpty(t *testing.T) {
@@ -41,6 +44,26 @@ func TestDeploymentResponseConverters(t *testing.T) {
 	require.Equal(t, *emptyApiModelResponse, *result)
 }
 
+func TestUpdateDeploymentRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.Deployment
+	var stateTfModel tfmodel.Deployment
+	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.DeploymentMetadata).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateDeploymentRequest{
+		Metadata: optional.OptionalNil[apimodel.UpdateDeploymentMetadataRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.DeploymentTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
+}
+
 func TestDeploymentMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
 	emptyApiModel := apimodel.DeploymentMetadataResponse{}
@@ -51,7 +74,7 @@ func TestDeploymentMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 func TestDeploymentMetadataResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.DeploymentMetadataRequest{
-		TypedResourceMetadataRequest: common.TypedResourceMetadataRequest{},
+		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
 	}
 
 	emptyApiModelResponse, err := apimodel.DeploymentMetadataRequestToResponse(&emptyApiModelRequest)
@@ -67,4 +90,18 @@ func TestDeploymentMetadataResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateDeploymentMetadataRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.DeploymentMetadata
+	var stateTfModel tfmodel.DeploymentMetadata
+
+	expectedUpdateModel := &apimodel.UpdateDeploymentMetadataRequest{}
+
+	result, diags := conv.DeploymentMetadataTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

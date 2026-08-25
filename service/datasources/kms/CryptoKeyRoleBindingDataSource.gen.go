@@ -83,13 +83,13 @@ func (m *CryptoKeyRoleBindingDataSource) Configure(ctx context.Context, req data
 func (m *CryptoKeyRoleBindingDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "CryptoKeyRoleBindingDataSource.Read")
 
-	var data tfmodel.CryptoKeyRoleBindingModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.CryptoKeyRoleBindingModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -97,15 +97,15 @@ func (m *CryptoKeyRoleBindingDataSource) Read(ctx context.Context, req datasourc
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetCryptoKeyRoleBinding(
 		ctx,
 		client.GetCryptoKeyRoleBindingRequest{
-			Project:     data.ProjectParam.ValueString(),
-			Key:         data.KeyParam.ValueString(),
-			RoleBinding: data.RoleBindingParam.ValueString(),
+			Project:     config.ProjectParam.ValueString(),
+			Key:         config.KeyParam.ValueString(),
+			RoleBinding: config.RoleBindingParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -123,7 +123,7 @@ func (m *CryptoKeyRoleBindingDataSource) Read(ctx context.Context, req datasourc
 		return
 	}
 
-	data.CryptoKeyRoleBinding = *tfRes
+	config.CryptoKeyRoleBinding = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

@@ -25,11 +25,11 @@ func ImageActivityAPIToTFModel(ctx context.Context, am *apimodel.ImageActivity) 
 	return t, diags
 }
 
-func ImageActivityTFToAPIModel(ctx context.Context, tm tfmodel.ImageActivity) (*apimodel.ImageActivity, tfdiag.Diagnostics) {
+func ImageActivityTFToAPIModel(ctx context.Context, plan tfmodel.ImageActivity) (*apimodel.ImageActivity, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am apimodel.ImageActivity
 
-	var tmp = types.String(tm)
+	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}

@@ -12,6 +12,7 @@ import (
 	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
 func TestPostgresInstanceTemplateAPIResponseToTFModelEmpty(t *testing.T) {
@@ -24,7 +25,7 @@ func TestPostgresInstanceTemplateAPIResponseToTFModelEmpty(t *testing.T) {
 func TestPostgresInstanceTemplateResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.PostgresInstanceTemplateRequest{
-		VmType: compute.NewVmTypeRef("vmTypeID"),
+		VmType: compute.NewMustVmTypeRef("vmTypeID"),
 		Disk: apimodel.DataDiskSpecRequest{
 			Size: bytesize.MustParseString("0 B"),
 			Type: "",
@@ -44,4 +45,18 @@ func TestPostgresInstanceTemplateResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdatePostgresInstanceTemplateRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.PostgresInstanceTemplate
+	var stateTfModel tfmodel.PostgresInstanceTemplate
+
+	expectedUpdateModel := &apimodel.UpdatePostgresInstanceTemplateRequest{}
+
+	result, diags := conv.PostgresInstanceTemplateTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

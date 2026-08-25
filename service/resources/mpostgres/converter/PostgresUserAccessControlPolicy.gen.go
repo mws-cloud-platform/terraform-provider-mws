@@ -25,11 +25,11 @@ func PostgresUserAccessControlPolicyAPIToTFModel(ctx context.Context, am *apimod
 	return t, diags
 }
 
-func PostgresUserAccessControlPolicyTFToAPIModel(ctx context.Context, tm tfmodel.PostgresUserAccessControlPolicy) (*apimodel.PostgresUserAccessControlPolicy, tfdiag.Diagnostics) {
+func PostgresUserAccessControlPolicyTFToAPIModel(ctx context.Context, plan tfmodel.PostgresUserAccessControlPolicy) (*apimodel.PostgresUserAccessControlPolicy, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am apimodel.PostgresUserAccessControlPolicy
 
-	var tmp = types.String(tm)
+	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}

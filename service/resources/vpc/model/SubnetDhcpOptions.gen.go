@@ -23,7 +23,7 @@ func (s *SubnetDhcpOptions) GetSchema() schema.Schema {
 			},
 			"domain_name_servers": schema.ListAttribute{
 				ElementType:         types.StringType,
-				MarkdownDescription: `Список адресов DNS серверов`,
+				MarkdownDescription: `Список адресов DNS-серверов`,
 				Optional:            true,
 			},
 			"ntp_servers": schema.ListAttribute{

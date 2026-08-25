@@ -113,13 +113,13 @@ func (m *OneToOneNatResource) Configure(ctx context.Context, req resource.Config
 func (m *OneToOneNatResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "OneToOneNatResource.Create")
 
-	var data tfmodel.OneToOneNatModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.OneToOneNatModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -127,17 +127,17 @@ func (m *OneToOneNatResource) Create(ctx context.Context, req resource.CreateReq
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "OneToOneNatResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.OneToOneNatTFToAPIRequestModel(ctx, &data.OneToOneNat)
+	body, diags := conv.OneToOneNatTFToAPIRequestModel(ctx, &plan.OneToOneNat)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "OneToOneNatResource.TFToAPI")
@@ -147,9 +147,9 @@ func (m *OneToOneNatResource) Create(ctx context.Context, req resource.CreateReq
 	apiRes, err := m.sdk.CreateOneToOneNat(
 		ctx,
 		client.UpsertOneToOneNatRequest{
-			Project:     data.ProjectParam.ValueString(),
-			Network:     data.NetworkParam.ValueString(),
-			OneToOneNat: data.OneToOneNatParam.ValueString(),
+			Project:     plan.ProjectParam.ValueString(),
+			Network:     plan.NetworkParam.ValueString(),
+			OneToOneNat: plan.OneToOneNatParam.ValueString(),
 			Body:        *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
@@ -162,7 +162,7 @@ func (m *OneToOneNatResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.OneToOneNatAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -171,21 +171,21 @@ func (m *OneToOneNatResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	data.OneToOneNat = *tfRes
+	plan.OneToOneNat = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *OneToOneNatResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "OneToOneNatResource.Read")
 
-	var data tfmodel.OneToOneNatModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.OneToOneNatModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -193,15 +193,15 @@ func (m *OneToOneNatResource) Read(ctx context.Context, req resource.ReadRequest
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetOneToOneNat(
 		ctx,
 		client.GetOneToOneNatRequest{
-			Project:     data.ProjectParam.ValueString(),
-			Network:     data.NetworkParam.ValueString(),
-			OneToOneNat: data.OneToOneNatParam.ValueString(),
+			Project:     state.ProjectParam.ValueString(),
+			Network:     state.NetworkParam.ValueString(),
+			OneToOneNat: state.OneToOneNatParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -212,7 +212,7 @@ func (m *OneToOneNatResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.OneToOneNatAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -221,21 +221,27 @@ func (m *OneToOneNatResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
-	data.OneToOneNat = *tfRes
+	state.OneToOneNat = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 func (m *OneToOneNatResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "OneToOneNatResource.Update")
 
-	var data tfmodel.OneToOneNatModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.OneToOneNatModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	var state tfmodel.OneToOneNatModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -243,17 +249,17 @@ func (m *OneToOneNatResource) Update(ctx context.Context, req resource.UpdateReq
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "OneToOneNatResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.OneToOneNatTFToAPIRequestModel(ctx, &data.OneToOneNat)
+	body, diags := conv.OneToOneNatTFToAPIUpdateRequestModel(ctx, &plan.OneToOneNat, &state.OneToOneNat)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "OneToOneNatResource.TFToAPI")
@@ -263,10 +269,10 @@ func (m *OneToOneNatResource) Update(ctx context.Context, req resource.UpdateReq
 	apiRes, err := m.sdk.UpdateOneToOneNat(
 		ctx,
 		client.UpdateOneToOneNatRequest{
-			Project:     data.ProjectParam.ValueString(),
-			Network:     data.NetworkParam.ValueString(),
-			OneToOneNat: data.OneToOneNatParam.ValueString(),
-			Body:        body.AsUpdateModel(),
+			Project:     plan.ProjectParam.ValueString(),
+			Network:     plan.NetworkParam.ValueString(),
+			OneToOneNat: plan.OneToOneNatParam.ValueString(),
+			Body:        *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -278,7 +284,7 @@ func (m *OneToOneNatResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.OneToOneNatAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -287,21 +293,21 @@ func (m *OneToOneNatResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	data.OneToOneNat = *tfRes
+	plan.OneToOneNat = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *OneToOneNatResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "OneToOneNatResource.Delete")
 
-	var data tfmodel.OneToOneNatModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.OneToOneNatModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -309,10 +315,10 @@ func (m *OneToOneNatResource) Delete(ctx context.Context, req resource.DeleteReq
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := state.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "OneToOneNatResource.Timeouts")
@@ -322,9 +328,9 @@ func (m *OneToOneNatResource) Delete(ctx context.Context, req resource.DeleteReq
 	err := m.sdk.DeleteOneToOneNat(
 		ctx,
 		client.DeleteOneToOneNatRequest{
-			Project:     data.ProjectParam.ValueString(),
-			Network:     data.NetworkParam.ValueString(),
-			OneToOneNat: data.OneToOneNatParam.ValueString(),
+			Project:     state.ProjectParam.ValueString(),
+			Network:     state.NetworkParam.ValueString(),
+			OneToOneNat: state.OneToOneNatParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -340,7 +346,7 @@ func (m *OneToOneNatResource) Delete(ctx context.Context, req resource.DeleteReq
 func (m *OneToOneNatResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "OneToOneNatResource.ImportState")
 
-	var data tfmodel.OneToOneNatModel
+	var state tfmodel.OneToOneNatModel
 
 	ref, err := vpcref.ParseOneToOneNatRef(ctx, req.ID)
 	if err != nil {
@@ -366,7 +372,7 @@ func (m *OneToOneNatResource) ImportState(ctx context.Context, req resource.Impo
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.OneToOneNatAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -375,11 +381,11 @@ func (m *OneToOneNatResource) ImportState(ctx context.Context, req resource.Impo
 		return
 	}
 
-	data.OneToOneNat = *tfRes
+	state.OneToOneNat = *tfRes
 
-	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.NetworkParam = types.StringValue(ref.GetNetwork())
-	data.OneToOneNatParam = types.StringValue(ref.GetOneToOneNat())
+	state.ProjectParam = types.StringValue(ref.GetProject())
+	state.NetworkParam = types.StringValue(ref.GetNetwork())
+	state.OneToOneNatParam = types.StringValue(ref.GetOneToOneNat())
 
 	var rwTimeouts timeouts.Value
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
@@ -387,7 +393,7 @@ func (m *OneToOneNatResource) ImportState(ctx context.Context, req resource.Impo
 		tflog.Debug(ctx, "OneToOneNatResource.timeouts.GetAttribute")
 		return
 	}
-	data.Timeouts = rwTimeouts
+	state.Timeouts = rwTimeouts
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

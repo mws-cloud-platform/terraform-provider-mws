@@ -11,6 +11,7 @@ import (
 
 	apimodel "go.mws.cloud/go-sdk/service/compute/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
 func TestStorageLocalDiskSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -40,4 +41,18 @@ func TestStorageLocalDiskSpecOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateStorageLocalDiskSpecRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.StorageLocalDiskSpec
+	var stateTfModel tfmodel.StorageLocalDiskSpec
+
+	expectedUpdateModel := &apimodel.UpdateStorageLocalDiskSpecRequest{}
+
+	result, diags := conv.StorageLocalDiskSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

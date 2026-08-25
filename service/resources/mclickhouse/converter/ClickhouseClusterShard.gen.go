@@ -108,31 +108,31 @@ func ClickhouseClusterShardAPIOptionalResponseToTFModel(ctx context.Context, am 
 	return &t, diags
 }
 
-func ClickhouseClusterShardTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClickhouseClusterShard) (*apimodel.ClickhouseClusterShardRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClickhouseClusterShardTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterShard) (*apimodel.ClickhouseClusterShardRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClickhouseClusterShardRequest
 
-	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		am.Name = tm.Name.ValueString()
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		am.Name = plan.Name.ValueString()
 	}
 
-	if !tm.Count.IsNull() && !tm.Count.IsUnknown() {
-		am.Count = ptr.Get(int(tm.Count.ValueInt64()))
+	if !plan.Count.IsNull() && !plan.Count.IsUnknown() {
+		am.Count = ptr.Get(int(plan.Count.ValueInt64()))
 	}
 
-	if !tm.Resources.IsNull() && !tm.Resources.IsUnknown() {
-		resourcesTfModel := tfmodel.ClickhouseInstanceHWResources{}
-		resourcesDiag := tm.Resources.As(ctx, &resourcesTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, resourcesDiag...)
+	if !plan.Resources.IsNull() && !plan.Resources.IsUnknown() {
+		resourcesPlan := tfmodel.ClickhouseInstanceHWResources{}
+		resourcesPlanDiag := plan.Resources.As(ctx, &resourcesPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, resourcesPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		resourcesTmp, resourcesDiag := ClickhouseInstanceHWResourcesTFToAPIRequestModel(ctx, &resourcesTfModel)
+		resourcesTmp, resourcesDiag := ClickhouseInstanceHWResourcesTFToAPIRequestModel(ctx, &resourcesPlan)
 		diags = append(diags, resourcesDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -140,17 +140,18 @@ func ClickhouseClusterShardTFToAPIRequestModel(ctx context.Context, tm *tfmodel.
 		am.Resources = *resourcesTmp
 	}
 
-	if !tm.Weight.IsNull() && !tm.Weight.IsUnknown() {
-		am.Weight = ptr.Get(int(tm.Weight.ValueInt64()))
+	if !plan.Weight.IsNull() && !plan.Weight.IsUnknown() {
+		am.Weight = ptr.Get(int(plan.Weight.ValueInt64()))
 	}
 
-	if !tm.Endpoints.IsNull() && !tm.Endpoints.IsUnknown() {
+	if !plan.Endpoints.IsNull() && !plan.Endpoints.IsUnknown() {
 		endpoints := make([]tfmodel.ClickhouseEndpoint, 0)
-		dEndpoints := tm.Endpoints.ElementsAs(ctx, &endpoints, false)
+		dEndpoints := plan.Endpoints.ElementsAs(ctx, &endpoints, false)
 		diags = append(diags, dEndpoints...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.Endpoints = make([]apimodel.ClickhouseEndpointRequest, 0, len(endpoints))
 
 		for _, entity := range endpoints {
@@ -163,13 +164,14 @@ func ClickhouseClusterShardTFToAPIRequestModel(ctx context.Context, tm *tfmodel.
 		}
 	}
 
-	if !tm.Instances.IsNull() && !tm.Instances.IsUnknown() {
+	if !plan.Instances.IsNull() && !plan.Instances.IsUnknown() {
 		instances := make([]tfmodel.ClickhouseClusterInstance, 0)
-		dInstances := tm.Instances.ElementsAs(ctx, &instances, false)
+		dInstances := plan.Instances.ElementsAs(ctx, &instances, false)
 		diags = append(diags, dInstances...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.Instances = make([]apimodel.ClickhouseClusterInstanceRequest, 0, len(instances))
 
 		for _, entity := range instances {
@@ -179,6 +181,113 @@ func ClickhouseClusterShardTFToAPIRequestModel(ctx context.Context, tm *tfmodel.
 				return nil, diags
 			}
 			am.Instances = append(am.Instances, *tmp)
+		}
+	}
+
+	return &am, diags
+}
+
+func ClickhouseClusterShardTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseClusterShard) (*apimodel.UpdateClickhouseClusterShardRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.ClickhouseClusterShard{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateClickhouseClusterShardRequest
+
+	if !plan.Name.Equal(state.Name) {
+		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+			am.Name.SetTo(plan.Name.ValueString())
+		}
+	}
+
+	if !plan.Count.Equal(state.Count) {
+		if !plan.Count.IsNull() && !plan.Count.IsUnknown() {
+			am.Count.SetTo(int(plan.Count.ValueInt64()))
+		}
+	}
+
+	if !plan.Resources.Equal(state.Resources) {
+		if !plan.Resources.IsNull() && !plan.Resources.IsUnknown() {
+			resourcesPlan := tfmodel.ClickhouseInstanceHWResources{}
+			resourcesPlanDiag := plan.Resources.As(ctx, &resourcesPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, resourcesPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			resourcesState := tfmodel.ClickhouseInstanceHWResources{}
+			if !state.Resources.IsNull() && !state.Resources.IsUnknown() {
+				resourcesStateDiag := state.Resources.As(ctx, &resourcesState, basetypes.ObjectAsOptions{})
+				diags = append(diags, resourcesStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			resourcesTmp, resourcesDiag := ClickhouseInstanceHWResourcesTFToAPIUpdateRequestModel(ctx, &resourcesPlan, &resourcesState)
+			diags = append(diags, resourcesDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Resources.SetTo(*resourcesTmp)
+		}
+	}
+
+	if !plan.Weight.Equal(state.Weight) {
+		if !plan.Weight.IsNull() && !plan.Weight.IsUnknown() {
+			am.Weight.SetTo(int(plan.Weight.ValueInt64()))
+		}
+	}
+
+	if !plan.Endpoints.Equal(state.Endpoints) {
+		if !plan.Endpoints.IsNull() && !plan.Endpoints.IsUnknown() {
+			endpoints := make([]tfmodel.ClickhouseEndpoint, 0)
+			dEndpoints := plan.Endpoints.ElementsAs(ctx, &endpoints, false)
+			diags = append(diags, dEndpoints...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			endpointsTmp := make([]apimodel.UpdateClickhouseEndpointRequest, 0, len(endpoints))
+
+			for _, entity := range endpoints {
+				stateEntity := tfmodel.ClickhouseEndpoint{}
+				tmp, d := ClickhouseEndpointTFToAPIUpdateRequestModel(ctx, &entity, &stateEntity)
+				diags = append(diags, d...)
+				if diags.HasError() {
+					return nil, diags
+				}
+				endpointsTmp = append(endpointsTmp, *tmp)
+			}
+			am.Endpoints.SetTo(endpointsTmp)
+		}
+	}
+
+	if !plan.Instances.Equal(state.Instances) {
+		if !plan.Instances.IsNull() && !plan.Instances.IsUnknown() {
+			instances := make([]tfmodel.ClickhouseClusterInstance, 0)
+			dInstances := plan.Instances.ElementsAs(ctx, &instances, false)
+			diags = append(diags, dInstances...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			instancesTmp := make([]apimodel.UpdateClickhouseClusterInstanceRequest, 0, len(instances))
+
+			for _, entity := range instances {
+				stateEntity := tfmodel.ClickhouseClusterInstance{}
+				tmp, d := ClickhouseClusterInstanceTFToAPIUpdateRequestModel(ctx, &entity, &stateEntity)
+				diags = append(diags, d...)
+				if diags.HasError() {
+					return nil, diags
+				}
+				instancesTmp = append(instancesTmp, *tmp)
+			}
+			am.Instances.SetTo(instancesTmp)
 		}
 	}
 

@@ -57,23 +57,23 @@ func AddressSpecOrRefWithAttachmentsAPIOptionalResponseToTFModel(ctx context.Con
 	return &t, diags
 }
 
-func AddressSpecOrRefWithAttachmentsTFToAPIRequestModel(ctx context.Context, tm *tfmodel.AddressSpecOrRefWithAttachments) (*apimodel.AddressSpecOrRefWithAttachmentsRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func AddressSpecOrRefWithAttachmentsTFToAPIRequestModel(ctx context.Context, plan *tfmodel.AddressSpecOrRefWithAttachments) (*apimodel.AddressSpecOrRefWithAttachmentsRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.AddressSpecOrRefWithAttachmentsRequest
 
-	if !tm.Address.IsNull() && !tm.Address.IsUnknown() {
-		addressTfModel := tfmodel.AddressSpecOrRef{}
-		addressDiag := tm.Address.As(ctx, &addressTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, addressDiag...)
+	if !plan.Address.IsNull() && !plan.Address.IsUnknown() {
+		addressPlan := tfmodel.AddressSpecOrRef{}
+		addressPlanDiag := plan.Address.As(ctx, &addressPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, addressPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		addressTmp, addressDiag := AddressSpecOrRefTFToAPIRequestModel(ctx, &addressTfModel)
+		addressTmp, addressDiag := AddressSpecOrRefTFToAPIRequestModel(ctx, &addressPlan)
 		diags = append(diags, addressDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -81,15 +81,15 @@ func AddressSpecOrRefWithAttachmentsTFToAPIRequestModel(ctx context.Context, tm 
 		am.Address = *addressTmp
 	}
 
-	if !tm.OneToOneNat.IsNull() && !tm.OneToOneNat.IsUnknown() {
-		oneToOneNatTfModel := tfmodel.ComputeOneToOneNatSpec{}
-		oneToOneNatDiag := tm.OneToOneNat.As(ctx, &oneToOneNatTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, oneToOneNatDiag...)
+	if !plan.OneToOneNat.IsNull() && !plan.OneToOneNat.IsUnknown() {
+		oneToOneNatPlan := tfmodel.ComputeOneToOneNatSpec{}
+		oneToOneNatPlanDiag := plan.OneToOneNat.As(ctx, &oneToOneNatPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, oneToOneNatPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		oneToOneNatTmp, oneToOneNatDiag := ComputeOneToOneNatSpecTFToAPIRequestModel(ctx, &oneToOneNatTfModel)
+		oneToOneNatTmp, oneToOneNatDiag := ComputeOneToOneNatSpecTFToAPIRequestModel(ctx, &oneToOneNatPlan)
 		diags = append(diags, oneToOneNatDiag...)
 		if diags.HasError() {
 			return nil, diags

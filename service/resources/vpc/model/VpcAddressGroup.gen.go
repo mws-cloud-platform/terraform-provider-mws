@@ -15,6 +15,7 @@ type VpcAddressGroup struct {
 	Kind      types.String `tfsdk:"kind"`
 	Metadata  types.Object `tfsdk:"metadata"`
 	Status    types.Object `tfsdk:"status"`
+	Region    types.String `tfsdk:"region"`
 	Addresses types.List   `tfsdk:"addresses"`
 }
 
@@ -41,9 +42,16 @@ func (s *VpcAddressGroup) GetSchema() schema.Schema {
 				MarkdownDescription: `Статус группы адресов`,
 				Computed:            true,
 			},
+			"region": schema.StringAttribute{
+				MarkdownDescription: `Регион, которому принадлежит группа группа IP-адресов`,
+				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplaceIfConfigured(),
+				},
+			},
 			"addresses": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
-					Attributes: new(ResourceAddressSpecOrRef).GetSchema().Attributes,
+					Attributes: new(tfcommon.ResourceAddressSpecOrRef).GetSchema().Attributes,
 				},
 				MarkdownDescription: `Спецификации или ссылки на существующие внутренние адреса`,
 				Required:            true,

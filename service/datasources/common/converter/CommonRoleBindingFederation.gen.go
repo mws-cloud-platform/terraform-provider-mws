@@ -108,16 +108,16 @@ func CommonRoleBindingFederationAPIOptionalResponseToTFModel(ctx context.Context
 	return &t, diags
 }
 
-func CommonRoleBindingFederationTFToAPIModel(ctx context.Context, tm *tfcommon.CommonRoleBindingFederation) (*commonapimodel.CommonRoleBindingFederation, tfdiag.Diagnostics) {
-	if tm == nil {
+func CommonRoleBindingFederationTFToAPIModel(ctx context.Context, plan *tfcommon.CommonRoleBindingFederation) (*commonapimodel.CommonRoleBindingFederation, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.CommonRoleBindingFederation
 
-	if !tm.Id.IsNull() && !tm.Id.IsUnknown() {
-		idRef, err := iam.ParseUserFederationRef(ctx, tm.Id.ValueString())
+	if !plan.Id.IsNull() && !plan.Id.IsUnknown() {
+		idRef, err := iam.ParseUserFederationRef(ctx, plan.Id.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -125,15 +125,15 @@ func CommonRoleBindingFederationTFToAPIModel(ctx context.Context, tm *tfcommon.C
 		am.Id = idRef
 	}
 
-	if !tm.Context.IsNull() && !tm.Context.IsUnknown() {
-		contextTfModel := tfcommon.CommonRoleBindingFederationContext{}
-		contextDiag := tm.Context.As(ctx, &contextTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, contextDiag...)
+	if !plan.Context.IsNull() && !plan.Context.IsUnknown() {
+		contextPlan := tfcommon.CommonRoleBindingFederationContext{}
+		contextPlanDiag := plan.Context.As(ctx, &contextPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, contextPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		contextTmp, contextDiag := CommonRoleBindingFederationContextTFToAPIModel(ctx, &contextTfModel)
+		contextTmp, contextDiag := CommonRoleBindingFederationContextTFToAPIModel(ctx, &contextPlan)
 		diags = append(diags, contextDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -144,16 +144,16 @@ func CommonRoleBindingFederationTFToAPIModel(ctx context.Context, tm *tfcommon.C
 	return &am, diags
 }
 
-func CommonRoleBindingFederationTFToAPIRequestModel(ctx context.Context, tm *tfcommon.CommonRoleBindingFederation) (*commonapimodel.CommonRoleBindingFederationRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func CommonRoleBindingFederationTFToAPIRequestModel(ctx context.Context, plan *tfcommon.CommonRoleBindingFederation) (*commonapimodel.CommonRoleBindingFederationRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.CommonRoleBindingFederationRequest
 
-	if !tm.Id.IsNull() && !tm.Id.IsUnknown() {
-		idRef, err := iam.ParseUserFederationRef(ctx, tm.Id.ValueString())
+	if !plan.Id.IsNull() && !plan.Id.IsUnknown() {
+		idRef, err := iam.ParseUserFederationRef(ctx, plan.Id.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -161,15 +161,15 @@ func CommonRoleBindingFederationTFToAPIRequestModel(ctx context.Context, tm *tfc
 		am.Id = idRef
 	}
 
-	if !tm.Context.IsNull() && !tm.Context.IsUnknown() {
-		contextTfModel := tfcommon.CommonRoleBindingFederationContext{}
-		contextDiag := tm.Context.As(ctx, &contextTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, contextDiag...)
+	if !plan.Context.IsNull() && !plan.Context.IsUnknown() {
+		contextPlan := tfcommon.CommonRoleBindingFederationContext{}
+		contextPlanDiag := plan.Context.As(ctx, &contextPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, contextPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		contextTmp, contextDiag := CommonRoleBindingFederationContextTFToAPIRequestModel(ctx, &contextTfModel)
+		contextTmp, contextDiag := CommonRoleBindingFederationContextTFToAPIRequestModel(ctx, &contextPlan)
 		diags = append(diags, contextDiag...)
 		if diags.HasError() {
 			return nil, diags

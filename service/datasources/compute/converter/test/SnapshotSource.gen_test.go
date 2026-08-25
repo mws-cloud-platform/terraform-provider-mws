@@ -49,7 +49,7 @@ func TestSnapshotSourceDiskAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 func TestSnapshotSourceDiskOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.SnapshotSourceDiskRequest{
-		Id: compute.NewDiskRef("projectID", "diskID"),
+		Id: compute.NewMustDiskRef("projectID", "diskID"),
 	}
 
 	emptyApiModelResponse, err := apimodel.SnapshotSourceDiskRequestToOptionalResponse(&emptyApiModelRequest)

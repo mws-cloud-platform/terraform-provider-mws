@@ -53,31 +53,31 @@ func ClusterVersionControlSpecAPIOptionalResponseToTFModel(ctx context.Context, 
 	return &t, diags
 }
 
-func ClusterVersionControlSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClusterVersionControlSpec) (*apimodel.ClusterVersionControlSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClusterVersionControlSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterVersionControlSpec) (*apimodel.ClusterVersionControlSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClusterVersionControlSpecRequest
 
-	if !tm.ReleaseChannel.IsNull() && !tm.ReleaseChannel.IsUnknown() {
-		am.ReleaseChannel = tm.ReleaseChannel.ValueString()
+	if !plan.ReleaseChannel.IsNull() && !plan.ReleaseChannel.IsUnknown() {
+		am.ReleaseChannel = plan.ReleaseChannel.ValueString()
 	}
 
-	if !tm.Version.IsNull() && !tm.Version.IsUnknown() {
-		am.Version = tm.Version.ValueStringPointer()
+	if !plan.Version.IsNull() && !plan.Version.IsUnknown() {
+		am.Version = plan.Version.ValueStringPointer()
 	}
 
-	if !tm.MaintenanceWindow.IsNull() && !tm.MaintenanceWindow.IsUnknown() {
-		maintenanceWindowTfModel := tfcommon.MaintenanceWindow{}
-		maintenanceWindowDiag := tm.MaintenanceWindow.As(ctx, &maintenanceWindowTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, maintenanceWindowDiag...)
+	if !plan.MaintenanceWindow.IsNull() && !plan.MaintenanceWindow.IsUnknown() {
+		maintenanceWindowPlan := tfcommon.MaintenanceWindow{}
+		maintenanceWindowPlanDiag := plan.MaintenanceWindow.As(ctx, &maintenanceWindowPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, maintenanceWindowPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		maintenanceWindowTmp, maintenanceWindowDiag := commonconv.MaintenanceWindowTFToAPIRequestModel(ctx, &maintenanceWindowTfModel)
+		maintenanceWindowTmp, maintenanceWindowDiag := commonconv.MaintenanceWindowTFToAPIRequestModel(ctx, &maintenanceWindowPlan)
 		diags = append(diags, maintenanceWindowDiag...)
 		if diags.HasError() {
 			return nil, diags

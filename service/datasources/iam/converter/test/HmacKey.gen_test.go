@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/iam/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/iam/converter"
 )
@@ -51,7 +51,7 @@ func TestHmacKeyMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 func TestHmacKeyMetadataResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.HmacKeyMetadataRequest{
-		TypedResourceMetadataRequest: common.TypedResourceMetadataRequest{},
+		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
 	}
 
 	emptyApiModelResponse, err := apimodel.HmacKeyMetadataRequestToResponse(&emptyApiModelRequest)

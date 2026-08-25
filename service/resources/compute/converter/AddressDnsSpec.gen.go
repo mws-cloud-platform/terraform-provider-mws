@@ -31,20 +31,20 @@ func AddressDnsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func AddressDnsSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.AddressDnsSpec) (*apimodel.AddressDnsSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func AddressDnsSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.AddressDnsSpec) (*apimodel.AddressDnsSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.AddressDnsSpecRequest
 
-	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		am.Name = tm.Name.ValueString()
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		am.Name = plan.Name.ValueString()
 	}
 
-	if !tm.Ttl.IsNull() && !tm.Ttl.IsUnknown() {
-		tmpTtl, err := duration.ParseString(tm.Ttl.ValueString())
+	if !plan.Ttl.IsNull() && !plan.Ttl.IsUnknown() {
+		tmpTtl, err := duration.ParseString(plan.Ttl.ValueString())
 		if err != nil {
 			diags.AddError("Duration string parsing", err.Error())
 			return nil, diags
@@ -52,8 +52,45 @@ func AddressDnsSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.AddressD
 		am.Ttl = tmpTtl
 	}
 
-	if !tm.Ptr.IsNull() && !tm.Ptr.IsUnknown() {
-		am.Ptr = tm.Ptr.ValueBool()
+	if !plan.Ptr.IsNull() && !plan.Ptr.IsUnknown() {
+		am.Ptr = plan.Ptr.ValueBool()
+	}
+
+	return &am, diags
+}
+
+func AddressDnsSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.AddressDnsSpec) (*apimodel.UpdateAddressDnsSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.AddressDnsSpec{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateAddressDnsSpecRequest
+
+	if !plan.Name.Equal(state.Name) {
+		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+			am.Name.SetTo(plan.Name.ValueString())
+		}
+	}
+
+	if !plan.Ttl.Equal(state.Ttl) {
+		if !plan.Ttl.IsNull() && !plan.Ttl.IsUnknown() {
+			tmpTtl, err := duration.ParseString(plan.Ttl.ValueString())
+			if err != nil {
+				diags.AddError("Duration string parsing", err.Error())
+				return nil, diags
+			}
+			am.Ttl.SetTo(tmpTtl)
+		}
+	}
+
+	if !plan.Ptr.Equal(state.Ptr) {
+		if !plan.Ptr.IsNull() && !plan.Ptr.IsUnknown() {
+			am.Ptr.SetTo(plan.Ptr.ValueBool())
+		}
 	}
 
 	return &am, diags

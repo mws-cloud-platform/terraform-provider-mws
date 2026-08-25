@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/iam/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
@@ -72,23 +72,23 @@ func ServiceAccountAPIResponseToTFModel(ctx context.Context, am *apimodel.Servic
 	return &t, diags
 }
 
-func ServiceAccountTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ServiceAccount) (*apimodel.ServiceAccountRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ServiceAccountTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ServiceAccount) (*apimodel.ServiceAccountRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ServiceAccountRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfmodel.ServiceAccountMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfmodel.ServiceAccountMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := ServiceAccountMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := ServiceAccountMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -179,26 +179,27 @@ func ServiceAccountMetadataAPIResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func ServiceAccountMetadataTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ServiceAccountMetadata) (*apimodel.ServiceAccountMetadataRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ServiceAccountMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ServiceAccountMetadata) (*apimodel.ServiceAccountMetadataRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ServiceAccountMetadataRequest
 
-	if !tm.DisplayName.IsNull() && !tm.DisplayName.IsUnknown() {
-		am.DisplayName = tm.DisplayName.ValueStringPointer()
+	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
+		am.DisplayName = plan.DisplayName.ValueStringPointer()
 	}
 
-	if !tm.Usages.IsNull() && !tm.Usages.IsUnknown() {
+	if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
 		usages := make([]tfcommon.TypedUsage, 0)
-		dUsages := tm.Usages.ElementsAs(ctx, &usages, false)
+		dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
 		diags = append(diags, dUsages...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.Usages = make([]common.TypedUsageRequest, 0, len(usages))
+
+		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
@@ -210,12 +211,12 @@ func ServiceAccountMetadataTFToAPIRequestModel(ctx context.Context, tm *tfmodel.
 		}
 	}
 
-	if !tm.Description.IsNull() && !tm.Description.IsUnknown() {
-		am.Description = tm.Description.ValueStringPointer()
+	if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
+		am.Description = plan.Description.ValueStringPointer()
 	}
 
-	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		am.Name = tm.Name.ValueStringPointer()
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		am.Name = plan.Name.ValueStringPointer()
 	}
 
 	return &am, diags
@@ -232,8 +233,8 @@ func ServiceAccountSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.Se
 	return &t, diags
 }
 
-func ServiceAccountSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ServiceAccountSpec) (*apimodel.ServiceAccountSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ServiceAccountSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ServiceAccountSpec) (*apimodel.ServiceAccountSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 

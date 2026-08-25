@@ -37,16 +37,16 @@ func CryptoKeySpecDestructionPolicyAPIOptionalResponseToTFModel(ctx context.Cont
 	return &t, diags
 }
 
-func CryptoKeySpecDestructionPolicyTFToAPIRequestModel(ctx context.Context, tm *tfmodel.CryptoKeySpecDestructionPolicy) (*apimodel.CryptoKeySpecDestructionPolicyRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func CryptoKeySpecDestructionPolicyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CryptoKeySpecDestructionPolicy) (*apimodel.CryptoKeySpecDestructionPolicyRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.CryptoKeySpecDestructionPolicyRequest
 
-	if !tm.DefaultDestructionIntervalDays.IsNull() && !tm.DefaultDestructionIntervalDays.IsUnknown() {
-		am.DefaultDestructionIntervalDays = ptr.Get(int32(tm.DefaultDestructionIntervalDays.ValueInt64()))
+	if !plan.DefaultDestructionIntervalDays.IsNull() && !plan.DefaultDestructionIntervalDays.IsUnknown() {
+		am.DefaultDestructionIntervalDays = ptr.Get(int32(plan.DefaultDestructionIntervalDays.ValueInt64()))
 	}
 
 	return &am, diags
@@ -75,20 +75,20 @@ func CryptoKeySpecRotationPolicyAPIOptionalResponseToTFModel(ctx context.Context
 	return &t, diags
 }
 
-func CryptoKeySpecRotationPolicyTFToAPIRequestModel(ctx context.Context, tm *tfmodel.CryptoKeySpecRotationPolicy) (*apimodel.CryptoKeySpecRotationPolicyRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func CryptoKeySpecRotationPolicyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CryptoKeySpecRotationPolicy) (*apimodel.CryptoKeySpecRotationPolicyRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.CryptoKeySpecRotationPolicyRequest
 
-	if !tm.Enabled.IsNull() && !tm.Enabled.IsUnknown() {
-		am.Enabled = tm.Enabled.ValueBoolPointer()
+	if !plan.Enabled.IsNull() && !plan.Enabled.IsUnknown() {
+		am.Enabled = plan.Enabled.ValueBoolPointer()
 	}
 
-	if !tm.RotationIntervalDays.IsNull() && !tm.RotationIntervalDays.IsUnknown() {
-		am.RotationIntervalDays = ptr.Get(int32(tm.RotationIntervalDays.ValueInt64()))
+	if !plan.RotationIntervalDays.IsNull() && !plan.RotationIntervalDays.IsUnknown() {
+		am.RotationIntervalDays = ptr.Get(int32(plan.RotationIntervalDays.ValueInt64()))
 	}
 
 	return &am, diags
@@ -111,16 +111,16 @@ func CryptoKeySpecUsagePolicyAPIOptionalResponseToTFModel(ctx context.Context, a
 	return &t, diags
 }
 
-func CryptoKeySpecUsagePolicyTFToAPIRequestModel(ctx context.Context, tm *tfmodel.CryptoKeySpecUsagePolicy) (*apimodel.CryptoKeySpecUsagePolicyRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func CryptoKeySpecUsagePolicyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CryptoKeySpecUsagePolicy) (*apimodel.CryptoKeySpecUsagePolicyRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.CryptoKeySpecUsagePolicyRequest
 
-	if !tm.Enabled.IsNull() && !tm.Enabled.IsUnknown() {
-		am.Enabled = tm.Enabled.ValueBoolPointer()
+	if !plan.Enabled.IsNull() && !plan.Enabled.IsUnknown() {
+		am.Enabled = plan.Enabled.ValueBoolPointer()
 	}
 
 	return &am, diags

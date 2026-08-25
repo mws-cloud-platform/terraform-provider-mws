@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	localmapplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/mapplanmodifier"
-	localobjectplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/objectplanmodifier"
 	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
@@ -79,16 +78,10 @@ func (s *PostgresCluster) GetSchema() schema.Schema {
 				Attributes:          new(PostgresClusterBackup).GetSchema().Attributes,
 				MarkdownDescription: `Спецификация автоматического бэкапирования`,
 				Optional:            true,
-				PlanModifiers: []planmodifier.Object{
-					localobjectplanmodifier.RequiresReplaceIfRemoved(),
-				},
 			},
 			"maintenance_window": schema.SingleNestedAttribute{
 				Attributes: new(tfcommon.MaintenanceWindow).GetSchema().Attributes,
 				Optional:   true,
-				PlanModifiers: []planmodifier.Object{
-					localobjectplanmodifier.RequiresReplaceIfRemoved(),
-				},
 			},
 			"postgres_parameters": schema.MapAttribute{
 				ElementType:         types.StringType,
@@ -135,8 +128,10 @@ func (s *PostgresClusterMetadata) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"purge_time": schema.StringAttribute{
-				MarkdownDescription: `Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
-				Computed:            true,
+				MarkdownDescription: `Время удаления ресурса
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"usages": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{

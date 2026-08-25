@@ -79,23 +79,23 @@ func CertificateAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.C
 	return &t, diags
 }
 
-func CertificateTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Certificate) (*apimodel.CertificateRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func CertificateTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Certificate) (*apimodel.CertificateRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.CertificateRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfcommon.CommonTypedResourceMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -103,15 +103,15 @@ func CertificateTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Certificate
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.SelfManaged.IsNull() && !tm.SelfManaged.IsUnknown() {
-		selfManagedTfModel := tfmodel.SelfManagedSpec{}
-		selfManagedDiag := tm.SelfManaged.As(ctx, &selfManagedTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, selfManagedDiag...)
+	if !plan.SelfManaged.IsNull() && !plan.SelfManaged.IsUnknown() {
+		selfManagedPlan := tfmodel.SelfManagedSpec{}
+		selfManagedPlanDiag := plan.SelfManaged.As(ctx, &selfManagedPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, selfManagedPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		selfManagedTmp, selfManagedDiag := SelfManagedSpecTFToAPIRequestModel(ctx, &selfManagedTfModel)
+		selfManagedTmp, selfManagedDiag := SelfManagedSpecTFToAPIRequestModel(ctx, &selfManagedPlan)
 		diags = append(diags, selfManagedDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -119,20 +119,133 @@ func CertificateTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Certificate
 		am.Spec.SelfManaged = selfManagedTmp
 	}
 
-	if !tm.Managed.IsNull() && !tm.Managed.IsUnknown() {
-		managedTfModel := tfmodel.CertificateManagedSpec{}
-		managedDiag := tm.Managed.As(ctx, &managedTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, managedDiag...)
+	if !plan.Managed.IsNull() && !plan.Managed.IsUnknown() {
+		managedPlan := tfmodel.CertificateManagedSpec{}
+		managedPlanDiag := plan.Managed.As(ctx, &managedPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, managedPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		managedTmp, managedDiag := CertificateManagedSpecTFToAPIRequestModel(ctx, &managedTfModel)
+		managedTmp, managedDiag := CertificateManagedSpecTFToAPIRequestModel(ctx, &managedPlan)
 		diags = append(diags, managedDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.Spec.Managed = managedTmp
+	}
+
+	return &am, diags
+}
+
+func CertificateTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Certificate) (*apimodel.UpdateCertificateRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.Certificate{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateCertificateRequest
+
+	if !plan.Metadata.Equal(state.Metadata) {
+		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+			metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+			metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, metadataPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			metadataState := tfcommon.CommonTypedResourceMetadata{}
+			if !state.Metadata.IsNull() && !state.Metadata.IsUnknown() {
+				metadataStateDiag := state.Metadata.As(ctx, &metadataState, basetypes.ObjectAsOptions{})
+				diags = append(diags, metadataStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIUpdateRequestModel(ctx, &metadataPlan, &metadataState)
+			diags = append(diags, metadataDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Metadata.SetTo(*metadataTmp)
+		} else if plan.Metadata.IsNull() {
+			am.Metadata.SetToNull()
+		}
+	}
+
+	if !plan.SelfManaged.Equal(state.SelfManaged) {
+		if !plan.SelfManaged.IsNull() && !plan.SelfManaged.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateCertificateSpecRequest{})
+			}
+			selfManagedPlan := tfmodel.SelfManagedSpec{}
+			selfManagedPlanDiag := plan.SelfManaged.As(ctx, &selfManagedPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, selfManagedPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			selfManagedState := tfmodel.SelfManagedSpec{}
+			if !state.SelfManaged.IsNull() && !state.SelfManaged.IsUnknown() {
+				selfManagedStateDiag := state.SelfManaged.As(ctx, &selfManagedState, basetypes.ObjectAsOptions{})
+				diags = append(diags, selfManagedStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			selfManagedTmp, selfManagedDiag := SelfManagedSpecTFToAPIUpdateRequestModel(ctx, &selfManagedPlan, &selfManagedState)
+			diags = append(diags, selfManagedDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Spec.Value.SelfManaged.SetTo(*selfManagedTmp)
+		} else if plan.SelfManaged.IsNull() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateCertificateSpecRequest{})
+			}
+			am.Spec.Value.SelfManaged.SetToNull()
+		}
+	}
+
+	if !plan.Managed.Equal(state.Managed) {
+		if !plan.Managed.IsNull() && !plan.Managed.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateCertificateSpecRequest{})
+			}
+			managedPlan := tfmodel.CertificateManagedSpec{}
+			managedPlanDiag := plan.Managed.As(ctx, &managedPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, managedPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			managedState := tfmodel.CertificateManagedSpec{}
+			if !state.Managed.IsNull() && !state.Managed.IsUnknown() {
+				managedStateDiag := state.Managed.As(ctx, &managedState, basetypes.ObjectAsOptions{})
+				diags = append(diags, managedStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			managedTmp, managedDiag := CertificateManagedSpecTFToAPIUpdateRequestModel(ctx, &managedPlan, &managedState)
+			diags = append(diags, managedDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Spec.Value.Managed.SetTo(*managedTmp)
+		} else if plan.Managed.IsNull() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateCertificateSpecRequest{})
+			}
+			am.Spec.Value.Managed.SetToNull()
+		}
 	}
 
 	return &am, diags

@@ -51,21 +51,22 @@ func NetworkSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.N
 	return &t, diags
 }
 
-func NetworkSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.NetworkSpec) (*apimodel.NetworkSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func NetworkSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NetworkSpec) (*apimodel.NetworkSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.NetworkSpecRequest
 
-	if !tm.NetworkInterfaces.IsNull() && !tm.NetworkInterfaces.IsUnknown() {
+	if !plan.NetworkInterfaces.IsNull() && !plan.NetworkInterfaces.IsUnknown() {
 		networkInterfaces := make([]tfmodel.NetworkInterfaceSpec, 0)
-		dNetworkInterfaces := tm.NetworkInterfaces.ElementsAs(ctx, &networkInterfaces, false)
+		dNetworkInterfaces := plan.NetworkInterfaces.ElementsAs(ctx, &networkInterfaces, false)
 		diags = append(diags, dNetworkInterfaces...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.NetworkInterfaces = make([]apimodel.NetworkInterfaceSpecRequest, 0, len(networkInterfaces))
 
 		for _, entity := range networkInterfaces {
@@ -75,6 +76,44 @@ func NetworkSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.NetworkSpec
 				return nil, diags
 			}
 			am.NetworkInterfaces = append(am.NetworkInterfaces, *tmp)
+		}
+	}
+
+	return &am, diags
+}
+
+func NetworkSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NetworkSpec) (*apimodel.UpdateNetworkSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.NetworkSpec{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateNetworkSpecRequest
+
+	if !plan.NetworkInterfaces.Equal(state.NetworkInterfaces) {
+		if !plan.NetworkInterfaces.IsNull() && !plan.NetworkInterfaces.IsUnknown() {
+			networkInterfaces := make([]tfmodel.NetworkInterfaceSpec, 0)
+			dNetworkInterfaces := plan.NetworkInterfaces.ElementsAs(ctx, &networkInterfaces, false)
+			diags = append(diags, dNetworkInterfaces...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			networkInterfacesTmp := make([]apimodel.UpdateNetworkInterfaceSpecRequest, 0, len(networkInterfaces))
+
+			for _, entity := range networkInterfaces {
+				stateEntity := tfmodel.NetworkInterfaceSpec{}
+				tmp, d := NetworkInterfaceSpecTFToAPIUpdateRequestModel(ctx, &entity, &stateEntity)
+				diags = append(diags, d...)
+				if diags.HasError() {
+					return nil, diags
+				}
+				networkInterfacesTmp = append(networkInterfacesTmp, *tmp)
+			}
+			am.NetworkInterfaces.SetTo(networkInterfacesTmp)
 		}
 	}
 

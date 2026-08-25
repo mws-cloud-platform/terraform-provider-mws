@@ -83,13 +83,13 @@ func (m *EgressNatDataSource) Configure(ctx context.Context, req datasource.Conf
 func (m *EgressNatDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "EgressNatDataSource.Read")
 
-	var data tfmodel.EgressNatModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.EgressNatModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -97,15 +97,15 @@ func (m *EgressNatDataSource) Read(ctx context.Context, req datasource.ReadReque
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetEgressNat(
 		ctx,
 		client.GetEgressNatRequest{
-			Project:   data.ProjectParam.ValueString(),
-			Network:   data.NetworkParam.ValueString(),
-			EgressNat: data.EgressNatParam.ValueString(),
+			Project:   config.ProjectParam.ValueString(),
+			Network:   config.NetworkParam.ValueString(),
+			EgressNat: config.EgressNatParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -123,7 +123,7 @@ func (m *EgressNatDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
-	data.EgressNat = *tfRes
+	config.EgressNat = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

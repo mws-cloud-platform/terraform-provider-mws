@@ -29,7 +29,7 @@ func CryptoKeyTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleResourc
 			if err != nil {
 				return fmt.Errorf("get: %w", err)
 			}
-			if r == nil || r.Status == nil {
+			if r == nil {
 				return fmt.Errorf("invalid resource state")
 			}
 			state := r.Status.Ready.State

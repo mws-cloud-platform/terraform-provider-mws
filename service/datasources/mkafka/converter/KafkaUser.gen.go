@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
@@ -99,23 +99,23 @@ func KafkaUserAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaUserRe
 	return &t, diags
 }
 
-func KafkaUserTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaUser) (*apimodel.KafkaUserRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func KafkaUserTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaUser) (*apimodel.KafkaUserRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaUserRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfmodel.KafkaUserMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfmodel.KafkaUserMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := KafkaUserMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := KafkaUserMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -123,13 +123,14 @@ func KafkaUserTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaUser) (*
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.Roles.IsNull() && !tm.Roles.IsUnknown() {
+	if !plan.Roles.IsNull() && !plan.Roles.IsUnknown() {
 		roles := make([]tfmodel.KafkaClusterRole, 0)
-		dRoles := tm.Roles.ElementsAs(ctx, &roles, false)
+		dRoles := plan.Roles.ElementsAs(ctx, &roles, false)
 		diags = append(diags, dRoles...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.Spec.Roles = make([]apimodel.KafkaClusterRoleRequest, 0, len(roles))
 
 		for _, entity := range roles {
@@ -219,26 +220,27 @@ func KafkaUserMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.Kaf
 	return &t, diags
 }
 
-func KafkaUserMetadataTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaUserMetadata) (*apimodel.KafkaUserMetadataRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func KafkaUserMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaUserMetadata) (*apimodel.KafkaUserMetadataRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaUserMetadataRequest
 
-	if !tm.DisplayName.IsNull() && !tm.DisplayName.IsUnknown() {
-		am.DisplayName = tm.DisplayName.ValueStringPointer()
+	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
+		am.DisplayName = plan.DisplayName.ValueStringPointer()
 	}
 
-	if !tm.Usages.IsNull() && !tm.Usages.IsUnknown() {
+	if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
 		usages := make([]tfcommon.TypedUsage, 0)
-		dUsages := tm.Usages.ElementsAs(ctx, &usages, false)
+		dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
 		diags = append(diags, dUsages...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.Usages = make([]common.TypedUsageRequest, 0, len(usages))
+
+		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
@@ -250,8 +252,8 @@ func KafkaUserMetadataTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Kafka
 		}
 	}
 
-	if !tm.Description.IsNull() && !tm.Description.IsUnknown() {
-		am.Description = tm.Description.ValueStringPointer()
+	if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
+		am.Description = plan.Description.ValueStringPointer()
 	}
 
 	return &am, diags

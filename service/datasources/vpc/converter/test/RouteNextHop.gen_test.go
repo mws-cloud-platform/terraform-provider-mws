@@ -49,7 +49,7 @@ func TestRouteNextHopAddressAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 func TestRouteNextHopAddressOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.RouteNextHopAddressRequest{
-		Ref: vpc.NewAddressRef("projectID", "networkID", "addressID"),
+		Ref: vpc.NewMustAddressRef("projectID", "networkID", "addressID"),
 	}
 
 	emptyApiModelResponse, err := apimodel.RouteNextHopAddressRequestToOptionalResponse(&emptyApiModelRequest)

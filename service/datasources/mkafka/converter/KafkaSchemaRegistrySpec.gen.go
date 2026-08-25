@@ -29,16 +29,16 @@ func KafkaSchemaRegistrySpecAPIResponseToTFModel(ctx context.Context, am *apimod
 	return &t, diags
 }
 
-func KafkaSchemaRegistrySpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaSchemaRegistrySpec) (*apimodel.KafkaSchemaRegistrySpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func KafkaSchemaRegistrySpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaSchemaRegistrySpec) (*apimodel.KafkaSchemaRegistrySpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaSchemaRegistrySpecRequest
 
-	if !tm.Enabled.IsNull() && !tm.Enabled.IsUnknown() {
-		am.Enabled = tm.Enabled.ValueBoolPointer()
+	if !plan.Enabled.IsNull() && !plan.Enabled.IsUnknown() {
+		am.Enabled = plan.Enabled.ValueBoolPointer()
 	}
 
 	return &am, diags

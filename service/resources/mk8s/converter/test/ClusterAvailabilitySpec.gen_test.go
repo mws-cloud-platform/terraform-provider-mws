@@ -8,8 +8,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
 	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
 func TestClusterAvailabilitySpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -36,6 +39,31 @@ func TestClusterAvailabilitySpecOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateClusterAvailabilitySpecRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ClusterAvailabilitySpec
+	var stateTfModel tfmodel.ClusterAvailabilitySpec
+	stateTfModel.Standalone = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.ClusterAvailabilitySpecStandalone).GetSchema().Attributes))
+	stateTfModel.ZonalHa = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.ClusterAvailabilitySpecZonalHa).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateClusterAvailabilitySpecRequest{
+		Standalone: optional.OptionalNil[apimodel.UpdateClusterAvailabilitySpecStandaloneRequest]{
+			Set:  true,
+			Null: true,
+		},
+		ZonalHa: optional.OptionalNil[apimodel.UpdateClusterAvailabilitySpecZonalHaRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.ClusterAvailabilitySpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }
 
 func TestClusterAvailabilitySpecStandaloneAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -66,6 +94,20 @@ func TestClusterAvailabilitySpecStandaloneOptionalResponseConverters(t *testing.
 	require.Equal(t, *emptyApiModelResponse, *result)
 }
 
+func TestUpdateClusterAvailabilitySpecStandaloneRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ClusterAvailabilitySpecStandalone
+	var stateTfModel tfmodel.ClusterAvailabilitySpecStandalone
+
+	expectedUpdateModel := &apimodel.UpdateClusterAvailabilitySpecStandaloneRequest{}
+
+	result, diags := conv.ClusterAvailabilitySpecStandaloneTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
+}
+
 func TestClusterAvailabilitySpecZonalHaAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
 	emptyApiModel := apimodel.ClusterAvailabilitySpecZonalHaOptionalResponse{}
@@ -92,4 +134,18 @@ func TestClusterAvailabilitySpecZonalHaOptionalResponseConverters(t *testing.T) 
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateClusterAvailabilitySpecZonalHaRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ClusterAvailabilitySpecZonalHa
+	var stateTfModel tfmodel.ClusterAvailabilitySpecZonalHa
+
+	expectedUpdateModel := &apimodel.UpdateClusterAvailabilitySpecZonalHaRequest{}
+
+	result, diags := conv.ClusterAvailabilitySpecZonalHaTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

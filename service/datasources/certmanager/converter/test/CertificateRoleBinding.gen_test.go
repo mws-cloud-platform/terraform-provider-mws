@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
-	common "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/iam"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/certmanager/converter"
 )
@@ -24,9 +24,9 @@ func TestCertificateRoleBindingAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 func TestCertificateRoleBindingOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.CertificateRoleBindingRequest{
-		Spec: common.CommonRoleBindingSpecRequest{
-			Subject: common.CommonRoleBindingSpecSubjectRequest{},
-			Role:    iam.NewRoleRef("roleID"),
+		Spec: commonapimodel.CommonRoleBindingSpecRequest{
+			Subject: commonapimodel.CommonRoleBindingSpecSubjectRequest{},
+			Role:    iam.NewMustRoleRef("roleID"),
 		},
 	}
 

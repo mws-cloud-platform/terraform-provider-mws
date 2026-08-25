@@ -14,15 +14,16 @@ type CommonRoleBindingFederation struct {
 
 func (s *CommonRoleBindingFederation) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Субъект федерации пользователей — идентификатор федерации и, опционально, контекст, уточняющий, на каких пользователей федерации распространяется привязка роли.`,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				MarkdownDescription: `Идентификатор федерации`,
 				Required:            true,
 			},
 			"context": schema.SingleNestedAttribute{
-				Attributes: new(CommonRoleBindingFederationContext).GetSchema().Attributes,
-				Optional:   true,
+				Attributes:          new(CommonRoleBindingFederationContext).GetSchema().Attributes,
+				MarkdownDescription: `Контекст федерации, уточняющий субъекта: конкретный пользователь федерации или атрибут, которым он должен обладать. Должно быть заполнено ровно одно из полей`,
+				Optional:            true,
 			},
 		},
 	}

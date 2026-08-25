@@ -6,10 +6,17 @@ import (
 	"context"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/resources/references/secretmanager"
 	apimodel "go.mws.cloud/go-sdk/service/secretmanager/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager/model"
 )
 
 func TestSecretAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -38,4 +45,36 @@ func TestSecretOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateSecretRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.Secret
+	var stateTfModel tfmodel.Secret
+	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
+	stateTfModel.CurrentSecretVersion = types.StringValue("")
+	stateTfModel.Encryption = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.EncryptionSpec).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateSecretRequest{
+		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+			Set:  true,
+			Null: true,
+		},
+		Spec: optional.NewOptional(apimodel.UpdateSecretSpecRequest{
+			CurrentSecretVersion: optional.OptionalNil[secretmanager.SecretVersionRef]{
+				Set:  true,
+				Null: true,
+			},
+			Encryption: optional.OptionalNil[apimodel.UpdateEncryptionSpecRequest]{
+				Set:  true,
+				Null: true,
+			},
+		}),
+	}
+
+	result, diags := conv.SecretTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

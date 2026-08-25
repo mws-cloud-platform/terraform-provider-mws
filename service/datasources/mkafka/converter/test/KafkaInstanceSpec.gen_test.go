@@ -24,7 +24,7 @@ func TestKafkaInstanceSpecAPIResponseToTFModelEmpty(t *testing.T) {
 func TestKafkaInstanceSpecResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.KafkaInstanceSpecRequest{
-		VmType: compute.NewVmTypeRef("vmTypeID"),
+		VmType: compute.NewMustVmTypeRef("vmTypeID"),
 		Disk: apimodel.KafkaDataDiskSpecRequest{
 			Size: bytesize.MustParseString("0 B"),
 		},

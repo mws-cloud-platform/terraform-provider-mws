@@ -6,10 +6,16 @@ import (
 	"context"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
 func TestClusterVersionControlSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -38,4 +44,29 @@ func TestClusterVersionControlSpecOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateClusterVersionControlSpecRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ClusterVersionControlSpec
+	var stateTfModel tfmodel.ClusterVersionControlSpec
+	stateTfModel.Version = types.StringValue("")
+	stateTfModel.MaintenanceWindow = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.MaintenanceWindow).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateClusterVersionControlSpecRequest{
+		Version: optional.OptionalNil[string]{
+			Set:  true,
+			Null: true,
+		},
+		MaintenanceWindow: optional.OptionalNil[commonapimodel.UpdateMaintenanceWindowRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.ClusterVersionControlSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

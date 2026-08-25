@@ -8,8 +8,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
 	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
 func TestAddressSpecOrRefAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -36,4 +39,24 @@ func TestAddressSpecOrRefOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateAddressSpecOrRefRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.AddressSpecOrRef
+	var stateTfModel tfmodel.AddressSpecOrRef
+	stateTfModel.Spec = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.AddressSpec).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateAddressSpecOrRefRequest{
+		Spec: optional.OptionalNil[apimodel.UpdateAddressSpecRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.AddressSpecOrRefTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

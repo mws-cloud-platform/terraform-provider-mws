@@ -121,8 +121,8 @@ Required:
 
 Optional:
 
-- `ref` (String) Относительная ссылка на статический внешний адрес
-- `spec` (Attributes) Спецификация внешнего адреса (see [below for nested schema](#nestedatt--external--address--spec))
+- `ref` (String) Относительная ссылка на статический внешний IP-адрес
+- `spec` (Attributes) Спецификация внешнего IP-адреса (see [below for nested schema](#nestedatt--external--address--spec))
 
 <a id="nestedatt--external--address--spec"></a>
 ### Nested Schema for `external.address.spec`
@@ -154,11 +154,11 @@ Optional:
 
 Required:
 
-- `subnet` (String) Подсеть облачной сети к которой принадлежит адрес. В случае приватного адреса, он всегда принадлежит к некоторой подсети внутри облачной сети
+- `subnet` (String) Подсеть сети, к которой принадлежит адрес. В случае внутреннего адреса, он всегда принадлежит к некоторой подсети внутри сети
 
 Optional:
 
-- `dns` (Attributes List) (see [below for nested schema](#nestedatt--internal--address--spec--dns))
+- `dns` (Attributes List) Спецификация DNS для IP-адреса (see [below for nested schema](#nestedatt--internal--address--spec--dns))
 - `ip_address` (String) Значение IP адреса
 
 IPv4- или IPv6-адрес
@@ -237,6 +237,7 @@ Read-Only:
 - `external` (Attributes) Группирующий элемент для всего, что касается внешней части (ресурсов, доступных извне) (see [below for nested schema](#nestedatt--status--external))
 - `internal` (Attributes) Группирующий элемент для всего, что касается внутренних ресурсов (see [below for nested schema](#nestedatt--status--internal))
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
+- `region` (String) Регион, которому принадлежит One-to-One NAT
 
 <a id="nestedatt--status--external"></a>
 ### Nested Schema for `status.external`
@@ -248,7 +249,7 @@ Read-Only:
 <a id="nestedatt--status--external--address"></a>
 ### Nested Schema for `status.external.address`
 
-Read-Only:
+Required:
 
 - `ip_address` (String) Значение IP адреса
 
@@ -267,7 +268,7 @@ Read-Only:
 <a id="nestedatt--status--internal--address"></a>
 ### Nested Schema for `status.internal.address`
 
-Read-Only:
+Required:
 
 - `ip_address` (String) Значение IP адреса
 

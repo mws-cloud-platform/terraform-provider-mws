@@ -8,6 +8,7 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
+	"go.mws.cloud/go-sdk/pkg/apimodels/sensitive"
 	apimodel "go.mws.cloud/go-sdk/service/secretmanager/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager/model"
 )
@@ -23,7 +24,7 @@ func SecretVersionDataSpecAPIToTFModel(ctx context.Context, am apimodel.SecretVe
 	convertedValues := make(map[string]types.String, len(am))
 
 	for k, entity := range am {
-		convertedValues[k] = types.StringValue(entity)
+		convertedValues[k] = types.StringValue(entity.Value())
 	}
 
 	value, d := types.MapValueFrom(ctx, types.StringType, convertedValues)
@@ -37,25 +38,49 @@ func SecretVersionDataSpecAPIToTFModel(ctx context.Context, am apimodel.SecretVe
 	return t, diags
 }
 
-func SecretVersionDataSpecTFToAPIModel(ctx context.Context, tm tfmodel.SecretVersionDataSpec) (apimodel.SecretVersionDataSpec, tfdiag.Diagnostics) {
+func SecretVersionDataSpecTFToAPIModel(ctx context.Context, plan tfmodel.SecretVersionDataSpec) (apimodel.SecretVersionDataSpec, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am apimodel.SecretVersionDataSpec
 
-	if tm.IsNull() {
+	if plan.IsNull() {
 		return nil, diags
 	}
 
 	tfModels := make(map[string]types.String)
-	d := tm.ElementsAs(ctx, &tfModels, false)
+	d := plan.ElementsAs(ctx, &tfModels, false)
 	diags = append(diags, d...)
 	if diags.HasError() {
 		return nil, diags
 	}
 
-	am = make(map[string]string, len(tfModels))
+	am = make(map[string]sensitive.Sensitive[string], len(tfModels))
 
 	for k, entity := range tfModels {
-		am[k] = entity.ValueString()
+		am[k] = sensitive.New(entity.ValueString())
+	}
+
+	return am, diags
+}
+
+func SecretVersionDataSpecTFToAPIUpdateModel(ctx context.Context, plan tfmodel.SecretVersionDataSpec) (apimodel.UpdateSecretVersionDataSpec, tfdiag.Diagnostics) {
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateSecretVersionDataSpec
+
+	if plan.IsNull() {
+		return nil, diags
+	}
+
+	tfModels := make(map[string]types.String)
+	d := plan.ElementsAs(ctx, &tfModels, false)
+	diags = append(diags, d...)
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	am = make(map[string]sensitive.Sensitive[string], len(tfModels))
+
+	for k, entity := range tfModels {
+		am[k] = sensitive.New(entity.ValueString())
 	}
 
 	return am, diags

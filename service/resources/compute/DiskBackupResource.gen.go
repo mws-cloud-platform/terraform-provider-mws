@@ -106,13 +106,13 @@ func (m *DiskBackupResource) Configure(ctx context.Context, req resource.Configu
 func (m *DiskBackupResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "DiskBackupResource.Create")
 
-	var data tfmodel.DiskBackupModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.DiskBackupModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -120,17 +120,17 @@ func (m *DiskBackupResource) Create(ctx context.Context, req resource.CreateRequ
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "DiskBackupResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.DiskBackupTFToAPIRequestModel(ctx, &data.DiskBackup)
+	body, diags := conv.DiskBackupTFToAPIRequestModel(ctx, &plan.DiskBackup)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "DiskBackupResource.TFToAPI")
@@ -140,8 +140,8 @@ func (m *DiskBackupResource) Create(ctx context.Context, req resource.CreateRequ
 	apiRes, err := m.sdk.CreateDiskBackup(
 		ctx,
 		client.UpsertDiskBackupRequest{
-			Project:    data.ProjectParam.ValueString(),
-			DiskBackup: data.DiskBackupParam.ValueString(),
+			Project:    plan.ProjectParam.ValueString(),
+			DiskBackup: plan.DiskBackupParam.ValueString(),
 			Body:       *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
@@ -154,7 +154,7 @@ func (m *DiskBackupResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.DiskBackupAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -163,21 +163,21 @@ func (m *DiskBackupResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 
-	data.DiskBackup = *tfRes
+	plan.DiskBackup = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *DiskBackupResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "DiskBackupResource.Read")
 
-	var data tfmodel.DiskBackupModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.DiskBackupModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -185,14 +185,14 @@ func (m *DiskBackupResource) Read(ctx context.Context, req resource.ReadRequest,
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetDiskBackup(
 		ctx,
 		client.GetDiskBackupRequest{
-			Project:    data.ProjectParam.ValueString(),
-			DiskBackup: data.DiskBackupParam.ValueString(),
+			Project:    state.ProjectParam.ValueString(),
+			DiskBackup: state.DiskBackupParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -203,7 +203,7 @@ func (m *DiskBackupResource) Read(ctx context.Context, req resource.ReadRequest,
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.DiskBackupAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -212,21 +212,27 @@ func (m *DiskBackupResource) Read(ctx context.Context, req resource.ReadRequest,
 		return
 	}
 
-	data.DiskBackup = *tfRes
+	state.DiskBackup = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 func (m *DiskBackupResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "DiskBackupResource.Update")
 
-	var data tfmodel.DiskBackupModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.DiskBackupModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	var state tfmodel.DiskBackupModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -234,17 +240,17 @@ func (m *DiskBackupResource) Update(ctx context.Context, req resource.UpdateRequ
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "DiskBackupResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.DiskBackupTFToAPIRequestModel(ctx, &data.DiskBackup)
+	body, diags := conv.DiskBackupTFToAPIUpdateRequestModel(ctx, &plan.DiskBackup, &state.DiskBackup)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "DiskBackupResource.TFToAPI")
@@ -254,9 +260,9 @@ func (m *DiskBackupResource) Update(ctx context.Context, req resource.UpdateRequ
 	apiRes, err := m.sdk.UpdateDiskBackup(
 		ctx,
 		client.UpdateDiskBackupRequest{
-			Project:    data.ProjectParam.ValueString(),
-			DiskBackup: data.DiskBackupParam.ValueString(),
-			Body:       body.AsUpdateModel(),
+			Project:    plan.ProjectParam.ValueString(),
+			DiskBackup: plan.DiskBackupParam.ValueString(),
+			Body:       *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -268,7 +274,7 @@ func (m *DiskBackupResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.DiskBackupAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -277,21 +283,21 @@ func (m *DiskBackupResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 
-	data.DiskBackup = *tfRes
+	plan.DiskBackup = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *DiskBackupResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "DiskBackupResource.Delete")
 
-	var data tfmodel.DiskBackupModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.DiskBackupModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -299,10 +305,10 @@ func (m *DiskBackupResource) Delete(ctx context.Context, req resource.DeleteRequ
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := state.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "DiskBackupResource.Timeouts")
@@ -312,8 +318,8 @@ func (m *DiskBackupResource) Delete(ctx context.Context, req resource.DeleteRequ
 	err := m.sdk.DeleteDiskBackup(
 		ctx,
 		client.DeleteDiskBackupRequest{
-			Project:    data.ProjectParam.ValueString(),
-			DiskBackup: data.DiskBackupParam.ValueString(),
+			Project:    state.ProjectParam.ValueString(),
+			DiskBackup: state.DiskBackupParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -329,7 +335,7 @@ func (m *DiskBackupResource) Delete(ctx context.Context, req resource.DeleteRequ
 func (m *DiskBackupResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "DiskBackupResource.ImportState")
 
-	var data tfmodel.DiskBackupModel
+	var state tfmodel.DiskBackupModel
 
 	ref, err := computeref.ParseDiskBackupRef(ctx, req.ID)
 	if err != nil {
@@ -354,7 +360,7 @@ func (m *DiskBackupResource) ImportState(ctx context.Context, req resource.Impor
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.DiskBackupAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -363,10 +369,10 @@ func (m *DiskBackupResource) ImportState(ctx context.Context, req resource.Impor
 		return
 	}
 
-	data.DiskBackup = *tfRes
+	state.DiskBackup = *tfRes
 
-	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.DiskBackupParam = types.StringValue(ref.GetDiskBackup())
+	state.ProjectParam = types.StringValue(ref.GetProject())
+	state.DiskBackupParam = types.StringValue(ref.GetDiskBackup())
 
 	var rwTimeouts timeouts.Value
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
@@ -374,7 +380,7 @@ func (m *DiskBackupResource) ImportState(ctx context.Context, req resource.Impor
 		tflog.Debug(ctx, "DiskBackupResource.timeouts.GetAttribute")
 		return
 	}
-	data.Timeouts = rwTimeouts
+	state.Timeouts = rwTimeouts
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

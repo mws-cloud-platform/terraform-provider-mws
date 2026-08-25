@@ -8,8 +8,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
 func TestOneToOneNatSpecExternalAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -22,7 +24,7 @@ func TestOneToOneNatSpecExternalAPIOptionalResponseToTFModelEmpty(t *testing.T) 
 func TestOneToOneNatSpecExternalOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.OneToOneNatSpecExternalRequest{
-		Address: apimodel.ResourceExternalAddressSpecOrRefRequest{},
+		Address: commonapimodel.ResourceExternalAddressSpecOrRefRequest{},
 	}
 
 	emptyApiModelResponse, err := apimodel.OneToOneNatSpecExternalRequestToOptionalResponse(&emptyApiModelRequest)
@@ -38,4 +40,18 @@ func TestOneToOneNatSpecExternalOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateOneToOneNatSpecExternalRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.OneToOneNatSpecExternal
+	var stateTfModel tfmodel.OneToOneNatSpecExternal
+
+	expectedUpdateModel := &apimodel.UpdateOneToOneNatSpecExternalRequest{}
+
+	result, diags := conv.OneToOneNatSpecExternalTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

@@ -83,13 +83,13 @@ func (m *NodeGroupDataSource) Configure(ctx context.Context, req datasource.Conf
 func (m *NodeGroupDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "NodeGroupDataSource.Read")
 
-	var data tfmodel.NodeGroupModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.NodeGroupModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -97,15 +97,15 @@ func (m *NodeGroupDataSource) Read(ctx context.Context, req datasource.ReadReque
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetMk8sNodeGroup(
 		ctx,
 		client.GetMk8sNodeGroupRequest{
-			Project:       data.ProjectParam.ValueString(),
-			ClusterName:   data.ClusterNameParam.ValueString(),
-			NodeGroupName: data.NodeGroupNameParam.ValueString(),
+			Project:       config.ProjectParam.ValueString(),
+			ClusterName:   config.ClusterNameParam.ValueString(),
+			NodeGroupName: config.NodeGroupNameParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -123,7 +123,7 @@ func (m *NodeGroupDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
-	data.NodeGroup = *tfRes
+	config.NodeGroup = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

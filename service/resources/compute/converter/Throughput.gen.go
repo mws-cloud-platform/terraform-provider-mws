@@ -27,11 +27,11 @@ func ThroughputAPIToTFModel(ctx context.Context, am *apimodel.Throughput) (tfmod
 	return t, diags
 }
 
-func ThroughputTFToAPIModel(ctx context.Context, tm tfmodel.Throughput) (*apimodel.Throughput, tfdiag.Diagnostics) {
+func ThroughputTFToAPIModel(ctx context.Context, plan tfmodel.Throughput) (*apimodel.Throughput, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am apimodel.Throughput
 
-	var tmp = types.String(tm)
+	var tmp = types.String(plan)
 	t, err := throughput.ParseString(tmp.ValueString())
 	if err != nil {
 		diags.AddError("Throughput string parsing", err.Error())

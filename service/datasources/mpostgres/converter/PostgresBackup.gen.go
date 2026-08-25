@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
@@ -72,23 +72,23 @@ func PostgresBackupAPIResponseToTFModel(ctx context.Context, am *apimodel.Postgr
 	return &t, diags
 }
 
-func PostgresBackupTFToAPIRequestModel(ctx context.Context, tm *tfmodel.PostgresBackup) (*apimodel.PostgresBackupRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func PostgresBackupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresBackup) (*apimodel.PostgresBackupRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.PostgresBackupRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfmodel.PostgresBackupMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfmodel.PostgresBackupMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := PostgresBackupMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := PostgresBackupMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -173,26 +173,27 @@ func PostgresBackupMetadataAPIResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func PostgresBackupMetadataTFToAPIRequestModel(ctx context.Context, tm *tfmodel.PostgresBackupMetadata) (*apimodel.PostgresBackupMetadataRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func PostgresBackupMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresBackupMetadata) (*apimodel.PostgresBackupMetadataRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.PostgresBackupMetadataRequest
 
-	if !tm.DisplayName.IsNull() && !tm.DisplayName.IsUnknown() {
-		am.DisplayName = tm.DisplayName.ValueStringPointer()
+	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
+		am.DisplayName = plan.DisplayName.ValueStringPointer()
 	}
 
-	if !tm.Usages.IsNull() && !tm.Usages.IsUnknown() {
+	if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
 		usages := make([]tfcommon.TypedUsage, 0)
-		dUsages := tm.Usages.ElementsAs(ctx, &usages, false)
+		dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
 		diags = append(diags, dUsages...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.Usages = make([]common.TypedUsageRequest, 0, len(usages))
+
+		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
@@ -204,8 +205,8 @@ func PostgresBackupMetadataTFToAPIRequestModel(ctx context.Context, tm *tfmodel.
 		}
 	}
 
-	if !tm.Description.IsNull() && !tm.Description.IsUnknown() {
-		am.Description = tm.Description.ValueStringPointer()
+	if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
+		am.Description = plan.Description.ValueStringPointer()
 	}
 
 	return &am, diags
@@ -222,8 +223,8 @@ func PostgresBackupSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.Po
 	return &t, diags
 }
 
-func PostgresBackupSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.PostgresBackupSpec) (*apimodel.PostgresBackupSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func PostgresBackupSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresBackupSpec) (*apimodel.PostgresBackupSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 

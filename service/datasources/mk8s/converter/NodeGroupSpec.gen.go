@@ -41,20 +41,20 @@ func NodeGroupSpecRolloutStrategyAPIOptionalResponseToTFModel(ctx context.Contex
 	return &t, diags
 }
 
-func NodeGroupSpecRolloutStrategyTFToAPIRequestModel(ctx context.Context, tm *tfmodel.NodeGroupSpecRolloutStrategy) (*apimodel.NodeGroupSpecRolloutStrategyRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func NodeGroupSpecRolloutStrategyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroupSpecRolloutStrategy) (*apimodel.NodeGroupSpecRolloutStrategyRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.NodeGroupSpecRolloutStrategyRequest
 
-	if !tm.MaxSurge.IsNull() && !tm.MaxSurge.IsUnknown() {
-		am.MaxSurge = ptr.Get(int(tm.MaxSurge.ValueInt64()))
+	if !plan.MaxSurge.IsNull() && !plan.MaxSurge.IsUnknown() {
+		am.MaxSurge = ptr.Get(int(plan.MaxSurge.ValueInt64()))
 	}
 
-	if !tm.MaxUnavailable.IsNull() && !tm.MaxUnavailable.IsUnknown() {
-		am.MaxUnavailable = ptr.Get(int(tm.MaxUnavailable.ValueInt64()))
+	if !plan.MaxUnavailable.IsNull() && !plan.MaxUnavailable.IsUnknown() {
+		am.MaxUnavailable = ptr.Get(int(plan.MaxUnavailable.ValueInt64()))
 	}
 
 	return &am, diags
@@ -95,27 +95,27 @@ func NodeGroupSpecScaleAPIOptionalResponseToTFModel(ctx context.Context, am *api
 	return &t, diags
 }
 
-func NodeGroupSpecScaleTFToAPIRequestModel(ctx context.Context, tm *tfmodel.NodeGroupSpecScale) (*apimodel.NodeGroupSpecScaleRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func NodeGroupSpecScaleTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroupSpecScale) (*apimodel.NodeGroupSpecScaleRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.NodeGroupSpecScaleRequest
 
-	if !tm.Fixed.IsNull() && !tm.Fixed.IsUnknown() {
-		am.Fixed = ptr.Get(int(tm.Fixed.ValueInt64()))
+	if !plan.Fixed.IsNull() && !plan.Fixed.IsUnknown() {
+		am.Fixed = ptr.Get(int(plan.Fixed.ValueInt64()))
 	}
 
-	if !tm.Autoscaling.IsNull() && !tm.Autoscaling.IsUnknown() {
-		autoscalingTfModel := tfmodel.NodeGroupSpecScaleAutoscaling{}
-		autoscalingDiag := tm.Autoscaling.As(ctx, &autoscalingTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, autoscalingDiag...)
+	if !plan.Autoscaling.IsNull() && !plan.Autoscaling.IsUnknown() {
+		autoscalingPlan := tfmodel.NodeGroupSpecScaleAutoscaling{}
+		autoscalingPlanDiag := plan.Autoscaling.As(ctx, &autoscalingPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, autoscalingPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		autoscalingTmp, autoscalingDiag := NodeGroupSpecScaleAutoscalingTFToAPIRequestModel(ctx, &autoscalingTfModel)
+		autoscalingTmp, autoscalingDiag := NodeGroupSpecScaleAutoscalingTFToAPIRequestModel(ctx, &autoscalingPlan)
 		diags = append(diags, autoscalingDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -141,20 +141,20 @@ func NodeGroupSpecScaleAutoscalingAPIOptionalResponseToTFModel(ctx context.Conte
 	return &t, diags
 }
 
-func NodeGroupSpecScaleAutoscalingTFToAPIRequestModel(ctx context.Context, tm *tfmodel.NodeGroupSpecScaleAutoscaling) (*apimodel.NodeGroupSpecScaleAutoscalingRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func NodeGroupSpecScaleAutoscalingTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroupSpecScaleAutoscaling) (*apimodel.NodeGroupSpecScaleAutoscalingRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.NodeGroupSpecScaleAutoscalingRequest
 
-	if !tm.Min.IsNull() && !tm.Min.IsUnknown() {
-		am.Min = int(tm.Min.ValueInt64())
+	if !plan.Min.IsNull() && !plan.Min.IsUnknown() {
+		am.Min = int(plan.Min.ValueInt64())
 	}
 
-	if !tm.Max.IsNull() && !tm.Max.IsUnknown() {
-		am.Max = int(tm.Max.ValueInt64())
+	if !plan.Max.IsNull() && !plan.Max.IsUnknown() {
+		am.Max = int(plan.Max.ValueInt64())
 	}
 
 	return &am, diags
@@ -173,16 +173,16 @@ func NodeGroupSpecServiceAccountAPIOptionalResponseToTFModel(ctx context.Context
 	return &t, diags
 }
 
-func NodeGroupSpecServiceAccountTFToAPIRequestModel(ctx context.Context, tm *tfmodel.NodeGroupSpecServiceAccount) (*apimodel.NodeGroupSpecServiceAccountRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func NodeGroupSpecServiceAccountTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroupSpecServiceAccount) (*apimodel.NodeGroupSpecServiceAccountRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.NodeGroupSpecServiceAccountRequest
 
-	if !tm.Ref.IsNull() && !tm.Ref.IsUnknown() {
-		refRef, err := iam.ParseServiceAccountRef(ctx, tm.Ref.ValueString())
+	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
+		refRef, err := iam.ParseServiceAccountRef(ctx, plan.Ref.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -206,16 +206,16 @@ func NodeGroupSpecSubnetAPIOptionalResponseToTFModel(ctx context.Context, am *ap
 	return &t, diags
 }
 
-func NodeGroupSpecSubnetTFToAPIRequestModel(ctx context.Context, tm *tfmodel.NodeGroupSpecSubnet) (*apimodel.NodeGroupSpecSubnetRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func NodeGroupSpecSubnetTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroupSpecSubnet) (*apimodel.NodeGroupSpecSubnetRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.NodeGroupSpecSubnetRequest
 
-	if !tm.Ref.IsNull() && !tm.Ref.IsUnknown() {
-		refRef, err := vpc.ParseSubnetRef(ctx, tm.Ref.ValueString())
+	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
+		refRef, err := vpc.ParseSubnetRef(ctx, plan.Ref.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -239,16 +239,16 @@ func NodeGroupSpecVmTypeAPIOptionalResponseToTFModel(ctx context.Context, am *ap
 	return &t, diags
 }
 
-func NodeGroupSpecVmTypeTFToAPIRequestModel(ctx context.Context, tm *tfmodel.NodeGroupSpecVmType) (*apimodel.NodeGroupSpecVmTypeRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func NodeGroupSpecVmTypeTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroupSpecVmType) (*apimodel.NodeGroupSpecVmTypeRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.NodeGroupSpecVmTypeRequest
 
-	if !tm.Ref.IsNull() && !tm.Ref.IsUnknown() {
-		refRef, err := compute.ParseVmTypeRef(ctx, tm.Ref.ValueString())
+	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
+		refRef, err := compute.ParseVmTypeRef(ctx, plan.Ref.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags

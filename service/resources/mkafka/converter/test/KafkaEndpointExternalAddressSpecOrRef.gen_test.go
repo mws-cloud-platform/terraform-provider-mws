@@ -8,8 +8,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
 	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
 func TestKafkaEndpointExternalAddressSpecOrRefAPIResponseToTFModelEmpty(t *testing.T) {
@@ -38,6 +41,26 @@ func TestKafkaEndpointExternalAddressSpecOrRefResponseConverters(t *testing.T) {
 	require.Equal(t, *emptyApiModelResponse, *result)
 }
 
+func TestUpdateKafkaEndpointExternalAddressSpecOrRefRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.KafkaEndpointExternalAddressSpecOrRef
+	var stateTfModel tfmodel.KafkaEndpointExternalAddressSpecOrRef
+	stateTfModel.Spec = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.KafkaEndpointExternalAddressSpecOrRefSpec).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateKafkaEndpointExternalAddressSpecOrRefRequest{
+		Spec: optional.OptionalNil[apimodel.UpdateKafkaEndpointExternalAddressSpecOrRefSpecRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.KafkaEndpointExternalAddressSpecOrRefTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
+}
+
 func TestKafkaEndpointExternalAddressSpecOrRefSpecAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
 	emptyApiModel := apimodel.KafkaEndpointExternalAddressSpecOrRefSpecResponse{}
@@ -62,4 +85,18 @@ func TestKafkaEndpointExternalAddressSpecOrRefSpecResponseConverters(t *testing.
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateKafkaEndpointExternalAddressSpecOrRefSpecRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.KafkaEndpointExternalAddressSpecOrRefSpec
+	var stateTfModel tfmodel.KafkaEndpointExternalAddressSpecOrRefSpec
+
+	expectedUpdateModel := &apimodel.UpdateKafkaEndpointExternalAddressSpecOrRefSpecRequest{}
+
+	result, diags := conv.KafkaEndpointExternalAddressSpecOrRefSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

@@ -8,8 +8,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
 	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
 func TestKafkaEndpointBrokerAddressAPIResponseToTFModelEmpty(t *testing.T) {
@@ -36,4 +39,24 @@ func TestKafkaEndpointBrokerAddressResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateKafkaEndpointBrokerAddressRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.KafkaEndpointBrokerAddress
+	var stateTfModel tfmodel.KafkaEndpointBrokerAddress
+	stateTfModel.Spec = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.KafkaEndpointBrokerAddressSpec).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateKafkaEndpointBrokerAddressRequest{
+		Spec: optional.OptionalNil[apimodel.UpdateKafkaEndpointBrokerAddressSpecRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.KafkaEndpointBrokerAddressTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

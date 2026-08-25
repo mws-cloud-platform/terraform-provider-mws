@@ -5,6 +5,8 @@ package model
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
 type OneToOneNatSpecInternal struct {
@@ -16,7 +18,7 @@ func (s *OneToOneNatSpecInternal) GetSchema() schema.Schema {
 		MarkdownDescription: `Группирующий элемент для всего, что касается внутренних ресурсов.`,
 		Attributes: map[string]schema.Attribute{
 			"address": schema.SingleNestedAttribute{
-				Attributes:          new(ResourceAddressSpecOrRef).GetSchema().Attributes,
+				Attributes:          new(tfcommon.ResourceAddressSpecOrRef).GetSchema().Attributes,
 				MarkdownDescription: `Спецификация внутреннего адреса, для которого будет осуществляться трансляция`,
 				Required:            true,
 			},

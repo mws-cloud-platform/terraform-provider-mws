@@ -78,21 +78,22 @@ func StorageSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.S
 	return &t, diags
 }
 
-func StorageSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.StorageSpec) (*apimodel.StorageSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func StorageSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.StorageSpec) (*apimodel.StorageSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.StorageSpecRequest
 
-	if !tm.Disks.IsNull() && !tm.Disks.IsUnknown() {
+	if !plan.Disks.IsNull() && !plan.Disks.IsUnknown() {
 		disks := make([]tfmodel.StorageDiskSpecOrRefWithAttachments, 0)
-		dDisks := tm.Disks.ElementsAs(ctx, &disks, false)
+		dDisks := plan.Disks.ElementsAs(ctx, &disks, false)
 		diags = append(diags, dDisks...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.Disks = make([]apimodel.StorageDiskSpecOrRefWithAttachmentsRequest, 0, len(disks))
 
 		for _, entity := range disks {
@@ -105,13 +106,14 @@ func StorageSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.StorageSpec
 		}
 	}
 
-	if !tm.LocalDisks.IsNull() && !tm.LocalDisks.IsUnknown() {
+	if !plan.LocalDisks.IsNull() && !plan.LocalDisks.IsUnknown() {
 		localDisks := make([]tfmodel.StorageLocalDiskSpec, 0)
-		dLocalDisks := tm.LocalDisks.ElementsAs(ctx, &localDisks, false)
+		dLocalDisks := plan.LocalDisks.ElementsAs(ctx, &localDisks, false)
 		diags = append(diags, dLocalDisks...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.LocalDisks = make([]apimodel.StorageLocalDiskSpecRequest, 0, len(localDisks))
 
 		for _, entity := range localDisks {

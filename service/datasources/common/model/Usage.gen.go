@@ -15,7 +15,7 @@ type Usage struct {
 
 func (s *Usage) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Связь ресурса с другим ресурсом. В зависимости от типа связи операции над ресурсом могут быть ограничены`,
 		Attributes: map[string]schema.Attribute{
 			"usage_type": schema.StringAttribute{
 				MarkdownDescription: `Тип связи. Помимо стандартных "own" и "use" могут быть добавлены специализированные типы для конкретных сервисов`,

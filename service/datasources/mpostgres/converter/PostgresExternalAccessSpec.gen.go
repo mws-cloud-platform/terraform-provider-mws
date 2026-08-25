@@ -33,20 +33,20 @@ func PostgresExternalAccessSpecAPIResponseToTFModel(ctx context.Context, am *api
 	return &t, diags
 }
 
-func PostgresExternalAccessSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.PostgresExternalAccessSpec) (*apimodel.PostgresExternalAccessSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func PostgresExternalAccessSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresExternalAccessSpec) (*apimodel.PostgresExternalAccessSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.PostgresExternalAccessSpecRequest
 
-	if !tm.Allowed.IsNull() && !tm.Allowed.IsUnknown() {
-		am.Allowed = tm.Allowed.ValueBool()
+	if !plan.Allowed.IsNull() && !plan.Allowed.IsUnknown() {
+		am.Allowed = plan.Allowed.ValueBool()
 	}
 
-	if !tm.Ref.IsNull() && !tm.Ref.IsUnknown() {
-		refRef, err := vpc.ParseExternalAddressRef(ctx, tm.Ref.ValueString())
+	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
+		refRef, err := vpc.ParseExternalAddressRef(ctx, plan.Ref.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags

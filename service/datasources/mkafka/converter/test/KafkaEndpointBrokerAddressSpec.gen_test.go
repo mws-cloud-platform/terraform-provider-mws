@@ -23,7 +23,7 @@ func TestKafkaEndpointBrokerAddressSpecAPIResponseToTFModelEmpty(t *testing.T) {
 func TestKafkaEndpointBrokerAddressSpecResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.KafkaEndpointBrokerAddressSpecRequest{
-		Subnet: vpc.NewSubnetRef("projectID", "networkID", "subnetID"),
+		Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
 	}
 
 	emptyApiModelResponse, err := apimodel.KafkaEndpointBrokerAddressSpecRequestToResponse(&emptyApiModelRequest)

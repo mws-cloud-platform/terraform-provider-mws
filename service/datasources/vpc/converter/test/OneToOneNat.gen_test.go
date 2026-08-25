@@ -8,6 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
@@ -24,10 +25,10 @@ func TestOneToOneNatOptionalResponseConverters(t *testing.T) {
 	emptyApiModelRequest := apimodel.OneToOneNatRequest{
 		Spec: apimodel.OneToOneNatSpecRequest{
 			Internal: apimodel.OneToOneNatSpecInternalRequest{
-				Address: apimodel.ResourceAddressSpecOrRefRequest{},
+				Address: commonapimodel.ResourceAddressSpecOrRefRequest{},
 			},
 			External: apimodel.OneToOneNatSpecExternalRequest{
-				Address: apimodel.ResourceExternalAddressSpecOrRefRequest{},
+				Address: commonapimodel.ResourceExternalAddressSpecOrRefRequest{},
 			},
 		},
 	}

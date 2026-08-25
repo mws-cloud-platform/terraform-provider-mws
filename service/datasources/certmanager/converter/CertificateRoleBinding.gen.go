@@ -90,23 +90,23 @@ func CertificateRoleBindingAPIOptionalResponseToTFModel(ctx context.Context, am 
 	return &t, diags
 }
 
-func CertificateRoleBindingTFToAPIRequestModel(ctx context.Context, tm *tfmodel.CertificateRoleBinding) (*apimodel.CertificateRoleBindingRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func CertificateRoleBindingTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CertificateRoleBinding) (*apimodel.CertificateRoleBindingRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.CertificateRoleBindingRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfcommon.CommonTypedResourceMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -114,15 +114,15 @@ func CertificateRoleBindingTFToAPIRequestModel(ctx context.Context, tm *tfmodel.
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.Subject.IsNull() && !tm.Subject.IsUnknown() {
-		subjectTfModel := tfcommon.CommonRoleBindingSpecSubject{}
-		subjectDiag := tm.Subject.As(ctx, &subjectTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, subjectDiag...)
+	if !plan.Subject.IsNull() && !plan.Subject.IsUnknown() {
+		subjectPlan := tfcommon.CommonRoleBindingSpecSubject{}
+		subjectPlanDiag := plan.Subject.As(ctx, &subjectPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, subjectPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		subjectTmp, subjectDiag := commonconv.CommonRoleBindingSpecSubjectTFToAPIRequestModel(ctx, &subjectTfModel)
+		subjectTmp, subjectDiag := commonconv.CommonRoleBindingSpecSubjectTFToAPIRequestModel(ctx, &subjectPlan)
 		diags = append(diags, subjectDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -130,8 +130,8 @@ func CertificateRoleBindingTFToAPIRequestModel(ctx context.Context, tm *tfmodel.
 		am.Spec.Subject = *subjectTmp
 	}
 
-	if !tm.Role.IsNull() && !tm.Role.IsUnknown() {
-		roleRef, err := iam.ParseRoleRef(ctx, tm.Role.ValueString())
+	if !plan.Role.IsNull() && !plan.Role.IsUnknown() {
+		roleRef, err := iam.ParseRoleRef(ctx, plan.Role.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -139,8 +139,8 @@ func CertificateRoleBindingTFToAPIRequestModel(ctx context.Context, tm *tfmodel.
 		am.Spec.Role = roleRef
 	}
 
-	if !tm.SupportRequestId.IsNull() && !tm.SupportRequestId.IsUnknown() {
-		supportRequestIdRef, err := support.ParseRequestIDRef(ctx, tm.SupportRequestId.ValueString())
+	if !plan.SupportRequestId.IsNull() && !plan.SupportRequestId.IsUnknown() {
+		supportRequestIdRef, err := support.ParseRequestIDRef(ctx, plan.SupportRequestId.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags

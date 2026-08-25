@@ -24,7 +24,7 @@ func TestAddressOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.AddressRequest{
 		Spec: apimodel.VpcAddressSpecRequest{
-			Subnet: vpc.NewSubnetRef("projectID", "networkID", "subnetID"),
+			Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
 		},
 	}
 

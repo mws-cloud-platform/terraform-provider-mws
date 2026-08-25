@@ -43,23 +43,23 @@ func FirewallRuleSourceAPIOptionalResponseToTFModel(ctx context.Context, am *api
 	return &t, diags
 }
 
-func FirewallRuleSourceTFToAPIRequestModel(ctx context.Context, tm *tfmodel.FirewallRuleSource) (*apimodel.FirewallRuleSourceRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func FirewallRuleSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.FirewallRuleSource) (*apimodel.FirewallRuleSourceRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.FirewallRuleSourceRequest
 
-	if !tm.Spec.IsNull() && !tm.Spec.IsUnknown() {
-		specTfModel := tfmodel.FirewallRuleSourceSpec{}
-		specDiag := tm.Spec.As(ctx, &specTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, specDiag...)
+	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
+		specPlan := tfmodel.FirewallRuleSourceSpec{}
+		specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, specPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		specTmp, specDiag := FirewallRuleSourceSpecTFToAPIRequestModel(ctx, &specTfModel)
+		specTmp, specDiag := FirewallRuleSourceSpecTFToAPIRequestModel(ctx, &specPlan)
 		diags = append(diags, specDiag...)
 		if diags.HasError() {
 			return nil, diags

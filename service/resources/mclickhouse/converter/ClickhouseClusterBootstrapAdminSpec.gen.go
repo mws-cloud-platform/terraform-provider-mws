@@ -8,6 +8,7 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
+	"go.mws.cloud/go-sdk/pkg/apimodels/sensitive"
 	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
@@ -29,20 +30,46 @@ func ClickhouseClusterBootstrapAdminSpecAPIOptionalResponseToTFModel(ctx context
 	return &t, diags
 }
 
-func ClickhouseClusterBootstrapAdminSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClickhouseClusterBootstrapAdminSpec) (*apimodel.ClickhouseClusterBootstrapAdminSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClickhouseClusterBootstrapAdminSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterBootstrapAdminSpec) (*apimodel.ClickhouseClusterBootstrapAdminSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClickhouseClusterBootstrapAdminSpecRequest
 
-	if !tm.Username.IsNull() && !tm.Username.IsUnknown() {
-		am.Username = tm.Username.ValueString()
+	if !plan.Username.IsNull() && !plan.Username.IsUnknown() {
+		am.Username = plan.Username.ValueString()
 	}
 
-	if !tm.Password.IsNull() && !tm.Password.IsUnknown() {
-		am.Password = tm.Password.ValueString()
+	if !plan.Password.IsNull() && !plan.Password.IsUnknown() {
+		am.Password = sensitive.New(plan.Password.ValueString())
+	}
+
+	return &am, diags
+}
+
+func ClickhouseClusterBootstrapAdminSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseClusterBootstrapAdminSpec) (*apimodel.UpdateClickhouseClusterBootstrapAdminSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.ClickhouseClusterBootstrapAdminSpec{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateClickhouseClusterBootstrapAdminSpecRequest
+
+	if !plan.Username.Equal(state.Username) {
+		if !plan.Username.IsNull() && !plan.Username.IsUnknown() {
+			am.Username.SetTo(plan.Username.ValueString())
+		}
+	}
+
+	if !plan.Password.Equal(state.Password) {
+		if !plan.Password.IsNull() && !plan.Password.IsUnknown() {
+			am.Password.SetTo(sensitive.New(plan.Password.ValueString()))
+		}
 	}
 
 	return &am, diags

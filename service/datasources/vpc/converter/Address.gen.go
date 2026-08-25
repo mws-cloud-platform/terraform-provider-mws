@@ -11,6 +11,7 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/ipaddress"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -78,10 +79,10 @@ func AddressAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Addre
 	}
 
 	if val, ok := am.Spec.Dns.Get(); ok {
-		dns := make([]tfmodel.VpcAddressDnsSpec, 0, len(val))
+		dns := make([]tfcommon.VpcAddressDnsSpec, 0, len(val))
 
 		for _, entity := range val {
-			tmp, d := VpcAddressDnsSpecAPIOptionalResponseToTFModel(ctx, &entity)
+			tmp, d := commonconv.VpcAddressDnsSpecAPIOptionalResponseToTFModel(ctx, &entity)
 			diags = append(diags, d...)
 			if diags.HasError() {
 				return nil, diags
@@ -90,7 +91,7 @@ func AddressAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Addre
 		}
 
 		dnsList, d := types.ListValueFrom(ctx, types.ObjectType{
-			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.VpcAddressDnsSpec).GetSchema().Attributes),
+			AttrTypes: tfconv.GetAttributesTypes(new(tfcommon.VpcAddressDnsSpec).GetSchema().Attributes),
 		}, dns)
 		diags = append(diags, d...)
 		if diags.HasError() {
@@ -100,30 +101,30 @@ func AddressAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Addre
 		t.Dns = dnsList
 	} else {
 		t.Dns = types.ListNull(types.ObjectType{
-			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.VpcAddressDnsSpec).GetSchema().Attributes),
+			AttrTypes: tfconv.GetAttributesTypes(new(tfcommon.VpcAddressDnsSpec).GetSchema().Attributes),
 		})
 	}
 
 	return &t, diags
 }
 
-func AddressTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Address) (*apimodel.AddressRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func AddressTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Address) (*apimodel.AddressRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.AddressRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfcommon.CommonTypedResourceMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -131,8 +132,8 @@ func AddressTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Address) (*apim
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.Subnet.IsNull() && !tm.Subnet.IsUnknown() {
-		subnetRef, err := vpc.ParseSubnetRef(ctx, tm.Subnet.ValueString())
+	if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {
+		subnetRef, err := vpc.ParseSubnetRef(ctx, plan.Subnet.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -140,8 +141,8 @@ func AddressTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Address) (*apim
 		am.Spec.Subnet = subnetRef
 	}
 
-	if !tm.IpAddress.IsNull() && !tm.IpAddress.IsUnknown() {
-		tmpIpAddress, err := ipaddress.ParseIPAddressString(tm.IpAddress.ValueString())
+	if !plan.IpAddress.IsNull() && !plan.IpAddress.IsUnknown() {
+		tmpIpAddress, err := ipaddress.ParseIPAddressString(plan.IpAddress.ValueString())
 		if err != nil {
 			diags.AddError("IPAddress string parsing", err.Error())
 			return nil, diags
@@ -149,17 +150,18 @@ func AddressTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Address) (*apim
 		am.Spec.IpAddress = &tmpIpAddress
 	}
 
-	if !tm.Dns.IsNull() && !tm.Dns.IsUnknown() {
-		dns := make([]tfmodel.VpcAddressDnsSpec, 0)
-		dDns := tm.Dns.ElementsAs(ctx, &dns, false)
+	if !plan.Dns.IsNull() && !plan.Dns.IsUnknown() {
+		dns := make([]tfcommon.VpcAddressDnsSpec, 0)
+		dDns := plan.Dns.ElementsAs(ctx, &dns, false)
 		diags = append(diags, dDns...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.Spec.Dns = make([]apimodel.VpcAddressDnsSpecRequest, 0, len(dns))
+
+		am.Spec.Dns = make([]commonapimodel.VpcAddressDnsSpecRequest, 0, len(dns))
 
 		for _, entity := range dns {
-			tmp, d := VpcAddressDnsSpecTFToAPIRequestModel(ctx, &entity)
+			tmp, d := commonconv.VpcAddressDnsSpecTFToAPIRequestModel(ctx, &entity)
 			diags = append(diags, d...)
 			if diags.HasError() {
 				return nil, diags

@@ -79,13 +79,13 @@ func (m *CryptoKeyDataSource) Configure(ctx context.Context, req datasource.Conf
 func (m *CryptoKeyDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "CryptoKeyDataSource.Read")
 
-	var data tfmodel.CryptoKeyModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.CryptoKeyModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -93,10 +93,10 @@ func (m *CryptoKeyDataSource) Read(ctx context.Context, req datasource.ReadReque
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	apiRes, err := cdskms.Read(ctx, req, resp, m.sdk, data)
+	apiRes, err := cdskms.Read(ctx, req, resp, m.sdk, config)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Get CryptoKey",
@@ -112,7 +112,7 @@ func (m *CryptoKeyDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
-	data.CryptoKey = *tfRes
+	config.CryptoKey = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

@@ -83,13 +83,13 @@ func (m *CertificateRoleBindingDataSource) Configure(ctx context.Context, req da
 func (m *CertificateRoleBindingDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "CertificateRoleBindingDataSource.Read")
 
-	var data tfmodel.CertificateRoleBindingModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.CertificateRoleBindingModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -97,15 +97,15 @@ func (m *CertificateRoleBindingDataSource) Read(ctx context.Context, req datasou
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetCertificateRoleBinding(
 		ctx,
 		client.GetCertificateRoleBindingRequest{
-			Project:     data.ProjectParam.ValueString(),
-			Name:        data.NameParam.ValueString(),
-			RoleBinding: data.RoleBindingParam.ValueString(),
+			Project:     config.ProjectParam.ValueString(),
+			Name:        config.NameParam.ValueString(),
+			RoleBinding: config.RoleBindingParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -123,7 +123,7 @@ func (m *CertificateRoleBindingDataSource) Read(ctx context.Context, req datasou
 		return
 	}
 
-	data.CertificateRoleBinding = *tfRes
+	config.CertificateRoleBinding = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

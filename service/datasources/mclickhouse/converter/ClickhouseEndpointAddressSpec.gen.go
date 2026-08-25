@@ -26,16 +26,16 @@ func ClickhouseEndpointAddressSpecAPIOptionalResponseToTFModel(ctx context.Conte
 	return &t, diags
 }
 
-func ClickhouseEndpointAddressSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClickhouseEndpointAddressSpec) (*apimodel.ClickhouseEndpointAddressSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClickhouseEndpointAddressSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseEndpointAddressSpec) (*apimodel.ClickhouseEndpointAddressSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClickhouseEndpointAddressSpecRequest
 
-	if !tm.Subnet.IsNull() && !tm.Subnet.IsUnknown() {
-		subnetRef, err := vpc.ParseSubnetRef(ctx, tm.Subnet.ValueString())
+	if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {
+		subnetRef, err := vpc.ParseSubnetRef(ctx, plan.Subnet.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags

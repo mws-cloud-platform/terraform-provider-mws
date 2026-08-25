@@ -25,7 +25,14 @@ resource "mws_compute_virtual_machine" "vm" {
         name = "boot"
         boot = true
         disk = {
-          ref = "%[2]s"
+          spec = {
+            diskType = "nbs-pl2"
+            size = "10 GB"
+            iops = 1000
+            source = {
+              image = "%[2]s"
+            }
+          }
         }
       },
       {
@@ -47,7 +54,9 @@ resource "mws_compute_virtual_machine" "vm" {
         addresses = [
           {
             address = {
-              ref = "%[4]s"
+              spec = {
+                subnet = "%[4]s"
+              }
             }
             one_to_one_nat = {
               external = {

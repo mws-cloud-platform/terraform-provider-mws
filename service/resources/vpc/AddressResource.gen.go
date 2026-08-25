@@ -14,7 +14,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/mws/wait"
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -114,13 +113,13 @@ func (m *AddressResource) Configure(ctx context.Context, req resource.ConfigureR
 func (m *AddressResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "AddressResource.Create")
 
-	var data tfmodel.AddressModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.AddressModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -128,17 +127,17 @@ func (m *AddressResource) Create(ctx context.Context, req resource.CreateRequest
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "AddressResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.AddressTFToAPIRequestModel(ctx, &data.Address)
+	body, diags := conv.AddressTFToAPIRequestModel(ctx, &plan.Address)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "AddressResource.TFToAPI")
@@ -148,9 +147,9 @@ func (m *AddressResource) Create(ctx context.Context, req resource.CreateRequest
 	apiRes, err := m.sdk.CreateAddress(
 		ctx,
 		client.UpsertAddressRequest{
-			Project: data.ProjectParam.ValueString(),
-			Network: data.NetworkParam.ValueString(),
-			Address: data.AddressParam.ValueString(),
+			Project: plan.ProjectParam.ValueString(),
+			Network: plan.NetworkParam.ValueString(),
+			Address: plan.AddressParam.ValueString(),
 			Body:    body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
@@ -163,7 +162,7 @@ func (m *AddressResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.AddressAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -172,21 +171,21 @@ func (m *AddressResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	data.Address = *tfRes
+	plan.Address = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *AddressResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "AddressResource.Read")
 
-	var data tfmodel.AddressModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.AddressModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -194,15 +193,15 @@ func (m *AddressResource) Read(ctx context.Context, req resource.ReadRequest, re
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetAddress(
 		ctx,
 		client.GetAddressRequest{
-			Project: data.ProjectParam.ValueString(),
-			Network: data.NetworkParam.ValueString(),
-			Address: data.AddressParam.ValueString(),
+			Project: state.ProjectParam.ValueString(),
+			Network: state.NetworkParam.ValueString(),
+			Address: state.AddressParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -213,7 +212,7 @@ func (m *AddressResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.AddressAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -222,21 +221,27 @@ func (m *AddressResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 
-	data.Address = *tfRes
+	state.Address = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 func (m *AddressResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "AddressResource.Update")
 
-	var data tfmodel.AddressModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.AddressModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	var state tfmodel.AddressModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -244,17 +249,17 @@ func (m *AddressResource) Update(ctx context.Context, req resource.UpdateRequest
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "AddressResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.AddressTFToAPIRequestModel(ctx, &data.Address)
+	body, diags := conv.AddressTFToAPIUpdateRequestModel(ctx, &plan.Address, &state.Address)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "AddressResource.TFToAPI")
@@ -264,10 +269,10 @@ func (m *AddressResource) Update(ctx context.Context, req resource.UpdateRequest
 	apiRes, err := m.sdk.UpdateAddress(
 		ctx,
 		client.UpdateAddressRequest{
-			Project: data.ProjectParam.ValueString(),
-			Network: data.NetworkParam.ValueString(),
-			Address: data.AddressParam.ValueString(),
-			Body:    ptr.Get(body.AsUpdateModel()),
+			Project: plan.ProjectParam.ValueString(),
+			Network: plan.NetworkParam.ValueString(),
+			Address: plan.AddressParam.ValueString(),
+			Body:    body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -279,7 +284,7 @@ func (m *AddressResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.AddressAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -288,21 +293,21 @@ func (m *AddressResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	data.Address = *tfRes
+	plan.Address = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *AddressResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "AddressResource.Delete")
 
-	var data tfmodel.AddressModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.AddressModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -310,10 +315,10 @@ func (m *AddressResource) Delete(ctx context.Context, req resource.DeleteRequest
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := state.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "AddressResource.Timeouts")
@@ -323,9 +328,9 @@ func (m *AddressResource) Delete(ctx context.Context, req resource.DeleteRequest
 	err := m.sdk.DeleteAddress(
 		ctx,
 		client.DeleteAddressRequest{
-			Project: data.ProjectParam.ValueString(),
-			Network: data.NetworkParam.ValueString(),
-			Address: data.AddressParam.ValueString(),
+			Project: state.ProjectParam.ValueString(),
+			Network: state.NetworkParam.ValueString(),
+			Address: state.AddressParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -341,7 +346,7 @@ func (m *AddressResource) Delete(ctx context.Context, req resource.DeleteRequest
 func (m *AddressResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "AddressResource.ImportState")
 
-	var data tfmodel.AddressModel
+	var state tfmodel.AddressModel
 
 	ref, err := vpcref.ParseAddressRef(ctx, req.ID)
 	if err != nil {
@@ -367,7 +372,7 @@ func (m *AddressResource) ImportState(ctx context.Context, req resource.ImportSt
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.AddressAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -376,11 +381,11 @@ func (m *AddressResource) ImportState(ctx context.Context, req resource.ImportSt
 		return
 	}
 
-	data.Address = *tfRes
+	state.Address = *tfRes
 
-	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.NetworkParam = types.StringValue(ref.GetNetwork())
-	data.AddressParam = types.StringValue(ref.GetAddress())
+	state.ProjectParam = types.StringValue(ref.GetProject())
+	state.NetworkParam = types.StringValue(ref.GetNetwork())
+	state.AddressParam = types.StringValue(ref.GetAddress())
 
 	var rwTimeouts timeouts.Value
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
@@ -388,7 +393,7 @@ func (m *AddressResource) ImportState(ctx context.Context, req resource.ImportSt
 		tflog.Debug(ctx, "AddressResource.timeouts.GetAttribute")
 		return
 	}
-	data.Timeouts = rwTimeouts
+	state.Timeouts = rwTimeouts
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

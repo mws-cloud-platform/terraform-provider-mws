@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	localobjectplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/objectplanmodifier"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
@@ -16,6 +15,7 @@ type Subnet struct {
 	Kind        types.String `tfsdk:"kind"`
 	Metadata    types.Object `tfsdk:"metadata"`
 	Status      types.Object `tfsdk:"status"`
+	Region      types.String `tfsdk:"region"`
 	Cidr        types.String `tfsdk:"cidr"`
 	DhcpOptions types.Object `tfsdk:"dhcp_options"`
 }
@@ -42,6 +42,10 @@ func (s *Subnet) GetSchema() schema.Schema {
 				Attributes: new(SubnetStatus).GetSchema().Attributes,
 				Computed:   true,
 			},
+			"region": schema.StringAttribute{
+				MarkdownDescription: `Регион, которому принадлежит подсеть`,
+				Optional:            true,
+			},
 			"cidr": schema.StringAttribute{
 				MarkdownDescription: `IPv4 подсеть в CIDR нотации`,
 				Required:            true,
@@ -49,9 +53,6 @@ func (s *Subnet) GetSchema() schema.Schema {
 			"dhcp_options": schema.SingleNestedAttribute{
 				Attributes: new(SubnetDhcpOptions).GetSchema().Attributes,
 				Optional:   true,
-				PlanModifiers: []planmodifier.Object{
-					localobjectplanmodifier.RequiresReplaceIfRemoved(),
-				},
 			},
 		},
 	}

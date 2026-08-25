@@ -11,6 +11,7 @@ import (
 
 	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
 func TestKafkaDataDiskSpecAPIResponseToTFModelEmpty(t *testing.T) {
@@ -39,4 +40,18 @@ func TestKafkaDataDiskSpecResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateKafkaDataDiskSpecRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.KafkaDataDiskSpec
+	var stateTfModel tfmodel.KafkaDataDiskSpec
+
+	expectedUpdateModel := &apimodel.UpdateKafkaDataDiskSpecRequest{}
+
+	result, diags := conv.KafkaDataDiskSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

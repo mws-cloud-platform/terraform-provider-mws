@@ -114,15 +114,15 @@ func (m *ApiKeyResource) Configure(ctx context.Context, req resource.ConfigureRe
 func (m *ApiKeyResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "ApiKeyResource.Create")
 
-	var data tfmodel.ApiKeyModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.ApiKeyModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	var statusApiKey tfattr.Value
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -130,17 +130,17 @@ func (m *ApiKeyResource) Create(ctx context.Context, req resource.CreateRequest,
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ApiKeyResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.ApiKeyTFToAPIRequestModel(ctx, &data.ApiKey)
+	body, diags := conv.ApiKeyTFToAPIRequestModel(ctx, &plan.ApiKey)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ApiKeyResource.TFToAPI")
@@ -150,9 +150,9 @@ func (m *ApiKeyResource) Create(ctx context.Context, req resource.CreateRequest,
 	apiRes, err := m.sdk.CreateApiKey(
 		ctx,
 		client.UpsertApiKeyRequest{
-			ServiceAccount: data.ServiceAccountParam.ValueString(),
-			ApiKey:         data.ApiKeyParam.ValueString(),
-			Project:        data.ProjectParam.ValueString(),
+			ServiceAccount: plan.ServiceAccountParam.ValueString(),
+			ApiKey:         plan.ApiKeyParam.ValueString(),
+			Project:        plan.ProjectParam.ValueString(),
 			Body:           *body,
 		},
 	)
@@ -164,7 +164,7 @@ func (m *ApiKeyResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.ApiKeyAPIResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -173,18 +173,18 @@ func (m *ApiKeyResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	data.ApiKey = *tfRes
+	plan.ApiKey = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("status").AtName("api_key"), &statusApiKey)...)
 
 	apiRes, err = m.sdk.GetApiKey(
 		ctx,
 		client.GetApiKeyRequest{
-			ServiceAccount: data.ServiceAccountParam.ValueString(),
-			ApiKey:         data.ApiKeyParam.ValueString(),
-			Project:        data.ProjectParam.ValueString(),
+			ServiceAccount: plan.ServiceAccountParam.ValueString(),
+			ApiKey:         plan.ApiKeyParam.ValueString(),
+			Project:        plan.ProjectParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -196,7 +196,7 @@ func (m *ApiKeyResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfFinalRes, diags := conv.ApiKeyAPIResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -205,24 +205,24 @@ func (m *ApiKeyResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	data.ApiKey = *tfFinalRes
+	plan.ApiKey = *tfFinalRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("status").AtName("api_key"), statusApiKey)...)
 }
 
 func (m *ApiKeyResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "ApiKeyResource.Read")
 
-	var data tfmodel.ApiKeyModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.ApiKeyModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	var statusApiKey tfattr.Value
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -230,15 +230,15 @@ func (m *ApiKeyResource) Read(ctx context.Context, req resource.ReadRequest, res
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetApiKey(
 		ctx,
 		client.GetApiKeyRequest{
-			ServiceAccount: data.ServiceAccountParam.ValueString(),
-			ApiKey:         data.ApiKeyParam.ValueString(),
-			Project:        data.ProjectParam.ValueString(),
+			ServiceAccount: state.ServiceAccountParam.ValueString(),
+			ApiKey:         state.ApiKeyParam.ValueString(),
+			Project:        state.ProjectParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -249,7 +249,7 @@ func (m *ApiKeyResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.ApiKeyAPIResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -258,9 +258,9 @@ func (m *ApiKeyResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
-	data.ApiKey = *tfRes
+	state.ApiKey = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 	resp.Diagnostics.Append(req.State.GetAttribute(ctx, tfpath.Root("status").AtName("api_key"), &statusApiKey)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("status").AtName("api_key"), statusApiKey)...)
 }
@@ -268,15 +268,21 @@ func (m *ApiKeyResource) Read(ctx context.Context, req resource.ReadRequest, res
 func (m *ApiKeyResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "ApiKeyResource.Update")
 
-	var data tfmodel.ApiKeyModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.ApiKeyModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	var state tfmodel.ApiKeyModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	var statusApiKey tfattr.Value
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -284,17 +290,17 @@ func (m *ApiKeyResource) Update(ctx context.Context, req resource.UpdateRequest,
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ApiKeyResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.ApiKeyTFToAPIRequestModel(ctx, &data.ApiKey)
+	body, diags := conv.ApiKeyTFToAPIUpdateRequestModel(ctx, &plan.ApiKey, &state.ApiKey)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ApiKeyResource.TFToAPI")
@@ -304,10 +310,10 @@ func (m *ApiKeyResource) Update(ctx context.Context, req resource.UpdateRequest,
 	apiRes, err := m.sdk.UpdateApiKey(
 		ctx,
 		client.UpdateApiKeyRequest{
-			ServiceAccount: data.ServiceAccountParam.ValueString(),
-			ApiKey:         data.ApiKeyParam.ValueString(),
-			Project:        data.ProjectParam.ValueString(),
-			Body:           body.AsUpdateModel(),
+			ServiceAccount: plan.ServiceAccountParam.ValueString(),
+			ApiKey:         plan.ApiKeyParam.ValueString(),
+			Project:        plan.ProjectParam.ValueString(),
+			Body:           *body,
 		},
 	)
 	if err != nil {
@@ -318,7 +324,7 @@ func (m *ApiKeyResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.ApiKeyAPIResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -327,16 +333,16 @@ func (m *ApiKeyResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	data.ApiKey = *tfRes
+	plan.ApiKey = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 
 	apiRes, err = m.sdk.GetApiKey(
 		ctx,
 		client.GetApiKeyRequest{
-			ServiceAccount: data.ServiceAccountParam.ValueString(),
-			ApiKey:         data.ApiKeyParam.ValueString(),
-			Project:        data.ProjectParam.ValueString(),
+			ServiceAccount: plan.ServiceAccountParam.ValueString(),
+			ApiKey:         plan.ApiKeyParam.ValueString(),
+			Project:        plan.ProjectParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -348,7 +354,7 @@ func (m *ApiKeyResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfFinalRes, diags := conv.ApiKeyAPIResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -357,9 +363,9 @@ func (m *ApiKeyResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	data.ApiKey = *tfFinalRes
+	plan.ApiKey = *tfFinalRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 	resp.Diagnostics.Append(req.State.GetAttribute(ctx, tfpath.Root("status").AtName("api_key"), &statusApiKey)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("status").AtName("api_key"), statusApiKey)...)
 }
@@ -367,13 +373,13 @@ func (m *ApiKeyResource) Update(ctx context.Context, req resource.UpdateRequest,
 func (m *ApiKeyResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "ApiKeyResource.Delete")
 
-	var data tfmodel.ApiKeyModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.ApiKeyModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -381,10 +387,10 @@ func (m *ApiKeyResource) Delete(ctx context.Context, req resource.DeleteRequest,
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := state.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ApiKeyResource.Timeouts")
@@ -394,9 +400,9 @@ func (m *ApiKeyResource) Delete(ctx context.Context, req resource.DeleteRequest,
 	err := m.sdk.DeleteApiKey(
 		ctx,
 		client.DeleteApiKeyRequest{
-			ServiceAccount: data.ServiceAccountParam.ValueString(),
-			ApiKey:         data.ApiKeyParam.ValueString(),
-			Project:        data.ProjectParam.ValueString(),
+			ServiceAccount: state.ServiceAccountParam.ValueString(),
+			ApiKey:         state.ApiKeyParam.ValueString(),
+			Project:        state.ProjectParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -412,7 +418,7 @@ func (m *ApiKeyResource) Delete(ctx context.Context, req resource.DeleteRequest,
 func (m *ApiKeyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "ApiKeyResource.ImportState")
 
-	var data tfmodel.ApiKeyModel
+	var state tfmodel.ApiKeyModel
 
 	ref, err := iamref.ParseApiKeyRef(ctx, req.ID)
 	if err != nil {
@@ -438,7 +444,7 @@ func (m *ApiKeyResource) ImportState(ctx context.Context, req resource.ImportSta
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.ApiKeyAPIResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -447,11 +453,11 @@ func (m *ApiKeyResource) ImportState(ctx context.Context, req resource.ImportSta
 		return
 	}
 
-	data.ApiKey = *tfRes
+	state.ApiKey = *tfRes
 
-	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.ServiceAccountParam = types.StringValue(ref.GetServiceAccount())
-	data.ApiKeyParam = types.StringValue(ref.GetApiKey())
+	state.ProjectParam = types.StringValue(ref.GetProject())
+	state.ServiceAccountParam = types.StringValue(ref.GetServiceAccount())
+	state.ApiKeyParam = types.StringValue(ref.GetApiKey())
 
 	var rwTimeouts timeouts.Value
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
@@ -459,7 +465,7 @@ func (m *ApiKeyResource) ImportState(ctx context.Context, req resource.ImportSta
 		tflog.Debug(ctx, "ApiKeyResource.timeouts.GetAttribute")
 		return
 	}
-	data.Timeouts = rwTimeouts
+	state.Timeouts = rwTimeouts
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

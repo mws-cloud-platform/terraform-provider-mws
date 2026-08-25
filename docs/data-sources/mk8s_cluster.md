@@ -40,6 +40,7 @@ data "mws_mk8s_cluster" "example_cluster" {
 - `metadata` (Attributes) Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров (see [below for nested schema](#nestedatt--metadata))
 - `network` (Attributes) (see [below for nested schema](#nestedatt--network))
 - `plugins` (Attributes) (see [below for nested schema](#nestedatt--plugins))
+- `security_posture` (Attributes) Настройка KSP для кластера (see [below for nested schema](#nestedatt--security_posture))
 - `status` (Attributes) Описывает статусную модель k8s cluster (see [below for nested schema](#nestedatt--status))
 - `version_control` (Attributes) (see [below for nested schema](#nestedatt--version_control))
 
@@ -168,6 +169,14 @@ Read-Only:
 
 
 
+<a id="nestedatt--security_posture"></a>
+### Nested Schema for `security_posture`
+
+Read-Only:
+
+- `enabled` (Boolean) Определяет, работает ли в кластере KSP. Если значение равно false, сканирование кластера выключено
+
+
 <a id="nestedatt--status"></a>
 ### Nested Schema for `status`
 
@@ -178,6 +187,7 @@ Read-Only:
 - `network` (Attributes) (see [below for nested schema](#nestedatt--status--network))
 - `plugins` (Attributes) (see [below for nested schema](#nestedatt--status--plugins))
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
+- `security_posture` (Attributes) Статус KSP для кластера (see [below for nested schema](#nestedatt--status--security_posture))
 - `version_control` (Attributes) (see [below for nested schema](#nestedatt--status--version_control))
 
 <a id="nestedatt--status--cluster_status"></a>
@@ -258,6 +268,14 @@ Read-Only:
 
 - `message` (String) Описание статуса
 - `state` (String) Состояние ресурса
+
+
+<a id="nestedatt--status--security_posture"></a>
+### Nested Schema for `status.security_posture`
+
+Read-Only:
+
+- `enabled` (Boolean) Показывает, работает ли в кластере KSP
 
 
 <a id="nestedatt--status--version_control"></a>

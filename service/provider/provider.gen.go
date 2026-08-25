@@ -10,6 +10,7 @@ import (
 	baseprovider "go.mws.cloud/terraform-provider-mws/internal/provider"
 	provider "go.mws.cloud/terraform-provider-mws/internal/provider/public"
 	crsrm "go.mws.cloud/terraform-provider-mws/service/custom/resources/rm"
+	crssecretmanager "go.mws.cloud/terraform-provider-mws/service/custom/resources/secretmanager"
 	dscertmanager "go.mws.cloud/terraform-provider-mws/service/datasources/certmanager"
 	dscompute "go.mws.cloud/terraform-provider-mws/service/datasources/compute"
 	dsgpt "go.mws.cloud/terraform-provider-mws/service/datasources/gpt"
@@ -19,6 +20,7 @@ import (
 	dsmk8s "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s"
 	dsmkafka "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka"
 	dsmpostgres "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres"
+	dsnlb "go.mws.cloud/terraform-provider-mws/service/datasources/nlb"
 	dsrm "go.mws.cloud/terraform-provider-mws/service/datasources/rm"
 	dssecretmanager "go.mws.cloud/terraform-provider-mws/service/datasources/secretmanager"
 	dsvpc "go.mws.cloud/terraform-provider-mws/service/datasources/vpc"
@@ -31,6 +33,7 @@ import (
 	rsmk8s "go.mws.cloud/terraform-provider-mws/service/resources/mk8s"
 	rsmkafka "go.mws.cloud/terraform-provider-mws/service/resources/mkafka"
 	rsmpostgres "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres"
+	rsnlb "go.mws.cloud/terraform-provider-mws/service/resources/nlb"
 	rssecretmanager "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager"
 	rsvpc "go.mws.cloud/terraform-provider-mws/service/resources/vpc"
 )
@@ -69,8 +72,10 @@ func resources() []func() resource.Resource {
 		rsmpostgres.NewClusterUserResource,
 		rsmpostgres.NewClusterDatabaseResource,
 		rsmpostgres.NewBackupResource,
+		rsnlb.NewNlbResource,
 		crsrm.NewEnabledServiceResource,
 		rssecretmanager.NewSecretResource,
+		crssecretmanager.NewSecretVersionResource,
 		rsvpc.NewNetworkResource,
 		rsvpc.NewExternalAddressResource,
 		rsvpc.NewSubnetResource,
@@ -79,6 +84,7 @@ func resources() []func() resource.Resource {
 		rsvpc.NewFirewallRuleResource,
 		rsvpc.NewEgressNatResource,
 		rsvpc.NewAddressResource,
+		rsvpc.NewAddressGroupResource,
 	}
 }
 
@@ -108,9 +114,11 @@ func dataSources() []func() datasource.DataSource {
 		dsmpostgres.NewClusterUserDataSource,
 		dsmpostgres.NewClusterDatabaseDataSource,
 		dsmpostgres.NewBackupDataSource,
+		dsnlb.NewNlbDataSource,
 		dsrm.NewZoneDataSource,
 		dsrm.NewRegionDataSource,
 		dssecretmanager.NewSecretDataSource,
+		dssecretmanager.NewSecretVersionDataSource,
 		dsvpc.NewNetworkDataSource,
 		dsvpc.NewExternalAddressDataSource,
 		dsvpc.NewSubnetDataSource,
@@ -119,5 +127,6 @@ func dataSources() []func() datasource.DataSource {
 		dsvpc.NewFirewallRuleDataSource,
 		dsvpc.NewEgressNatDataSource,
 		dsvpc.NewAddressDataSource,
+		dsvpc.NewAddressGroupDataSource,
 	}
 }

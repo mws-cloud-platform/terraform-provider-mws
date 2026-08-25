@@ -84,5 +84,23 @@ func ImageStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.ImageStat
 		t.OsType = types.StringNull()
 	}
 
+	if am.Encryption != nil {
+		encryptionTmp, d := EncryptionStatusAPIResponseToTFModel(ctx, am.Encryption)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		encryptionTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.EncryptionStatus).GetSchema().Attributes),
+			*encryptionTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.Encryption = encryptionTfObject
+	} else {
+		t.Encryption = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.EncryptionStatus).GetSchema().Attributes))
+	}
+
 	return &t, diags
 }

@@ -12,7 +12,7 @@ type CommonRoleBindingStatus struct {
 
 func (s *CommonRoleBindingStatus) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Текущее состояние привязки роли, вычисляемое системой.`,
 		Attributes: map[string]schema.Attribute{
 			"ready": schema.SingleNestedAttribute{
 				Attributes:          new(ResourceStatusReady).GetSchema().Attributes,

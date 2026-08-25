@@ -9,10 +9,14 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/pkg/optional"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
 func TestKafkaClusterAPIResponseToTFModelEmpty(t *testing.T) {
@@ -30,7 +34,7 @@ func TestKafkaClusterResponseConverters(t *testing.T) {
 			Endpoints: []apimodel.KafkaEndpointRequest{},
 			Instances: apimodel.KafkaInstanceRequest{
 				Broker: apimodel.KafkaInstanceSpecRequest{
-					VmType: compute.NewVmTypeRef("vmTypeID"),
+					VmType: compute.NewMustVmTypeRef("vmTypeID"),
 					Disk: apimodel.KafkaDataDiskSpecRequest{
 						Size: bytesize.MustParseString("0 B"),
 					},
@@ -55,6 +59,43 @@ func TestKafkaClusterResponseConverters(t *testing.T) {
 	require.Equal(t, *emptyApiModelResponse, *result)
 }
 
+func TestUpdateKafkaClusterRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.KafkaCluster
+	var stateTfModel tfmodel.KafkaCluster
+	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.KafkaClusterMetadata).GetSchema().Attributes))
+	stateTfModel.MaintenanceWindow = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.MaintenanceWindow).GetSchema().Attributes))
+	stateTfModel.SchemaRegistry = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.KafkaSchemaRegistrySpec).GetSchema().Attributes))
+	stateTfModel.Balancer = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.KafkaBalancerSpec).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateKafkaClusterRequest{
+		Metadata: optional.OptionalNil[apimodel.UpdateKafkaClusterMetadataRequest]{
+			Set:  true,
+			Null: true,
+		},
+		Spec: optional.NewOptional(apimodel.UpdateKafkaClusterSpecRequest{
+			MaintenanceWindow: optional.OptionalNil[commonapimodel.UpdateMaintenanceWindowRequest]{
+				Set:  true,
+				Null: true,
+			},
+			SchemaRegistry: optional.OptionalNil[apimodel.UpdateKafkaSchemaRegistrySpecRequest]{
+				Set:  true,
+				Null: true,
+			},
+			Balancer: optional.OptionalNil[apimodel.UpdateKafkaBalancerSpecRequest]{
+				Set:  true,
+				Null: true,
+			},
+		}),
+	}
+
+	result, diags := conv.KafkaClusterTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
+}
+
 func TestKafkaClusterMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
 	emptyApiModel := apimodel.KafkaClusterMetadataResponse{}
@@ -65,7 +106,7 @@ func TestKafkaClusterMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 func TestKafkaClusterMetadataResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.KafkaClusterMetadataRequest{
-		TypedResourceMetadataRequest: common.TypedResourceMetadataRequest{},
+		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
 	}
 
 	emptyApiModelResponse, err := apimodel.KafkaClusterMetadataRequestToResponse(&emptyApiModelRequest)
@@ -81,4 +122,18 @@ func TestKafkaClusterMetadataResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateKafkaClusterMetadataRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.KafkaClusterMetadata
+	var stateTfModel tfmodel.KafkaClusterMetadata
+
+	expectedUpdateModel := &apimodel.UpdateKafkaClusterMetadataRequest{}
+
+	result, diags := conv.KafkaClusterMetadataTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

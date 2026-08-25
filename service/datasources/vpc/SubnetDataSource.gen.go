@@ -83,13 +83,13 @@ func (m *SubnetDataSource) Configure(ctx context.Context, req datasource.Configu
 func (m *SubnetDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "SubnetDataSource.Read")
 
-	var data tfmodel.SubnetModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.SubnetModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -97,15 +97,15 @@ func (m *SubnetDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetSubnet(
 		ctx,
 		client.GetSubnetRequest{
-			Project: data.ProjectParam.ValueString(),
-			Network: data.NetworkParam.ValueString(),
-			Subnet:  data.SubnetParam.ValueString(),
+			Project: config.ProjectParam.ValueString(),
+			Network: config.NetworkParam.ValueString(),
+			Subnet:  config.SubnetParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -123,7 +123,7 @@ func (m *SubnetDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		return
 	}
 
-	data.Subnet = *tfRes
+	config.Subnet = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

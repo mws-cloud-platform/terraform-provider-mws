@@ -346,7 +346,9 @@ Read-Only:
 
 Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `id` (String) Ссылка на типизированный референс
-- `purge_time` (String) Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `purge_time` (String) Время удаления ресурса
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
 
 <a id="nestedatt--metadata--usages"></a>
@@ -387,6 +389,7 @@ Read-Only:
 - `message` (String)
 - `network` (Attributes) Описание IP-адресов для доступа к кластеру (see [below for nested schema](#nestedatt--status--network))
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
+- `region` (String) Регион, которому принадлежит кластер
 - `state` (String) Состояние кластера:
   * "CREATING"     - Создается;
   * "RUNNING"      - Работает в штатном режиме;

@@ -11,6 +11,7 @@ import (
 
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
 func TestFirewallRuleSourceSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -39,4 +40,18 @@ func TestFirewallRuleSourceSpecOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateFirewallRuleSourceSpecRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.FirewallRuleSourceSpec
+	var stateTfModel tfmodel.FirewallRuleSourceSpec
+
+	expectedUpdateModel := &apimodel.UpdateFirewallRuleSourceSpecRequest{}
+
+	result, diags := conv.FirewallRuleSourceSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

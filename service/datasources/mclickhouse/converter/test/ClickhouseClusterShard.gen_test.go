@@ -26,7 +26,7 @@ func TestClickhouseClusterShardOptionalResponseConverters(t *testing.T) {
 	emptyApiModelRequest := apimodel.ClickhouseClusterShardRequest{
 		Name: "name",
 		Resources: apimodel.ClickhouseInstanceHWResourcesRequest{
-			VmType: mclickhouse.NewClickhouseVmTypeRef("vmTypeID"),
+			VmType: mclickhouse.NewMustClickhouseVmTypeRef("vmTypeID"),
 			Disk: apimodel.ClickhouseInstanceDiskSpecRequest{
 				Size: bytesize.MustParseString("0 B"),
 				Type: "",

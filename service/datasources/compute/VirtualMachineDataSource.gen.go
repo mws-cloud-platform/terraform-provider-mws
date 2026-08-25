@@ -78,13 +78,13 @@ func (m *VirtualMachineDataSource) Configure(ctx context.Context, req datasource
 func (m *VirtualMachineDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "VirtualMachineDataSource.Read")
 
-	var data tfmodel.VirtualMachineModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.VirtualMachineModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -92,14 +92,14 @@ func (m *VirtualMachineDataSource) Read(ctx context.Context, req datasource.Read
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetVirtualMachine(
 		ctx,
 		client.GetVirtualMachineRequest{
-			Project:        data.ProjectParam.ValueString(),
-			VirtualMachine: data.VirtualMachineParam.ValueString(),
+			Project:        config.ProjectParam.ValueString(),
+			VirtualMachine: config.VirtualMachineParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -117,7 +117,7 @@ func (m *VirtualMachineDataSource) Read(ctx context.Context, req datasource.Read
 		return
 	}
 
-	data.VirtualMachine = *tfRes
+	config.VirtualMachine = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

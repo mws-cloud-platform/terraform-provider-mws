@@ -47,7 +47,7 @@ IPv4- или IPv6-адрес`,
 			},
 			"dns": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
-					Attributes: new(VpcAddressDnsSpec).GetSchema().Attributes,
+					Attributes: new(tfcommon.VpcAddressDnsSpec).GetSchema().Attributes,
 				},
 				Computed: true,
 			},

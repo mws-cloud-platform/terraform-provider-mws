@@ -7,6 +7,7 @@ import (
 
 	helper "github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/stretchr/testify/suite"
+	"go.mws.cloud/go-sdk/pkg/apimodels/sensitive"
 	mpostgresclient "go.mws.cloud/go-sdk/service/mpostgres/client"
 	mpostgresmodel "go.mws.cloud/go-sdk/service/mpostgres/model"
 	mpostgressdk "go.mws.cloud/go-sdk/service/mpostgres/sdk"
@@ -67,7 +68,7 @@ func (s *ClusterDatabaseSuite) SetupSuite() {
 		User:    s.userName,
 		Body: mpostgresmodel.PostgresClusterUserRequest{
 			Spec: mpostgresmodel.PostgresClusterUserSpecRequest{
-				Password: helper.RandString(16),
+				Password: sensitive.New(helper.RandString(16)),
 				Role:     new(mpostgresmodel.PostgresUserRole_DB_OWNER_USER),
 			},
 		},

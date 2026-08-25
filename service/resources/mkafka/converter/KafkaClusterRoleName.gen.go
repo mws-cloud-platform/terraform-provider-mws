@@ -25,11 +25,11 @@ func KafkaClusterRoleNameAPIToTFModel(ctx context.Context, am *apimodel.KafkaClu
 	return t, diags
 }
 
-func KafkaClusterRoleNameTFToAPIModel(ctx context.Context, tm tfmodel.KafkaClusterRoleName) (*apimodel.KafkaClusterRoleName, tfdiag.Diagnostics) {
+func KafkaClusterRoleNameTFToAPIModel(ctx context.Context, plan tfmodel.KafkaClusterRoleName) (*apimodel.KafkaClusterRoleName, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaClusterRoleName
 
-	var tmp = types.String(tm)
+	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}

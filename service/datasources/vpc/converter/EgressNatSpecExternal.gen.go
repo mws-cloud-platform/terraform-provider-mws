@@ -8,8 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
+	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/model"
 )
 
@@ -22,10 +25,10 @@ func EgressNatSpecExternalAPIOptionalResponseToTFModel(ctx context.Context, am *
 	var t tfmodel.EgressNatSpecExternal
 
 	if am.Addresses != nil {
-		addresses := make([]tfmodel.ResourceExternalAddressSpecOrRef, 0, len(am.Addresses))
+		addresses := make([]tfcommon.ResourceExternalAddressSpecOrRef, 0, len(am.Addresses))
 
 		for _, entity := range am.Addresses {
-			tmp, d := ResourceExternalAddressSpecOrRefAPIOptionalResponseToTFModel(ctx, &entity)
+			tmp, d := commonconv.ResourceExternalAddressSpecOrRefAPIOptionalResponseToTFModel(ctx, &entity)
 			diags = append(diags, d...)
 			if diags.HasError() {
 				return nil, diags
@@ -34,7 +37,7 @@ func EgressNatSpecExternalAPIOptionalResponseToTFModel(ctx context.Context, am *
 		}
 
 		addressesList, d := types.ListValueFrom(ctx, types.ObjectType{
-			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.ResourceExternalAddressSpecOrRef).GetSchema().Attributes),
+			AttrTypes: tfconv.GetAttributesTypes(new(tfcommon.ResourceExternalAddressSpecOrRef).GetSchema().Attributes),
 		}, addresses)
 		diags = append(diags, d...)
 		if diags.HasError() {
@@ -44,32 +47,33 @@ func EgressNatSpecExternalAPIOptionalResponseToTFModel(ctx context.Context, am *
 		t.Addresses = addressesList
 	} else {
 		t.Addresses = types.ListNull(types.ObjectType{
-			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.ResourceExternalAddressSpecOrRef).GetSchema().Attributes),
+			AttrTypes: tfconv.GetAttributesTypes(new(tfcommon.ResourceExternalAddressSpecOrRef).GetSchema().Attributes),
 		})
 	}
 
 	return &t, diags
 }
 
-func EgressNatSpecExternalTFToAPIRequestModel(ctx context.Context, tm *tfmodel.EgressNatSpecExternal) (*apimodel.EgressNatSpecExternalRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func EgressNatSpecExternalTFToAPIRequestModel(ctx context.Context, plan *tfmodel.EgressNatSpecExternal) (*apimodel.EgressNatSpecExternalRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.EgressNatSpecExternalRequest
 
-	if !tm.Addresses.IsNull() && !tm.Addresses.IsUnknown() {
-		addresses := make([]tfmodel.ResourceExternalAddressSpecOrRef, 0)
-		dAddresses := tm.Addresses.ElementsAs(ctx, &addresses, false)
+	if !plan.Addresses.IsNull() && !plan.Addresses.IsUnknown() {
+		addresses := make([]tfcommon.ResourceExternalAddressSpecOrRef, 0)
+		dAddresses := plan.Addresses.ElementsAs(ctx, &addresses, false)
 		diags = append(diags, dAddresses...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.Addresses = make([]apimodel.ResourceExternalAddressSpecOrRefRequest, 0, len(addresses))
+
+		am.Addresses = make([]commonapimodel.ResourceExternalAddressSpecOrRefRequest, 0, len(addresses))
 
 		for _, entity := range addresses {
-			tmp, d := ResourceExternalAddressSpecOrRefTFToAPIRequestModel(ctx, &entity)
+			tmp, d := commonconv.ResourceExternalAddressSpecOrRefTFToAPIRequestModel(ctx, &entity)
 			diags = append(diags, d...)
 			if diags.HasError() {
 				return nil, diags

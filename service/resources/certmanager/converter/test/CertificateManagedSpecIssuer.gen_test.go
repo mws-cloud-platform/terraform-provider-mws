@@ -8,8 +8,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
 	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/model"
 )
 
 func TestCertificateManagedSpecIssuerAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -36,6 +39,26 @@ func TestCertificateManagedSpecIssuerOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateCertificateManagedSpecIssuerRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.CertificateManagedSpecIssuer
+	var stateTfModel tfmodel.CertificateManagedSpecIssuer
+	stateTfModel.Acme = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.CertificateManagedSpecIssuerAcme).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateCertificateManagedSpecIssuerRequest{
+		Acme: optional.OptionalNil[apimodel.UpdateCertificateManagedSpecIssuerAcmeRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.CertificateManagedSpecIssuerTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }
 
 func TestCertificateManagedSpecIssuerAcmeAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -65,4 +88,18 @@ func TestCertificateManagedSpecIssuerAcmeOptionalResponseConverters(t *testing.T
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateCertificateManagedSpecIssuerAcmeRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.CertificateManagedSpecIssuerAcme
+	var stateTfModel tfmodel.CertificateManagedSpecIssuerAcme
+
+	expectedUpdateModel := &apimodel.UpdateCertificateManagedSpecIssuerAcmeRequest{}
+
+	result, diags := conv.CertificateManagedSpecIssuerAcmeTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

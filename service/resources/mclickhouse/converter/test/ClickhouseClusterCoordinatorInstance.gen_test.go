@@ -11,6 +11,7 @@ import (
 	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
 	"go.mws.cloud/go-sdk/service/resources/references/rm"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
 func TestClickhouseClusterCoordinatorInstanceAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -23,7 +24,7 @@ func TestClickhouseClusterCoordinatorInstanceAPIOptionalResponseToTFModelEmpty(t
 func TestClickhouseClusterCoordinatorInstanceOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.ClickhouseClusterCoordinatorInstanceRequest{
-		Zone: rm.NewZoneRef("zoneID"),
+		Zone: rm.NewMustZoneRef("zoneID"),
 	}
 
 	emptyApiModelResponse, err := apimodel.ClickhouseClusterCoordinatorInstanceRequestToOptionalResponse(&emptyApiModelRequest)
@@ -39,4 +40,18 @@ func TestClickhouseClusterCoordinatorInstanceOptionalResponseConverters(t *testi
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateClickhouseClusterCoordinatorInstanceRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ClickhouseClusterCoordinatorInstance
+	var stateTfModel tfmodel.ClickhouseClusterCoordinatorInstance
+
+	expectedUpdateModel := &apimodel.UpdateClickhouseClusterCoordinatorInstanceRequest{}
+
+	result, diags := conv.ClickhouseClusterCoordinatorInstanceTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

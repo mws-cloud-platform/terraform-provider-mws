@@ -10,6 +10,7 @@ import (
 
 	apimodel "go.mws.cloud/go-sdk/service/compute/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
 func TestComputeOneToOneNatSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -42,6 +43,20 @@ func TestComputeOneToOneNatSpecOptionalResponseConverters(t *testing.T) {
 	require.Equal(t, *emptyApiModelResponse, *result)
 }
 
+func TestUpdateComputeOneToOneNatSpecRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ComputeOneToOneNatSpec
+	var stateTfModel tfmodel.ComputeOneToOneNatSpec
+
+	expectedUpdateModel := &apimodel.UpdateComputeOneToOneNatSpecRequest{}
+
+	result, diags := conv.ComputeOneToOneNatSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
+}
+
 func TestComputeOneToOneNatSpecExternalAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
 	emptyApiModel := apimodel.ComputeOneToOneNatSpecExternalOptionalResponse{}
@@ -68,4 +83,18 @@ func TestComputeOneToOneNatSpecExternalOptionalResponseConverters(t *testing.T) 
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateComputeOneToOneNatSpecExternalRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ComputeOneToOneNatSpecExternal
+	var stateTfModel tfmodel.ComputeOneToOneNatSpecExternal
+
+	expectedUpdateModel := &apimodel.UpdateComputeOneToOneNatSpecExternalRequest{}
+
+	result, diags := conv.ComputeOneToOneNatSpecExternalTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

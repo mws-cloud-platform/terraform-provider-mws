@@ -51,16 +51,16 @@ func KafkaEndpointExternalAddressSpecOrRefAPIResponseToTFModel(ctx context.Conte
 	return &t, diags
 }
 
-func KafkaEndpointExternalAddressSpecOrRefTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaEndpointExternalAddressSpecOrRef) (*apimodel.KafkaEndpointExternalAddressSpecOrRefRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func KafkaEndpointExternalAddressSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaEndpointExternalAddressSpecOrRef) (*apimodel.KafkaEndpointExternalAddressSpecOrRefRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaEndpointExternalAddressSpecOrRefRequest
 
-	if !tm.Ref.IsNull() && !tm.Ref.IsUnknown() {
-		refRef, err := vpc.ParseExternalAddressRef(ctx, tm.Ref.ValueString())
+	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
+		refRef, err := vpc.ParseExternalAddressRef(ctx, plan.Ref.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -68,15 +68,15 @@ func KafkaEndpointExternalAddressSpecOrRefTFToAPIRequestModel(ctx context.Contex
 		am.Ref = &refRef
 	}
 
-	if !tm.Spec.IsNull() && !tm.Spec.IsUnknown() {
-		specTfModel := tfmodel.KafkaEndpointExternalAddressSpecOrRefSpec{}
-		specDiag := tm.Spec.As(ctx, &specTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, specDiag...)
+	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
+		specPlan := tfmodel.KafkaEndpointExternalAddressSpecOrRefSpec{}
+		specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, specPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		specTmp, specDiag := KafkaEndpointExternalAddressSpecOrRefSpecTFToAPIRequestModel(ctx, &specTfModel)
+		specTmp, specDiag := KafkaEndpointExternalAddressSpecOrRefSpecTFToAPIRequestModel(ctx, &specPlan)
 		diags = append(diags, specDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -98,8 +98,8 @@ func KafkaEndpointExternalAddressSpecOrRefSpecAPIResponseToTFModel(ctx context.C
 	return &t, diags
 }
 
-func KafkaEndpointExternalAddressSpecOrRefSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaEndpointExternalAddressSpecOrRefSpec) (*apimodel.KafkaEndpointExternalAddressSpecOrRefSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func KafkaEndpointExternalAddressSpecOrRefSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaEndpointExternalAddressSpecOrRefSpec) (*apimodel.KafkaEndpointExternalAddressSpecOrRefSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 

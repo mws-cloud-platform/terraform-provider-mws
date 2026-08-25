@@ -79,13 +79,13 @@ func (m *DiskDataSource) Configure(ctx context.Context, req datasource.Configure
 func (m *DiskDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "DiskDataSource.Read")
 
-	var data tfmodel.DiskModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.DiskModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -93,14 +93,14 @@ func (m *DiskDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetDisk(
 		ctx,
 		client.GetDiskRequest{
-			Project: data.ProjectParam.ValueString(),
-			Disk:    data.DiskParam.ValueString(),
+			Project: config.ProjectParam.ValueString(),
+			Disk:    config.DiskParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -118,7 +118,7 @@ func (m *DiskDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		return
 	}
 
-	data.Disk = *tfRes
+	config.Disk = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

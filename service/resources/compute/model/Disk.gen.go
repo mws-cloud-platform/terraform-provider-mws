@@ -16,16 +16,17 @@ import (
 )
 
 type Disk struct {
-	Kind      types.String `tfsdk:"kind"`
-	Metadata  types.Object `tfsdk:"metadata"`
-	Status    types.Object `tfsdk:"status"`
-	Zone      types.String `tfsdk:"zone"`
-	Size      types.String `tfsdk:"size"`
-	Source    types.Object `tfsdk:"source"`
-	DiskType  types.String `tfsdk:"disk_type"`
-	Iops      Iops         `tfsdk:"iops"`
-	BlockSize types.String `tfsdk:"block_size"`
-	OsType    OsType       `tfsdk:"os_type"`
+	Kind       types.String `tfsdk:"kind"`
+	Metadata   types.Object `tfsdk:"metadata"`
+	Status     types.Object `tfsdk:"status"`
+	Zone       types.String `tfsdk:"zone"`
+	Size       types.String `tfsdk:"size"`
+	Source     types.Object `tfsdk:"source"`
+	DiskType   types.String `tfsdk:"disk_type"`
+	Iops       Iops         `tfsdk:"iops"`
+	BlockSize  types.String `tfsdk:"block_size"`
+	OsType     OsType       `tfsdk:"os_type"`
+	Encryption types.Object `tfsdk:"encryption"`
 }
 
 func (s *Disk) GetSchema() schema.Schema {
@@ -108,6 +109,11 @@ func (s *Disk) GetSchema() schema.Schema {
 				PlanModifiers: []planmodifier.String{
 					localstringplanmodifier.RequiresReplaceIfRemoved(),
 				},
+			},
+			"encryption": schema.SingleNestedAttribute{
+				Attributes:          new(EncryptionSpec).GetSchema().Attributes,
+				MarkdownDescription: `Способ шифрования ресурса`,
+				Optional:            true,
 			},
 		},
 	}

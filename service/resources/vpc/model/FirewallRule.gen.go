@@ -12,7 +12,6 @@ import (
 
 	localboolplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/boolplanmodifier"
 	localint64planmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/int64planmodifier"
-	locallistplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/listplanmodifier"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
@@ -31,7 +30,7 @@ type FirewallRule struct {
 
 func (s *FirewallRule) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Правило файрвола — набор параметров, который разрешает или запрещает определенный тип трафика`,
+		MarkdownDescription: `Правило файрвола — набор параметров, который разрешает или запрещает определенный тип трафика.`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,
@@ -43,13 +42,13 @@ func (s *FirewallRule) GetSchema() schema.Schema {
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes,
-				MarkdownDescription: `Метаданные правила Firewall'а`,
+				MarkdownDescription: `Метаданные правила файрвола`,
 				Computed:            true,
 				Optional:            true,
 			},
 			"status": schema.SingleNestedAttribute{
 				Attributes:          new(FirewallRuleStatus).GetSchema().Attributes,
-				MarkdownDescription: `Статус правила Firewall'а`,
+				MarkdownDescription: `Статус правила файрвола`,
 				Computed:            true,
 			},
 			"direction": schema.StringAttribute{
@@ -100,9 +99,6 @@ func (s *FirewallRule) GetSchema() schema.Schema {
 				ElementType:         types.StringType,
 				MarkdownDescription: `Критерий применимости правила. Определяет список протоколов и соответствующих портов (если применимо) назначения пакета. Значение по умолчанию - пустое значение. Означает любой протокол и порт`,
 				Optional:            true,
-				PlanModifiers: []planmodifier.List{
-					locallistplanmodifier.RequiresReplaceIfRemoved(),
-				},
 			},
 		},
 	}

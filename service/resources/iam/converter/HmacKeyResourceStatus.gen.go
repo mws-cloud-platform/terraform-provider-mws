@@ -46,7 +46,7 @@ func HmacKeyResourceStatusAPIResponseToTFModel(ctx context.Context, am *apimodel
 	}
 
 	if am.SecretAccessKey != nil {
-		t.SecretAccessKey = types.StringPointerValue(am.SecretAccessKey)
+		t.SecretAccessKey = types.StringValue(am.SecretAccessKey.Value())
 	} else {
 		t.SecretAccessKey = types.StringNull()
 	}

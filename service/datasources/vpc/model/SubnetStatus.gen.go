@@ -12,6 +12,7 @@ import (
 type SubnetStatus struct {
 	tfcommon.ResourceStatus
 	DhcpOptions types.Object `tfsdk:"dhcp_options"`
+	Region      types.String `tfsdk:"region"`
 }
 
 func (s *SubnetStatus) GetSchema() schema.Schema {
@@ -26,6 +27,10 @@ func (s *SubnetStatus) GetSchema() schema.Schema {
 			"dhcp_options": schema.SingleNestedAttribute{
 				Attributes: new(SubnetDhcpOptions).GetSchema().Attributes,
 				Computed:   true,
+			},
+			"region": schema.StringAttribute{
+				MarkdownDescription: `Регион, которому принадлежит подсеть`,
+				Computed:            true,
 			},
 		},
 	}

@@ -23,6 +23,7 @@ type Image struct {
 	Activity    ImageActivity `tfsdk:"activity"`
 	MinDiskSize types.String  `tfsdk:"min_disk_size"`
 	OsType      OsType        `tfsdk:"os_type"`
+	Encryption  types.Object  `tfsdk:"encryption"`
 }
 
 func (s *Image) GetSchema() schema.Schema {
@@ -97,6 +98,11 @@ func (s *Image) GetSchema() schema.Schema {
 				PlanModifiers: []planmodifier.String{
 					localstringplanmodifier.RequiresReplaceIfRemoved(),
 				},
+			},
+			"encryption": schema.SingleNestedAttribute{
+				Attributes:          new(EncryptionSpec).GetSchema().Attributes,
+				MarkdownDescription: `Способ шифрования ресурса`,
+				Optional:            true,
 			},
 		},
 	}

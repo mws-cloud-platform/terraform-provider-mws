@@ -8,6 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
@@ -22,7 +23,7 @@ func TestEgressNatSpecExternalAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 func TestEgressNatSpecExternalOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.EgressNatSpecExternalRequest{
-		Addresses: []apimodel.ResourceExternalAddressSpecOrRefRequest{},
+		Addresses: []commonapimodel.ResourceExternalAddressSpecOrRefRequest{},
 	}
 
 	emptyApiModelResponse, err := apimodel.EgressNatSpecExternalRequestToOptionalResponse(&emptyApiModelRequest)

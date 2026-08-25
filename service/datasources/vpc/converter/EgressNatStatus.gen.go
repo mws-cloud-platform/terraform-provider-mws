@@ -7,6 +7,7 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -89,6 +90,12 @@ func EgressNatStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.Egres
 		t.PortAllocation = portAllocationTfObject
 	} else {
 		t.PortAllocation = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.EgressNatStatusPortAllocation).GetSchema().Attributes))
+	}
+
+	if am.Region != nil {
+		t.Region = types.StringPointerValue(ptr.Get(am.Region.ID()))
+	} else {
+		t.Region = types.StringNull()
 	}
 
 	return &t, diags

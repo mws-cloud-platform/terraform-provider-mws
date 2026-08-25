@@ -83,13 +83,13 @@ func (m *AddressDataSource) Configure(ctx context.Context, req datasource.Config
 func (m *AddressDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "AddressDataSource.Read")
 
-	var data tfmodel.AddressModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.AddressModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -97,15 +97,15 @@ func (m *AddressDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetAddress(
 		ctx,
 		client.GetAddressRequest{
-			Project: data.ProjectParam.ValueString(),
-			Network: data.NetworkParam.ValueString(),
-			Address: data.AddressParam.ValueString(),
+			Project: config.ProjectParam.ValueString(),
+			Network: config.NetworkParam.ValueString(),
+			Address: config.AddressParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -123,7 +123,7 @@ func (m *AddressDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		return
 	}
 
-	data.Address = *tfRes
+	config.Address = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

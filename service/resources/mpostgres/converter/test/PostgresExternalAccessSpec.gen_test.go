@@ -10,6 +10,7 @@ import (
 
 	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
 func TestPostgresExternalAccessSpecAPIResponseToTFModelEmpty(t *testing.T) {
@@ -38,4 +39,18 @@ func TestPostgresExternalAccessSpecResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdatePostgresExternalAccessSpecRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.PostgresExternalAccessSpec
+	var stateTfModel tfmodel.PostgresExternalAccessSpec
+
+	expectedUpdateModel := &apimodel.UpdatePostgresExternalAccessSpecRequest{}
+
+	result, diags := conv.PostgresExternalAccessSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

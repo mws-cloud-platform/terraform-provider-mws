@@ -42,20 +42,20 @@ func NodeLabelSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.NodeLab
 	return &t, diags
 }
 
-func NodeLabelSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.NodeLabelSpec) (*apimodel.NodeLabelSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func NodeLabelSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeLabelSpec) (*apimodel.NodeLabelSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.NodeLabelSpecRequest
 
-	if !tm.Key.IsNull() && !tm.Key.IsUnknown() {
-		am.Key = tm.Key.ValueString()
+	if !plan.Key.IsNull() && !plan.Key.IsUnknown() {
+		am.Key = plan.Key.ValueString()
 	}
 
-	if !tm.Value.IsNull() && !tm.Value.IsUnknown() {
-		am.Value = tm.Value.ValueString()
+	if !plan.Value.IsNull() && !plan.Value.IsUnknown() {
+		am.Value = plan.Value.ValueString()
 	}
 
 	return &am, diags

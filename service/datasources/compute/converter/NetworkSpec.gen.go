@@ -51,21 +51,22 @@ func NetworkSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.N
 	return &t, diags
 }
 
-func NetworkSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.NetworkSpec) (*apimodel.NetworkSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func NetworkSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NetworkSpec) (*apimodel.NetworkSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.NetworkSpecRequest
 
-	if !tm.NetworkInterfaces.IsNull() && !tm.NetworkInterfaces.IsUnknown() {
+	if !plan.NetworkInterfaces.IsNull() && !plan.NetworkInterfaces.IsUnknown() {
 		networkInterfaces := make([]tfmodel.NetworkInterfaceSpec, 0)
-		dNetworkInterfaces := tm.NetworkInterfaces.ElementsAs(ctx, &networkInterfaces, false)
+		dNetworkInterfaces := plan.NetworkInterfaces.ElementsAs(ctx, &networkInterfaces, false)
 		diags = append(diags, dNetworkInterfaces...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.NetworkInterfaces = make([]apimodel.NetworkInterfaceSpecRequest, 0, len(networkInterfaces))
 
 		for _, entity := range networkInterfaces {

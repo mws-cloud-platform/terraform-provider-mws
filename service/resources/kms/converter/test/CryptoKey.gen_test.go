@@ -6,10 +6,17 @@ import (
 	"context"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/kms/model"
+	"go.mws.cloud/go-sdk/service/resources/references/kms"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/kms/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/kms/model"
 )
 
 func TestCryptoKeyAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -38,4 +45,46 @@ func TestCryptoKeyOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateCryptoKeyRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.CryptoKey
+	var stateTfModel tfmodel.CryptoKey
+	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
+	stateTfModel.DestructionPolicy = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.CryptoKeySpecDestructionPolicy).GetSchema().Attributes))
+	stateTfModel.UsagePolicy = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.CryptoKeySpecUsagePolicy).GetSchema().Attributes))
+	stateTfModel.RotationPolicy = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.CryptoKeySpecRotationPolicy).GetSchema().Attributes))
+	stateTfModel.PrimaryKeyVersionRef = types.StringValue("")
+
+	expectedUpdateModel := &apimodel.UpdateCryptoKeyRequest{
+		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+			Set:  true,
+			Null: true,
+		},
+		Spec: optional.NewOptional(apimodel.UpdateCryptoKeySpecRequest{
+			DestructionPolicy: optional.OptionalNil[apimodel.UpdateCryptoKeySpecDestructionPolicyRequest]{
+				Set:  true,
+				Null: true,
+			},
+			UsagePolicy: optional.OptionalNil[apimodel.UpdateCryptoKeySpecUsagePolicyRequest]{
+				Set:  true,
+				Null: true,
+			},
+			RotationPolicy: optional.OptionalNil[apimodel.UpdateCryptoKeySpecRotationPolicyRequest]{
+				Set:  true,
+				Null: true,
+			},
+			PrimaryKeyVersionRef: optional.OptionalNil[kms.CryptoKeyVersionRef]{
+				Set:  true,
+				Null: true,
+			},
+		}),
+	}
+
+	result, diags := conv.CryptoKeyTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

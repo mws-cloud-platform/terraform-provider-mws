@@ -63,47 +63,47 @@ func UsageAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.U
 	return &t, diags
 }
 
-func UsageTFToAPIModel(ctx context.Context, tm *tfcommon.Usage) (*commonapimodel.Usage, tfdiag.Diagnostics) {
-	if tm == nil {
+func UsageTFToAPIModel(ctx context.Context, plan *tfcommon.Usage) (*commonapimodel.Usage, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.Usage
 
-	if !tm.UsageType.IsNull() && !tm.UsageType.IsUnknown() {
-		am.UsageType = tm.UsageType.ValueString()
+	if !plan.UsageType.IsNull() && !plan.UsageType.IsUnknown() {
+		am.UsageType = plan.UsageType.ValueString()
 	}
 
-	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		am.Name = tm.Name.ValueString()
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		am.Name = plan.Name.ValueString()
 	}
 
-	if !tm.Resource.IsNull() && !tm.Resource.IsUnknown() {
-		am.Resource = tm.Resource.ValueString()
+	if !plan.Resource.IsNull() && !plan.Resource.IsUnknown() {
+		am.Resource = plan.Resource.ValueString()
 	}
 
 	return &am, diags
 }
 
-func UsageTFToAPIRequestModel(ctx context.Context, tm *tfcommon.Usage) (*commonapimodel.UsageRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func UsageTFToAPIRequestModel(ctx context.Context, plan *tfcommon.Usage) (*commonapimodel.UsageRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.UsageRequest
 
-	if !tm.UsageType.IsNull() && !tm.UsageType.IsUnknown() {
-		am.UsageType = tm.UsageType.ValueString()
+	if !plan.UsageType.IsNull() && !plan.UsageType.IsUnknown() {
+		am.UsageType = plan.UsageType.ValueString()
 	}
 
-	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		am.Name = tm.Name.ValueString()
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		am.Name = plan.Name.ValueString()
 	}
 
-	if !tm.Resource.IsNull() && !tm.Resource.IsUnknown() {
-		am.Resource = tm.Resource.ValueString()
+	if !plan.Resource.IsNull() && !plan.Resource.IsUnknown() {
+		am.Resource = plan.Resource.ValueString()
 	}
 
 	return &am, diags

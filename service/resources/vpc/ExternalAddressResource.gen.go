@@ -14,7 +14,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/mws/wait"
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
@@ -107,13 +106,13 @@ func (m *ExternalAddressResource) Configure(ctx context.Context, req resource.Co
 func (m *ExternalAddressResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "ExternalAddressResource.Create")
 
-	var data tfmodel.ExternalAddressModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.ExternalAddressModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -121,17 +120,17 @@ func (m *ExternalAddressResource) Create(ctx context.Context, req resource.Creat
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ExternalAddressResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.ExternalAddressTFToAPIRequestModel(ctx, &data.ExternalAddress)
+	body, diags := conv.ExternalAddressTFToAPIRequestModel(ctx, &plan.ExternalAddress)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ExternalAddressResource.TFToAPI")
@@ -141,8 +140,8 @@ func (m *ExternalAddressResource) Create(ctx context.Context, req resource.Creat
 	apiRes, err := m.sdk.CreateExternalAddress(
 		ctx,
 		client.UpsertExternalAddressRequest{
-			Project:         data.ProjectParam.ValueString(),
-			ExternalAddress: data.ExternalAddressParam.ValueString(),
+			Project:         plan.ProjectParam.ValueString(),
+			ExternalAddress: plan.ExternalAddressParam.ValueString(),
 			Body:            body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
@@ -155,7 +154,7 @@ func (m *ExternalAddressResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.ExternalAddressAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -164,21 +163,21 @@ func (m *ExternalAddressResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	data.ExternalAddress = *tfRes
+	plan.ExternalAddress = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *ExternalAddressResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "ExternalAddressResource.Read")
 
-	var data tfmodel.ExternalAddressModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.ExternalAddressModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -186,14 +185,14 @@ func (m *ExternalAddressResource) Read(ctx context.Context, req resource.ReadReq
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetExternalAddress(
 		ctx,
 		client.GetExternalAddressRequest{
-			Project:         data.ProjectParam.ValueString(),
-			ExternalAddress: data.ExternalAddressParam.ValueString(),
+			Project:         state.ProjectParam.ValueString(),
+			ExternalAddress: state.ExternalAddressParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -204,7 +203,7 @@ func (m *ExternalAddressResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.ExternalAddressAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -213,21 +212,27 @@ func (m *ExternalAddressResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
-	data.ExternalAddress = *tfRes
+	state.ExternalAddress = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 func (m *ExternalAddressResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "ExternalAddressResource.Update")
 
-	var data tfmodel.ExternalAddressModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.ExternalAddressModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	var state tfmodel.ExternalAddressModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -235,17 +240,17 @@ func (m *ExternalAddressResource) Update(ctx context.Context, req resource.Updat
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ExternalAddressResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.ExternalAddressTFToAPIRequestModel(ctx, &data.ExternalAddress)
+	body, diags := conv.ExternalAddressTFToAPIUpdateRequestModel(ctx, &plan.ExternalAddress, &state.ExternalAddress)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ExternalAddressResource.TFToAPI")
@@ -255,9 +260,9 @@ func (m *ExternalAddressResource) Update(ctx context.Context, req resource.Updat
 	apiRes, err := m.sdk.UpdateExternalAddress(
 		ctx,
 		client.UpdateExternalAddressRequest{
-			Project:         data.ProjectParam.ValueString(),
-			ExternalAddress: data.ExternalAddressParam.ValueString(),
-			Body:            ptr.Get(body.AsUpdateModel()),
+			Project:         plan.ProjectParam.ValueString(),
+			ExternalAddress: plan.ExternalAddressParam.ValueString(),
+			Body:            body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -269,7 +274,7 @@ func (m *ExternalAddressResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.ExternalAddressAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -278,21 +283,21 @@ func (m *ExternalAddressResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
-	data.ExternalAddress = *tfRes
+	plan.ExternalAddress = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *ExternalAddressResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "ExternalAddressResource.Delete")
 
-	var data tfmodel.ExternalAddressModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.ExternalAddressModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -300,10 +305,10 @@ func (m *ExternalAddressResource) Delete(ctx context.Context, req resource.Delet
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := state.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ExternalAddressResource.Timeouts")
@@ -313,8 +318,8 @@ func (m *ExternalAddressResource) Delete(ctx context.Context, req resource.Delet
 	err := m.sdk.DeleteExternalAddress(
 		ctx,
 		client.DeleteExternalAddressRequest{
-			Project:         data.ProjectParam.ValueString(),
-			ExternalAddress: data.ExternalAddressParam.ValueString(),
+			Project:         state.ProjectParam.ValueString(),
+			ExternalAddress: state.ExternalAddressParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -330,7 +335,7 @@ func (m *ExternalAddressResource) Delete(ctx context.Context, req resource.Delet
 func (m *ExternalAddressResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "ExternalAddressResource.ImportState")
 
-	var data tfmodel.ExternalAddressModel
+	var state tfmodel.ExternalAddressModel
 
 	ref, err := vpcref.ParseExternalAddressRef(ctx, req.ID)
 	if err != nil {
@@ -355,7 +360,7 @@ func (m *ExternalAddressResource) ImportState(ctx context.Context, req resource.
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.ExternalAddressAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -364,10 +369,10 @@ func (m *ExternalAddressResource) ImportState(ctx context.Context, req resource.
 		return
 	}
 
-	data.ExternalAddress = *tfRes
+	state.ExternalAddress = *tfRes
 
-	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.ExternalAddressParam = types.StringValue(ref.GetExternalAddress())
+	state.ProjectParam = types.StringValue(ref.GetProject())
+	state.ExternalAddressParam = types.StringValue(ref.GetExternalAddress())
 
 	var rwTimeouts timeouts.Value
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
@@ -375,7 +380,7 @@ func (m *ExternalAddressResource) ImportState(ctx context.Context, req resource.
 		tflog.Debug(ctx, "ExternalAddressResource.timeouts.GetAttribute")
 		return
 	}
-	data.Timeouts = rwTimeouts
+	state.Timeouts = rwTimeouts
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

@@ -23,7 +23,7 @@ func TestClickhouseClusterCoordinatorInstanceAPIOptionalResponseToTFModelEmpty(t
 func TestClickhouseClusterCoordinatorInstanceOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.ClickhouseClusterCoordinatorInstanceRequest{
-		Zone: rm.NewZoneRef("zoneID"),
+		Zone: rm.NewMustZoneRef("zoneID"),
 	}
 
 	emptyApiModelResponse, err := apimodel.ClickhouseClusterCoordinatorInstanceRequestToOptionalResponse(&emptyApiModelRequest)

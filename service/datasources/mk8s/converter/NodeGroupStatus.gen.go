@@ -80,6 +80,33 @@ func NodeGroupStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.NodeG
 		t.ImageStorageIops = types.Int64Null()
 	}
 
+	if am.LocalDisks != nil {
+		localDisks := make([]tfmodel.LocalDiskStatus, 0, len(am.LocalDisks))
+
+		for _, entity := range am.LocalDisks {
+			tmp, d := LocalDiskStatusAPIResponseToTFModel(ctx, &entity)
+			diags = append(diags, d...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			localDisks = append(localDisks, *tmp)
+		}
+
+		localDisksList, d := types.ListValueFrom(ctx, types.ObjectType{
+			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.LocalDiskStatus).GetSchema().Attributes),
+		}, localDisks)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		t.LocalDisks = localDisksList
+	} else {
+		t.LocalDisks = types.ListNull(types.ObjectType{
+			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.LocalDiskStatus).GetSchema().Attributes),
+		})
+	}
+
 	if am.Scale != nil {
 		scaleTmp, d := NodeGroupStatusScaleAPIResponseToTFModel(ctx, am.Scale)
 		diags = append(diags, d...)

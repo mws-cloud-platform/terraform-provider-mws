@@ -6,10 +6,15 @@ import (
 	"context"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
 	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
 func TestClusterPublicEndpointSpecOrRefAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -36,4 +41,29 @@ func TestClusterPublicEndpointSpecOrRefOptionalResponseConverters(t *testing.T) 
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateClusterPublicEndpointSpecOrRefRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ClusterPublicEndpointSpecOrRef
+	var stateTfModel tfmodel.ClusterPublicEndpointSpecOrRef
+	stateTfModel.Ref = types.StringValue("")
+	stateTfModel.Spec = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.ClusterPublicEndpointSpec).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateClusterPublicEndpointSpecOrRefRequest{
+		Ref: optional.OptionalNil[vpc.ExternalAddressRef]{
+			Set:  true,
+			Null: true,
+		},
+		Spec: optional.OptionalNil[apimodel.UpdateClusterPublicEndpointSpecRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.ClusterPublicEndpointSpecOrRefTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

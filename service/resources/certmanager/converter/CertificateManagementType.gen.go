@@ -25,11 +25,11 @@ func CertificateManagementTypeAPIToTFModel(ctx context.Context, am *apimodel.Cer
 	return t, diags
 }
 
-func CertificateManagementTypeTFToAPIModel(ctx context.Context, tm tfmodel.CertificateManagementType) (*apimodel.CertificateManagementType, tfdiag.Diagnostics) {
+func CertificateManagementTypeTFToAPIModel(ctx context.Context, plan tfmodel.CertificateManagementType) (*apimodel.CertificateManagementType, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am apimodel.CertificateManagementType
 
-	var tmp = types.String(tm)
+	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}

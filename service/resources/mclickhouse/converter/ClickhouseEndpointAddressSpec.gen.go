@@ -26,21 +26,46 @@ func ClickhouseEndpointAddressSpecAPIOptionalResponseToTFModel(ctx context.Conte
 	return &t, diags
 }
 
-func ClickhouseEndpointAddressSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClickhouseEndpointAddressSpec) (*apimodel.ClickhouseEndpointAddressSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClickhouseEndpointAddressSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseEndpointAddressSpec) (*apimodel.ClickhouseEndpointAddressSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClickhouseEndpointAddressSpecRequest
 
-	if !tm.Subnet.IsNull() && !tm.Subnet.IsUnknown() {
-		subnetRef, err := vpc.ParseSubnetRef(ctx, tm.Subnet.ValueString())
+	if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {
+		subnetRef, err := vpc.ParseSubnetRef(ctx, plan.Subnet.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
 		}
 		am.Subnet = subnetRef
+	}
+
+	return &am, diags
+}
+
+func ClickhouseEndpointAddressSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseEndpointAddressSpec) (*apimodel.UpdateClickhouseEndpointAddressSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.ClickhouseEndpointAddressSpec{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateClickhouseEndpointAddressSpecRequest
+
+	if !plan.Subnet.Equal(state.Subnet) {
+		if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {
+			subnetRef, err := vpc.ParseSubnetRef(ctx, plan.Subnet.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.Subnet.SetTo(subnetRef)
+		}
 	}
 
 	return &am, diags

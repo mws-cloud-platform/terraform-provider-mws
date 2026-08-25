@@ -110,20 +110,20 @@ func PostgresEndpointAPIResponseToTFModel(ctx context.Context, am *apimodel.Post
 	return &t, diags
 }
 
-func PostgresEndpointTFToAPIRequestModel(ctx context.Context, tm *tfmodel.PostgresEndpoint) (*apimodel.PostgresEndpointRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func PostgresEndpointTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresEndpoint) (*apimodel.PostgresEndpointRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.PostgresEndpointRequest
 
-	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		am.Name = tm.Name.ValueString()
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		am.Name = plan.Name.ValueString()
 	}
 
-	if !tm.Network.IsNull() && !tm.Network.IsUnknown() {
-		networkRef, err := vpc.ParseNetworkRef(ctx, tm.Network.ValueString())
+	if !plan.Network.IsNull() && !plan.Network.IsUnknown() {
+		networkRef, err := vpc.ParseNetworkRef(ctx, plan.Network.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -131,13 +131,14 @@ func PostgresEndpointTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Postgr
 		am.Network = networkRef
 	}
 
-	if !tm.PrimaryAddresses.IsNull() && !tm.PrimaryAddresses.IsUnknown() {
+	if !plan.PrimaryAddresses.IsNull() && !plan.PrimaryAddresses.IsUnknown() {
 		primaryAddresses := make([]tfmodel.PostgresNetworkAddress, 0)
-		dPrimaryAddresses := tm.PrimaryAddresses.ElementsAs(ctx, &primaryAddresses, false)
+		dPrimaryAddresses := plan.PrimaryAddresses.ElementsAs(ctx, &primaryAddresses, false)
 		diags = append(diags, dPrimaryAddresses...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.PrimaryAddresses = make([]apimodel.PostgresNetworkAddressRequest, 0, len(primaryAddresses))
 
 		for _, entity := range primaryAddresses {
@@ -150,13 +151,14 @@ func PostgresEndpointTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Postgr
 		}
 	}
 
-	if !tm.ReadOnlyAddresses.IsNull() && !tm.ReadOnlyAddresses.IsUnknown() {
+	if !plan.ReadOnlyAddresses.IsNull() && !plan.ReadOnlyAddresses.IsUnknown() {
 		readOnlyAddresses := make([]tfmodel.PostgresNetworkAddress, 0)
-		dReadOnlyAddresses := tm.ReadOnlyAddresses.ElementsAs(ctx, &readOnlyAddresses, false)
+		dReadOnlyAddresses := plan.ReadOnlyAddresses.ElementsAs(ctx, &readOnlyAddresses, false)
 		diags = append(diags, dReadOnlyAddresses...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.ReadOnlyAddresses = make([]apimodel.PostgresNetworkAddressRequest, 0, len(readOnlyAddresses))
 
 		for _, entity := range readOnlyAddresses {
@@ -169,13 +171,14 @@ func PostgresEndpointTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Postgr
 		}
 	}
 
-	if !tm.DirectAddresses.IsNull() && !tm.DirectAddresses.IsUnknown() {
+	if !plan.DirectAddresses.IsNull() && !plan.DirectAddresses.IsUnknown() {
 		directAddresses := make([]tfmodel.PostgresNetworkDirectAddress, 0)
-		dDirectAddresses := tm.DirectAddresses.ElementsAs(ctx, &directAddresses, false)
+		dDirectAddresses := plan.DirectAddresses.ElementsAs(ctx, &directAddresses, false)
 		diags = append(diags, dDirectAddresses...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.DirectAddresses = make([]apimodel.PostgresNetworkDirectAddressRequest, 0, len(directAddresses))
 
 		for _, entity := range directAddresses {
@@ -185,6 +188,109 @@ func PostgresEndpointTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Postgr
 				return nil, diags
 			}
 			am.DirectAddresses = append(am.DirectAddresses, *tmp)
+		}
+	}
+
+	return &am, diags
+}
+
+func PostgresEndpointTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresEndpoint) (*apimodel.UpdatePostgresEndpointRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.PostgresEndpoint{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdatePostgresEndpointRequest
+
+	if !plan.Name.Equal(state.Name) {
+		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+			am.Name.SetTo(plan.Name.ValueString())
+		}
+	}
+
+	if !plan.Network.Equal(state.Network) {
+		if !plan.Network.IsNull() && !plan.Network.IsUnknown() {
+			networkRef, err := vpc.ParseNetworkRef(ctx, plan.Network.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.Network.SetTo(networkRef)
+		}
+	}
+
+	if !plan.PrimaryAddresses.Equal(state.PrimaryAddresses) {
+		if !plan.PrimaryAddresses.IsNull() && !plan.PrimaryAddresses.IsUnknown() {
+			primaryAddresses := make([]tfmodel.PostgresNetworkAddress, 0)
+			dPrimaryAddresses := plan.PrimaryAddresses.ElementsAs(ctx, &primaryAddresses, false)
+			diags = append(diags, dPrimaryAddresses...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			primaryAddressesTmp := make([]apimodel.UpdatePostgresNetworkAddressRequest, 0, len(primaryAddresses))
+
+			for _, entity := range primaryAddresses {
+				stateEntity := tfmodel.PostgresNetworkAddress{}
+				tmp, d := PostgresNetworkAddressTFToAPIUpdateRequestModel(ctx, &entity, &stateEntity)
+				diags = append(diags, d...)
+				if diags.HasError() {
+					return nil, diags
+				}
+				primaryAddressesTmp = append(primaryAddressesTmp, *tmp)
+			}
+			am.PrimaryAddresses.SetTo(primaryAddressesTmp)
+		}
+	}
+
+	if !plan.ReadOnlyAddresses.Equal(state.ReadOnlyAddresses) {
+		if !plan.ReadOnlyAddresses.IsNull() && !plan.ReadOnlyAddresses.IsUnknown() {
+			readOnlyAddresses := make([]tfmodel.PostgresNetworkAddress, 0)
+			dReadOnlyAddresses := plan.ReadOnlyAddresses.ElementsAs(ctx, &readOnlyAddresses, false)
+			diags = append(diags, dReadOnlyAddresses...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			readOnlyAddressesTmp := make([]apimodel.UpdatePostgresNetworkAddressRequest, 0, len(readOnlyAddresses))
+
+			for _, entity := range readOnlyAddresses {
+				stateEntity := tfmodel.PostgresNetworkAddress{}
+				tmp, d := PostgresNetworkAddressTFToAPIUpdateRequestModel(ctx, &entity, &stateEntity)
+				diags = append(diags, d...)
+				if diags.HasError() {
+					return nil, diags
+				}
+				readOnlyAddressesTmp = append(readOnlyAddressesTmp, *tmp)
+			}
+			am.ReadOnlyAddresses.SetTo(readOnlyAddressesTmp)
+		}
+	}
+
+	if !plan.DirectAddresses.Equal(state.DirectAddresses) {
+		if !plan.DirectAddresses.IsNull() && !plan.DirectAddresses.IsUnknown() {
+			directAddresses := make([]tfmodel.PostgresNetworkDirectAddress, 0)
+			dDirectAddresses := plan.DirectAddresses.ElementsAs(ctx, &directAddresses, false)
+			diags = append(diags, dDirectAddresses...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			directAddressesTmp := make([]apimodel.UpdatePostgresNetworkDirectAddressRequest, 0, len(directAddresses))
+
+			for _, entity := range directAddresses {
+				stateEntity := tfmodel.PostgresNetworkDirectAddress{}
+				tmp, d := PostgresNetworkDirectAddressTFToAPIUpdateRequestModel(ctx, &entity, &stateEntity)
+				diags = append(diags, d...)
+				if diags.HasError() {
+					return nil, diags
+				}
+				directAddressesTmp = append(directAddressesTmp, *tmp)
+			}
+			am.DirectAddresses.SetTo(directAddressesTmp)
 		}
 	}
 

@@ -8,18 +8,18 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	localobjectplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/objectplanmodifier"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
 type Cluster struct {
-	Kind           types.String `tfsdk:"kind"`
-	Metadata       types.Object `tfsdk:"metadata"`
-	Status         types.Object `tfsdk:"status"`
-	Availability   types.Object `tfsdk:"availability"`
-	Network        types.Object `tfsdk:"network"`
-	VersionControl types.Object `tfsdk:"version_control"`
-	Plugins        types.Object `tfsdk:"plugins"`
+	Kind            types.String `tfsdk:"kind"`
+	Metadata        types.Object `tfsdk:"metadata"`
+	Status          types.Object `tfsdk:"status"`
+	Availability    types.Object `tfsdk:"availability"`
+	Network         types.Object `tfsdk:"network"`
+	VersionControl  types.Object `tfsdk:"version_control"`
+	Plugins         types.Object `tfsdk:"plugins"`
+	SecurityPosture types.Object `tfsdk:"security_posture"`
 }
 
 func (s *Cluster) GetSchema() schema.Schema {
@@ -63,9 +63,11 @@ Plane (управляющего слоя) и групп рабочих узло�
 			"plugins": schema.SingleNestedAttribute{
 				Attributes: new(PluginsSpec).GetSchema().Attributes,
 				Optional:   true,
-				PlanModifiers: []planmodifier.Object{
-					localobjectplanmodifier.RequiresReplaceIfRemoved(),
-				},
+			},
+			"security_posture": schema.SingleNestedAttribute{
+				Attributes:          new(SecurityPostureSpec).GetSchema().Attributes,
+				MarkdownDescription: `Настройка KSP для кластера`,
+				Optional:            true,
 			},
 		},
 	}

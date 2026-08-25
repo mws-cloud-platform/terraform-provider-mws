@@ -79,13 +79,13 @@ func (m *CertificateDataSource) Configure(ctx context.Context, req datasource.Co
 func (m *CertificateDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "CertificateDataSource.Read")
 
-	var data tfmodel.CertificateModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.CertificateModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -93,14 +93,14 @@ func (m *CertificateDataSource) Read(ctx context.Context, req datasource.ReadReq
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetCertificate(
 		ctx,
 		client.GetCertificateRequest{
-			Project: data.ProjectParam.ValueString(),
-			Name:    data.NameParam.ValueString(),
+			Project: config.ProjectParam.ValueString(),
+			Name:    config.NameParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -118,7 +118,7 @@ func (m *CertificateDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	data.Certificate = *tfRes
+	config.Certificate = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

@@ -75,13 +75,13 @@ func (m *ZoneDataSource) Configure(ctx context.Context, req datasource.Configure
 func (m *ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "ZoneDataSource.Read")
 
-	var data tfmodel.ZoneModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.ZoneModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	zoneParam := cmp.Or(data.ZoneParam, m.config.Zone)
+	zoneParam := cmp.Or(config.ZoneParam, m.config.Zone)
 	if zoneParam.IsNull() || zoneParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -89,13 +89,13 @@ func (m *ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		)
 		return
 	}
-	data.ZoneParam = zoneParam
+	config.ZoneParam = zoneParam
 	ctx = ctxvalues.With(ctx, "zone", zoneParam.String())
 
 	apiRes, err := m.sdk.GetZone(
 		ctx,
 		client.GetZoneRequest{
-			Zone: data.ZoneParam.ValueString(),
+			Zone: config.ZoneParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -113,7 +113,7 @@ func (m *ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		return
 	}
 
-	data.Zone = *tfRes
+	config.Zone = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

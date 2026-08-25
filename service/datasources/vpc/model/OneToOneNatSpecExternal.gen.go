@@ -5,6 +5,8 @@ package model
 import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 )
 
 type OneToOneNatSpecExternal struct {
@@ -16,7 +18,7 @@ func (s *OneToOneNatSpecExternal) GetSchema() schema.Schema {
 		MarkdownDescription: `Группирующий элемент для всего что, касается внешней части (ресурсов, доступных извне).`,
 		Attributes: map[string]schema.Attribute{
 			"address": schema.SingleNestedAttribute{
-				Attributes:          new(ResourceExternalAddressSpecOrRef).GetSchema().Attributes,
+				Attributes:          new(tfcommon.ResourceExternalAddressSpecOrRef).GetSchema().Attributes,
 				MarkdownDescription: `Спецификация внешнего адреса, через который будет осуществляться трансляция`,
 				Computed:            true,
 			},

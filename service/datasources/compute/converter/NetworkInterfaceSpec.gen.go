@@ -65,33 +65,34 @@ func NetworkInterfaceSpecAPIOptionalResponseToTFModel(ctx context.Context, am *a
 	return &t, diags
 }
 
-func NetworkInterfaceSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.NetworkInterfaceSpec) (*apimodel.NetworkInterfaceSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func NetworkInterfaceSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NetworkInterfaceSpec) (*apimodel.NetworkInterfaceSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.NetworkInterfaceSpecRequest
 
-	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		am.Name = tm.Name.ValueString()
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		am.Name = plan.Name.ValueString()
 	}
 
-	if !tm.Primary.IsNull() && !tm.Primary.IsUnknown() {
-		am.Primary = tm.Primary.ValueBoolPointer()
+	if !plan.Primary.IsNull() && !plan.Primary.IsUnknown() {
+		am.Primary = plan.Primary.ValueBoolPointer()
 	}
 
-	if !tm.IpForwardingEnabled.IsNull() && !tm.IpForwardingEnabled.IsUnknown() {
-		am.IpForwardingEnabled = tm.IpForwardingEnabled.ValueBoolPointer()
+	if !plan.IpForwardingEnabled.IsNull() && !plan.IpForwardingEnabled.IsUnknown() {
+		am.IpForwardingEnabled = plan.IpForwardingEnabled.ValueBoolPointer()
 	}
 
-	if !tm.Addresses.IsNull() && !tm.Addresses.IsUnknown() {
+	if !plan.Addresses.IsNull() && !plan.Addresses.IsUnknown() {
 		addresses := make([]tfmodel.AddressSpecOrRefWithAttachments, 0)
-		dAddresses := tm.Addresses.ElementsAs(ctx, &addresses, false)
+		dAddresses := plan.Addresses.ElementsAs(ctx, &addresses, false)
 		diags = append(diags, dAddresses...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.Addresses = make([]apimodel.AddressSpecOrRefWithAttachmentsRequest, 0, len(addresses))
 
 		for _, entity := range addresses {

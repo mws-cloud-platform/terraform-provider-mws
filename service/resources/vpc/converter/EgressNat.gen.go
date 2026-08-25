@@ -115,23 +115,23 @@ func EgressNatAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Egr
 	return &t, diags
 }
 
-func EgressNatTFToAPIRequestModel(ctx context.Context, tm *tfmodel.EgressNat) (*apimodel.EgressNatRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func EgressNatTFToAPIRequestModel(ctx context.Context, plan *tfmodel.EgressNat) (*apimodel.EgressNatRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.EgressNatRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfcommon.CommonTypedResourceMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -139,15 +139,15 @@ func EgressNatTFToAPIRequestModel(ctx context.Context, tm *tfmodel.EgressNat) (*
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.Internal.IsNull() && !tm.Internal.IsUnknown() {
-		internalTfModel := tfmodel.EgressNatSpecInternal{}
-		internalDiag := tm.Internal.As(ctx, &internalTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, internalDiag...)
+	if !plan.Internal.IsNull() && !plan.Internal.IsUnknown() {
+		internalPlan := tfmodel.EgressNatSpecInternal{}
+		internalPlanDiag := plan.Internal.As(ctx, &internalPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, internalPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		internalTmp, internalDiag := EgressNatSpecInternalTFToAPIRequestModel(ctx, &internalTfModel)
+		internalTmp, internalDiag := EgressNatSpecInternalTFToAPIRequestModel(ctx, &internalPlan)
 		diags = append(diags, internalDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -155,15 +155,15 @@ func EgressNatTFToAPIRequestModel(ctx context.Context, tm *tfmodel.EgressNat) (*
 		am.Spec.Internal = *internalTmp
 	}
 
-	if !tm.External.IsNull() && !tm.External.IsUnknown() {
-		externalTfModel := tfmodel.EgressNatSpecExternal{}
-		externalDiag := tm.External.As(ctx, &externalTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, externalDiag...)
+	if !plan.External.IsNull() && !plan.External.IsUnknown() {
+		externalPlan := tfmodel.EgressNatSpecExternal{}
+		externalPlanDiag := plan.External.As(ctx, &externalPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, externalPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		externalTmp, externalDiag := EgressNatSpecExternalTFToAPIRequestModel(ctx, &externalTfModel)
+		externalTmp, externalDiag := EgressNatSpecExternalTFToAPIRequestModel(ctx, &externalPlan)
 		diags = append(diags, externalDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -171,20 +171,158 @@ func EgressNatTFToAPIRequestModel(ctx context.Context, tm *tfmodel.EgressNat) (*
 		am.Spec.External = *externalTmp
 	}
 
-	if !tm.PortAllocation.IsNull() && !tm.PortAllocation.IsUnknown() {
-		portAllocationTfModel := tfmodel.EgressNatSpecPortAllocation{}
-		portAllocationDiag := tm.PortAllocation.As(ctx, &portAllocationTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, portAllocationDiag...)
+	if !plan.PortAllocation.IsNull() && !plan.PortAllocation.IsUnknown() {
+		portAllocationPlan := tfmodel.EgressNatSpecPortAllocation{}
+		portAllocationPlanDiag := plan.PortAllocation.As(ctx, &portAllocationPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, portAllocationPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		portAllocationTmp, portAllocationDiag := EgressNatSpecPortAllocationTFToAPIRequestModel(ctx, &portAllocationTfModel)
+		portAllocationTmp, portAllocationDiag := EgressNatSpecPortAllocationTFToAPIRequestModel(ctx, &portAllocationPlan)
 		diags = append(diags, portAllocationDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.Spec.PortAllocation = portAllocationTmp
+	}
+
+	return &am, diags
+}
+
+func EgressNatTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.EgressNat) (*apimodel.UpdateEgressNatRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.EgressNat{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateEgressNatRequest
+
+	if !plan.Metadata.Equal(state.Metadata) {
+		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+			metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+			metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, metadataPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			metadataState := tfcommon.CommonTypedResourceMetadata{}
+			if !state.Metadata.IsNull() && !state.Metadata.IsUnknown() {
+				metadataStateDiag := state.Metadata.As(ctx, &metadataState, basetypes.ObjectAsOptions{})
+				diags = append(diags, metadataStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIUpdateRequestModel(ctx, &metadataPlan, &metadataState)
+			diags = append(diags, metadataDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Metadata.SetTo(*metadataTmp)
+		} else if plan.Metadata.IsNull() {
+			am.Metadata.SetToNull()
+		}
+	}
+
+	if !plan.Internal.Equal(state.Internal) {
+		if !plan.Internal.IsNull() && !plan.Internal.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateEgressNatSpecRequest{})
+			}
+			internalPlan := tfmodel.EgressNatSpecInternal{}
+			internalPlanDiag := plan.Internal.As(ctx, &internalPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, internalPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			internalState := tfmodel.EgressNatSpecInternal{}
+			if !state.Internal.IsNull() && !state.Internal.IsUnknown() {
+				internalStateDiag := state.Internal.As(ctx, &internalState, basetypes.ObjectAsOptions{})
+				diags = append(diags, internalStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			internalTmp, internalDiag := EgressNatSpecInternalTFToAPIUpdateRequestModel(ctx, &internalPlan, &internalState)
+			diags = append(diags, internalDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Spec.Value.Internal.SetTo(*internalTmp)
+		}
+	}
+
+	if !plan.External.Equal(state.External) {
+		if !plan.External.IsNull() && !plan.External.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateEgressNatSpecRequest{})
+			}
+			externalPlan := tfmodel.EgressNatSpecExternal{}
+			externalPlanDiag := plan.External.As(ctx, &externalPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, externalPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			externalState := tfmodel.EgressNatSpecExternal{}
+			if !state.External.IsNull() && !state.External.IsUnknown() {
+				externalStateDiag := state.External.As(ctx, &externalState, basetypes.ObjectAsOptions{})
+				diags = append(diags, externalStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			externalTmp, externalDiag := EgressNatSpecExternalTFToAPIUpdateRequestModel(ctx, &externalPlan, &externalState)
+			diags = append(diags, externalDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Spec.Value.External.SetTo(*externalTmp)
+		}
+	}
+
+	if !plan.PortAllocation.Equal(state.PortAllocation) {
+		if !plan.PortAllocation.IsNull() && !plan.PortAllocation.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateEgressNatSpecRequest{})
+			}
+			portAllocationPlan := tfmodel.EgressNatSpecPortAllocation{}
+			portAllocationPlanDiag := plan.PortAllocation.As(ctx, &portAllocationPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, portAllocationPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			portAllocationState := tfmodel.EgressNatSpecPortAllocation{}
+			if !state.PortAllocation.IsNull() && !state.PortAllocation.IsUnknown() {
+				portAllocationStateDiag := state.PortAllocation.As(ctx, &portAllocationState, basetypes.ObjectAsOptions{})
+				diags = append(diags, portAllocationStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			portAllocationTmp, portAllocationDiag := EgressNatSpecPortAllocationTFToAPIUpdateRequestModel(ctx, &portAllocationPlan, &portAllocationState)
+			diags = append(diags, portAllocationDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Spec.Value.PortAllocation.SetTo(*portAllocationTmp)
+		} else if plan.PortAllocation.IsNull() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateEgressNatSpecRequest{})
+			}
+			am.Spec.Value.PortAllocation.SetToNull()
+		}
 	}
 
 	return &am, diags

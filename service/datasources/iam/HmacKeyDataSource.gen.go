@@ -81,13 +81,13 @@ func (m *HmacKeyDataSource) Configure(ctx context.Context, req datasource.Config
 func (m *HmacKeyDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "HmacKeyDataSource.Read")
 
-	var data tfmodel.HmacKeyModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.HmacKeyModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -95,15 +95,15 @@ func (m *HmacKeyDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetHmacKey(
 		ctx,
 		client.GetHmacKeyRequest{
-			ServiceAccount: data.ServiceAccountParam.ValueString(),
-			KeyName:        data.KeyNameParam.ValueString(),
-			Project:        data.ProjectParam.ValueString(),
+			ServiceAccount: config.ServiceAccountParam.ValueString(),
+			KeyName:        config.KeyNameParam.ValueString(),
+			Project:        config.ProjectParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -121,7 +121,7 @@ func (m *HmacKeyDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		return
 	}
 
-	data.HmacKey = *tfRes
+	config.HmacKey = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

@@ -89,23 +89,23 @@ func CommonRoleBindingStatusAPIOptionalResponseToTFModel(ctx context.Context, am
 	return &t, diags
 }
 
-func CommonRoleBindingStatusTFToAPIModel(ctx context.Context, tm *tfcommon.CommonRoleBindingStatus) (*commonapimodel.CommonRoleBindingStatus, tfdiag.Diagnostics) {
-	if tm == nil {
+func CommonRoleBindingStatusTFToAPIModel(ctx context.Context, plan *tfcommon.CommonRoleBindingStatus) (*commonapimodel.CommonRoleBindingStatus, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.CommonRoleBindingStatus
 
-	if !tm.Ready.IsNull() && !tm.Ready.IsUnknown() {
-		readyTfModel := tfcommon.ResourceStatusReady{}
-		readyDiag := tm.Ready.As(ctx, &readyTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, readyDiag...)
+	if !plan.Ready.IsNull() && !plan.Ready.IsUnknown() {
+		readyPlan := tfcommon.ResourceStatusReady{}
+		readyPlanDiag := plan.Ready.As(ctx, &readyPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, readyPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		readyTmp, readyDiag := ResourceStatusReadyTFToAPIModel(ctx, &readyTfModel)
+		readyTmp, readyDiag := ResourceStatusReadyTFToAPIModel(ctx, &readyPlan)
 		diags = append(diags, readyDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -116,23 +116,23 @@ func CommonRoleBindingStatusTFToAPIModel(ctx context.Context, tm *tfcommon.Commo
 	return &am, diags
 }
 
-func CommonRoleBindingStatusTFToAPIRequestModel(ctx context.Context, tm *tfcommon.CommonRoleBindingStatus) (*commonapimodel.CommonRoleBindingStatusRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func CommonRoleBindingStatusTFToAPIRequestModel(ctx context.Context, plan *tfcommon.CommonRoleBindingStatus) (*commonapimodel.CommonRoleBindingStatusRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.CommonRoleBindingStatusRequest
 
-	if !tm.Ready.IsNull() && !tm.Ready.IsUnknown() {
-		readyTfModel := tfcommon.ResourceStatusReady{}
-		readyDiag := tm.Ready.As(ctx, &readyTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, readyDiag...)
+	if !plan.Ready.IsNull() && !plan.Ready.IsUnknown() {
+		readyPlan := tfcommon.ResourceStatusReady{}
+		readyPlanDiag := plan.Ready.As(ctx, &readyPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, readyPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		readyTmp, readyDiag := ResourceStatusReadyTFToAPIRequestModel(ctx, &readyTfModel)
+		readyTmp, readyDiag := ResourceStatusReadyTFToAPIRequestModel(ctx, &readyPlan)
 		diags = append(diags, readyDiag...)
 		if diags.HasError() {
 			return nil, diags

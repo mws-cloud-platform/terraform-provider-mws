@@ -8,8 +8,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
 	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
 func TestKafkaControllerInstanceSpecAPIResponseToTFModelEmpty(t *testing.T) {
@@ -36,4 +39,24 @@ func TestKafkaControllerInstanceSpecResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateKafkaControllerInstanceSpecRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.KafkaControllerInstanceSpec
+	var stateTfModel tfmodel.KafkaControllerInstanceSpec
+	stateTfModel.Disk = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.KafkaDataDiskSpec).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateKafkaControllerInstanceSpecRequest{
+		Disk: optional.OptionalNil[apimodel.UpdateKafkaDataDiskSpecRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.KafkaControllerInstanceSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

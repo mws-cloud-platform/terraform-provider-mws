@@ -113,13 +113,13 @@ func (m *ClusterDatabaseResource) Configure(ctx context.Context, req resource.Co
 func (m *ClusterDatabaseResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "ClusterDatabaseResource.Create")
 
-	var data tfmodel.ClusterDatabaseModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.ClusterDatabaseModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -127,17 +127,17 @@ func (m *ClusterDatabaseResource) Create(ctx context.Context, req resource.Creat
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ClusterDatabaseResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.PostgresClusterDatabaseTFToAPIRequestModel(ctx, &data.PostgresClusterDatabase)
+	body, diags := conv.PostgresClusterDatabaseTFToAPIRequestModel(ctx, &plan.PostgresClusterDatabase)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ClusterDatabaseResource.TFToAPI")
@@ -147,9 +147,9 @@ func (m *ClusterDatabaseResource) Create(ctx context.Context, req resource.Creat
 	apiRes, err := m.sdk.CreatePostgresClusterDatabase(
 		ctx,
 		client.UpsertPostgresClusterDatabaseRequest{
-			Project:  data.ProjectParam.ValueString(),
-			Cluster:  data.ClusterParam.ValueString(),
-			Database: data.DatabaseParam.ValueString(),
+			Project:  plan.ProjectParam.ValueString(),
+			Cluster:  plan.ClusterParam.ValueString(),
+			Database: plan.DatabaseParam.ValueString(),
 			Body:     *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
@@ -162,7 +162,7 @@ func (m *ClusterDatabaseResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.PostgresClusterDatabaseAPIResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -171,21 +171,21 @@ func (m *ClusterDatabaseResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	data.PostgresClusterDatabase = *tfRes
+	plan.PostgresClusterDatabase = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *ClusterDatabaseResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "ClusterDatabaseResource.Read")
 
-	var data tfmodel.ClusterDatabaseModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.ClusterDatabaseModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -193,15 +193,15 @@ func (m *ClusterDatabaseResource) Read(ctx context.Context, req resource.ReadReq
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetPostgresClusterDatabase(
 		ctx,
 		client.GetPostgresClusterDatabaseRequest{
-			Project:  data.ProjectParam.ValueString(),
-			Cluster:  data.ClusterParam.ValueString(),
-			Database: data.DatabaseParam.ValueString(),
+			Project:  state.ProjectParam.ValueString(),
+			Cluster:  state.ClusterParam.ValueString(),
+			Database: state.DatabaseParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -212,7 +212,7 @@ func (m *ClusterDatabaseResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.PostgresClusterDatabaseAPIResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -221,21 +221,27 @@ func (m *ClusterDatabaseResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
-	data.PostgresClusterDatabase = *tfRes
+	state.PostgresClusterDatabase = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 func (m *ClusterDatabaseResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "ClusterDatabaseResource.Update")
 
-	var data tfmodel.ClusterDatabaseModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.ClusterDatabaseModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	var state tfmodel.ClusterDatabaseModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -243,17 +249,17 @@ func (m *ClusterDatabaseResource) Update(ctx context.Context, req resource.Updat
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ClusterDatabaseResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.PostgresClusterDatabaseTFToAPIRequestModel(ctx, &data.PostgresClusterDatabase)
+	body, diags := conv.PostgresClusterDatabaseTFToAPIUpdateRequestModel(ctx, &plan.PostgresClusterDatabase, &state.PostgresClusterDatabase)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ClusterDatabaseResource.TFToAPI")
@@ -263,10 +269,10 @@ func (m *ClusterDatabaseResource) Update(ctx context.Context, req resource.Updat
 	apiRes, err := m.sdk.UpdatePostgresClusterDatabase(
 		ctx,
 		client.UpdatePostgresClusterDatabaseRequest{
-			Project:  data.ProjectParam.ValueString(),
-			Cluster:  data.ClusterParam.ValueString(),
-			Database: data.DatabaseParam.ValueString(),
-			Body:     body.AsUpdateModel(),
+			Project:  plan.ProjectParam.ValueString(),
+			Cluster:  plan.ClusterParam.ValueString(),
+			Database: plan.DatabaseParam.ValueString(),
+			Body:     *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -278,7 +284,7 @@ func (m *ClusterDatabaseResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.PostgresClusterDatabaseAPIResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -287,21 +293,21 @@ func (m *ClusterDatabaseResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
-	data.PostgresClusterDatabase = *tfRes
+	plan.PostgresClusterDatabase = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *ClusterDatabaseResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "ClusterDatabaseResource.Delete")
 
-	var data tfmodel.ClusterDatabaseModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.ClusterDatabaseModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -309,10 +315,10 @@ func (m *ClusterDatabaseResource) Delete(ctx context.Context, req resource.Delet
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := state.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ClusterDatabaseResource.Timeouts")
@@ -322,9 +328,9 @@ func (m *ClusterDatabaseResource) Delete(ctx context.Context, req resource.Delet
 	err := m.sdk.DeletePostgresClusterDatabase(
 		ctx,
 		client.DeletePostgresClusterDatabaseRequest{
-			Project:  data.ProjectParam.ValueString(),
-			Cluster:  data.ClusterParam.ValueString(),
-			Database: data.DatabaseParam.ValueString(),
+			Project:  state.ProjectParam.ValueString(),
+			Cluster:  state.ClusterParam.ValueString(),
+			Database: state.DatabaseParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -340,7 +346,7 @@ func (m *ClusterDatabaseResource) Delete(ctx context.Context, req resource.Delet
 func (m *ClusterDatabaseResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "ClusterDatabaseResource.ImportState")
 
-	var data tfmodel.ClusterDatabaseModel
+	var state tfmodel.ClusterDatabaseModel
 
 	ref, err := mpostgresref.ParsePostgresClusterDatabaseRef(ctx, req.ID)
 	if err != nil {
@@ -366,7 +372,7 @@ func (m *ClusterDatabaseResource) ImportState(ctx context.Context, req resource.
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.PostgresClusterDatabaseAPIResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -375,11 +381,11 @@ func (m *ClusterDatabaseResource) ImportState(ctx context.Context, req resource.
 		return
 	}
 
-	data.PostgresClusterDatabase = *tfRes
+	state.PostgresClusterDatabase = *tfRes
 
-	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.ClusterParam = types.StringValue(ref.GetCluster())
-	data.DatabaseParam = types.StringValue(ref.GetDatabase())
+	state.ProjectParam = types.StringValue(ref.GetProject())
+	state.ClusterParam = types.StringValue(ref.GetCluster())
+	state.DatabaseParam = types.StringValue(ref.GetDatabase())
 
 	var rwTimeouts timeouts.Value
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
@@ -387,7 +393,7 @@ func (m *ClusterDatabaseResource) ImportState(ctx context.Context, req resource.
 		tflog.Debug(ctx, "ClusterDatabaseResource.timeouts.GetAttribute")
 		return
 	}
-	data.Timeouts = rwTimeouts
+	state.Timeouts = rwTimeouts
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

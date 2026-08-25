@@ -78,13 +78,13 @@ func (m *ServiceAccountDataSource) Configure(ctx context.Context, req datasource
 func (m *ServiceAccountDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "ServiceAccountDataSource.Read")
 
-	var data tfmodel.ServiceAccountModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.ServiceAccountModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -92,14 +92,14 @@ func (m *ServiceAccountDataSource) Read(ctx context.Context, req datasource.Read
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetServiceAccount(
 		ctx,
 		client.GetServiceAccountRequest{
-			Project:        data.ProjectParam.ValueString(),
-			ServiceAccount: data.ServiceAccountParam.ValueString(),
+			Project:        config.ProjectParam.ValueString(),
+			ServiceAccount: config.ServiceAccountParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -117,7 +117,7 @@ func (m *ServiceAccountDataSource) Read(ctx context.Context, req datasource.Read
 		return
 	}
 
-	data.ServiceAccount = *tfRes
+	config.ServiceAccount = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

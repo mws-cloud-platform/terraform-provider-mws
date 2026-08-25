@@ -79,13 +79,13 @@ func (m *ClusterDataSource) Configure(ctx context.Context, req datasource.Config
 func (m *ClusterDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "ClusterDataSource.Read")
 
-	var data tfmodel.ClusterModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.ClusterModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -93,14 +93,14 @@ func (m *ClusterDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetClickhouseCluster(
 		ctx,
 		client.GetClickhouseClusterRequest{
-			Project: data.ProjectParam.ValueString(),
-			Cluster: data.ClusterParam.ValueString(),
+			Project: config.ProjectParam.ValueString(),
+			Cluster: config.ClusterParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -118,7 +118,7 @@ func (m *ClusterDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		return
 	}
 
-	data.ClickhouseCluster = *tfRes
+	config.ClickhouseCluster = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

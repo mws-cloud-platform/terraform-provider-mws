@@ -37,25 +37,56 @@ func HardwareSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.
 	return &t, diags
 }
 
-func HardwareSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.HardwareSpec) (*apimodel.HardwareSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func HardwareSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.HardwareSpec) (*apimodel.HardwareSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.HardwareSpecRequest
 
-	if !tm.Power.IsNull() && !tm.Power.IsUnknown() {
-		am.Power = ptr.Get(apimodel.HardwareSpecPowerRequest(tm.Power.ValueString()))
+	if !plan.Power.IsNull() && !plan.Power.IsUnknown() {
+		am.Power = ptr.Get(apimodel.HardwareSpecPowerRequest(plan.Power.ValueString()))
 	}
 
-	if !tm.GracefulShutdownTimeout.IsNull() && !tm.GracefulShutdownTimeout.IsUnknown() {
-		tmpGracefulShutdownTimeout, err := duration.ParseString(tm.GracefulShutdownTimeout.ValueString())
+	if !plan.GracefulShutdownTimeout.IsNull() && !plan.GracefulShutdownTimeout.IsUnknown() {
+		tmpGracefulShutdownTimeout, err := duration.ParseString(plan.GracefulShutdownTimeout.ValueString())
 		if err != nil {
 			diags.AddError("Duration string parsing", err.Error())
 			return nil, diags
 		}
 		am.GracefulShutdownTimeout = &tmpGracefulShutdownTimeout
+	}
+
+	return &am, diags
+}
+
+func HardwareSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.HardwareSpec) (*apimodel.UpdateHardwareSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.HardwareSpec{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateHardwareSpecRequest
+
+	if !plan.Power.Equal(state.Power) {
+		if !plan.Power.IsNull() && !plan.Power.IsUnknown() {
+			am.Power.SetTo(apimodel.HardwareSpecPowerRequest(plan.Power.ValueString()))
+		}
+	}
+
+	if !plan.GracefulShutdownTimeout.Equal(state.GracefulShutdownTimeout) {
+		if !plan.GracefulShutdownTimeout.IsNull() && !plan.GracefulShutdownTimeout.IsUnknown() {
+			tmpGracefulShutdownTimeout, err := duration.ParseString(plan.GracefulShutdownTimeout.ValueString())
+			if err != nil {
+				diags.AddError("Duration string parsing", err.Error())
+				return nil, diags
+			}
+			am.GracefulShutdownTimeout.SetTo(tmpGracefulShutdownTimeout)
+		}
 	}
 
 	return &am, diags

@@ -16,6 +16,7 @@ type PostgresClusterStatus struct {
 	State             ClusterState  `tfsdk:"state"`
 	Health            ClusterHealth `tfsdk:"health"`
 	Message           types.String  `tfsdk:"message"`
+	Region            types.String  `tfsdk:"region"`
 	Network           types.Object  `tfsdk:"network"`
 	Instances         types.List    `tfsdk:"instances"`
 	MaintenanceWindow types.Object  `tfsdk:"maintenance_window"`
@@ -82,6 +83,10 @@ func (s *PostgresClusterStatus) GetSchema() schema.Schema {
 			},
 			"message": schema.StringAttribute{
 				Computed: true,
+			},
+			"region": schema.StringAttribute{
+				MarkdownDescription: `Регион, которому принадлежит кластер`,
+				Computed:            true,
 			},
 			"network": schema.SingleNestedAttribute{
 				Attributes:          new(PostgresStatusNetwork).GetSchema().Attributes,

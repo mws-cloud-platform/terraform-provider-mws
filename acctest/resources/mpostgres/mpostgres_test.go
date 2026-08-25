@@ -180,7 +180,7 @@ func (s *BaseClusterSuite) SetupSuite() {
 					}},
 				}},
 				InstanceTemplate: mpostgresmodel.PostgresInstanceTemplateRequest{
-					VmType: compute.NewVmTypeRef("gen-2-8"),
+					VmType: compute.NewMustVmTypeRef("gen-2-8"),
 					Disk: mpostgresmodel.DataDiskSpecRequest{
 						Size: bytesize.MustNewFromInt64(20, bytesize.GB),
 						Type: mpostgresmodel.DataDiskType_NETWORK_STANDARD_SSD,

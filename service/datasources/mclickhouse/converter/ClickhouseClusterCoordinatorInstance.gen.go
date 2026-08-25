@@ -33,20 +33,20 @@ func ClickhouseClusterCoordinatorInstanceAPIOptionalResponseToTFModel(ctx contex
 	return &t, diags
 }
 
-func ClickhouseClusterCoordinatorInstanceTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClickhouseClusterCoordinatorInstance) (*apimodel.ClickhouseClusterCoordinatorInstanceRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClickhouseClusterCoordinatorInstanceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterCoordinatorInstance) (*apimodel.ClickhouseClusterCoordinatorInstanceRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClickhouseClusterCoordinatorInstanceRequest
 
-	if !tm.Count.IsNull() && !tm.Count.IsUnknown() {
-		am.Count = ptr.Get(int(tm.Count.ValueInt64()))
+	if !plan.Count.IsNull() && !plan.Count.IsUnknown() {
+		am.Count = ptr.Get(int(plan.Count.ValueInt64()))
 	}
 
-	if !tm.Zone.IsNull() && !tm.Zone.IsUnknown() {
-		zoneRef, err := rm.ParseZoneRef(ctx, tm.Zone.ValueString())
+	if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
+		zoneRef, err := rm.ParseZoneRef(ctx, plan.Zone.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags

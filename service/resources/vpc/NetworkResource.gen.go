@@ -106,13 +106,13 @@ func (m *NetworkResource) Configure(ctx context.Context, req resource.ConfigureR
 func (m *NetworkResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "NetworkResource.Create")
 
-	var data tfmodel.NetworkModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.NetworkModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -120,17 +120,17 @@ func (m *NetworkResource) Create(ctx context.Context, req resource.CreateRequest
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "NetworkResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.NetworkTFToAPIRequestModel(ctx, &data.Network)
+	body, diags := conv.NetworkTFToAPIRequestModel(ctx, &plan.Network)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "NetworkResource.TFToAPI")
@@ -140,8 +140,8 @@ func (m *NetworkResource) Create(ctx context.Context, req resource.CreateRequest
 	apiRes, err := m.sdk.CreateNetwork(
 		ctx,
 		client.UpsertNetworkRequest{
-			Project: data.ProjectParam.ValueString(),
-			Network: data.NetworkParam.ValueString(),
+			Project: plan.ProjectParam.ValueString(),
+			Network: plan.NetworkParam.ValueString(),
 			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
@@ -154,7 +154,7 @@ func (m *NetworkResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.NetworkAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -163,21 +163,21 @@ func (m *NetworkResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	data.Network = *tfRes
+	plan.Network = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *NetworkResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "NetworkResource.Read")
 
-	var data tfmodel.NetworkModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.NetworkModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -185,14 +185,14 @@ func (m *NetworkResource) Read(ctx context.Context, req resource.ReadRequest, re
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetNetwork(
 		ctx,
 		client.GetNetworkRequest{
-			Project: data.ProjectParam.ValueString(),
-			Network: data.NetworkParam.ValueString(),
+			Project: state.ProjectParam.ValueString(),
+			Network: state.NetworkParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -203,7 +203,7 @@ func (m *NetworkResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.NetworkAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -212,21 +212,27 @@ func (m *NetworkResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 
-	data.Network = *tfRes
+	state.Network = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 func (m *NetworkResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "NetworkResource.Update")
 
-	var data tfmodel.NetworkModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.NetworkModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	var state tfmodel.NetworkModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -234,17 +240,17 @@ func (m *NetworkResource) Update(ctx context.Context, req resource.UpdateRequest
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "NetworkResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.NetworkTFToAPIRequestModel(ctx, &data.Network)
+	body, diags := conv.NetworkTFToAPIUpdateRequestModel(ctx, &plan.Network, &state.Network)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "NetworkResource.TFToAPI")
@@ -254,9 +260,9 @@ func (m *NetworkResource) Update(ctx context.Context, req resource.UpdateRequest
 	apiRes, err := m.sdk.UpdateNetwork(
 		ctx,
 		client.UpdateNetworkRequest{
-			Project: data.ProjectParam.ValueString(),
-			Network: data.NetworkParam.ValueString(),
-			Body:    body.AsUpdateModel(),
+			Project: plan.ProjectParam.ValueString(),
+			Network: plan.NetworkParam.ValueString(),
+			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -268,7 +274,7 @@ func (m *NetworkResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.NetworkAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -277,21 +283,21 @@ func (m *NetworkResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	data.Network = *tfRes
+	plan.Network = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *NetworkResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "NetworkResource.Delete")
 
-	var data tfmodel.NetworkModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.NetworkModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -299,10 +305,10 @@ func (m *NetworkResource) Delete(ctx context.Context, req resource.DeleteRequest
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := state.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "NetworkResource.Timeouts")
@@ -312,8 +318,8 @@ func (m *NetworkResource) Delete(ctx context.Context, req resource.DeleteRequest
 	err := m.sdk.DeleteNetwork(
 		ctx,
 		client.DeleteNetworkRequest{
-			Project: data.ProjectParam.ValueString(),
-			Network: data.NetworkParam.ValueString(),
+			Project: state.ProjectParam.ValueString(),
+			Network: state.NetworkParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -329,7 +335,7 @@ func (m *NetworkResource) Delete(ctx context.Context, req resource.DeleteRequest
 func (m *NetworkResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "NetworkResource.ImportState")
 
-	var data tfmodel.NetworkModel
+	var state tfmodel.NetworkModel
 
 	ref, err := vpcref.ParseNetworkRef(ctx, req.ID)
 	if err != nil {
@@ -354,7 +360,7 @@ func (m *NetworkResource) ImportState(ctx context.Context, req resource.ImportSt
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.NetworkAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -363,10 +369,10 @@ func (m *NetworkResource) ImportState(ctx context.Context, req resource.ImportSt
 		return
 	}
 
-	data.Network = *tfRes
+	state.Network = *tfRes
 
-	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.NetworkParam = types.StringValue(ref.GetNetwork())
+	state.ProjectParam = types.StringValue(ref.GetProject())
+	state.NetworkParam = types.StringValue(ref.GetNetwork())
 
 	var rwTimeouts timeouts.Value
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
@@ -374,7 +380,7 @@ func (m *NetworkResource) ImportState(ctx context.Context, req resource.ImportSt
 		tflog.Debug(ctx, "NetworkResource.timeouts.GetAttribute")
 		return
 	}
-	data.Timeouts = rwTimeouts
+	state.Timeouts = rwTimeouts
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

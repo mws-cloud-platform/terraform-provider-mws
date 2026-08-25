@@ -11,6 +11,7 @@ import (
 	"go.mws.cloud/go-sdk/service/resources/references/kms"
 	apimodel "go.mws.cloud/go-sdk/service/secretmanager/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager/model"
 )
 
 func TestEncryptionSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -23,7 +24,7 @@ func TestEncryptionSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 func TestEncryptionSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.EncryptionSpecRequest{
-		CryptoKeyId: kms.NewCryptoKeyRef("projectID", "keyID"),
+		CryptoKeyId: kms.NewMustCryptoKeyRef("projectID", "keyID"),
 	}
 
 	emptyApiModelResponse, err := apimodel.EncryptionSpecRequestToOptionalResponse(&emptyApiModelRequest)
@@ -39,4 +40,18 @@ func TestEncryptionSpecOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateEncryptionSpecRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.EncryptionSpec
+	var stateTfModel tfmodel.EncryptionSpec
+
+	expectedUpdateModel := &apimodel.UpdateEncryptionSpecRequest{}
+
+	result, diags := conv.EncryptionSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

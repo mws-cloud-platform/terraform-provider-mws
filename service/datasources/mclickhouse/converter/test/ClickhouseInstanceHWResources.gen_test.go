@@ -24,7 +24,7 @@ func TestClickhouseInstanceHWResourcesAPIOptionalResponseToTFModelEmpty(t *testi
 func TestClickhouseInstanceHWResourcesOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.ClickhouseInstanceHWResourcesRequest{
-		VmType: mclickhouse.NewClickhouseVmTypeRef("vmTypeID"),
+		VmType: mclickhouse.NewMustClickhouseVmTypeRef("vmTypeID"),
 		Disk: apimodel.ClickhouseInstanceDiskSpecRequest{
 			Size: bytesize.MustParseString("0 B"),
 			Type: "",
@@ -56,7 +56,7 @@ func TestClickhouseInstanceHWResourcesAPIResponseToTFModelEmpty(t *testing.T) {
 func TestClickhouseInstanceHWResourcesResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.ClickhouseInstanceHWResourcesRequest{
-		VmType: mclickhouse.NewClickhouseVmTypeRef("vmTypeID"),
+		VmType: mclickhouse.NewMustClickhouseVmTypeRef("vmTypeID"),
 		Disk: apimodel.ClickhouseInstanceDiskSpecRequest{
 			Size: bytesize.MustParseString("0 B"),
 			Type: "",

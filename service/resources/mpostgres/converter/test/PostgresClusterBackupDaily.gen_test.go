@@ -10,6 +10,7 @@ import (
 
 	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
 func TestPostgresClusterBackupDailyAPIResponseToTFModelEmpty(t *testing.T) {
@@ -36,4 +37,18 @@ func TestPostgresClusterBackupDailyResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdatePostgresClusterBackupDailyRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.PostgresClusterBackupDaily
+	var stateTfModel tfmodel.PostgresClusterBackupDaily
+
+	expectedUpdateModel := &apimodel.UpdatePostgresClusterBackupDailyRequest{}
+
+	result, diags := conv.PostgresClusterBackupDailyTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

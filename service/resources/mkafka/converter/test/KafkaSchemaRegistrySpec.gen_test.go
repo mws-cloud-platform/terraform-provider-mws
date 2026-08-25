@@ -10,6 +10,7 @@ import (
 
 	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
 func TestKafkaSchemaRegistrySpecAPIResponseToTFModelEmpty(t *testing.T) {
@@ -36,4 +37,18 @@ func TestKafkaSchemaRegistrySpecResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateKafkaSchemaRegistrySpecRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.KafkaSchemaRegistrySpec
+	var stateTfModel tfmodel.KafkaSchemaRegistrySpec
+
+	expectedUpdateModel := &apimodel.UpdateKafkaSchemaRegistrySpecRequest{}
+
+	result, diags := conv.KafkaSchemaRegistrySpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

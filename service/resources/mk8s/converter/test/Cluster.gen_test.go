@@ -9,8 +9,13 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
 func TestClusterAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -49,4 +54,36 @@ func TestClusterOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateClusterRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.Cluster
+	var stateTfModel tfmodel.Cluster
+	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
+	stateTfModel.Plugins = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.PluginsSpec).GetSchema().Attributes))
+	stateTfModel.SecurityPosture = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.SecurityPostureSpec).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateClusterRequest{
+		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+			Set:  true,
+			Null: true,
+		},
+		Spec: optional.NewOptional(apimodel.UpdateClusterSpecRequest{
+			Plugins: optional.OptionalNil[apimodel.UpdatePluginsSpecRequest]{
+				Set:  true,
+				Null: true,
+			},
+			SecurityPosture: optional.OptionalNil[apimodel.UpdateSecurityPostureSpecRequest]{
+				Set:  true,
+				Null: true,
+			},
+		}),
+	}
+
+	result, diags := conv.ClusterTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

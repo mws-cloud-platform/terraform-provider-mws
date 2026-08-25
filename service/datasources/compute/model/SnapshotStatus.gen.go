@@ -19,6 +19,7 @@ type SnapshotStatus struct {
 	MinDiskSize        types.String `tfsdk:"min_disk_size"`
 	InitialSourceImage types.String `tfsdk:"initial_source_image"`
 	OsType             OsType2      `tfsdk:"os_type"`
+	Encryption         types.Object `tfsdk:"encryption"`
 }
 
 func (s *SnapshotStatus) GetSchema() schema.Schema {
@@ -71,6 +72,11 @@ func (s *SnapshotStatus) GetSchema() schema.Schema {
 					),
 				},
 				Computed: true,
+			},
+			"encryption": schema.SingleNestedAttribute{
+				Attributes:          new(EncryptionStatus).GetSchema().Attributes,
+				MarkdownDescription: `Способ шифрования ресурса`,
+				Computed:            true,
 			},
 		},
 	}

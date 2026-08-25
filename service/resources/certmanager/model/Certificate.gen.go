@@ -12,8 +12,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	localint64planmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/int64planmodifier"
-	localobjectplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/objectplanmodifier"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
@@ -54,9 +52,6 @@ func (s *Certificate) GetSchema() schema.Schema {
 					int64validator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("self_managed")),
 				},
 				Optional: true,
-				PlanModifiers: []planmodifier.Int64{
-					localint64planmodifier.RequiresReplaceIfRemoved(),
-				},
 			},
 			"self_managed": schema.SingleNestedAttribute{
 				Attributes: new(SelfManagedSpec).GetSchema().Attributes,
@@ -65,9 +60,6 @@ func (s *Certificate) GetSchema() schema.Schema {
 				},
 				WriteOnly: true,
 				Optional:  true,
-				PlanModifiers: []planmodifier.Object{
-					localobjectplanmodifier.RequiresReplaceIfRemoved(),
-				},
 			},
 			"managed": schema.SingleNestedAttribute{
 				Attributes: new(CertificateManagedSpec).GetSchema().Attributes,

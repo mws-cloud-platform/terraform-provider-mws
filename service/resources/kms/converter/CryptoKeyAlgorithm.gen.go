@@ -25,11 +25,11 @@ func CryptoKeyAlgorithmAPIToTFModel(ctx context.Context, am *apimodel.CryptoKeyA
 	return t, diags
 }
 
-func CryptoKeyAlgorithmTFToAPIModel(ctx context.Context, tm tfmodel.CryptoKeyAlgorithm) (*apimodel.CryptoKeyAlgorithm, tfdiag.Diagnostics) {
+func CryptoKeyAlgorithmTFToAPIModel(ctx context.Context, plan tfmodel.CryptoKeyAlgorithm) (*apimodel.CryptoKeyAlgorithm, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am apimodel.CryptoKeyAlgorithm
 
-	var tmp = types.String(tm)
+	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}

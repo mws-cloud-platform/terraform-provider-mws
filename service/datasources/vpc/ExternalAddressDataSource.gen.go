@@ -79,13 +79,13 @@ func (m *ExternalAddressDataSource) Configure(ctx context.Context, req datasourc
 func (m *ExternalAddressDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "ExternalAddressDataSource.Read")
 
-	var data tfmodel.ExternalAddressModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.ExternalAddressModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -93,14 +93,14 @@ func (m *ExternalAddressDataSource) Read(ctx context.Context, req datasource.Rea
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetExternalAddress(
 		ctx,
 		client.GetExternalAddressRequest{
-			Project:         data.ProjectParam.ValueString(),
-			ExternalAddress: data.ExternalAddressParam.ValueString(),
+			Project:         config.ProjectParam.ValueString(),
+			ExternalAddress: config.ExternalAddressParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -118,7 +118,7 @@ func (m *ExternalAddressDataSource) Read(ctx context.Context, req datasource.Rea
 		return
 	}
 
-	data.ExternalAddress = *tfRes
+	config.ExternalAddress = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

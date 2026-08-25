@@ -8,9 +8,12 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/pkg/optional"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/iam/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/iam/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/iam/model"
 )
 
 func TestApiKeyAPIResponseToTFModelEmpty(t *testing.T) {
@@ -41,6 +44,26 @@ func TestApiKeyResponseConverters(t *testing.T) {
 	require.Equal(t, *emptyApiModelResponse, *result)
 }
 
+func TestUpdateApiKeyRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ApiKey
+	var stateTfModel tfmodel.ApiKey
+	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.ApiKeyMetadata).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateApiKeyRequest{
+		Metadata: optional.OptionalNil[apimodel.UpdateApiKeyMetadataRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.ApiKeyTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
+}
+
 func TestApiKeyMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
 	emptyApiModel := apimodel.ApiKeyMetadataResponse{}
@@ -51,7 +74,7 @@ func TestApiKeyMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 func TestApiKeyMetadataResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.ApiKeyMetadataRequest{
-		TypedResourceMetadataRequest: common.TypedResourceMetadataRequest{},
+		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
 	}
 
 	emptyApiModelResponse, err := apimodel.ApiKeyMetadataRequestToResponse(&emptyApiModelRequest)
@@ -67,4 +90,18 @@ func TestApiKeyMetadataResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateApiKeyMetadataRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ApiKeyMetadata
+	var stateTfModel tfmodel.ApiKeyMetadata
+
+	expectedUpdateModel := &apimodel.UpdateApiKeyMetadataRequest{}
+
+	result, diags := conv.ApiKeyMetadataTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

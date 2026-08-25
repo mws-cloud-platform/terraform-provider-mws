@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/gpt/model"
 	"go.mws.cloud/go-sdk/service/resources/references/gpt"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -85,23 +85,23 @@ func DeploymentAPIResponseToTFModel(ctx context.Context, am *apimodel.Deployment
 	return &t, diags
 }
 
-func DeploymentTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Deployment) (*apimodel.DeploymentRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func DeploymentTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Deployment) (*apimodel.DeploymentRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.DeploymentRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfmodel.DeploymentMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfmodel.DeploymentMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := DeploymentMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := DeploymentMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -109,17 +109,83 @@ func DeploymentTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Deployment) 
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.IsActive.IsNull() && !tm.IsActive.IsUnknown() {
-		am.Spec.IsActive = tm.IsActive.ValueBoolPointer()
+	if !plan.IsActive.IsNull() && !plan.IsActive.IsUnknown() {
+		am.Spec.IsActive = plan.IsActive.ValueBoolPointer()
 	}
 
-	if !tm.Model.IsNull() && !tm.Model.IsUnknown() {
-		modelRef, err := gpt.ParseModelRef(ctx, tm.Model.ValueString())
+	if !plan.Model.IsNull() && !plan.Model.IsUnknown() {
+		modelRef, err := gpt.ParseModelRef(ctx, plan.Model.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
 		}
 		am.Spec.Model = &modelRef
+	}
+
+	return &am, diags
+}
+
+func DeploymentTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Deployment) (*apimodel.UpdateDeploymentRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.Deployment{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateDeploymentRequest
+
+	if !plan.Metadata.Equal(state.Metadata) {
+		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+			metadataPlan := tfmodel.DeploymentMetadata{}
+			metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, metadataPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			metadataState := tfmodel.DeploymentMetadata{}
+			if !state.Metadata.IsNull() && !state.Metadata.IsUnknown() {
+				metadataStateDiag := state.Metadata.As(ctx, &metadataState, basetypes.ObjectAsOptions{})
+				diags = append(diags, metadataStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			metadataTmp, metadataDiag := DeploymentMetadataTFToAPIUpdateRequestModel(ctx, &metadataPlan, &metadataState)
+			diags = append(diags, metadataDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Metadata.SetTo(*metadataTmp)
+		} else if plan.Metadata.IsNull() {
+			am.Metadata.SetToNull()
+		}
+	}
+
+	if !plan.IsActive.Equal(state.IsActive) {
+		if !plan.IsActive.IsNull() && !plan.IsActive.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateDeploymentSpecRequest{})
+			}
+			am.Spec.Value.IsActive.SetTo(plan.IsActive.ValueBool())
+		}
+	}
+
+	if !plan.Model.Equal(state.Model) {
+		if !plan.Model.IsNull() && !plan.Model.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateDeploymentSpecRequest{})
+			}
+			modelRef, err := gpt.ParseModelRef(ctx, plan.Model.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.Spec.Value.Model.SetTo(modelRef)
+		}
 	}
 
 	return &am, diags
@@ -199,26 +265,27 @@ func DeploymentMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.De
 	return &t, diags
 }
 
-func DeploymentMetadataTFToAPIRequestModel(ctx context.Context, tm *tfmodel.DeploymentMetadata) (*apimodel.DeploymentMetadataRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func DeploymentMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DeploymentMetadata) (*apimodel.DeploymentMetadataRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.DeploymentMetadataRequest
 
-	if !tm.DisplayName.IsNull() && !tm.DisplayName.IsUnknown() {
-		am.DisplayName = tm.DisplayName.ValueStringPointer()
+	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
+		am.DisplayName = plan.DisplayName.ValueStringPointer()
 	}
 
-	if !tm.Usages.IsNull() && !tm.Usages.IsUnknown() {
+	if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
 		usages := make([]tfcommon.TypedUsage, 0)
-		dUsages := tm.Usages.ElementsAs(ctx, &usages, false)
+		dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
 		diags = append(diags, dUsages...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.Usages = make([]common.TypedUsageRequest, 0, len(usages))
+
+		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
@@ -230,8 +297,58 @@ func DeploymentMetadataTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Depl
 		}
 	}
 
-	if !tm.Description.IsNull() && !tm.Description.IsUnknown() {
-		am.Description = tm.Description.ValueStringPointer()
+	if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
+		am.Description = plan.Description.ValueStringPointer()
+	}
+
+	return &am, diags
+}
+
+func DeploymentMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.DeploymentMetadata) (*apimodel.UpdateDeploymentMetadataRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.DeploymentMetadata{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateDeploymentMetadataRequest
+
+	if !plan.DisplayName.Equal(state.DisplayName) {
+		if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
+			am.DisplayName.SetTo(plan.DisplayName.ValueString())
+		}
+	}
+
+	if !plan.Usages.Equal(state.Usages) {
+		if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
+			usages := make([]tfcommon.TypedUsage, 0)
+			dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
+			diags = append(diags, dUsages...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			usagesTmp := make([]commonapimodel.UpdateTypedUsageRequest, 0, len(usages))
+
+			for _, entity := range usages {
+				stateEntity := tfcommon.TypedUsage{}
+				tmp, d := commonconv.TypedUsageTFToAPIUpdateRequestModel(ctx, &entity, &stateEntity)
+				diags = append(diags, d...)
+				if diags.HasError() {
+					return nil, diags
+				}
+				usagesTmp = append(usagesTmp, *tmp)
+			}
+			am.Usages.SetTo(usagesTmp)
+		}
+	}
+
+	if !plan.Description.Equal(state.Description) {
+		if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
+			am.Description.SetTo(plan.Description.ValueString())
+		}
 	}
 
 	return &am, diags

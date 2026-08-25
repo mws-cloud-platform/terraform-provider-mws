@@ -24,7 +24,7 @@ func TestPostgresInstanceTemplateAPIResponseToTFModelEmpty(t *testing.T) {
 func TestPostgresInstanceTemplateResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.PostgresInstanceTemplateRequest{
-		VmType: compute.NewVmTypeRef("vmTypeID"),
+		VmType: compute.NewMustVmTypeRef("vmTypeID"),
 		Disk: apimodel.DataDiskSpecRequest{
 			Size: bytesize.MustParseString("0 B"),
 			Type: "",

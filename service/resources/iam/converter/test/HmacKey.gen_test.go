@@ -8,9 +8,12 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/pkg/optional"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/iam/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/iam/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/iam/model"
 )
 
 func TestHmacKeyAPIResponseToTFModelEmpty(t *testing.T) {
@@ -41,6 +44,26 @@ func TestHmacKeyResponseConverters(t *testing.T) {
 	require.Equal(t, *emptyApiModelResponse, *result)
 }
 
+func TestUpdateHmacKeyRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.HmacKey
+	var stateTfModel tfmodel.HmacKey
+	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.HmacKeyMetadata).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateHmacKeyRequest{
+		Metadata: optional.OptionalNil[apimodel.UpdateHmacKeyMetadataRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.HmacKeyTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
+}
+
 func TestHmacKeyMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
 	emptyApiModel := apimodel.HmacKeyMetadataResponse{}
@@ -51,7 +74,7 @@ func TestHmacKeyMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 func TestHmacKeyMetadataResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.HmacKeyMetadataRequest{
-		TypedResourceMetadataRequest: common.TypedResourceMetadataRequest{},
+		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
 	}
 
 	emptyApiModelResponse, err := apimodel.HmacKeyMetadataRequestToResponse(&emptyApiModelRequest)
@@ -67,4 +90,18 @@ func TestHmacKeyMetadataResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateHmacKeyMetadataRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.HmacKeyMetadata
+	var stateTfModel tfmodel.HmacKeyMetadata
+
+	expectedUpdateModel := &apimodel.UpdateHmacKeyMetadataRequest{}
+
+	result, diags := conv.HmacKeyMetadataTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

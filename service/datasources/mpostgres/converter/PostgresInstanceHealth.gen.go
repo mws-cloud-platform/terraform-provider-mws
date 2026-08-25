@@ -25,11 +25,11 @@ func PostgresInstanceHealthAPIToTFModel(ctx context.Context, am *apimodel.Postgr
 	return t, diags
 }
 
-func PostgresInstanceHealthTFToAPIModel(ctx context.Context, tm tfmodel.PostgresInstanceHealth) (*apimodel.PostgresInstanceHealth, tfdiag.Diagnostics) {
+func PostgresInstanceHealthTFToAPIModel(ctx context.Context, plan tfmodel.PostgresInstanceHealth) (*apimodel.PostgresInstanceHealth, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am apimodel.PostgresInstanceHealth
 
-	var tmp = types.String(tm)
+	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}

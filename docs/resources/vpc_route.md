@@ -220,7 +220,7 @@ Read-Only:
 <a id="nestedatt--status--next_hop--address"></a>
 ### Nested Schema for `status.next_hop.address`
 
-Read-Only:
+Required:
 
 - `ip_address` (String) Значение IP адреса
 

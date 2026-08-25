@@ -132,23 +132,23 @@ func FirewallRuleAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.
 	return &t, diags
 }
 
-func FirewallRuleTFToAPIRequestModel(ctx context.Context, tm *tfmodel.FirewallRule) (*apimodel.FirewallRuleRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func FirewallRuleTFToAPIRequestModel(ctx context.Context, plan *tfmodel.FirewallRule) (*apimodel.FirewallRuleRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.FirewallRuleRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfcommon.CommonTypedResourceMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -156,31 +156,31 @@ func FirewallRuleTFToAPIRequestModel(ctx context.Context, tm *tfmodel.FirewallRu
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.Direction.IsNull() && !tm.Direction.IsUnknown() {
-		am.Spec.Direction = apimodel.FirewallRuleSpecDirectionRequest(tm.Direction.ValueString())
+	if !plan.Direction.IsNull() && !plan.Direction.IsUnknown() {
+		am.Spec.Direction = apimodel.FirewallRuleSpecDirectionRequest(plan.Direction.ValueString())
 	}
 
-	if !tm.Priority.IsNull() && !tm.Priority.IsUnknown() {
-		am.Spec.Priority = ptr.Get(int32(tm.Priority.ValueInt64()))
+	if !plan.Priority.IsNull() && !plan.Priority.IsUnknown() {
+		am.Spec.Priority = ptr.Get(int32(plan.Priority.ValueInt64()))
 	}
 
-	if !tm.Action.IsNull() && !tm.Action.IsUnknown() {
-		am.Spec.Action = apimodel.FirewallRuleSpecActionRequest(tm.Action.ValueString())
+	if !plan.Action.IsNull() && !plan.Action.IsUnknown() {
+		am.Spec.Action = apimodel.FirewallRuleSpecActionRequest(plan.Action.ValueString())
 	}
 
-	if !tm.Active.IsNull() && !tm.Active.IsUnknown() {
-		am.Spec.Active = tm.Active.ValueBoolPointer()
+	if !plan.Active.IsNull() && !plan.Active.IsUnknown() {
+		am.Spec.Active = plan.Active.ValueBoolPointer()
 	}
 
-	if !tm.Source.IsNull() && !tm.Source.IsUnknown() {
-		sourceTfModel := tfmodel.FirewallRuleSource{}
-		sourceDiag := tm.Source.As(ctx, &sourceTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, sourceDiag...)
+	if !plan.Source.IsNull() && !plan.Source.IsUnknown() {
+		sourcePlan := tfmodel.FirewallRuleSource{}
+		sourcePlanDiag := plan.Source.As(ctx, &sourcePlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, sourcePlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		sourceTmp, sourceDiag := FirewallRuleSourceTFToAPIRequestModel(ctx, &sourceTfModel)
+		sourceTmp, sourceDiag := FirewallRuleSourceTFToAPIRequestModel(ctx, &sourcePlan)
 		diags = append(diags, sourceDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -188,15 +188,15 @@ func FirewallRuleTFToAPIRequestModel(ctx context.Context, tm *tfmodel.FirewallRu
 		am.Spec.Source = *sourceTmp
 	}
 
-	if !tm.Destination.IsNull() && !tm.Destination.IsUnknown() {
-		destinationTfModel := tfmodel.FirewallRuleDestination{}
-		destinationDiag := tm.Destination.As(ctx, &destinationTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, destinationDiag...)
+	if !plan.Destination.IsNull() && !plan.Destination.IsUnknown() {
+		destinationPlan := tfmodel.FirewallRuleDestination{}
+		destinationPlanDiag := plan.Destination.As(ctx, &destinationPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, destinationPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		destinationTmp, destinationDiag := FirewallRuleDestinationTFToAPIRequestModel(ctx, &destinationTfModel)
+		destinationTmp, destinationDiag := FirewallRuleDestinationTFToAPIRequestModel(ctx, &destinationPlan)
 		diags = append(diags, destinationDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -204,17 +204,183 @@ func FirewallRuleTFToAPIRequestModel(ctx context.Context, tm *tfmodel.FirewallRu
 		am.Spec.Destination = *destinationTmp
 	}
 
-	if !tm.ProtoPorts.IsNull() && !tm.ProtoPorts.IsUnknown() {
+	if !plan.ProtoPorts.IsNull() && !plan.ProtoPorts.IsUnknown() {
 		protoPorts := make([]types.String, 0)
-		dProtoPorts := tm.ProtoPorts.ElementsAs(ctx, &protoPorts, false)
+		dProtoPorts := plan.ProtoPorts.ElementsAs(ctx, &protoPorts, false)
 		diags = append(diags, dProtoPorts...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.Spec.ProtoPorts = make([]string, 0, len(protoPorts))
 
 		for _, entity := range protoPorts {
 			am.Spec.ProtoPorts = append(am.Spec.ProtoPorts, entity.ValueString())
+		}
+	}
+
+	return &am, diags
+}
+
+func FirewallRuleTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.FirewallRule) (*apimodel.UpdateFirewallRuleRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.FirewallRule{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateFirewallRuleRequest
+
+	if !plan.Metadata.Equal(state.Metadata) {
+		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+			metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+			metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, metadataPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			metadataState := tfcommon.CommonTypedResourceMetadata{}
+			if !state.Metadata.IsNull() && !state.Metadata.IsUnknown() {
+				metadataStateDiag := state.Metadata.As(ctx, &metadataState, basetypes.ObjectAsOptions{})
+				diags = append(diags, metadataStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIUpdateRequestModel(ctx, &metadataPlan, &metadataState)
+			diags = append(diags, metadataDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Metadata.SetTo(*metadataTmp)
+		} else if plan.Metadata.IsNull() {
+			am.Metadata.SetToNull()
+		}
+	}
+
+	if !plan.Direction.Equal(state.Direction) {
+		if !plan.Direction.IsNull() && !plan.Direction.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateFirewallRuleSpecRequest{})
+			}
+			am.Spec.Value.Direction.SetTo(apimodel.FirewallRuleSpecDirectionRequest(plan.Direction.ValueString()))
+		}
+	}
+
+	if !plan.Priority.Equal(state.Priority) {
+		if !plan.Priority.IsNull() && !plan.Priority.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateFirewallRuleSpecRequest{})
+			}
+			am.Spec.Value.Priority.SetTo(int32(plan.Priority.ValueInt64()))
+		}
+	}
+
+	if !plan.Action.Equal(state.Action) {
+		if !plan.Action.IsNull() && !plan.Action.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateFirewallRuleSpecRequest{})
+			}
+			am.Spec.Value.Action.SetTo(apimodel.FirewallRuleSpecActionRequest(plan.Action.ValueString()))
+		}
+	}
+
+	if !plan.Active.Equal(state.Active) {
+		if !plan.Active.IsNull() && !plan.Active.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateFirewallRuleSpecRequest{})
+			}
+			am.Spec.Value.Active.SetTo(plan.Active.ValueBool())
+		}
+	}
+
+	if !plan.Source.Equal(state.Source) {
+		if !plan.Source.IsNull() && !plan.Source.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateFirewallRuleSpecRequest{})
+			}
+			sourcePlan := tfmodel.FirewallRuleSource{}
+			sourcePlanDiag := plan.Source.As(ctx, &sourcePlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, sourcePlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			sourceState := tfmodel.FirewallRuleSource{}
+			if !state.Source.IsNull() && !state.Source.IsUnknown() {
+				sourceStateDiag := state.Source.As(ctx, &sourceState, basetypes.ObjectAsOptions{})
+				diags = append(diags, sourceStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			sourceTmp, sourceDiag := FirewallRuleSourceTFToAPIUpdateRequestModel(ctx, &sourcePlan, &sourceState)
+			diags = append(diags, sourceDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Spec.Value.Source.SetTo(*sourceTmp)
+		}
+	}
+
+	if !plan.Destination.Equal(state.Destination) {
+		if !plan.Destination.IsNull() && !plan.Destination.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateFirewallRuleSpecRequest{})
+			}
+			destinationPlan := tfmodel.FirewallRuleDestination{}
+			destinationPlanDiag := plan.Destination.As(ctx, &destinationPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, destinationPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			destinationState := tfmodel.FirewallRuleDestination{}
+			if !state.Destination.IsNull() && !state.Destination.IsUnknown() {
+				destinationStateDiag := state.Destination.As(ctx, &destinationState, basetypes.ObjectAsOptions{})
+				diags = append(diags, destinationStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			destinationTmp, destinationDiag := FirewallRuleDestinationTFToAPIUpdateRequestModel(ctx, &destinationPlan, &destinationState)
+			diags = append(diags, destinationDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Spec.Value.Destination.SetTo(*destinationTmp)
+		}
+	}
+
+	if !plan.ProtoPorts.Equal(state.ProtoPorts) {
+		if !plan.ProtoPorts.IsNull() && !plan.ProtoPorts.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateFirewallRuleSpecRequest{})
+			}
+			protoPorts := make([]types.String, 0)
+			dProtoPorts := plan.ProtoPorts.ElementsAs(ctx, &protoPorts, false)
+			diags = append(diags, dProtoPorts...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			protoPortsTmp := make([]string, 0, len(protoPorts))
+
+			for _, entity := range protoPorts {
+				protoPortsTmp = append(protoPortsTmp, entity.ValueString())
+			}
+			am.Spec.Value.ProtoPorts.SetTo(protoPortsTmp)
+		} else if plan.ProtoPorts.IsNull() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateFirewallRuleSpecRequest{})
+			}
+			am.Spec.Value.ProtoPorts.SetToNull()
 		}
 	}
 

@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/kms/model"
 	"go.mws.cloud/go-sdk/service/resources/references/iam"
 	"go.mws.cloud/go-sdk/service/resources/references/support"
@@ -27,11 +28,7 @@ func CryptoKeyRoleBindingAPIOptionalResponseToTFModel(ctx context.Context, am *a
 	var diags tfdiag.Diagnostics
 	var t tfmodel.CryptoKeyRoleBinding
 
-	if am.Kind != nil {
-		t.Kind = types.StringPointerValue(am.Kind)
-	} else {
-		t.Kind = types.StringNull()
-	}
+	t.Kind = types.StringValue(am.Kind)
 
 	if val, ok := am.Metadata.Get(); ok {
 		metadataTmp, d := commonconv.CommonTypedResourceMetadataAPIOptionalResponseToTFModel(ctx, &val)
@@ -94,23 +91,23 @@ func CryptoKeyRoleBindingAPIOptionalResponseToTFModel(ctx context.Context, am *a
 	return &t, diags
 }
 
-func CryptoKeyRoleBindingTFToAPIRequestModel(ctx context.Context, tm *tfmodel.CryptoKeyRoleBinding) (*apimodel.CryptoKeyRoleBindingRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func CryptoKeyRoleBindingTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CryptoKeyRoleBinding) (*apimodel.CryptoKeyRoleBindingRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.CryptoKeyRoleBindingRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfcommon.CommonTypedResourceMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -118,15 +115,15 @@ func CryptoKeyRoleBindingTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Cr
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.Subject.IsNull() && !tm.Subject.IsUnknown() {
-		subjectTfModel := tfcommon.CommonRoleBindingSpecSubject{}
-		subjectDiag := tm.Subject.As(ctx, &subjectTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, subjectDiag...)
+	if !plan.Subject.IsNull() && !plan.Subject.IsUnknown() {
+		subjectPlan := tfcommon.CommonRoleBindingSpecSubject{}
+		subjectPlanDiag := plan.Subject.As(ctx, &subjectPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, subjectPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		subjectTmp, subjectDiag := commonconv.CommonRoleBindingSpecSubjectTFToAPIRequestModel(ctx, &subjectTfModel)
+		subjectTmp, subjectDiag := commonconv.CommonRoleBindingSpecSubjectTFToAPIRequestModel(ctx, &subjectPlan)
 		diags = append(diags, subjectDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -134,8 +131,8 @@ func CryptoKeyRoleBindingTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Cr
 		am.Spec.Subject = *subjectTmp
 	}
 
-	if !tm.Role.IsNull() && !tm.Role.IsUnknown() {
-		roleRef, err := iam.ParseRoleRef(ctx, tm.Role.ValueString())
+	if !plan.Role.IsNull() && !plan.Role.IsUnknown() {
+		roleRef, err := iam.ParseRoleRef(ctx, plan.Role.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -143,13 +140,114 @@ func CryptoKeyRoleBindingTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Cr
 		am.Spec.Role = roleRef
 	}
 
-	if !tm.SupportRequestId.IsNull() && !tm.SupportRequestId.IsUnknown() {
-		supportRequestIdRef, err := support.ParseRequestIDRef(ctx, tm.SupportRequestId.ValueString())
+	if !plan.SupportRequestId.IsNull() && !plan.SupportRequestId.IsUnknown() {
+		supportRequestIdRef, err := support.ParseRequestIDRef(ctx, plan.SupportRequestId.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
 		}
 		am.Spec.SupportRequestId = &supportRequestIdRef
+	}
+
+	return &am, diags
+}
+
+func CryptoKeyRoleBindingTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.CryptoKeyRoleBinding) (*apimodel.UpdateCryptoKeyRoleBindingRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.CryptoKeyRoleBinding{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateCryptoKeyRoleBindingRequest
+
+	if !plan.Metadata.Equal(state.Metadata) {
+		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+			metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+			metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, metadataPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			metadataState := tfcommon.CommonTypedResourceMetadata{}
+			if !state.Metadata.IsNull() && !state.Metadata.IsUnknown() {
+				metadataStateDiag := state.Metadata.As(ctx, &metadataState, basetypes.ObjectAsOptions{})
+				diags = append(diags, metadataStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIUpdateRequestModel(ctx, &metadataPlan, &metadataState)
+			diags = append(diags, metadataDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Metadata.SetTo(*metadataTmp)
+		} else if plan.Metadata.IsNull() {
+			am.Metadata.SetToNull()
+		}
+	}
+
+	if !plan.Subject.Equal(state.Subject) {
+		if !plan.Subject.IsNull() && !plan.Subject.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(commonapimodel.UpdateCommonRoleBindingSpecRequest{})
+			}
+			subjectPlan := tfcommon.CommonRoleBindingSpecSubject{}
+			subjectPlanDiag := plan.Subject.As(ctx, &subjectPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, subjectPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			subjectState := tfcommon.CommonRoleBindingSpecSubject{}
+			if !state.Subject.IsNull() && !state.Subject.IsUnknown() {
+				subjectStateDiag := state.Subject.As(ctx, &subjectState, basetypes.ObjectAsOptions{})
+				diags = append(diags, subjectStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			subjectTmp, subjectDiag := commonconv.CommonRoleBindingSpecSubjectTFToAPIUpdateRequestModel(ctx, &subjectPlan, &subjectState)
+			diags = append(diags, subjectDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Spec.Value.Subject.SetTo(*subjectTmp)
+		}
+	}
+
+	if !plan.Role.Equal(state.Role) {
+		if !plan.Role.IsNull() && !plan.Role.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(commonapimodel.UpdateCommonRoleBindingSpecRequest{})
+			}
+			roleRef, err := iam.ParseRoleRef(ctx, plan.Role.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.Spec.Value.Role.SetTo(roleRef)
+		}
+	}
+
+	if !plan.SupportRequestId.Equal(state.SupportRequestId) {
+		if !plan.SupportRequestId.IsNull() && !plan.SupportRequestId.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(commonapimodel.UpdateCommonRoleBindingSpecRequest{})
+			}
+			supportRequestIdRef, err := support.ParseRequestIDRef(ctx, plan.SupportRequestId.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.Spec.Value.SupportRequestId.SetTo(supportRequestIdRef)
+		}
 	}
 
 	return &am, diags

@@ -8,8 +8,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
 	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
 func TestStorageDiskSpecOrRefAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -36,4 +39,24 @@ func TestStorageDiskSpecOrRefOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateStorageDiskSpecOrRefRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.StorageDiskSpecOrRef
+	var stateTfModel tfmodel.StorageDiskSpecOrRef
+	stateTfModel.Spec = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.StorageDiskSpec).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateStorageDiskSpecOrRefRequest{
+		Spec: optional.OptionalNil[apimodel.UpdateStorageDiskSpecRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.StorageDiskSpecOrRefTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

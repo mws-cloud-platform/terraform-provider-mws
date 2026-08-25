@@ -41,7 +41,7 @@ data "mws_gpt_model" "model" {
 - `modalities` (Attributes) (see [below for nested schema](#nestedatt--modalities))
 - `output_modalities` (Attributes) (see [below for nested schema](#nestedatt--output_modalities))
 - `size` (Number) Размер модели в миллиардах параметров
-- `status` (Attributes) (see [below for nested schema](#nestedatt--status))
+- `status` (Attributes) Текущее состояние ресурса, вычисляемое системой (see [below for nested schema](#nestedatt--status))
 
 <a id="nestedatt--capabilities"></a>
 ### Nested Schema for `capabilities`
@@ -87,7 +87,9 @@ Read-Only:
 - `description` (String) Описание ресурса
 - `display_name` (String) Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов
 - `id` (String) Ссылка на типизированный референс
-- `purge_time` (String) Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `purge_time` (String) Время удаления ресурса
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
 
 <a id="nestedatt--metadata--usages"></a>

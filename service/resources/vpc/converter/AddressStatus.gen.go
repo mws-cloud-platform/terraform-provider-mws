@@ -38,6 +38,12 @@ func AddressStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.Address
 	}
 	t.Ready = readyTfObject
 
+	if am.Region != nil {
+		t.Region = types.StringPointerValue(ptr.Get(am.Region.ID()))
+	} else {
+		t.Region = types.StringNull()
+	}
+
 	if am.IpAddress != nil {
 		t.IpAddress = types.StringValue(ptr.Value(am.IpAddress.RawValue()))
 	} else {

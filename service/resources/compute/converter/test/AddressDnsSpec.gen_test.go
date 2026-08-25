@@ -11,6 +11,7 @@ import (
 
 	apimodel "go.mws.cloud/go-sdk/service/compute/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
 func TestAddressDnsSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -41,4 +42,18 @@ func TestAddressDnsSpecOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateAddressDnsSpecRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.AddressDnsSpec
+	var stateTfModel tfmodel.AddressDnsSpec
+
+	expectedUpdateModel := &apimodel.UpdateAddressDnsSpecRequest{}
+
+	result, diags := conv.AddressDnsSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

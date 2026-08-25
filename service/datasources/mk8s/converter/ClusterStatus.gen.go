@@ -116,6 +116,24 @@ func ClusterStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.Cluster
 		t.Plugins = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.PluginsStatus).GetSchema().Attributes))
 	}
 
+	if am.SecurityPosture != nil {
+		securityPostureTmp, d := SecurityPostureStatusAPIResponseToTFModel(ctx, am.SecurityPosture)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		securityPostureTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.SecurityPostureStatus).GetSchema().Attributes),
+			*securityPostureTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.SecurityPosture = securityPostureTfObject
+	} else {
+		t.SecurityPosture = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.SecurityPostureStatus).GetSchema().Attributes))
+	}
+
 	return &t, diags
 }
 

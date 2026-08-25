@@ -8,34 +8,37 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/pkg/optional"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
 func TestCommonRoleBindingFederationContextAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.CommonRoleBindingFederationContext{}
+	emptyApiModel := commonapimodel.CommonRoleBindingFederationContext{}
 	_, diags := commonconv.CommonRoleBindingFederationContextAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestCommonRoleBindingFederationContextAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.CommonRoleBindingFederationContextResponse{}
+	emptyApiModel := commonapimodel.CommonRoleBindingFederationContextResponse{}
 	_, diags := commonconv.CommonRoleBindingFederationContextAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestCommonRoleBindingFederationContextAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.CommonRoleBindingFederationContextOptionalResponse{}
+	emptyApiModel := commonapimodel.CommonRoleBindingFederationContextOptionalResponse{}
 	_, diags := commonconv.CommonRoleBindingFederationContextAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestCommonRoleBindingFederationContextConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.CommonRoleBindingFederationContext{}
+	emptyApiModel := commonapimodel.CommonRoleBindingFederationContext{}
 
 	tfModel, diags := commonconv.CommonRoleBindingFederationContextAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
@@ -48,9 +51,9 @@ func TestCommonRoleBindingFederationContextConverters(t *testing.T) {
 
 func TestCommonRoleBindingFederationContextResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.CommonRoleBindingFederationContextRequest{}
+	emptyApiModelRequest := commonapimodel.CommonRoleBindingFederationContextRequest{}
 
-	emptyApiModelResponse, err := apimodel.CommonRoleBindingFederationContextRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonapimodel.CommonRoleBindingFederationContextRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.CommonRoleBindingFederationContextAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -59,7 +62,7 @@ func TestCommonRoleBindingFederationContextResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := commonconv.CommonRoleBindingFederationContextTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.CommonRoleBindingFederationContextRequestToResponse(filledApiModelRequest)
+	result, err := commonapimodel.CommonRoleBindingFederationContextRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -67,9 +70,9 @@ func TestCommonRoleBindingFederationContextResponseConverters(t *testing.T) {
 
 func TestCommonRoleBindingFederationContextOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.CommonRoleBindingFederationContextRequest{}
+	emptyApiModelRequest := commonapimodel.CommonRoleBindingFederationContextRequest{}
 
-	emptyApiModelResponse, err := apimodel.CommonRoleBindingFederationContextRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonapimodel.CommonRoleBindingFederationContextRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.CommonRoleBindingFederationContextAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -78,8 +81,48 @@ func TestCommonRoleBindingFederationContextOptionalResponseConverters(t *testing
 	filledApiModelRequest, diags := commonconv.CommonRoleBindingFederationContextTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.CommonRoleBindingFederationContextRequestToOptionalResponse(filledApiModelRequest)
+	result, err := commonapimodel.CommonRoleBindingFederationContextRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateCommonRoleBindingFederationContextConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfcommon.CommonRoleBindingFederationContext
+	var stateTfModel tfcommon.CommonRoleBindingFederationContext
+	stateTfModel.Attribute = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingFederationContextAttribute).GetSchema().Attributes))
+
+	expectedUpdateModel := &commonapimodel.UpdateCommonRoleBindingFederationContext{
+		Attribute: optional.OptionalNil[commonapimodel.UpdateCommonRoleBindingFederationContextAttribute]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := commonconv.CommonRoleBindingFederationContextTFToAPIUpdateModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
+}
+
+func TestUpdateCommonRoleBindingFederationContextRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfcommon.CommonRoleBindingFederationContext
+	var stateTfModel tfcommon.CommonRoleBindingFederationContext
+	stateTfModel.Attribute = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingFederationContextAttribute).GetSchema().Attributes))
+
+	expectedUpdateModel := &commonapimodel.UpdateCommonRoleBindingFederationContextRequest{
+		Attribute: optional.OptionalNil[commonapimodel.UpdateCommonRoleBindingFederationContextAttributeRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := commonconv.CommonRoleBindingFederationContextTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

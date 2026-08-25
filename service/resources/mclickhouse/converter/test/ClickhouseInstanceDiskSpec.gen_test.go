@@ -11,6 +11,7 @@ import (
 
 	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
 func TestClickhouseInstanceDiskSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -69,4 +70,18 @@ func TestClickhouseInstanceDiskSpecResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateClickhouseInstanceDiskSpecRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ClickhouseInstanceDiskSpec
+	var stateTfModel tfmodel.ClickhouseInstanceDiskSpec
+
+	expectedUpdateModel := &apimodel.UpdateClickhouseInstanceDiskSpecRequest{}
+
+	result, diags := conv.ClickhouseInstanceDiskSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

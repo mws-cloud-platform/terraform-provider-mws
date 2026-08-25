@@ -8,8 +8,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
 func TestFirewallRuleDestinationAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -36,4 +39,24 @@ func TestFirewallRuleDestinationOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateFirewallRuleDestinationRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.FirewallRuleDestination
+	var stateTfModel tfmodel.FirewallRuleDestination
+	stateTfModel.Spec = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.FirewallRuleDestinationSpec).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateFirewallRuleDestinationRequest{
+		Spec: optional.OptionalNil[apimodel.UpdateFirewallRuleDestinationSpecRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.FirewallRuleDestinationTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

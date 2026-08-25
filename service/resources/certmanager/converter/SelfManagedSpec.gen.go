@@ -7,28 +7,61 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 
+	"go.mws.cloud/go-sdk/pkg/apimodels/sensitive"
 	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/model"
 )
 
-func SelfManagedSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.SelfManagedSpec) (*apimodel.SelfManagedSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func SelfManagedSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SelfManagedSpec) (*apimodel.SelfManagedSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.SelfManagedSpecRequest
 
-	if !tm.Certificate.IsNull() && !tm.Certificate.IsUnknown() {
-		am.Certificate = tm.Certificate.ValueString()
+	if !plan.Certificate.IsNull() && !plan.Certificate.IsUnknown() {
+		am.Certificate = plan.Certificate.ValueString()
 	}
 
-	if !tm.PrivateKey.IsNull() && !tm.PrivateKey.IsUnknown() {
-		am.PrivateKey = tm.PrivateKey.ValueString()
+	if !plan.PrivateKey.IsNull() && !plan.PrivateKey.IsUnknown() {
+		am.PrivateKey = sensitive.New(plan.PrivateKey.ValueString())
 	}
 
-	if !tm.ChainedCert.IsNull() && !tm.ChainedCert.IsUnknown() {
-		am.ChainedCert = tm.ChainedCert.ValueStringPointer()
+	if !plan.ChainedCert.IsNull() && !plan.ChainedCert.IsUnknown() {
+		am.ChainedCert = plan.ChainedCert.ValueStringPointer()
+	}
+
+	return &am, diags
+}
+
+func SelfManagedSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.SelfManagedSpec) (*apimodel.UpdateSelfManagedSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.SelfManagedSpec{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateSelfManagedSpecRequest
+
+	if !plan.Certificate.Equal(state.Certificate) {
+		if !plan.Certificate.IsNull() && !plan.Certificate.IsUnknown() {
+			am.Certificate.SetTo(plan.Certificate.ValueString())
+		}
+	}
+
+	if !plan.PrivateKey.Equal(state.PrivateKey) {
+		if !plan.PrivateKey.IsNull() && !plan.PrivateKey.IsUnknown() {
+			am.PrivateKey.SetTo(sensitive.New(plan.PrivateKey.ValueString()))
+		}
+	}
+
+	if !plan.ChainedCert.Equal(state.ChainedCert) {
+		if !plan.ChainedCert.IsNull() && !plan.ChainedCert.IsUnknown() {
+			am.ChainedCert.SetTo(plan.ChainedCert.ValueString())
+		}
 	}
 
 	return &am, diags

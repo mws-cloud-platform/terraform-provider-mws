@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/kms/model"
 	"go.mws.cloud/go-sdk/service/resources/references/iam"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/kms/converter"
@@ -24,9 +24,9 @@ func TestCryptoKeyRoleBindingAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 func TestCryptoKeyRoleBindingOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.CryptoKeyRoleBindingRequest{
-		Spec: common.CommonRoleBindingSpecRequest{
-			Subject: common.CommonRoleBindingSpecSubjectRequest{},
-			Role:    iam.NewRoleRef("roleID"),
+		Spec: commonapimodel.CommonRoleBindingSpecRequest{
+			Subject: commonapimodel.CommonRoleBindingSpecSubjectRequest{},
+			Role:    iam.NewMustRoleRef("roleID"),
 		},
 	}
 

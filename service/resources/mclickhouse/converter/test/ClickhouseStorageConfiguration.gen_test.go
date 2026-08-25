@@ -10,6 +10,7 @@ import (
 
 	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
 func TestClickhouseStorageConfigurationAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -62,4 +63,18 @@ func TestClickhouseStorageConfigurationResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateClickhouseStorageConfigurationRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ClickhouseStorageConfiguration
+	var stateTfModel tfmodel.ClickhouseStorageConfiguration
+
+	expectedUpdateModel := &apimodel.UpdateClickhouseStorageConfigurationRequest{}
+
+	result, diags := conv.ClickhouseStorageConfigurationTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

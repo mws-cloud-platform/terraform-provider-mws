@@ -7,6 +7,7 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -38,10 +39,10 @@ func VpcAddressGroupStatusAPIResponseToTFModel(ctx context.Context, am *apimodel
 	t.Ready = readyTfObject
 
 	if am.Addresses != nil {
-		addresses := make([]tfmodel.ResourceAddressStatus, 0, len(am.Addresses))
+		addresses := make([]tfcommon.ResourceAddressStatus, 0, len(am.Addresses))
 
 		for _, entity := range am.Addresses {
-			tmp, d := ResourceAddressStatusAPIResponseToTFModel(ctx, &entity)
+			tmp, d := commonconv.ResourceAddressStatusAPIResponseToTFModel(ctx, &entity)
 			diags = append(diags, d...)
 			if diags.HasError() {
 				return nil, diags
@@ -50,7 +51,7 @@ func VpcAddressGroupStatusAPIResponseToTFModel(ctx context.Context, am *apimodel
 		}
 
 		addressesList, d := types.ListValueFrom(ctx, types.ObjectType{
-			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.ResourceAddressStatus).GetSchema().Attributes),
+			AttrTypes: tfconv.GetAttributesTypes(new(tfcommon.ResourceAddressStatus).GetSchema().Attributes),
 		}, addresses)
 		diags = append(diags, d...)
 		if diags.HasError() {
@@ -60,7 +61,7 @@ func VpcAddressGroupStatusAPIResponseToTFModel(ctx context.Context, am *apimodel
 		t.Addresses = addressesList
 	} else {
 		t.Addresses = types.ListNull(types.ObjectType{
-			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.ResourceAddressStatus).GetSchema().Attributes),
+			AttrTypes: tfconv.GetAttributesTypes(new(tfcommon.ResourceAddressStatus).GetSchema().Attributes),
 		})
 	}
 
@@ -80,6 +81,12 @@ func VpcAddressGroupStatusAPIResponseToTFModel(ctx context.Context, am *apimodel
 		t.OrphanAddresses = orphanAddressesList
 	} else {
 		t.OrphanAddresses = types.ListNull(types.StringType)
+	}
+
+	if am.Region != nil {
+		t.Region = types.StringPointerValue(ptr.Get(am.Region.ID()))
+	} else {
+		t.Region = types.StringNull()
 	}
 
 	return &t, diags

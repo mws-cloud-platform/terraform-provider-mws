@@ -107,13 +107,13 @@ func (m *SnapshotResource) Configure(ctx context.Context, req resource.Configure
 func (m *SnapshotResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "SnapshotResource.Create")
 
-	var data tfmodel.SnapshotModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.SnapshotModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -121,17 +121,17 @@ func (m *SnapshotResource) Create(ctx context.Context, req resource.CreateReques
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SnapshotResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.SnapshotTFToAPIRequestModel(ctx, &data.Snapshot)
+	body, diags := conv.SnapshotTFToAPIRequestModel(ctx, &plan.Snapshot)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SnapshotResource.TFToAPI")
@@ -141,8 +141,8 @@ func (m *SnapshotResource) Create(ctx context.Context, req resource.CreateReques
 	apiRes, err := m.sdk.CreateSnapshot(
 		ctx,
 		client.UpsertSnapshotRequest{
-			Project:  data.ProjectParam.ValueString(),
-			Snapshot: data.SnapshotParam.ValueString(),
+			Project:  plan.ProjectParam.ValueString(),
+			Snapshot: plan.SnapshotParam.ValueString(),
 			Body:     *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
@@ -155,7 +155,7 @@ func (m *SnapshotResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.SnapshotAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -164,21 +164,21 @@ func (m *SnapshotResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	data.Snapshot = *tfRes
+	plan.Snapshot = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *SnapshotResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "SnapshotResource.Read")
 
-	var data tfmodel.SnapshotModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.SnapshotModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -186,14 +186,14 @@ func (m *SnapshotResource) Read(ctx context.Context, req resource.ReadRequest, r
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetSnapshot(
 		ctx,
 		client.GetSnapshotRequest{
-			Project:  data.ProjectParam.ValueString(),
-			Snapshot: data.SnapshotParam.ValueString(),
+			Project:  state.ProjectParam.ValueString(),
+			Snapshot: state.SnapshotParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -204,7 +204,7 @@ func (m *SnapshotResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.SnapshotAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -213,21 +213,27 @@ func (m *SnapshotResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
-	data.Snapshot = *tfRes
+	state.Snapshot = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 func (m *SnapshotResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "SnapshotResource.Update")
 
-	var data tfmodel.SnapshotModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.SnapshotModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	var state tfmodel.SnapshotModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -235,17 +241,17 @@ func (m *SnapshotResource) Update(ctx context.Context, req resource.UpdateReques
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SnapshotResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.SnapshotTFToAPIRequestModel(ctx, &data.Snapshot)
+	body, diags := conv.SnapshotTFToAPIUpdateRequestModel(ctx, &plan.Snapshot, &state.Snapshot)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SnapshotResource.TFToAPI")
@@ -255,9 +261,9 @@ func (m *SnapshotResource) Update(ctx context.Context, req resource.UpdateReques
 	apiRes, err := m.sdk.UpdateSnapshot(
 		ctx,
 		client.UpdateSnapshotRequest{
-			Project:  data.ProjectParam.ValueString(),
-			Snapshot: data.SnapshotParam.ValueString(),
-			Body:     body.AsUpdateModel(),
+			Project:  plan.ProjectParam.ValueString(),
+			Snapshot: plan.SnapshotParam.ValueString(),
+			Body:     *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -269,7 +275,7 @@ func (m *SnapshotResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.SnapshotAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -278,21 +284,21 @@ func (m *SnapshotResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
-	data.Snapshot = *tfRes
+	plan.Snapshot = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *SnapshotResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "SnapshotResource.Delete")
 
-	var data tfmodel.SnapshotModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.SnapshotModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -300,10 +306,10 @@ func (m *SnapshotResource) Delete(ctx context.Context, req resource.DeleteReques
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := state.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SnapshotResource.Timeouts")
@@ -313,8 +319,8 @@ func (m *SnapshotResource) Delete(ctx context.Context, req resource.DeleteReques
 	err := m.sdk.DeleteSnapshot(
 		ctx,
 		client.DeleteSnapshotRequest{
-			Project:  data.ProjectParam.ValueString(),
-			Snapshot: data.SnapshotParam.ValueString(),
+			Project:  state.ProjectParam.ValueString(),
+			Snapshot: state.SnapshotParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -330,7 +336,7 @@ func (m *SnapshotResource) Delete(ctx context.Context, req resource.DeleteReques
 func (m *SnapshotResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "SnapshotResource.ImportState")
 
-	var data tfmodel.SnapshotModel
+	var state tfmodel.SnapshotModel
 
 	ref, err := computeref.ParseSnapshotRef(ctx, req.ID)
 	if err != nil {
@@ -355,7 +361,7 @@ func (m *SnapshotResource) ImportState(ctx context.Context, req resource.ImportS
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.SnapshotAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -364,10 +370,10 @@ func (m *SnapshotResource) ImportState(ctx context.Context, req resource.ImportS
 		return
 	}
 
-	data.Snapshot = *tfRes
+	state.Snapshot = *tfRes
 
-	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.SnapshotParam = types.StringValue(ref.GetSnapshot())
+	state.ProjectParam = types.StringValue(ref.GetProject())
+	state.SnapshotParam = types.StringValue(ref.GetSnapshot())
 
 	var rwTimeouts timeouts.Value
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
@@ -375,7 +381,7 @@ func (m *SnapshotResource) ImportState(ctx context.Context, req resource.ImportS
 		tflog.Debug(ctx, "SnapshotResource.timeouts.GetAttribute")
 		return
 	}
-	data.Timeouts = rwTimeouts
+	state.Timeouts = rwTimeouts
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

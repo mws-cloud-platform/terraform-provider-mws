@@ -10,6 +10,7 @@ import (
 
 	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
 func TestPostgresExtensionSpecAPIResponseToTFModelEmpty(t *testing.T) {
@@ -38,4 +39,18 @@ func TestPostgresExtensionSpecResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdatePostgresExtensionSpecRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.PostgresExtensionSpec
+	var stateTfModel tfmodel.PostgresExtensionSpec
+
+	expectedUpdateModel := &apimodel.UpdatePostgresExtensionSpecRequest{}
+
+	result, diags := conv.PostgresExtensionSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

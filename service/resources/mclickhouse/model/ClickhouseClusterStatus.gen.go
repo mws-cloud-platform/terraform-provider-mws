@@ -15,7 +15,6 @@ type ClickhouseClusterStatus struct {
 	tfcommon.ResourceStatus
 	Health  ClusterHealth `tfsdk:"health"`
 	State   ClusterState  `tfsdk:"state"`
-	Region  types.String  `tfsdk:"region"`
 	Cluster types.Object  `tfsdk:"cluster"`
 }
 
@@ -73,10 +72,6 @@ func (s *ClickhouseClusterStatus) GetSchema() schema.Schema {
 					),
 				},
 				Computed: true,
-			},
-			"region": schema.StringAttribute{
-				MarkdownDescription: `Регион, в котором располагается кластер`,
-				Computed:            true,
 			},
 			"cluster": schema.SingleNestedAttribute{
 				Attributes:          new(ClickhouseClusterResource).GetSchema().Attributes,

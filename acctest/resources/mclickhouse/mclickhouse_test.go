@@ -3,6 +3,7 @@ package mclickhouse
 import (
 	helper "github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
+	"go.mws.cloud/go-sdk/pkg/apimodels/sensitive"
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	mclickhouseclient "go.mws.cloud/go-sdk/service/mclickhouse/client"
@@ -133,7 +134,7 @@ func (s *BaseClusterSuite) SetupSuite() {
 				Shards: []mclickhousemodel.ClickhouseClusterShardRequest{{
 					Name: "shard",
 					Resources: mclickhousemodel.ClickhouseInstanceHWResourcesRequest{
-						VmType: mclickhouseref.NewClickhouseVmTypeRef("gen-4-8"),
+						VmType: mclickhouseref.NewMustClickhouseVmTypeRef("gen-4-8"),
 						Disk: mclickhousemodel.ClickhouseInstanceDiskSpecRequest{
 							Type: mclickhousemodel.ClickhouseDataDiskType_NETWORK_STANDARD_SSD,
 							Size: bytesize.MustParseString("10GB"),
@@ -157,7 +158,7 @@ func (s *BaseClusterSuite) SetupSuite() {
 				}},
 				BootstrapAdmin: mclickhousemodel.ClickhouseClusterBootstrapAdminSpecRequest{
 					Username: "admin",
-					Password: helper.RandString(16),
+					Password: sensitive.New(helper.RandString(16)),
 				},
 				MaintenanceWindow: &commonmodel.MaintenanceWindowRequest{
 					Weekly: commonmodel.WeeklyMaintenanceWindowRequest{

@@ -8,6 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
@@ -28,7 +29,7 @@ func TestEgressNatOptionalResponseConverters(t *testing.T) {
 				Subnets: []vpc.SubnetRef{},
 			},
 			External: apimodel.EgressNatSpecExternalRequest{
-				Addresses: []apimodel.ResourceExternalAddressSpecOrRefRequest{},
+				Addresses: []commonapimodel.ResourceExternalAddressSpecOrRefRequest{},
 			},
 		},
 	}

@@ -79,13 +79,13 @@ func (m *DiskBackupDataSource) Configure(ctx context.Context, req datasource.Con
 func (m *DiskBackupDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "DiskBackupDataSource.Read")
 
-	var data tfmodel.DiskBackupModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.DiskBackupModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -93,14 +93,14 @@ func (m *DiskBackupDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetDiskBackup(
 		ctx,
 		client.GetDiskBackupRequest{
-			Project:    data.ProjectParam.ValueString(),
-			DiskBackup: data.DiskBackupParam.ValueString(),
+			Project:    config.ProjectParam.ValueString(),
+			DiskBackup: config.DiskBackupParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -118,7 +118,7 @@ func (m *DiskBackupDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		return
 	}
 
-	data.DiskBackup = *tfRes
+	config.DiskBackup = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

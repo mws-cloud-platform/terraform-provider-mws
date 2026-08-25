@@ -25,11 +25,11 @@ func ClickhouseInstanceHealthAPIToTFModel(ctx context.Context, am *apimodel.Clic
 	return t, diags
 }
 
-func ClickhouseInstanceHealthTFToAPIModel(ctx context.Context, tm tfmodel.ClickhouseInstanceHealth) (*apimodel.ClickhouseInstanceHealth, tfdiag.Diagnostics) {
+func ClickhouseInstanceHealthTFToAPIModel(ctx context.Context, plan tfmodel.ClickhouseInstanceHealth) (*apimodel.ClickhouseInstanceHealth, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClickhouseInstanceHealth
 
-	var tmp = types.String(tm)
+	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}

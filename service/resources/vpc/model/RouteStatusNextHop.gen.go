@@ -5,6 +5,8 @@ package model
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
 type RouteStatusNextHop struct {
@@ -26,7 +28,7 @@ func (s *RouteStatusNextHop) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"address": schema.SingleNestedAttribute{
-				Attributes:          new(ResourceAddressStatus).GetSchema().Attributes,
+				Attributes:          new(tfcommon.ResourceAddressStatus).GetSchema().Attributes,
 				MarkdownDescription: `Адрес`,
 				Computed:            true,
 			},

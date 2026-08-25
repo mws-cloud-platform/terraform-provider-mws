@@ -83,13 +83,13 @@ func (m *TopicDataSource) Configure(ctx context.Context, req datasource.Configur
 func (m *TopicDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "TopicDataSource.Read")
 
-	var data tfmodel.TopicModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.TopicModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -97,15 +97,15 @@ func (m *TopicDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetKafkaTopic(
 		ctx,
 		client.GetKafkaTopicRequest{
-			Project: data.ProjectParam.ValueString(),
-			Cluster: data.ClusterParam.ValueString(),
-			Topic:   data.TopicParam.ValueString(),
+			Project: config.ProjectParam.ValueString(),
+			Cluster: config.ClusterParam.ValueString(),
+			Topic:   config.TopicParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -123,7 +123,7 @@ func (m *TopicDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		return
 	}
 
-	data.KafkaTopic = *tfRes
+	config.KafkaTopic = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

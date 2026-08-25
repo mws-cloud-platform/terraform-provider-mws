@@ -10,13 +10,14 @@ import (
 )
 
 type Cluster struct {
-	Kind           types.String `tfsdk:"kind"`
-	Metadata       types.Object `tfsdk:"metadata"`
-	Status         types.Object `tfsdk:"status"`
-	Availability   types.Object `tfsdk:"availability"`
-	Network        types.Object `tfsdk:"network"`
-	VersionControl types.Object `tfsdk:"version_control"`
-	Plugins        types.Object `tfsdk:"plugins"`
+	Kind            types.String `tfsdk:"kind"`
+	Metadata        types.Object `tfsdk:"metadata"`
+	Status          types.Object `tfsdk:"status"`
+	Availability    types.Object `tfsdk:"availability"`
+	Network         types.Object `tfsdk:"network"`
+	VersionControl  types.Object `tfsdk:"version_control"`
+	Plugins         types.Object `tfsdk:"plugins"`
+	SecurityPosture types.Object `tfsdk:"security_posture"`
 }
 
 func (s *Cluster) GetSchema() schema.Schema {
@@ -54,6 +55,11 @@ Plane (управляющего слоя) и групп рабочих узло�
 			"plugins": schema.SingleNestedAttribute{
 				Attributes: new(PluginsSpec).GetSchema().Attributes,
 				Computed:   true,
+			},
+			"security_posture": schema.SingleNestedAttribute{
+				Attributes:          new(SecurityPostureSpec).GetSchema().Attributes,
+				MarkdownDescription: `Настройка KSP для кластера`,
+				Computed:            true,
 			},
 		},
 	}

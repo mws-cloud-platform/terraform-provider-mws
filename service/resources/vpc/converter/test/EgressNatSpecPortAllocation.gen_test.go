@@ -12,6 +12,7 @@ import (
 
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
 func TestEgressNatSpecPortAllocationAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -40,4 +41,18 @@ func TestEgressNatSpecPortAllocationOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateEgressNatSpecPortAllocationRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.EgressNatSpecPortAllocation
+	var stateTfModel tfmodel.EgressNatSpecPortAllocation
+
+	expectedUpdateModel := &apimodel.UpdateEgressNatSpecPortAllocationRequest{}
+
+	result, diags := conv.EgressNatSpecPortAllocationTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

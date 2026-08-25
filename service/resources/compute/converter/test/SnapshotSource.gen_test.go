@@ -8,9 +8,12 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
 	apimodel "go.mws.cloud/go-sdk/service/compute/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
 func TestSnapshotSourceAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -39,6 +42,26 @@ func TestSnapshotSourceOptionalResponseConverters(t *testing.T) {
 	require.Equal(t, *emptyApiModelResponse, *result)
 }
 
+func TestUpdateSnapshotSourceRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.SnapshotSource
+	var stateTfModel tfmodel.SnapshotSource
+	stateTfModel.Disk = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.SnapshotSourceDisk).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateSnapshotSourceRequest{
+		Disk: optional.OptionalNil[apimodel.UpdateSnapshotSourceDiskRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.SnapshotSourceTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
+}
+
 func TestSnapshotSourceDiskAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
 	emptyApiModel := apimodel.SnapshotSourceDiskOptionalResponse{}
@@ -49,7 +72,7 @@ func TestSnapshotSourceDiskAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 func TestSnapshotSourceDiskOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.SnapshotSourceDiskRequest{
-		Id: compute.NewDiskRef("projectID", "diskID"),
+		Id: compute.NewMustDiskRef("projectID", "diskID"),
 	}
 
 	emptyApiModelResponse, err := apimodel.SnapshotSourceDiskRequestToOptionalResponse(&emptyApiModelRequest)
@@ -65,4 +88,18 @@ func TestSnapshotSourceDiskOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateSnapshotSourceDiskRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.SnapshotSourceDisk
+	var stateTfModel tfmodel.SnapshotSourceDisk
+
+	expectedUpdateModel := &apimodel.UpdateSnapshotSourceDiskRequest{}
+
+	result, diags := conv.SnapshotSourceDiskTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

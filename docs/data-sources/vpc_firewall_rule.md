@@ -3,12 +3,12 @@
 page_title: "mws_vpc_firewall_rule Data Source - mws"
 subcategory: ""
 description: |-
-  Правило файрвола — набор параметров, который разрешает или запрещает определенный тип трафика
+  Правило файрвола — набор параметров, который разрешает или запрещает определенный тип трафика.
 ---
 
 # mws_vpc_firewall_rule (Data Source)
 
-Правило файрвола — набор параметров, который разрешает или запрещает определенный тип трафика
+Правило файрвола — набор параметров, который разрешает или запрещает определенный тип трафика.
 
 ## Примеры использования
 
@@ -38,11 +38,11 @@ data "mws_vpc_firewall_rule" "firewall_rule" {
 - `destination` (Attributes) Критерий применимости правила, описывает пункт назначения пакета (see [below for nested schema](#nestedatt--destination))
 - `direction` (String) Направление трафика, к которому применяется правило
 - `kind` (String)
-- `metadata` (Attributes) Метаданные правила Firewall'а (see [below for nested schema](#nestedatt--metadata))
+- `metadata` (Attributes) Метаданные правила файрвола (see [below for nested schema](#nestedatt--metadata))
 - `priority` (Number) Приоритет правила. Чем меньше число, тем больший приоритет имеет правило
 - `proto_ports` (List of String) Критерий применимости правила. Определяет список протоколов и соответствующих портов (если применимо) назначения пакета. Значение по умолчанию - пустое значение. Означает любой протокол и порт
 - `source` (Attributes) Критерий применимости правила, описывает источник отправления пакета (see [below for nested schema](#nestedatt--source))
-- `status` (Attributes) Статус правила Firewall'а (see [below for nested schema](#nestedatt--status))
+- `status` (Attributes) Статус правила файрвола (see [below for nested schema](#nestedatt--status))
 
 <a id="nestedatt--destination"></a>
 ### Nested Schema for `destination`

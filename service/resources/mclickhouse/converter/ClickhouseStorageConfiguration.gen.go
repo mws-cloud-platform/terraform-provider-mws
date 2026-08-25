@@ -96,28 +96,28 @@ func ClickhouseStorageConfigurationAPIResponseToTFModel(ctx context.Context, am 
 	return &t, diags
 }
 
-func ClickhouseStorageConfigurationTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClickhouseStorageConfiguration) (*apimodel.ClickhouseStorageConfigurationRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClickhouseStorageConfigurationTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseStorageConfiguration) (*apimodel.ClickhouseStorageConfigurationRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClickhouseStorageConfigurationRequest
 
-	if !tm.HybridStorageEnabled.IsNull() && !tm.HybridStorageEnabled.IsUnknown() {
-		am.HybridStorageEnabled = tm.HybridStorageEnabled.ValueBoolPointer()
+	if !plan.HybridStorageEnabled.IsNull() && !plan.HybridStorageEnabled.IsUnknown() {
+		am.HybridStorageEnabled = plan.HybridStorageEnabled.ValueBoolPointer()
 	}
 
-	if !tm.MoveFactor.IsNull() && !tm.MoveFactor.IsUnknown() {
-		am.MoveFactor = tm.MoveFactor.ValueFloat64Pointer()
+	if !plan.MoveFactor.IsNull() && !plan.MoveFactor.IsUnknown() {
+		am.MoveFactor = plan.MoveFactor.ValueFloat64Pointer()
 	}
 
-	if !tm.DataCachingEnabled.IsNull() && !tm.DataCachingEnabled.IsUnknown() {
-		am.DataCachingEnabled = tm.DataCachingEnabled.ValueBoolPointer()
+	if !plan.DataCachingEnabled.IsNull() && !plan.DataCachingEnabled.IsUnknown() {
+		am.DataCachingEnabled = plan.DataCachingEnabled.ValueBoolPointer()
 	}
 
-	if !tm.CacheMaxSize.IsNull() && !tm.CacheMaxSize.IsUnknown() {
-		tmpCacheMaxSize, err := bytesize.ParseString(tm.CacheMaxSize.ValueString())
+	if !plan.CacheMaxSize.IsNull() && !plan.CacheMaxSize.IsUnknown() {
+		tmpCacheMaxSize, err := bytesize.ParseString(plan.CacheMaxSize.ValueString())
 		if err != nil {
 			diags.AddError("ByteSize string parsing", err.Error())
 			return nil, diags
@@ -125,13 +125,67 @@ func ClickhouseStorageConfigurationTFToAPIRequestModel(ctx context.Context, tm *
 		am.CacheMaxSize = &tmpCacheMaxSize
 	}
 
-	if !tm.MaxDataPartSizeSsd.IsNull() && !tm.MaxDataPartSizeSsd.IsUnknown() {
-		tmpMaxDataPartSizeSsd, err := bytesize.ParseString(tm.MaxDataPartSizeSsd.ValueString())
+	if !plan.MaxDataPartSizeSsd.IsNull() && !plan.MaxDataPartSizeSsd.IsUnknown() {
+		tmpMaxDataPartSizeSsd, err := bytesize.ParseString(plan.MaxDataPartSizeSsd.ValueString())
 		if err != nil {
 			diags.AddError("ByteSize string parsing", err.Error())
 			return nil, diags
 		}
 		am.MaxDataPartSizeSsd = &tmpMaxDataPartSizeSsd
+	}
+
+	return &am, diags
+}
+
+func ClickhouseStorageConfigurationTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseStorageConfiguration) (*apimodel.UpdateClickhouseStorageConfigurationRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.ClickhouseStorageConfiguration{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateClickhouseStorageConfigurationRequest
+
+	if !plan.HybridStorageEnabled.Equal(state.HybridStorageEnabled) {
+		if !plan.HybridStorageEnabled.IsNull() && !plan.HybridStorageEnabled.IsUnknown() {
+			am.HybridStorageEnabled.SetTo(plan.HybridStorageEnabled.ValueBool())
+		}
+	}
+
+	if !plan.MoveFactor.Equal(state.MoveFactor) {
+		if !plan.MoveFactor.IsNull() && !plan.MoveFactor.IsUnknown() {
+			am.MoveFactor.SetTo(plan.MoveFactor.ValueFloat64())
+		}
+	}
+
+	if !plan.DataCachingEnabled.Equal(state.DataCachingEnabled) {
+		if !plan.DataCachingEnabled.IsNull() && !plan.DataCachingEnabled.IsUnknown() {
+			am.DataCachingEnabled.SetTo(plan.DataCachingEnabled.ValueBool())
+		}
+	}
+
+	if !plan.CacheMaxSize.Equal(state.CacheMaxSize) {
+		if !plan.CacheMaxSize.IsNull() && !plan.CacheMaxSize.IsUnknown() {
+			tmpCacheMaxSize, err := bytesize.ParseString(plan.CacheMaxSize.ValueString())
+			if err != nil {
+				diags.AddError("ByteSize string parsing", err.Error())
+				return nil, diags
+			}
+			am.CacheMaxSize.SetTo(tmpCacheMaxSize)
+		}
+	}
+
+	if !plan.MaxDataPartSizeSsd.Equal(state.MaxDataPartSizeSsd) {
+		if !plan.MaxDataPartSizeSsd.IsNull() && !plan.MaxDataPartSizeSsd.IsUnknown() {
+			tmpMaxDataPartSizeSsd, err := bytesize.ParseString(plan.MaxDataPartSizeSsd.ValueString())
+			if err != nil {
+				diags.AddError("ByteSize string parsing", err.Error())
+				return nil, diags
+			}
+			am.MaxDataPartSizeSsd.SetTo(tmpMaxDataPartSizeSsd)
+		}
 	}
 
 	return &am, diags

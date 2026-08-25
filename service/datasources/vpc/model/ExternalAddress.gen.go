@@ -13,6 +13,7 @@ type ExternalAddress struct {
 	Kind       types.String `tfsdk:"kind"`
 	Metadata   types.Object `tfsdk:"metadata"`
 	Status     types.Object `tfsdk:"status"`
+	Region     types.String `tfsdk:"region"`
 	NatGateway types.String `tfsdk:"nat_gateway"`
 }
 
@@ -31,6 +32,10 @@ func (s *ExternalAddress) GetSchema() schema.Schema {
 			"status": schema.SingleNestedAttribute{
 				Attributes:          new(ExternalAddressStatus).GetSchema().Attributes,
 				MarkdownDescription: `Статус внешнего адреса`,
+				Computed:            true,
+			},
+			"region": schema.StringAttribute{
+				MarkdownDescription: `Регион, которому принадлежит адрес`,
 				Computed:            true,
 			},
 			"nat_gateway": schema.StringAttribute{

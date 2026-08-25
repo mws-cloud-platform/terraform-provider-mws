@@ -256,29 +256,33 @@ func CommonTypedResourceMetadataAPIOptionalResponseToTFModel(ctx context.Context
 	return &t, diags
 }
 
-func CommonTypedResourceMetadataTFToAPIModel(ctx context.Context, tm *tfcommon.CommonTypedResourceMetadata) (*commonapimodel.CommonTypedResourceMetadata, tfdiag.Diagnostics) {
-	if tm == nil {
+func CommonTypedResourceMetadataTFToAPIModel(ctx context.Context, plan *tfcommon.CommonTypedResourceMetadata) (*commonapimodel.CommonTypedResourceMetadata, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.CommonTypedResourceMetadata
 
-	if !tm.Id.IsNull() && !tm.Id.IsUnknown() {
-		idID := resmodels.ParseAnyResourceID(tm.Id.ValueString())
+	if !plan.Id.IsNull() && !plan.Id.IsUnknown() {
+		idID, err := resmodels.ParseAnyResourceID(plan.Id.ValueString())
+		if err != nil {
+			diags.AddError("reference parsing", err.Error())
+			return nil, diags
+		}
 		am.Id = &idID
 	}
 
-	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		am.Name = tm.Name.ValueStringPointer()
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		am.Name = plan.Name.ValueStringPointer()
 	}
 
-	if !tm.DisplayName.IsNull() && !tm.DisplayName.IsUnknown() {
-		am.DisplayName = tm.DisplayName.ValueStringPointer()
+	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
+		am.DisplayName = plan.DisplayName.ValueStringPointer()
 	}
 
-	if !tm.CreateTime.IsNull() && !tm.CreateTime.IsUnknown() {
-		tmpCreateTime, err := time.Parse(time.RFC3339, tm.CreateTime.ValueString())
+	if !plan.CreateTime.IsNull() && !plan.CreateTime.IsUnknown() {
+		tmpCreateTime, err := time.Parse(time.RFC3339, plan.CreateTime.ValueString())
 		if err != nil {
 			diags.AddError("time string parsing", err.Error())
 			return nil, diags
@@ -286,8 +290,8 @@ func CommonTypedResourceMetadataTFToAPIModel(ctx context.Context, tm *tfcommon.C
 		am.CreateTime = &tmpCreateTime
 	}
 
-	if !tm.DeleteTime.IsNull() && !tm.DeleteTime.IsUnknown() {
-		tmpDeleteTime, err := time.Parse(time.RFC3339, tm.DeleteTime.ValueString())
+	if !plan.DeleteTime.IsNull() && !plan.DeleteTime.IsUnknown() {
+		tmpDeleteTime, err := time.Parse(time.RFC3339, plan.DeleteTime.ValueString())
 		if err != nil {
 			diags.AddError("time string parsing", err.Error())
 			return nil, diags
@@ -295,8 +299,8 @@ func CommonTypedResourceMetadataTFToAPIModel(ctx context.Context, tm *tfcommon.C
 		am.DeleteTime = &tmpDeleteTime
 	}
 
-	if !tm.PurgeTime.IsNull() && !tm.PurgeTime.IsUnknown() {
-		tmpPurgeTime, err := time.Parse(time.RFC3339, tm.PurgeTime.ValueString())
+	if !plan.PurgeTime.IsNull() && !plan.PurgeTime.IsUnknown() {
+		tmpPurgeTime, err := time.Parse(time.RFC3339, plan.PurgeTime.ValueString())
 		if err != nil {
 			diags.AddError("time string parsing", err.Error())
 			return nil, diags
@@ -304,13 +308,14 @@ func CommonTypedResourceMetadataTFToAPIModel(ctx context.Context, tm *tfcommon.C
 		am.PurgeTime = &tmpPurgeTime
 	}
 
-	if !tm.Usages.IsNull() && !tm.Usages.IsUnknown() {
+	if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
 		usages := make([]tfcommon.Usage, 0)
-		dUsages := tm.Usages.ElementsAs(ctx, &usages, false)
+		dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
 		diags = append(diags, dUsages...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.Usages = make([]commonapimodel.Usage, 0, len(usages))
 
 		for _, entity := range usages {
@@ -323,36 +328,37 @@ func CommonTypedResourceMetadataTFToAPIModel(ctx context.Context, tm *tfcommon.C
 		}
 	}
 
-	if !tm.Description.IsNull() && !tm.Description.IsUnknown() {
-		am.Description = tm.Description.ValueStringPointer()
+	if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
+		am.Description = plan.Description.ValueStringPointer()
 	}
 
 	return &am, diags
 }
 
-func CommonTypedResourceMetadataTFToAPIRequestModel(ctx context.Context, tm *tfcommon.CommonTypedResourceMetadata) (*commonapimodel.CommonTypedResourceMetadataRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func CommonTypedResourceMetadataTFToAPIRequestModel(ctx context.Context, plan *tfcommon.CommonTypedResourceMetadata) (*commonapimodel.CommonTypedResourceMetadataRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.CommonTypedResourceMetadataRequest
 
-	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		am.Name = tm.Name.ValueStringPointer()
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		am.Name = plan.Name.ValueStringPointer()
 	}
 
-	if !tm.DisplayName.IsNull() && !tm.DisplayName.IsUnknown() {
-		am.DisplayName = tm.DisplayName.ValueStringPointer()
+	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
+		am.DisplayName = plan.DisplayName.ValueStringPointer()
 	}
 
-	if !tm.Usages.IsNull() && !tm.Usages.IsUnknown() {
+	if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
 		usages := make([]tfcommon.Usage, 0)
-		dUsages := tm.Usages.ElementsAs(ctx, &usages, false)
+		dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
 		diags = append(diags, dUsages...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.Usages = make([]commonapimodel.UsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
@@ -365,8 +371,164 @@ func CommonTypedResourceMetadataTFToAPIRequestModel(ctx context.Context, tm *tfc
 		}
 	}
 
-	if !tm.Description.IsNull() && !tm.Description.IsUnknown() {
-		am.Description = tm.Description.ValueStringPointer()
+	if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
+		am.Description = plan.Description.ValueStringPointer()
+	}
+
+	return &am, diags
+}
+
+func CommonTypedResourceMetadataTFToAPIUpdateModel(ctx context.Context, plan, state *tfcommon.CommonTypedResourceMetadata) (*commonapimodel.UpdateCommonTypedResourceMetadata, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfcommon.CommonTypedResourceMetadata{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am commonapimodel.UpdateCommonTypedResourceMetadata
+
+	if !plan.Id.Equal(state.Id) {
+		if !plan.Id.IsNull() && !plan.Id.IsUnknown() {
+			idID, err := resmodels.ParseAnyResourceID(plan.Id.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.Id.SetTo(idID)
+		}
+	}
+
+	if !plan.Name.Equal(state.Name) {
+		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+			am.Name.SetTo(plan.Name.ValueString())
+		}
+	}
+
+	if !plan.DisplayName.Equal(state.DisplayName) {
+		if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
+			am.DisplayName.SetTo(plan.DisplayName.ValueString())
+		}
+	}
+
+	if !plan.CreateTime.Equal(state.CreateTime) {
+		if !plan.CreateTime.IsNull() && !plan.CreateTime.IsUnknown() {
+			tmpCreateTime, err := time.Parse(time.RFC3339, plan.CreateTime.ValueString())
+			if err != nil {
+				diags.AddError("time string parsing", err.Error())
+				return nil, diags
+			}
+			am.CreateTime.SetTo(tmpCreateTime)
+		}
+	}
+
+	if !plan.DeleteTime.Equal(state.DeleteTime) {
+		if !plan.DeleteTime.IsNull() && !plan.DeleteTime.IsUnknown() {
+			tmpDeleteTime, err := time.Parse(time.RFC3339, plan.DeleteTime.ValueString())
+			if err != nil {
+				diags.AddError("time string parsing", err.Error())
+				return nil, diags
+			}
+			am.DeleteTime.SetTo(tmpDeleteTime)
+		}
+	}
+
+	if !plan.PurgeTime.Equal(state.PurgeTime) {
+		if !plan.PurgeTime.IsNull() && !plan.PurgeTime.IsUnknown() {
+			tmpPurgeTime, err := time.Parse(time.RFC3339, plan.PurgeTime.ValueString())
+			if err != nil {
+				diags.AddError("time string parsing", err.Error())
+				return nil, diags
+			}
+			am.PurgeTime.SetTo(tmpPurgeTime)
+		}
+	}
+
+	if !plan.Usages.Equal(state.Usages) {
+		if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
+			usages := make([]tfcommon.Usage, 0)
+			dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
+			diags = append(diags, dUsages...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			usagesTmp := make([]commonapimodel.UpdateUsage, 0, len(usages))
+
+			for _, entity := range usages {
+				stateEntity := tfcommon.Usage{}
+				tmp, d := UsageTFToAPIUpdateModel(ctx, &entity, &stateEntity)
+				diags = append(diags, d...)
+				if diags.HasError() {
+					return nil, diags
+				}
+				usagesTmp = append(usagesTmp, *tmp)
+			}
+			am.Usages.SetTo(usagesTmp)
+		}
+	}
+
+	if !plan.Description.Equal(state.Description) {
+		if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
+			am.Description.SetTo(plan.Description.ValueString())
+		}
+	}
+
+	return &am, diags
+}
+
+func CommonTypedResourceMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfcommon.CommonTypedResourceMetadata) (*commonapimodel.UpdateCommonTypedResourceMetadataRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfcommon.CommonTypedResourceMetadata{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am commonapimodel.UpdateCommonTypedResourceMetadataRequest
+
+	if !plan.Name.Equal(state.Name) {
+		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+			am.Name.SetTo(plan.Name.ValueString())
+		}
+	}
+
+	if !plan.DisplayName.Equal(state.DisplayName) {
+		if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
+			am.DisplayName.SetTo(plan.DisplayName.ValueString())
+		}
+	}
+
+	if !plan.Usages.Equal(state.Usages) {
+		if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
+			usages := make([]tfcommon.Usage, 0)
+			dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
+			diags = append(diags, dUsages...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			usagesTmp := make([]commonapimodel.UpdateUsageRequest, 0, len(usages))
+
+			for _, entity := range usages {
+				stateEntity := tfcommon.Usage{}
+				tmp, d := UsageTFToAPIUpdateRequestModel(ctx, &entity, &stateEntity)
+				diags = append(diags, d...)
+				if diags.HasError() {
+					return nil, diags
+				}
+				usagesTmp = append(usagesTmp, *tmp)
+			}
+			am.Usages.SetTo(usagesTmp)
+		}
+	}
+
+	if !plan.Description.Equal(state.Description) {
+		if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
+			am.Description.SetTo(plan.Description.ValueString())
+		}
 	}
 
 	return &am, diags

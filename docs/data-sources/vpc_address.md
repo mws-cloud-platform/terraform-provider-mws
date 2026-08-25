@@ -101,6 +101,7 @@ Read-Only:
 
 IPv4- или IPv6-адрес
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
+- `region` (String) Регион, которому принадлежит адрес; берется из подсети
 
 <a id="nestedatt--status--ready"></a>
 ### Nested Schema for `status.ready`

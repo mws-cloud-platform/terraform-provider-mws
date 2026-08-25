@@ -28,21 +28,46 @@ func EgressNatSpecPortAllocationAPIOptionalResponseToTFModel(ctx context.Context
 	return &t, diags
 }
 
-func EgressNatSpecPortAllocationTFToAPIRequestModel(ctx context.Context, tm *tfmodel.EgressNatSpecPortAllocation) (*apimodel.EgressNatSpecPortAllocationRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func EgressNatSpecPortAllocationTFToAPIRequestModel(ctx context.Context, plan *tfmodel.EgressNatSpecPortAllocation) (*apimodel.EgressNatSpecPortAllocationRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.EgressNatSpecPortAllocationRequest
 
-	if !tm.PortsPerClient.IsNull() && !tm.PortsPerClient.IsUnknown() {
-		tmpPortsPerClient, err := unitsrange.ParseString[largenumber.LargeNumber](tm.PortsPerClient.ValueString())
+	if !plan.PortsPerClient.IsNull() && !plan.PortsPerClient.IsUnknown() {
+		tmpPortsPerClient, err := unitsrange.ParseString[largenumber.LargeNumber](plan.PortsPerClient.ValueString())
 		if err != nil {
 			diags.AddError("LargeNumber string parsing", err.Error())
 			return nil, diags
 		}
 		am.PortsPerClient = tmpPortsPerClient
+	}
+
+	return &am, diags
+}
+
+func EgressNatSpecPortAllocationTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.EgressNatSpecPortAllocation) (*apimodel.UpdateEgressNatSpecPortAllocationRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.EgressNatSpecPortAllocation{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateEgressNatSpecPortAllocationRequest
+
+	if !plan.PortsPerClient.Equal(state.PortsPerClient) {
+		if !plan.PortsPerClient.IsNull() && !plan.PortsPerClient.IsUnknown() {
+			tmpPortsPerClient, err := unitsrange.ParseString[largenumber.LargeNumber](plan.PortsPerClient.ValueString())
+			if err != nil {
+				diags.AddError("LargeNumber string parsing", err.Error())
+				return nil, diags
+			}
+			am.PortsPerClient.SetTo(tmpPortsPerClient)
+		}
 	}
 
 	return &am, diags

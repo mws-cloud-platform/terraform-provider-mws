@@ -30,7 +30,7 @@ data "mws_resmanager_region" "example_region" {
 - `kind` (String)
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
 - `spec` (String) Спецификация региона
-- `status` (Attributes) (see [below for nested schema](#nestedatt--status))
+- `status` (Attributes) Текущее состояние ресурса, вычисляемое системой (see [below for nested schema](#nestedatt--status))
 
 <a id="nestedatt--metadata"></a>
 ### Nested Schema for `metadata`
@@ -46,7 +46,9 @@ Read-Only:
 - `description` (String) Описание ресурса
 - `display_name` (String) Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов
 - `id` (String) ID свойства
-- `purge_time` (String) Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `purge_time` (String) Время удаления ресурса
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
 
 <a id="nestedatt--metadata--usages"></a>

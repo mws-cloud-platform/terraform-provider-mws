@@ -51,16 +51,16 @@ func ClusterPublicEndpointSpecOrRefAPIOptionalResponseToTFModel(ctx context.Cont
 	return &t, diags
 }
 
-func ClusterPublicEndpointSpecOrRefTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClusterPublicEndpointSpecOrRef) (*apimodel.ClusterPublicEndpointSpecOrRefRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClusterPublicEndpointSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterPublicEndpointSpecOrRef) (*apimodel.ClusterPublicEndpointSpecOrRefRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClusterPublicEndpointSpecOrRefRequest
 
-	if !tm.Ref.IsNull() && !tm.Ref.IsUnknown() {
-		refRef, err := vpc.ParseExternalAddressRef(ctx, tm.Ref.ValueString())
+	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
+		refRef, err := vpc.ParseExternalAddressRef(ctx, plan.Ref.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -68,20 +68,76 @@ func ClusterPublicEndpointSpecOrRefTFToAPIRequestModel(ctx context.Context, tm *
 		am.Ref = &refRef
 	}
 
-	if !tm.Spec.IsNull() && !tm.Spec.IsUnknown() {
-		specTfModel := tfmodel.ClusterPublicEndpointSpec{}
-		specDiag := tm.Spec.As(ctx, &specTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, specDiag...)
+	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
+		specPlan := tfmodel.ClusterPublicEndpointSpec{}
+		specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, specPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		specTmp, specDiag := ClusterPublicEndpointSpecTFToAPIRequestModel(ctx, &specTfModel)
+		specTmp, specDiag := ClusterPublicEndpointSpecTFToAPIRequestModel(ctx, &specPlan)
 		diags = append(diags, specDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.Spec = specTmp
+	}
+
+	return &am, diags
+}
+
+func ClusterPublicEndpointSpecOrRefTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClusterPublicEndpointSpecOrRef) (*apimodel.UpdateClusterPublicEndpointSpecOrRefRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.ClusterPublicEndpointSpecOrRef{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateClusterPublicEndpointSpecOrRefRequest
+
+	if !plan.Ref.Equal(state.Ref) {
+		if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
+			refRef, err := vpc.ParseExternalAddressRef(ctx, plan.Ref.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.Ref.SetTo(refRef)
+		} else if plan.Ref.IsNull() {
+			am.Ref.SetToNull()
+		}
+	}
+
+	if !plan.Spec.Equal(state.Spec) {
+		if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
+			specPlan := tfmodel.ClusterPublicEndpointSpec{}
+			specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, specPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			specState := tfmodel.ClusterPublicEndpointSpec{}
+			if !state.Spec.IsNull() && !state.Spec.IsUnknown() {
+				specStateDiag := state.Spec.As(ctx, &specState, basetypes.ObjectAsOptions{})
+				diags = append(diags, specStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			specTmp, specDiag := ClusterPublicEndpointSpecTFToAPIUpdateRequestModel(ctx, &specPlan, &specState)
+			diags = append(diags, specDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Spec.SetTo(*specTmp)
+		} else if plan.Spec.IsNull() {
+			am.Spec.SetToNull()
+		}
 	}
 
 	return &am, diags

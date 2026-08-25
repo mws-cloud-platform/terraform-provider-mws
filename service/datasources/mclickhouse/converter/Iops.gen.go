@@ -25,11 +25,11 @@ func IopsAPIToTFModel(ctx context.Context, am *apimodel.Iops) (tfmodel.Iops, tfd
 	return t, diags
 }
 
-func IopsTFToAPIModel(ctx context.Context, tm tfmodel.Iops) (*apimodel.Iops, tfdiag.Diagnostics) {
+func IopsTFToAPIModel(ctx context.Context, plan tfmodel.Iops) (*apimodel.Iops, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am apimodel.Iops
 
-	var tmp = types.Int64(tm)
+	var tmp = types.Int64(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}

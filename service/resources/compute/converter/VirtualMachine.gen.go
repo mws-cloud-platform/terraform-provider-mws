@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/compute/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	"go.mws.cloud/go-sdk/service/resources/references/iam"
@@ -148,23 +148,23 @@ func VirtualMachineAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func VirtualMachineTFToAPIRequestModel(ctx context.Context, tm *tfmodel.VirtualMachine) (*apimodel.VirtualMachineRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func VirtualMachineTFToAPIRequestModel(ctx context.Context, plan *tfmodel.VirtualMachine) (*apimodel.VirtualMachineRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.VirtualMachineRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfmodel.VirtualMachineMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfmodel.VirtualMachineMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := VirtualMachineMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := VirtualMachineMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -172,12 +172,12 @@ func VirtualMachineTFToAPIRequestModel(ctx context.Context, tm *tfmodel.VirtualM
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.Zone.IsNull() && !tm.Zone.IsUnknown() {
-		am.Spec.Zone = tm.Zone.ValueString()
+	if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
+		am.Spec.Zone = plan.Zone.ValueString()
 	}
 
-	if !tm.VmType.IsNull() && !tm.VmType.IsUnknown() {
-		vmTypeRef, err := compute.ParseVmTypeRef(ctx, tm.VmType.ValueString())
+	if !plan.VmType.IsNull() && !plan.VmType.IsUnknown() {
+		vmTypeRef, err := compute.ParseVmTypeRef(ctx, plan.VmType.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -185,15 +185,15 @@ func VirtualMachineTFToAPIRequestModel(ctx context.Context, tm *tfmodel.VirtualM
 		am.Spec.VmType = vmTypeRef
 	}
 
-	if !tm.Hardware.IsNull() && !tm.Hardware.IsUnknown() {
-		hardwareTfModel := tfmodel.HardwareSpec{}
-		hardwareDiag := tm.Hardware.As(ctx, &hardwareTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, hardwareDiag...)
+	if !plan.Hardware.IsNull() && !plan.Hardware.IsUnknown() {
+		hardwarePlan := tfmodel.HardwareSpec{}
+		hardwarePlanDiag := plan.Hardware.As(ctx, &hardwarePlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, hardwarePlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		hardwareTmp, hardwareDiag := HardwareSpecTFToAPIRequestModel(ctx, &hardwareTfModel)
+		hardwareTmp, hardwareDiag := HardwareSpecTFToAPIRequestModel(ctx, &hardwarePlan)
 		diags = append(diags, hardwareDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -201,15 +201,15 @@ func VirtualMachineTFToAPIRequestModel(ctx context.Context, tm *tfmodel.VirtualM
 		am.Spec.Hardware = hardwareTmp
 	}
 
-	if !tm.Os.IsNull() && !tm.Os.IsUnknown() {
-		osTfModel := tfmodel.OsSpec{}
-		osDiag := tm.Os.As(ctx, &osTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, osDiag...)
+	if !plan.Os.IsNull() && !plan.Os.IsUnknown() {
+		osPlan := tfmodel.OsSpec{}
+		osPlanDiag := plan.Os.As(ctx, &osPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, osPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		osTmp, osDiag := OsSpecTFToAPIRequestModel(ctx, &osTfModel)
+		osTmp, osDiag := OsSpecTFToAPIRequestModel(ctx, &osPlan)
 		diags = append(diags, osDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -217,15 +217,15 @@ func VirtualMachineTFToAPIRequestModel(ctx context.Context, tm *tfmodel.VirtualM
 		am.Spec.Os = osTmp
 	}
 
-	if !tm.Storage.IsNull() && !tm.Storage.IsUnknown() {
-		storageTfModel := tfmodel.StorageSpec{}
-		storageDiag := tm.Storage.As(ctx, &storageTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, storageDiag...)
+	if !plan.Storage.IsNull() && !plan.Storage.IsUnknown() {
+		storagePlan := tfmodel.StorageSpec{}
+		storagePlanDiag := plan.Storage.As(ctx, &storagePlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, storagePlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		storageTmp, storageDiag := StorageSpecTFToAPIRequestModel(ctx, &storageTfModel)
+		storageTmp, storageDiag := StorageSpecTFToAPIRequestModel(ctx, &storagePlan)
 		diags = append(diags, storageDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -233,15 +233,15 @@ func VirtualMachineTFToAPIRequestModel(ctx context.Context, tm *tfmodel.VirtualM
 		am.Spec.Storage = *storageTmp
 	}
 
-	if !tm.Network.IsNull() && !tm.Network.IsUnknown() {
-		networkTfModel := tfmodel.NetworkSpec{}
-		networkDiag := tm.Network.As(ctx, &networkTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, networkDiag...)
+	if !plan.Network.IsNull() && !plan.Network.IsUnknown() {
+		networkPlan := tfmodel.NetworkSpec{}
+		networkPlanDiag := plan.Network.As(ctx, &networkPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, networkPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		networkTmp, networkDiag := NetworkSpecTFToAPIRequestModel(ctx, &networkTfModel)
+		networkTmp, networkDiag := NetworkSpecTFToAPIRequestModel(ctx, &networkPlan)
 		diags = append(diags, networkDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -249,13 +249,228 @@ func VirtualMachineTFToAPIRequestModel(ctx context.Context, tm *tfmodel.VirtualM
 		am.Spec.Network = *networkTmp
 	}
 
-	if !tm.ServiceAccount.IsNull() && !tm.ServiceAccount.IsUnknown() {
-		serviceAccountRef, err := iam.ParseServiceAccountRef(ctx, tm.ServiceAccount.ValueString())
+	if !plan.ServiceAccount.IsNull() && !plan.ServiceAccount.IsUnknown() {
+		serviceAccountRef, err := iam.ParseServiceAccountRef(ctx, plan.ServiceAccount.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
 		}
 		am.Spec.ServiceAccount = &serviceAccountRef
+	}
+
+	return &am, diags
+}
+
+func VirtualMachineTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.VirtualMachine) (*apimodel.UpdateVirtualMachineRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.VirtualMachine{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateVirtualMachineRequest
+
+	if !plan.Metadata.Equal(state.Metadata) {
+		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+			metadataPlan := tfmodel.VirtualMachineMetadata{}
+			metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, metadataPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			metadataState := tfmodel.VirtualMachineMetadata{}
+			if !state.Metadata.IsNull() && !state.Metadata.IsUnknown() {
+				metadataStateDiag := state.Metadata.As(ctx, &metadataState, basetypes.ObjectAsOptions{})
+				diags = append(diags, metadataStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			metadataTmp, metadataDiag := VirtualMachineMetadataTFToAPIUpdateRequestModel(ctx, &metadataPlan, &metadataState)
+			diags = append(diags, metadataDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Metadata.SetTo(*metadataTmp)
+		} else if plan.Metadata.IsNull() {
+			am.Metadata.SetToNull()
+		}
+	}
+
+	if !plan.Zone.Equal(state.Zone) {
+		if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateVirtualMachineSpecRequest{})
+			}
+			am.Spec.Value.Zone.SetTo(plan.Zone.ValueString())
+		}
+	}
+
+	if !plan.VmType.Equal(state.VmType) {
+		if !plan.VmType.IsNull() && !plan.VmType.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateVirtualMachineSpecRequest{})
+			}
+			vmTypeRef, err := compute.ParseVmTypeRef(ctx, plan.VmType.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.Spec.Value.VmType.SetTo(vmTypeRef)
+		}
+	}
+
+	if !plan.Hardware.Equal(state.Hardware) {
+		if !plan.Hardware.IsNull() && !plan.Hardware.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateVirtualMachineSpecRequest{})
+			}
+			hardwarePlan := tfmodel.HardwareSpec{}
+			hardwarePlanDiag := plan.Hardware.As(ctx, &hardwarePlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, hardwarePlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			hardwareState := tfmodel.HardwareSpec{}
+			if !state.Hardware.IsNull() && !state.Hardware.IsUnknown() {
+				hardwareStateDiag := state.Hardware.As(ctx, &hardwareState, basetypes.ObjectAsOptions{})
+				diags = append(diags, hardwareStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			hardwareTmp, hardwareDiag := HardwareSpecTFToAPIUpdateRequestModel(ctx, &hardwarePlan, &hardwareState)
+			diags = append(diags, hardwareDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Spec.Value.Hardware.SetTo(*hardwareTmp)
+		} else if plan.Hardware.IsNull() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateVirtualMachineSpecRequest{})
+			}
+			am.Spec.Value.Hardware.SetToNull()
+		}
+	}
+
+	if !plan.Os.Equal(state.Os) {
+		if !plan.Os.IsNull() && !plan.Os.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateVirtualMachineSpecRequest{})
+			}
+			osPlan := tfmodel.OsSpec{}
+			osPlanDiag := plan.Os.As(ctx, &osPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, osPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			osState := tfmodel.OsSpec{}
+			if !state.Os.IsNull() && !state.Os.IsUnknown() {
+				osStateDiag := state.Os.As(ctx, &osState, basetypes.ObjectAsOptions{})
+				diags = append(diags, osStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			osTmp, osDiag := OsSpecTFToAPIUpdateRequestModel(ctx, &osPlan, &osState)
+			diags = append(diags, osDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Spec.Value.Os.SetTo(*osTmp)
+		} else if plan.Os.IsNull() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateVirtualMachineSpecRequest{})
+			}
+			am.Spec.Value.Os.SetToNull()
+		}
+	}
+
+	if !plan.Storage.Equal(state.Storage) {
+		if !plan.Storage.IsNull() && !plan.Storage.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateVirtualMachineSpecRequest{})
+			}
+			storagePlan := tfmodel.StorageSpec{}
+			storagePlanDiag := plan.Storage.As(ctx, &storagePlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, storagePlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			storageState := tfmodel.StorageSpec{}
+			if !state.Storage.IsNull() && !state.Storage.IsUnknown() {
+				storageStateDiag := state.Storage.As(ctx, &storageState, basetypes.ObjectAsOptions{})
+				diags = append(diags, storageStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			storageTmp, storageDiag := StorageSpecTFToAPIUpdateRequestModel(ctx, &storagePlan, &storageState)
+			diags = append(diags, storageDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Spec.Value.Storage.SetTo(*storageTmp)
+		}
+	}
+
+	if !plan.Network.Equal(state.Network) {
+		if !plan.Network.IsNull() && !plan.Network.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateVirtualMachineSpecRequest{})
+			}
+			networkPlan := tfmodel.NetworkSpec{}
+			networkPlanDiag := plan.Network.As(ctx, &networkPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, networkPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			networkState := tfmodel.NetworkSpec{}
+			if !state.Network.IsNull() && !state.Network.IsUnknown() {
+				networkStateDiag := state.Network.As(ctx, &networkState, basetypes.ObjectAsOptions{})
+				diags = append(diags, networkStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			networkTmp, networkDiag := NetworkSpecTFToAPIUpdateRequestModel(ctx, &networkPlan, &networkState)
+			diags = append(diags, networkDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Spec.Value.Network.SetTo(*networkTmp)
+		}
+	}
+
+	if !plan.ServiceAccount.Equal(state.ServiceAccount) {
+		if !plan.ServiceAccount.IsNull() && !plan.ServiceAccount.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateVirtualMachineSpecRequest{})
+			}
+			serviceAccountRef, err := iam.ParseServiceAccountRef(ctx, plan.ServiceAccount.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.Spec.Value.ServiceAccount.SetTo(serviceAccountRef)
+		} else if plan.ServiceAccount.IsNull() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateVirtualMachineSpecRequest{})
+			}
+			am.Spec.Value.ServiceAccount.SetToNull()
+		}
 	}
 
 	return &am, diags
@@ -331,26 +546,27 @@ func VirtualMachineMetadataAPIOptionalResponseToTFModel(ctx context.Context, am 
 	return &t, diags
 }
 
-func VirtualMachineMetadataTFToAPIRequestModel(ctx context.Context, tm *tfmodel.VirtualMachineMetadata) (*apimodel.VirtualMachineMetadataRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func VirtualMachineMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.VirtualMachineMetadata) (*apimodel.VirtualMachineMetadataRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.VirtualMachineMetadataRequest
 
-	if !tm.DisplayName.IsNull() && !tm.DisplayName.IsUnknown() {
-		am.DisplayName = tm.DisplayName.ValueStringPointer()
+	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
+		am.DisplayName = plan.DisplayName.ValueStringPointer()
 	}
 
-	if !tm.Usages.IsNull() && !tm.Usages.IsUnknown() {
+	if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
 		usages := make([]tfcommon.TypedUsage, 0)
-		dUsages := tm.Usages.ElementsAs(ctx, &usages, false)
+		dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
 		diags = append(diags, dUsages...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.Usages = make([]common.TypedUsageRequest, 0, len(usages))
+
+		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
@@ -362,8 +578,58 @@ func VirtualMachineMetadataTFToAPIRequestModel(ctx context.Context, tm *tfmodel.
 		}
 	}
 
-	if !tm.Description.IsNull() && !tm.Description.IsUnknown() {
-		am.Description = tm.Description.ValueStringPointer()
+	if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
+		am.Description = plan.Description.ValueStringPointer()
+	}
+
+	return &am, diags
+}
+
+func VirtualMachineMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.VirtualMachineMetadata) (*apimodel.UpdateVirtualMachineMetadataRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.VirtualMachineMetadata{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateVirtualMachineMetadataRequest
+
+	if !plan.DisplayName.Equal(state.DisplayName) {
+		if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
+			am.DisplayName.SetTo(plan.DisplayName.ValueString())
+		}
+	}
+
+	if !plan.Usages.Equal(state.Usages) {
+		if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
+			usages := make([]tfcommon.TypedUsage, 0)
+			dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
+			diags = append(diags, dUsages...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			usagesTmp := make([]commonapimodel.UpdateTypedUsageRequest, 0, len(usages))
+
+			for _, entity := range usages {
+				stateEntity := tfcommon.TypedUsage{}
+				tmp, d := commonconv.TypedUsageTFToAPIUpdateRequestModel(ctx, &entity, &stateEntity)
+				diags = append(diags, d...)
+				if diags.HasError() {
+					return nil, diags
+				}
+				usagesTmp = append(usagesTmp, *tmp)
+			}
+			am.Usages.SetTo(usagesTmp)
+		}
+	}
+
+	if !plan.Description.Equal(state.Description) {
+		if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
+			am.Description.SetTo(plan.Description.ValueString())
+		}
 	}
 
 	return &am, diags

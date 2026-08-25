@@ -24,7 +24,7 @@ func TestPostgresEndpointResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.PostgresEndpointRequest{
 		Name:             "name",
-		Network:          vpc.NewNetworkRef("projectID", "networkID"),
+		Network:          vpc.NewMustNetworkRef("projectID", "networkID"),
 		PrimaryAddresses: []apimodel.PostgresNetworkAddressRequest{},
 	}
 

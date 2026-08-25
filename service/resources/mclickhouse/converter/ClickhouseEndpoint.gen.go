@@ -57,23 +57,23 @@ func ClickhouseEndpointAPIOptionalResponseToTFModel(ctx context.Context, am *api
 	return &t, diags
 }
 
-func ClickhouseEndpointTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClickhouseEndpoint) (*apimodel.ClickhouseEndpointRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClickhouseEndpointTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseEndpoint) (*apimodel.ClickhouseEndpointRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClickhouseEndpointRequest
 
-	if !tm.Address.IsNull() && !tm.Address.IsUnknown() {
-		addressTfModel := tfmodel.ClickhouseEndpointAddressSpecOrRef{}
-		addressDiag := tm.Address.As(ctx, &addressTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, addressDiag...)
+	if !plan.Address.IsNull() && !plan.Address.IsUnknown() {
+		addressPlan := tfmodel.ClickhouseEndpointAddressSpecOrRef{}
+		addressPlanDiag := plan.Address.As(ctx, &addressPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, addressPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		addressTmp, addressDiag := ClickhouseEndpointAddressSpecOrRefTFToAPIRequestModel(ctx, &addressTfModel)
+		addressTmp, addressDiag := ClickhouseEndpointAddressSpecOrRefTFToAPIRequestModel(ctx, &addressPlan)
 		diags = append(diags, addressDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -81,20 +81,90 @@ func ClickhouseEndpointTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Clic
 		am.Address = *addressTmp
 	}
 
-	if !tm.ExternalAddress.IsNull() && !tm.ExternalAddress.IsUnknown() {
-		externalAddressTfModel := tfmodel.ClickhouseEndpointExternalAddressSpecOrRef{}
-		externalAddressDiag := tm.ExternalAddress.As(ctx, &externalAddressTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, externalAddressDiag...)
+	if !plan.ExternalAddress.IsNull() && !plan.ExternalAddress.IsUnknown() {
+		externalAddressPlan := tfmodel.ClickhouseEndpointExternalAddressSpecOrRef{}
+		externalAddressPlanDiag := plan.ExternalAddress.As(ctx, &externalAddressPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, externalAddressPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		externalAddressTmp, externalAddressDiag := ClickhouseEndpointExternalAddressSpecOrRefTFToAPIRequestModel(ctx, &externalAddressTfModel)
+		externalAddressTmp, externalAddressDiag := ClickhouseEndpointExternalAddressSpecOrRefTFToAPIRequestModel(ctx, &externalAddressPlan)
 		diags = append(diags, externalAddressDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.ExternalAddress = externalAddressTmp
+	}
+
+	return &am, diags
+}
+
+func ClickhouseEndpointTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseEndpoint) (*apimodel.UpdateClickhouseEndpointRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.ClickhouseEndpoint{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateClickhouseEndpointRequest
+
+	if !plan.Address.Equal(state.Address) {
+		if !plan.Address.IsNull() && !plan.Address.IsUnknown() {
+			addressPlan := tfmodel.ClickhouseEndpointAddressSpecOrRef{}
+			addressPlanDiag := plan.Address.As(ctx, &addressPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, addressPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			addressState := tfmodel.ClickhouseEndpointAddressSpecOrRef{}
+			if !state.Address.IsNull() && !state.Address.IsUnknown() {
+				addressStateDiag := state.Address.As(ctx, &addressState, basetypes.ObjectAsOptions{})
+				diags = append(diags, addressStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			addressTmp, addressDiag := ClickhouseEndpointAddressSpecOrRefTFToAPIUpdateRequestModel(ctx, &addressPlan, &addressState)
+			diags = append(diags, addressDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Address.SetTo(*addressTmp)
+		}
+	}
+
+	if !plan.ExternalAddress.Equal(state.ExternalAddress) {
+		if !plan.ExternalAddress.IsNull() && !plan.ExternalAddress.IsUnknown() {
+			externalAddressPlan := tfmodel.ClickhouseEndpointExternalAddressSpecOrRef{}
+			externalAddressPlanDiag := plan.ExternalAddress.As(ctx, &externalAddressPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, externalAddressPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			externalAddressState := tfmodel.ClickhouseEndpointExternalAddressSpecOrRef{}
+			if !state.ExternalAddress.IsNull() && !state.ExternalAddress.IsUnknown() {
+				externalAddressStateDiag := state.ExternalAddress.As(ctx, &externalAddressState, basetypes.ObjectAsOptions{})
+				diags = append(diags, externalAddressStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			externalAddressTmp, externalAddressDiag := ClickhouseEndpointExternalAddressSpecOrRefTFToAPIUpdateRequestModel(ctx, &externalAddressPlan, &externalAddressState)
+			diags = append(diags, externalAddressDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.ExternalAddress.SetTo(*externalAddressTmp)
+		} else if plan.ExternalAddress.IsNull() {
+			am.ExternalAddress.SetToNull()
+		}
 	}
 
 	return &am, diags

@@ -51,16 +51,16 @@ func ClickhouseEndpointExternalAddressSpecOrRefAPIOptionalResponseToTFModel(ctx 
 	return &t, diags
 }
 
-func ClickhouseEndpointExternalAddressSpecOrRefTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClickhouseEndpointExternalAddressSpecOrRef) (*apimodel.ClickhouseEndpointExternalAddressSpecOrRefRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClickhouseEndpointExternalAddressSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseEndpointExternalAddressSpecOrRef) (*apimodel.ClickhouseEndpointExternalAddressSpecOrRefRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClickhouseEndpointExternalAddressSpecOrRefRequest
 
-	if !tm.Ref.IsNull() && !tm.Ref.IsUnknown() {
-		refRef, err := vpc.ParseExternalAddressRef(ctx, tm.Ref.ValueString())
+	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
+		refRef, err := vpc.ParseExternalAddressRef(ctx, plan.Ref.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -68,15 +68,15 @@ func ClickhouseEndpointExternalAddressSpecOrRefTFToAPIRequestModel(ctx context.C
 		am.Ref = &refRef
 	}
 
-	if !tm.Spec.IsNull() && !tm.Spec.IsUnknown() {
-		specTfModel := tfmodel.ClickhouseEndpointExternalAddressSpecOrRefSpec{}
-		specDiag := tm.Spec.As(ctx, &specTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, specDiag...)
+	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
+		specPlan := tfmodel.ClickhouseEndpointExternalAddressSpecOrRefSpec{}
+		specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, specPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		specTmp, specDiag := ClickhouseEndpointExternalAddressSpecOrRefSpecTFToAPIRequestModel(ctx, &specTfModel)
+		specTmp, specDiag := ClickhouseEndpointExternalAddressSpecOrRefSpecTFToAPIRequestModel(ctx, &specPlan)
 		diags = append(diags, specDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -98,8 +98,8 @@ func ClickhouseEndpointExternalAddressSpecOrRefSpecAPIOptionalResponseToTFModel(
 	return &t, diags
 }
 
-func ClickhouseEndpointExternalAddressSpecOrRefSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClickhouseEndpointExternalAddressSpecOrRefSpec) (*apimodel.ClickhouseEndpointExternalAddressSpecOrRefSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClickhouseEndpointExternalAddressSpecOrRefSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseEndpointExternalAddressSpecOrRefSpec) (*apimodel.ClickhouseEndpointExternalAddressSpecOrRefSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 

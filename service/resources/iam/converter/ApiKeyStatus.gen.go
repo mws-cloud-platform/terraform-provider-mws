@@ -40,7 +40,7 @@ func ApiKeyStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.ApiKeySt
 	t.Ready = readyTfObject
 
 	if am.ApiKey != nil {
-		t.ApiKey = types.StringPointerValue(am.ApiKey)
+		t.ApiKey = types.StringValue(am.ApiKey.Value())
 	} else {
 		t.ApiKey = types.StringNull()
 	}

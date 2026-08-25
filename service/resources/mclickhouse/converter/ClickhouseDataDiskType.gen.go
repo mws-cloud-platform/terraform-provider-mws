@@ -25,11 +25,11 @@ func ClickhouseDataDiskTypeAPIToTFModel(ctx context.Context, am *apimodel.Clickh
 	return t, diags
 }
 
-func ClickhouseDataDiskTypeTFToAPIModel(ctx context.Context, tm tfmodel.ClickhouseDataDiskType) (*apimodel.ClickhouseDataDiskType, tfdiag.Diagnostics) {
+func ClickhouseDataDiskTypeTFToAPIModel(ctx context.Context, plan tfmodel.ClickhouseDataDiskType) (*apimodel.ClickhouseDataDiskType, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClickhouseDataDiskType
 
-	var tmp = types.String(tm)
+	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}

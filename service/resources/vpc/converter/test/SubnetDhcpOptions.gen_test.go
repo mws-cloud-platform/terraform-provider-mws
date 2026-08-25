@@ -6,10 +6,15 @@ import (
 	"context"
 	"testing"
 
+	tfattr "github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/ipaddress"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
 func TestSubnetDhcpOptionsAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -62,4 +67,34 @@ func TestSubnetDhcpOptionsResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateSubnetDhcpOptionsRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.SubnetDhcpOptions
+	var stateTfModel tfmodel.SubnetDhcpOptions
+	stateTfModel.DomainName = types.StringValue("")
+	stateTfModel.DomainNameServers = types.ListValueMust(types.StringType, []tfattr.Value{})
+	stateTfModel.NtpServers = types.ListValueMust(types.StringType, []tfattr.Value{})
+
+	expectedUpdateModel := &apimodel.UpdateSubnetDhcpOptionsRequest{
+		DomainName: optional.OptionalNil[string]{
+			Set:  true,
+			Null: true,
+		},
+		DomainNameServers: optional.OptionalNil[[]ipaddress.IP4Address]{
+			Set:  true,
+			Null: true,
+		},
+		NtpServers: optional.OptionalNil[[]ipaddress.IP4Address]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.SubnetDhcpOptionsTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

@@ -58,16 +58,16 @@ func LinkedVmInfoAPIOptionalResponseToTFModel(ctx context.Context, am *commonapi
 	return &t, diags
 }
 
-func LinkedVmInfoTFToAPIModel(ctx context.Context, tm *tfcommon.LinkedVmInfo) (*commonapimodel.LinkedVmInfo, tfdiag.Diagnostics) {
-	if tm == nil {
+func LinkedVmInfoTFToAPIModel(ctx context.Context, plan *tfcommon.LinkedVmInfo) (*commonapimodel.LinkedVmInfo, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.LinkedVmInfo
 
-	if !tm.Id.IsNull() && !tm.Id.IsUnknown() {
-		idRef, err := compute.ParseVirtualMachineRef(ctx, tm.Id.ValueString())
+	if !plan.Id.IsNull() && !plan.Id.IsUnknown() {
+		idRef, err := compute.ParseVirtualMachineRef(ctx, plan.Id.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -75,23 +75,23 @@ func LinkedVmInfoTFToAPIModel(ctx context.Context, tm *tfcommon.LinkedVmInfo) (*
 		am.Id = idRef
 	}
 
-	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		am.Name = tm.Name.ValueString()
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		am.Name = plan.Name.ValueString()
 	}
 
 	return &am, diags
 }
 
-func LinkedVmInfoTFToAPIRequestModel(ctx context.Context, tm *tfcommon.LinkedVmInfo) (*commonapimodel.LinkedVmInfoRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func LinkedVmInfoTFToAPIRequestModel(ctx context.Context, plan *tfcommon.LinkedVmInfo) (*commonapimodel.LinkedVmInfoRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.LinkedVmInfoRequest
 
-	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		am.Name = tm.Name.ValueString()
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		am.Name = plan.Name.ValueString()
 	}
 
 	return &am, diags

@@ -29,16 +29,36 @@ func KafkaSchemaRegistrySpecAPIResponseToTFModel(ctx context.Context, am *apimod
 	return &t, diags
 }
 
-func KafkaSchemaRegistrySpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaSchemaRegistrySpec) (*apimodel.KafkaSchemaRegistrySpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func KafkaSchemaRegistrySpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaSchemaRegistrySpec) (*apimodel.KafkaSchemaRegistrySpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaSchemaRegistrySpecRequest
 
-	if !tm.Enabled.IsNull() && !tm.Enabled.IsUnknown() {
-		am.Enabled = tm.Enabled.ValueBoolPointer()
+	if !plan.Enabled.IsNull() && !plan.Enabled.IsUnknown() {
+		am.Enabled = plan.Enabled.ValueBoolPointer()
+	}
+
+	return &am, diags
+}
+
+func KafkaSchemaRegistrySpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaSchemaRegistrySpec) (*apimodel.UpdateKafkaSchemaRegistrySpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.KafkaSchemaRegistrySpec{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateKafkaSchemaRegistrySpecRequest
+
+	if !plan.Enabled.Equal(state.Enabled) {
+		if !plan.Enabled.IsNull() && !plan.Enabled.IsUnknown() {
+			am.Enabled.SetTo(plan.Enabled.ValueBool())
+		}
 	}
 
 	return &am, diags

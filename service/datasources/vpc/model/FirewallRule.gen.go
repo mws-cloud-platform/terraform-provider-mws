@@ -26,19 +26,19 @@ type FirewallRule struct {
 
 func (s *FirewallRule) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Правило файрвола — набор параметров, который разрешает или запрещает определенный тип трафика`,
+		MarkdownDescription: `Правило файрвола — набор параметров, который разрешает или запрещает определенный тип трафика.`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,
 			},
 			"metadata": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes,
-				MarkdownDescription: `Метаданные правила Firewall'а`,
+				MarkdownDescription: `Метаданные правила файрвола`,
 				Computed:            true,
 			},
 			"status": schema.SingleNestedAttribute{
 				Attributes:          new(FirewallRuleStatus).GetSchema().Attributes,
-				MarkdownDescription: `Статус правила Firewall'а`,
+				MarkdownDescription: `Статус правила файрвола`,
 				Computed:            true,
 			},
 			"direction": schema.StringAttribute{

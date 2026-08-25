@@ -51,16 +51,16 @@ func KafkaEndpointBrokerAddressAPIResponseToTFModel(ctx context.Context, am *api
 	return &t, diags
 }
 
-func KafkaEndpointBrokerAddressTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaEndpointBrokerAddress) (*apimodel.KafkaEndpointBrokerAddressRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func KafkaEndpointBrokerAddressTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaEndpointBrokerAddress) (*apimodel.KafkaEndpointBrokerAddressRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaEndpointBrokerAddressRequest
 
-	if !tm.Ref.IsNull() && !tm.Ref.IsUnknown() {
-		refRef, err := vpc.ParseAddressRef(ctx, tm.Ref.ValueString())
+	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
+		refRef, err := vpc.ParseAddressRef(ctx, plan.Ref.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -68,15 +68,15 @@ func KafkaEndpointBrokerAddressTFToAPIRequestModel(ctx context.Context, tm *tfmo
 		am.Ref = &refRef
 	}
 
-	if !tm.Spec.IsNull() && !tm.Spec.IsUnknown() {
-		specTfModel := tfmodel.KafkaEndpointBrokerAddressSpec{}
-		specDiag := tm.Spec.As(ctx, &specTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, specDiag...)
+	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
+		specPlan := tfmodel.KafkaEndpointBrokerAddressSpec{}
+		specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, specPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		specTmp, specDiag := KafkaEndpointBrokerAddressSpecTFToAPIRequestModel(ctx, &specTfModel)
+		specTmp, specDiag := KafkaEndpointBrokerAddressSpecTFToAPIRequestModel(ctx, &specPlan)
 		diags = append(diags, specDiag...)
 		if diags.HasError() {
 			return nil, diags

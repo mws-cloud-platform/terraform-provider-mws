@@ -45,23 +45,23 @@ func PluginsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.P
 	return &t, diags
 }
 
-func PluginsSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.PluginsSpec) (*apimodel.PluginsSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func PluginsSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PluginsSpec) (*apimodel.PluginsSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.PluginsSpecRequest
 
-	if !tm.Cni.IsNull() && !tm.Cni.IsUnknown() {
-		cniTfModel := tfmodel.PluginsSpecCni{}
-		cniDiag := tm.Cni.As(ctx, &cniTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, cniDiag...)
+	if !plan.Cni.IsNull() && !plan.Cni.IsUnknown() {
+		cniPlan := tfmodel.PluginsSpecCni{}
+		cniPlanDiag := plan.Cni.As(ctx, &cniPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, cniPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		cniTmp, cniDiag := PluginsSpecCniTFToAPIRequestModel(ctx, &cniTfModel)
+		cniTmp, cniDiag := PluginsSpecCniTFToAPIRequestModel(ctx, &cniPlan)
 		diags = append(diags, cniDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -95,20 +95,20 @@ func PluginsSpecCniAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func PluginsSpecCniTFToAPIRequestModel(ctx context.Context, tm *tfmodel.PluginsSpecCni) (*apimodel.PluginsSpecCniRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func PluginsSpecCniTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PluginsSpecCni) (*apimodel.PluginsSpecCniRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.PluginsSpecCniRequest
 
-	if !tm.Calico.IsNull() && !tm.Calico.IsUnknown() {
-		am.Calico = json.RawMessage(tm.Calico.ValueString())
+	if !plan.Calico.IsNull() && !plan.Calico.IsUnknown() {
+		am.Calico = json.RawMessage(plan.Calico.ValueString())
 	}
 
-	if !tm.Cilium.IsNull() && !tm.Cilium.IsUnknown() {
-		am.Cilium = json.RawMessage(tm.Cilium.ValueString())
+	if !plan.Cilium.IsNull() && !plan.Cilium.IsUnknown() {
+		am.Cilium = json.RawMessage(plan.Cilium.ValueString())
 	}
 
 	return &am, diags

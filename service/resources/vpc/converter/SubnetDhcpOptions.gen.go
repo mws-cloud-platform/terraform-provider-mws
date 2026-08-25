@@ -120,25 +120,26 @@ func SubnetDhcpOptionsAPIResponseToTFModel(ctx context.Context, am *apimodel.Sub
 	return &t, diags
 }
 
-func SubnetDhcpOptionsTFToAPIRequestModel(ctx context.Context, tm *tfmodel.SubnetDhcpOptions) (*apimodel.SubnetDhcpOptionsRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func SubnetDhcpOptionsTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SubnetDhcpOptions) (*apimodel.SubnetDhcpOptionsRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.SubnetDhcpOptionsRequest
 
-	if !tm.DomainName.IsNull() && !tm.DomainName.IsUnknown() {
-		am.DomainName = tm.DomainName.ValueStringPointer()
+	if !plan.DomainName.IsNull() && !plan.DomainName.IsUnknown() {
+		am.DomainName = plan.DomainName.ValueStringPointer()
 	}
 
-	if !tm.DomainNameServers.IsNull() && !tm.DomainNameServers.IsUnknown() {
+	if !plan.DomainNameServers.IsNull() && !plan.DomainNameServers.IsUnknown() {
 		domainNameServers := make([]types.String, 0)
-		dDomainNameServers := tm.DomainNameServers.ElementsAs(ctx, &domainNameServers, false)
+		dDomainNameServers := plan.DomainNameServers.ElementsAs(ctx, &domainNameServers, false)
 		diags = append(diags, dDomainNameServers...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.DomainNameServers = make([]ipaddress.IP4Address, 0, len(domainNameServers))
 
 		for _, entity := range domainNameServers {
@@ -151,13 +152,14 @@ func SubnetDhcpOptionsTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Subne
 		}
 	}
 
-	if !tm.NtpServers.IsNull() && !tm.NtpServers.IsUnknown() {
+	if !plan.NtpServers.IsNull() && !plan.NtpServers.IsUnknown() {
 		ntpServers := make([]types.String, 0)
-		dNtpServers := tm.NtpServers.ElementsAs(ctx, &ntpServers, false)
+		dNtpServers := plan.NtpServers.ElementsAs(ctx, &ntpServers, false)
 		diags = append(diags, dNtpServers...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.NtpServers = make([]ipaddress.IP4Address, 0, len(ntpServers))
 
 		for _, entity := range ntpServers {
@@ -167,6 +169,78 @@ func SubnetDhcpOptionsTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Subne
 				return nil, diags
 			}
 			am.NtpServers = append(am.NtpServers, tmp)
+		}
+	}
+
+	return &am, diags
+}
+
+func SubnetDhcpOptionsTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.SubnetDhcpOptions) (*apimodel.UpdateSubnetDhcpOptionsRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.SubnetDhcpOptions{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateSubnetDhcpOptionsRequest
+
+	if !plan.DomainName.Equal(state.DomainName) {
+		if !plan.DomainName.IsNull() && !plan.DomainName.IsUnknown() {
+			am.DomainName.SetTo(plan.DomainName.ValueString())
+		} else if plan.DomainName.IsNull() {
+			am.DomainName.SetToNull()
+		}
+	}
+
+	if !plan.DomainNameServers.Equal(state.DomainNameServers) {
+		if !plan.DomainNameServers.IsNull() && !plan.DomainNameServers.IsUnknown() {
+			domainNameServers := make([]types.String, 0)
+			dDomainNameServers := plan.DomainNameServers.ElementsAs(ctx, &domainNameServers, false)
+			diags = append(diags, dDomainNameServers...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			domainNameServersTmp := make([]ipaddress.IP4Address, 0, len(domainNameServers))
+
+			for _, entity := range domainNameServers {
+				tmp, err := ipaddress.ParseIP4AddressString(entity.ValueString())
+				if err != nil {
+					diags.AddError("IP4Address string parsing", err.Error())
+					return nil, diags
+				}
+				domainNameServersTmp = append(domainNameServersTmp, tmp)
+			}
+			am.DomainNameServers.SetTo(domainNameServersTmp)
+		} else if plan.DomainNameServers.IsNull() {
+			am.DomainNameServers.SetToNull()
+		}
+	}
+
+	if !plan.NtpServers.Equal(state.NtpServers) {
+		if !plan.NtpServers.IsNull() && !plan.NtpServers.IsUnknown() {
+			ntpServers := make([]types.String, 0)
+			dNtpServers := plan.NtpServers.ElementsAs(ctx, &ntpServers, false)
+			diags = append(diags, dNtpServers...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			ntpServersTmp := make([]ipaddress.IP4Address, 0, len(ntpServers))
+
+			for _, entity := range ntpServers {
+				tmp, err := ipaddress.ParseIP4AddressString(entity.ValueString())
+				if err != nil {
+					diags.AddError("IP4Address string parsing", err.Error())
+					return nil, diags
+				}
+				ntpServersTmp = append(ntpServersTmp, tmp)
+			}
+			am.NtpServers.SetTo(ntpServersTmp)
+		} else if plan.NtpServers.IsNull() {
+			am.NtpServers.SetToNull()
 		}
 	}
 

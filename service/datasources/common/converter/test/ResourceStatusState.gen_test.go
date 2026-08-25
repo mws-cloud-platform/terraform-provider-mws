@@ -8,20 +8,20 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
 func TestResourceStatusStateAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ResourceStatusState("")
+	emptyApiModel := commonapimodel.ResourceStatusState("")
 	_, diags := commonconv.ResourceStatusStateAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestResourceStatusStateConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ResourceStatusState("")
+	emptyApiModel := commonapimodel.ResourceStatusState("")
 
 	tfModel, diags := commonconv.ResourceStatusStateAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())

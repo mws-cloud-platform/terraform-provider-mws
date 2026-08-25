@@ -57,36 +57,93 @@ func NodeGroupVersionControlSpecAPIOptionalResponseToTFModel(ctx context.Context
 	return &t, diags
 }
 
-func NodeGroupVersionControlSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.NodeGroupVersionControlSpec) (*apimodel.NodeGroupVersionControlSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func NodeGroupVersionControlSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroupVersionControlSpec) (*apimodel.NodeGroupVersionControlSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.NodeGroupVersionControlSpecRequest
 
-	if !tm.Version.IsNull() && !tm.Version.IsUnknown() {
-		am.Version = tm.Version.ValueStringPointer()
+	if !plan.Version.IsNull() && !plan.Version.IsUnknown() {
+		am.Version = plan.Version.ValueStringPointer()
 	}
 
-	if !tm.AutoUpdate.IsNull() && !tm.AutoUpdate.IsUnknown() {
-		am.AutoUpdate = tm.AutoUpdate.ValueBoolPointer()
+	if !plan.AutoUpdate.IsNull() && !plan.AutoUpdate.IsUnknown() {
+		am.AutoUpdate = plan.AutoUpdate.ValueBoolPointer()
 	}
 
-	if !tm.MaintenanceWindow.IsNull() && !tm.MaintenanceWindow.IsUnknown() {
-		maintenanceWindowTfModel := tfcommon.MaintenanceWindow{}
-		maintenanceWindowDiag := tm.MaintenanceWindow.As(ctx, &maintenanceWindowTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, maintenanceWindowDiag...)
+	if !plan.MaintenanceWindow.IsNull() && !plan.MaintenanceWindow.IsUnknown() {
+		maintenanceWindowPlan := tfcommon.MaintenanceWindow{}
+		maintenanceWindowPlanDiag := plan.MaintenanceWindow.As(ctx, &maintenanceWindowPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, maintenanceWindowPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		maintenanceWindowTmp, maintenanceWindowDiag := commonconv.MaintenanceWindowTFToAPIRequestModel(ctx, &maintenanceWindowTfModel)
+		maintenanceWindowTmp, maintenanceWindowDiag := commonconv.MaintenanceWindowTFToAPIRequestModel(ctx, &maintenanceWindowPlan)
 		diags = append(diags, maintenanceWindowDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.MaintenanceWindow = maintenanceWindowTmp
+	}
+
+	return &am, diags
+}
+
+func NodeGroupVersionControlSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NodeGroupVersionControlSpec) (*apimodel.UpdateNodeGroupVersionControlSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.NodeGroupVersionControlSpec{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateNodeGroupVersionControlSpecRequest
+
+	if !plan.Version.Equal(state.Version) {
+		if !plan.Version.IsNull() && !plan.Version.IsUnknown() {
+			am.Version.SetTo(plan.Version.ValueString())
+		} else if plan.Version.IsNull() {
+			am.Version.SetToNull()
+		}
+	}
+
+	if !plan.AutoUpdate.Equal(state.AutoUpdate) {
+		if !plan.AutoUpdate.IsNull() && !plan.AutoUpdate.IsUnknown() {
+			am.AutoUpdate.SetTo(plan.AutoUpdate.ValueBool())
+		}
+	}
+
+	if !plan.MaintenanceWindow.Equal(state.MaintenanceWindow) {
+		if !plan.MaintenanceWindow.IsNull() && !plan.MaintenanceWindow.IsUnknown() {
+			maintenanceWindowPlan := tfcommon.MaintenanceWindow{}
+			maintenanceWindowPlanDiag := plan.MaintenanceWindow.As(ctx, &maintenanceWindowPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, maintenanceWindowPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			maintenanceWindowState := tfcommon.MaintenanceWindow{}
+			if !state.MaintenanceWindow.IsNull() && !state.MaintenanceWindow.IsUnknown() {
+				maintenanceWindowStateDiag := state.MaintenanceWindow.As(ctx, &maintenanceWindowState, basetypes.ObjectAsOptions{})
+				diags = append(diags, maintenanceWindowStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			maintenanceWindowTmp, maintenanceWindowDiag := commonconv.MaintenanceWindowTFToAPIUpdateRequestModel(ctx, &maintenanceWindowPlan, &maintenanceWindowState)
+			diags = append(diags, maintenanceWindowDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.MaintenanceWindow.SetTo(*maintenanceWindowTmp)
+		} else if plan.MaintenanceWindow.IsNull() {
+			am.MaintenanceWindow.SetToNull()
+		}
 	}
 
 	return &am, diags

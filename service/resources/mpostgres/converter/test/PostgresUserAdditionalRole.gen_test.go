@@ -10,6 +10,7 @@ import (
 
 	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
 func TestPostgresUserAdditionalRoleAPIResponseToTFModelEmpty(t *testing.T) {
@@ -36,4 +37,18 @@ func TestPostgresUserAdditionalRoleResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdatePostgresUserAdditionalRoleRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.PostgresUserAdditionalRole
+	var stateTfModel tfmodel.PostgresUserAdditionalRole
+
+	expectedUpdateModel := &apimodel.UpdatePostgresUserAdditionalRoleRequest{}
+
+	result, diags := conv.PostgresUserAdditionalRoleTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

@@ -140,6 +140,7 @@ Optional:
 
 Read-Only:
 
+- `encryption` (Attributes) Способ шифрования ресурса (see [below for nested schema](#nestedatt--status--encryption))
 - `initial_source_image` (String) Ссылка на исходный образ
 - `min_disk_size` (String) Минимальный допустимый размер диска, создаваемого из резервной копии диска
 
@@ -159,6 +160,16 @@ Read-Only:
 Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
 Значение базовой единицы измерения (в байтах) должно оставаться целым.
 Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
+
+<a id="nestedatt--status--encryption"></a>
+### Nested Schema for `status.encryption`
+
+Read-Only:
+
+- `crypto_key_id` (String) Идентификатор пользовательского ключа
+- `key_activity` (String) Состояние ключа
+- `version` (Number) Версия пользовательского ключа
+
 
 <a id="nestedatt--status--ready"></a>
 ### Nested Schema for `status.ready`

@@ -76,16 +76,16 @@ func PostgresNetworkDirectAddressAPIResponseToTFModel(ctx context.Context, am *a
 	return &t, diags
 }
 
-func PostgresNetworkDirectAddressTFToAPIRequestModel(ctx context.Context, tm *tfmodel.PostgresNetworkDirectAddress) (*apimodel.PostgresNetworkDirectAddressRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func PostgresNetworkDirectAddressTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresNetworkDirectAddress) (*apimodel.PostgresNetworkDirectAddressRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.PostgresNetworkDirectAddressRequest
 
-	if !tm.Ref.IsNull() && !tm.Ref.IsUnknown() {
-		refRef, err := vpc.ParseAddressRef(ctx, tm.Ref.ValueString())
+	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
+		refRef, err := vpc.ParseAddressRef(ctx, plan.Ref.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -93,15 +93,15 @@ func PostgresNetworkDirectAddressTFToAPIRequestModel(ctx context.Context, tm *tf
 		am.Ref = &refRef
 	}
 
-	if !tm.Spec.IsNull() && !tm.Spec.IsUnknown() {
-		specTfModel := tfmodel.PostgresNetworkAddressSpec{}
-		specDiag := tm.Spec.As(ctx, &specTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, specDiag...)
+	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
+		specPlan := tfmodel.PostgresNetworkAddressSpec{}
+		specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, specPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		specTmp, specDiag := PostgresNetworkAddressSpecTFToAPIRequestModel(ctx, &specTfModel)
+		specTmp, specDiag := PostgresNetworkAddressSpecTFToAPIRequestModel(ctx, &specPlan)
 		diags = append(diags, specDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -109,15 +109,15 @@ func PostgresNetworkDirectAddressTFToAPIRequestModel(ctx context.Context, tm *tf
 		am.Spec = specTmp
 	}
 
-	if !tm.ExternalAccess.IsNull() && !tm.ExternalAccess.IsUnknown() {
-		externalAccessTfModel := tfmodel.PostgresExternalAccessSpec{}
-		externalAccessDiag := tm.ExternalAccess.As(ctx, &externalAccessTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, externalAccessDiag...)
+	if !plan.ExternalAccess.IsNull() && !plan.ExternalAccess.IsUnknown() {
+		externalAccessPlan := tfmodel.PostgresExternalAccessSpec{}
+		externalAccessPlanDiag := plan.ExternalAccess.As(ctx, &externalAccessPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, externalAccessPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		externalAccessTmp, externalAccessDiag := PostgresExternalAccessSpecTFToAPIRequestModel(ctx, &externalAccessTfModel)
+		externalAccessTmp, externalAccessDiag := PostgresExternalAccessSpecTFToAPIRequestModel(ctx, &externalAccessPlan)
 		diags = append(diags, externalAccessDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -125,8 +125,8 @@ func PostgresNetworkDirectAddressTFToAPIRequestModel(ctx context.Context, tm *tf
 		am.ExternalAccess = externalAccessTmp
 	}
 
-	if !tm.Zone.IsNull() && !tm.Zone.IsUnknown() {
-		zoneRef, err := rm.ParseZoneRef(ctx, tm.Zone.ValueString())
+	if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
+		zoneRef, err := rm.ParseZoneRef(ctx, plan.Zone.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags

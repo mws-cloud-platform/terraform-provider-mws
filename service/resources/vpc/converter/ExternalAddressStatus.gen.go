@@ -50,5 +50,11 @@ func ExternalAddressStatusAPIResponseToTFModel(ctx context.Context, am *apimodel
 		t.Active = types.BoolNull()
 	}
 
+	if am.Region != nil {
+		t.Region = types.StringPointerValue(ptr.Get(am.Region.ID()))
+	} else {
+		t.Region = types.StringNull()
+	}
+
 	return &t, diags
 }

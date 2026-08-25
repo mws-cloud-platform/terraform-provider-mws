@@ -75,20 +75,20 @@ func KafkaEndpointAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaEn
 	return &t, diags
 }
 
-func KafkaEndpointTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaEndpoint) (*apimodel.KafkaEndpointRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func KafkaEndpointTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaEndpoint) (*apimodel.KafkaEndpointRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaEndpointRequest
 
-	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		am.Name = tm.Name.ValueString()
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		am.Name = plan.Name.ValueString()
 	}
 
-	if !tm.Network.IsNull() && !tm.Network.IsUnknown() {
-		networkRef, err := vpc.ParseNetworkRef(ctx, tm.Network.ValueString())
+	if !plan.Network.IsNull() && !plan.Network.IsUnknown() {
+		networkRef, err := vpc.ParseNetworkRef(ctx, plan.Network.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -96,13 +96,14 @@ func KafkaEndpointTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaEndp
 		am.Network = networkRef
 	}
 
-	if !tm.BrokerAddresses.IsNull() && !tm.BrokerAddresses.IsUnknown() {
+	if !plan.BrokerAddresses.IsNull() && !plan.BrokerAddresses.IsUnknown() {
 		brokerAddresses := make([]tfmodel.KafkaEndpointBrokerAddress, 0)
-		dBrokerAddresses := tm.BrokerAddresses.ElementsAs(ctx, &brokerAddresses, false)
+		dBrokerAddresses := plan.BrokerAddresses.ElementsAs(ctx, &brokerAddresses, false)
 		diags = append(diags, dBrokerAddresses...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.BrokerAddresses = make([]apimodel.KafkaEndpointBrokerAddressRequest, 0, len(brokerAddresses))
 
 		for _, entity := range brokerAddresses {
@@ -115,15 +116,15 @@ func KafkaEndpointTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaEndp
 		}
 	}
 
-	if !tm.ExternalAccess.IsNull() && !tm.ExternalAccess.IsUnknown() {
-		externalAccessTfModel := tfmodel.KafkaEndpointExternalAccesses{}
-		externalAccessDiag := tm.ExternalAccess.As(ctx, &externalAccessTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, externalAccessDiag...)
+	if !plan.ExternalAccess.IsNull() && !plan.ExternalAccess.IsUnknown() {
+		externalAccessPlan := tfmodel.KafkaEndpointExternalAccesses{}
+		externalAccessPlanDiag := plan.ExternalAccess.As(ctx, &externalAccessPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, externalAccessPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		externalAccessTmp, externalAccessDiag := KafkaEndpointExternalAccessesTFToAPIRequestModel(ctx, &externalAccessTfModel)
+		externalAccessTmp, externalAccessDiag := KafkaEndpointExternalAccessesTFToAPIRequestModel(ctx, &externalAccessPlan)
 		diags = append(diags, externalAccessDiag...)
 		if diags.HasError() {
 			return nil, diags

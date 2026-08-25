@@ -37,6 +37,7 @@ data "mws_vpc_subnet" "subnet" {
 - `dhcp_options` (Attributes) (see [below for nested schema](#nestedatt--dhcp_options))
 - `kind` (String)
 - `metadata` (Attributes) Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров (see [below for nested schema](#nestedatt--metadata))
+- `region` (String) Регион, которому принадлежит подсеть
 - `status` (Attributes) (see [below for nested schema](#nestedatt--status))
 
 <a id="nestedatt--dhcp_options"></a>
@@ -45,7 +46,7 @@ data "mws_vpc_subnet" "subnet" {
 Read-Only:
 
 - `domain_name` (String) Базовое доменное имя для разрешения имен
-- `domain_name_servers` (List of String) Список адресов DNS серверов
+- `domain_name_servers` (List of String) Список адресов DNS-серверов
 - `ntp_servers` (List of String) Список адресов NTP серверов
 
 
@@ -87,6 +88,7 @@ Read-Only:
 
 - `dhcp_options` (Attributes) (see [below for nested schema](#nestedatt--status--dhcp_options))
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
+- `region` (String) Регион, которому принадлежит подсеть
 
 <a id="nestedatt--status--dhcp_options"></a>
 ### Nested Schema for `status.dhcp_options`
@@ -94,7 +96,7 @@ Read-Only:
 Read-Only:
 
 - `domain_name` (String) Базовое доменное имя для разрешения имен
-- `domain_name_servers` (List of String) Список адресов DNS серверов
+- `domain_name_servers` (List of String) Список адресов DNS-серверов
 - `ntp_servers` (List of String) Список адресов NTP серверов
 
 

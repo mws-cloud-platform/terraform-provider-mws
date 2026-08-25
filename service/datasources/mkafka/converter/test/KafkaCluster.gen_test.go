@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/converter"
@@ -30,7 +30,7 @@ func TestKafkaClusterResponseConverters(t *testing.T) {
 			Endpoints: []apimodel.KafkaEndpointRequest{},
 			Instances: apimodel.KafkaInstanceRequest{
 				Broker: apimodel.KafkaInstanceSpecRequest{
-					VmType: compute.NewVmTypeRef("vmTypeID"),
+					VmType: compute.NewMustVmTypeRef("vmTypeID"),
 					Disk: apimodel.KafkaDataDiskSpecRequest{
 						Size: bytesize.MustParseString("0 B"),
 					},
@@ -65,7 +65,7 @@ func TestKafkaClusterMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 func TestKafkaClusterMetadataResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.KafkaClusterMetadataRequest{
-		TypedResourceMetadataRequest: common.TypedResourceMetadataRequest{},
+		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
 	}
 
 	emptyApiModelResponse, err := apimodel.KafkaClusterMetadataRequestToResponse(&emptyApiModelRequest)

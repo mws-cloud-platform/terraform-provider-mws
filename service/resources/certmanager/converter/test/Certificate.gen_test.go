@@ -8,8 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
 	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/model"
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
 func TestCertificateAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -38,4 +43,36 @@ func TestCertificateOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateCertificateRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.Certificate
+	var stateTfModel tfmodel.Certificate
+	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
+	stateTfModel.SelfManaged = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.SelfManagedSpec).GetSchema().Attributes))
+	stateTfModel.Managed = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.CertificateManagedSpec).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateCertificateRequest{
+		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+			Set:  true,
+			Null: true,
+		},
+		Spec: optional.NewOptional(apimodel.UpdateCertificateSpecRequest{
+			SelfManaged: optional.OptionalNil[apimodel.UpdateSelfManagedSpecRequest]{
+				Set:  true,
+				Null: true,
+			},
+			Managed: optional.OptionalNil[apimodel.UpdateCertificateManagedSpecRequest]{
+				Set:  true,
+				Null: true,
+			},
+		}),
+	}
+
+	result, diags := conv.CertificateTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

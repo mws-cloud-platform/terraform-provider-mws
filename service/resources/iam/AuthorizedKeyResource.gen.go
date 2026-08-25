@@ -112,8 +112,8 @@ func (m *AuthorizedKeyResource) Configure(ctx context.Context, req resource.Conf
 func (m *AuthorizedKeyResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "AuthorizedKeyResource.Create")
 
-	var data tfmodel.AuthorizedKeyModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.AuthorizedKeyModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -121,7 +121,7 @@ func (m *AuthorizedKeyResource) Create(ctx context.Context, req resource.CreateR
 	var statusPrivateKey tfattr.Value
 	var statusPrivateKeyFile tfattr.Value
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -129,17 +129,17 @@ func (m *AuthorizedKeyResource) Create(ctx context.Context, req resource.CreateR
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "AuthorizedKeyResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.AuthorizedKeyTFToAPIRequestModel(ctx, &data.AuthorizedKey)
+	body, diags := conv.AuthorizedKeyTFToAPIRequestModel(ctx, &plan.AuthorizedKey)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "AuthorizedKeyResource.TFToAPI")
@@ -149,9 +149,9 @@ func (m *AuthorizedKeyResource) Create(ctx context.Context, req resource.CreateR
 	apiRes, err := m.sdk.CreateAuthorizedKeyV2(
 		ctx,
 		client.UpsertAuthorizedKeyV2Request{
-			ServiceAccount: data.ServiceAccountParam.ValueString(),
-			AuthorizedKey:  data.AuthorizedKeyParam.ValueString(),
-			Project:        data.ProjectParam.ValueString(),
+			ServiceAccount: plan.ServiceAccountParam.ValueString(),
+			AuthorizedKey:  plan.AuthorizedKeyParam.ValueString(),
+			Project:        plan.ProjectParam.ValueString(),
 			Body:           *body,
 		},
 	)
@@ -163,7 +163,7 @@ func (m *AuthorizedKeyResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.AuthorizedKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -172,9 +172,9 @@ func (m *AuthorizedKeyResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	data.AuthorizedKey = *tfRes
+	plan.AuthorizedKey = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("status").AtName("private_key"), &statusPrivateKey)...)
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("status").AtName("private_key_file"), &statusPrivateKeyFile)...)
@@ -182,9 +182,9 @@ func (m *AuthorizedKeyResource) Create(ctx context.Context, req resource.CreateR
 	apiRes, err = m.sdk.GetAuthorizedKeyV2(
 		ctx,
 		client.GetAuthorizedKeyV2Request{
-			ServiceAccount: data.ServiceAccountParam.ValueString(),
-			AuthorizedKey:  data.AuthorizedKeyParam.ValueString(),
-			Project:        data.ProjectParam.ValueString(),
+			ServiceAccount: plan.ServiceAccountParam.ValueString(),
+			AuthorizedKey:  plan.AuthorizedKeyParam.ValueString(),
+			Project:        plan.ProjectParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -196,7 +196,7 @@ func (m *AuthorizedKeyResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfFinalRes, diags := conv.AuthorizedKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -205,9 +205,9 @@ func (m *AuthorizedKeyResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	data.AuthorizedKey = *tfFinalRes
+	plan.AuthorizedKey = *tfFinalRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("status").AtName("private_key"), statusPrivateKey)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("status").AtName("private_key_file"), statusPrivateKeyFile)...)
 }
@@ -215,8 +215,8 @@ func (m *AuthorizedKeyResource) Create(ctx context.Context, req resource.CreateR
 func (m *AuthorizedKeyResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "AuthorizedKeyResource.Read")
 
-	var data tfmodel.AuthorizedKeyModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.AuthorizedKeyModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -224,7 +224,7 @@ func (m *AuthorizedKeyResource) Read(ctx context.Context, req resource.ReadReque
 	var statusPrivateKey tfattr.Value
 	var statusPrivateKeyFile tfattr.Value
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -232,15 +232,15 @@ func (m *AuthorizedKeyResource) Read(ctx context.Context, req resource.ReadReque
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetAuthorizedKeyV2(
 		ctx,
 		client.GetAuthorizedKeyV2Request{
-			ServiceAccount: data.ServiceAccountParam.ValueString(),
-			AuthorizedKey:  data.AuthorizedKeyParam.ValueString(),
-			Project:        data.ProjectParam.ValueString(),
+			ServiceAccount: state.ServiceAccountParam.ValueString(),
+			AuthorizedKey:  state.AuthorizedKeyParam.ValueString(),
+			Project:        state.ProjectParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -251,7 +251,7 @@ func (m *AuthorizedKeyResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.AuthorizedKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -260,9 +260,9 @@ func (m *AuthorizedKeyResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
-	data.AuthorizedKey = *tfRes
+	state.AuthorizedKey = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 	resp.Diagnostics.Append(req.State.GetAttribute(ctx, tfpath.Root("status").AtName("private_key"), &statusPrivateKey)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("status").AtName("private_key"), statusPrivateKey)...)
 	resp.Diagnostics.Append(req.State.GetAttribute(ctx, tfpath.Root("status").AtName("private_key_file"), &statusPrivateKeyFile)...)
@@ -272,8 +272,14 @@ func (m *AuthorizedKeyResource) Read(ctx context.Context, req resource.ReadReque
 func (m *AuthorizedKeyResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "AuthorizedKeyResource.Update")
 
-	var data tfmodel.AuthorizedKeyModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.AuthorizedKeyModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	var state tfmodel.AuthorizedKeyModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -281,7 +287,7 @@ func (m *AuthorizedKeyResource) Update(ctx context.Context, req resource.UpdateR
 	var statusPrivateKey tfattr.Value
 	var statusPrivateKeyFile tfattr.Value
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -289,17 +295,17 @@ func (m *AuthorizedKeyResource) Update(ctx context.Context, req resource.UpdateR
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "AuthorizedKeyResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.AuthorizedKeyTFToAPIRequestModel(ctx, &data.AuthorizedKey)
+	body, diags := conv.AuthorizedKeyTFToAPIUpdateRequestModel(ctx, &plan.AuthorizedKey, &state.AuthorizedKey)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "AuthorizedKeyResource.TFToAPI")
@@ -309,10 +315,10 @@ func (m *AuthorizedKeyResource) Update(ctx context.Context, req resource.UpdateR
 	apiRes, err := m.sdk.UpdateAuthorizedKeyV2(
 		ctx,
 		client.UpdateAuthorizedKeyV2Request{
-			ServiceAccount: data.ServiceAccountParam.ValueString(),
-			AuthorizedKey:  data.AuthorizedKeyParam.ValueString(),
-			Project:        data.ProjectParam.ValueString(),
-			Body:           body.AsUpdateModel(),
+			ServiceAccount: plan.ServiceAccountParam.ValueString(),
+			AuthorizedKey:  plan.AuthorizedKeyParam.ValueString(),
+			Project:        plan.ProjectParam.ValueString(),
+			Body:           *body,
 		},
 	)
 	if err != nil {
@@ -323,7 +329,7 @@ func (m *AuthorizedKeyResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.AuthorizedKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -332,16 +338,16 @@ func (m *AuthorizedKeyResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	data.AuthorizedKey = *tfRes
+	plan.AuthorizedKey = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 
 	apiRes, err = m.sdk.GetAuthorizedKeyV2(
 		ctx,
 		client.GetAuthorizedKeyV2Request{
-			ServiceAccount: data.ServiceAccountParam.ValueString(),
-			AuthorizedKey:  data.AuthorizedKeyParam.ValueString(),
-			Project:        data.ProjectParam.ValueString(),
+			ServiceAccount: plan.ServiceAccountParam.ValueString(),
+			AuthorizedKey:  plan.AuthorizedKeyParam.ValueString(),
+			Project:        plan.ProjectParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -353,7 +359,7 @@ func (m *AuthorizedKeyResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfFinalRes, diags := conv.AuthorizedKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -362,9 +368,9 @@ func (m *AuthorizedKeyResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	data.AuthorizedKey = *tfFinalRes
+	plan.AuthorizedKey = *tfFinalRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 	resp.Diagnostics.Append(req.State.GetAttribute(ctx, tfpath.Root("status").AtName("private_key"), &statusPrivateKey)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("status").AtName("private_key"), statusPrivateKey)...)
 	resp.Diagnostics.Append(req.State.GetAttribute(ctx, tfpath.Root("status").AtName("private_key_file"), &statusPrivateKeyFile)...)
@@ -374,13 +380,13 @@ func (m *AuthorizedKeyResource) Update(ctx context.Context, req resource.UpdateR
 func (m *AuthorizedKeyResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "AuthorizedKeyResource.Delete")
 
-	var data tfmodel.AuthorizedKeyModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.AuthorizedKeyModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -388,10 +394,10 @@ func (m *AuthorizedKeyResource) Delete(ctx context.Context, req resource.DeleteR
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := state.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "AuthorizedKeyResource.Timeouts")
@@ -401,9 +407,9 @@ func (m *AuthorizedKeyResource) Delete(ctx context.Context, req resource.DeleteR
 	err := m.sdk.DeleteAuthorizedKeyV2(
 		ctx,
 		client.DeleteAuthorizedKeyV2Request{
-			ServiceAccount: data.ServiceAccountParam.ValueString(),
-			AuthorizedKey:  data.AuthorizedKeyParam.ValueString(),
-			Project:        data.ProjectParam.ValueString(),
+			ServiceAccount: state.ServiceAccountParam.ValueString(),
+			AuthorizedKey:  state.AuthorizedKeyParam.ValueString(),
+			Project:        state.ProjectParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -419,7 +425,7 @@ func (m *AuthorizedKeyResource) Delete(ctx context.Context, req resource.DeleteR
 func (m *AuthorizedKeyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "AuthorizedKeyResource.ImportState")
 
-	var data tfmodel.AuthorizedKeyModel
+	var state tfmodel.AuthorizedKeyModel
 
 	ref, err := iamref.ParseAuthorizedKeyRef(ctx, req.ID)
 	if err != nil {
@@ -445,7 +451,7 @@ func (m *AuthorizedKeyResource) ImportState(ctx context.Context, req resource.Im
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.AuthorizedKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -454,11 +460,11 @@ func (m *AuthorizedKeyResource) ImportState(ctx context.Context, req resource.Im
 		return
 	}
 
-	data.AuthorizedKey = *tfRes
+	state.AuthorizedKey = *tfRes
 
-	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.ServiceAccountParam = types.StringValue(ref.GetServiceAccount())
-	data.AuthorizedKeyParam = types.StringValue(ref.GetAuthorizedKey())
+	state.ProjectParam = types.StringValue(ref.GetProject())
+	state.ServiceAccountParam = types.StringValue(ref.GetServiceAccount())
+	state.AuthorizedKeyParam = types.StringValue(ref.GetAuthorizedKey())
 
 	var rwTimeouts timeouts.Value
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
@@ -466,7 +472,7 @@ func (m *AuthorizedKeyResource) ImportState(ctx context.Context, req resource.Im
 		tflog.Debug(ctx, "AuthorizedKeyResource.timeouts.GetAttribute")
 		return
 	}
-	data.Timeouts = rwTimeouts
+	state.Timeouts = rwTimeouts
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

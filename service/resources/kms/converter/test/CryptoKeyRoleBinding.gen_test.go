@@ -8,10 +8,14 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/pkg/optional"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/kms/model"
 	"go.mws.cloud/go-sdk/service/resources/references/iam"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/kms/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/kms/model"
 )
 
 func TestCryptoKeyRoleBindingAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -24,9 +28,9 @@ func TestCryptoKeyRoleBindingAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 func TestCryptoKeyRoleBindingOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.CryptoKeyRoleBindingRequest{
-		Spec: common.CommonRoleBindingSpecRequest{
-			Subject: common.CommonRoleBindingSpecSubjectRequest{},
-			Role:    iam.NewRoleRef("roleID"),
+		Spec: commonapimodel.CommonRoleBindingSpecRequest{
+			Subject: commonapimodel.CommonRoleBindingSpecSubjectRequest{},
+			Role:    iam.NewMustRoleRef("roleID"),
 		},
 	}
 
@@ -43,4 +47,24 @@ func TestCryptoKeyRoleBindingOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateCryptoKeyRoleBindingRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.CryptoKeyRoleBinding
+	var stateTfModel tfmodel.CryptoKeyRoleBinding
+	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateCryptoKeyRoleBindingRequest{
+		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.CryptoKeyRoleBindingTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

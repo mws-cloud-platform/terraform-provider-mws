@@ -106,13 +106,13 @@ func (m *DiskResource) Configure(ctx context.Context, req resource.ConfigureRequ
 func (m *DiskResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "DiskResource.Create")
 
-	var data tfmodel.DiskModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.DiskModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -120,10 +120,10 @@ func (m *DiskResource) Create(ctx context.Context, req resource.CreateRequest, r
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	zoneParam := cmp.Or(data.Zone, m.config.Zone)
+	zoneParam := cmp.Or(plan.Zone, m.config.Zone)
 	if zoneParam.IsNull() || zoneParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -131,16 +131,16 @@ func (m *DiskResource) Create(ctx context.Context, req resource.CreateRequest, r
 		)
 		return
 	}
-	data.Zone = zoneParam
+	plan.Zone = zoneParam
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "DiskResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.DiskTFToAPIRequestModel(ctx, &data.Disk)
+	body, diags := conv.DiskTFToAPIRequestModel(ctx, &plan.Disk)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "DiskResource.TFToAPI")
@@ -150,8 +150,8 @@ func (m *DiskResource) Create(ctx context.Context, req resource.CreateRequest, r
 	apiRes, err := m.sdk.CreateDisk(
 		ctx,
 		client.UpsertDiskRequest{
-			Project: data.ProjectParam.ValueString(),
-			Disk:    data.DiskParam.ValueString(),
+			Project: plan.ProjectParam.ValueString(),
+			Disk:    plan.DiskParam.ValueString(),
 			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
@@ -164,7 +164,7 @@ func (m *DiskResource) Create(ctx context.Context, req resource.CreateRequest, r
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.DiskAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -173,21 +173,21 @@ func (m *DiskResource) Create(ctx context.Context, req resource.CreateRequest, r
 		return
 	}
 
-	data.Disk = *tfRes
+	plan.Disk = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *DiskResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "DiskResource.Read")
 
-	var data tfmodel.DiskModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.DiskModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -195,10 +195,10 @@ func (m *DiskResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	zoneParam := cmp.Or(data.Zone, m.config.Zone)
+	zoneParam := cmp.Or(state.Zone, m.config.Zone)
 	if zoneParam.IsNull() || zoneParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -206,13 +206,13 @@ func (m *DiskResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 		)
 		return
 	}
-	data.Zone = zoneParam
+	state.Zone = zoneParam
 
 	apiRes, err := m.sdk.GetDisk(
 		ctx,
 		client.GetDiskRequest{
-			Project: data.ProjectParam.ValueString(),
-			Disk:    data.DiskParam.ValueString(),
+			Project: state.ProjectParam.ValueString(),
+			Disk:    state.DiskParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -223,7 +223,7 @@ func (m *DiskResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.DiskAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -232,21 +232,27 @@ func (m *DiskResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 		return
 	}
 
-	data.Disk = *tfRes
+	state.Disk = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 func (m *DiskResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "DiskResource.Update")
 
-	var data tfmodel.DiskModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.DiskModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	var state tfmodel.DiskModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -254,10 +260,10 @@ func (m *DiskResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	zoneParam := cmp.Or(data.Zone, m.config.Zone)
+	zoneParam := cmp.Or(plan.Zone, m.config.Zone)
 	if zoneParam.IsNull() || zoneParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -265,16 +271,16 @@ func (m *DiskResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		)
 		return
 	}
-	data.Zone = zoneParam
+	plan.Zone = zoneParam
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "DiskResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.DiskTFToAPIRequestModel(ctx, &data.Disk)
+	body, diags := conv.DiskTFToAPIUpdateRequestModel(ctx, &plan.Disk, &state.Disk)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "DiskResource.TFToAPI")
@@ -284,9 +290,9 @@ func (m *DiskResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	apiRes, err := m.sdk.UpdateDisk(
 		ctx,
 		client.UpdateDiskRequest{
-			Project: data.ProjectParam.ValueString(),
-			Disk:    data.DiskParam.ValueString(),
-			Body:    body.AsUpdateModel(),
+			Project: plan.ProjectParam.ValueString(),
+			Disk:    plan.DiskParam.ValueString(),
+			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -298,7 +304,7 @@ func (m *DiskResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.DiskAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -307,21 +313,21 @@ func (m *DiskResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		return
 	}
 
-	data.Disk = *tfRes
+	plan.Disk = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *DiskResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "DiskResource.Delete")
 
-	var data tfmodel.DiskModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.DiskModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -329,10 +335,10 @@ func (m *DiskResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	zoneParam := cmp.Or(data.Zone, m.config.Zone)
+	zoneParam := cmp.Or(state.Zone, m.config.Zone)
 	if zoneParam.IsNull() || zoneParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -340,9 +346,9 @@ func (m *DiskResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 		)
 		return
 	}
-	data.Zone = zoneParam
+	state.Zone = zoneParam
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := state.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "DiskResource.Timeouts")
@@ -352,8 +358,8 @@ func (m *DiskResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 	err := m.sdk.DeleteDisk(
 		ctx,
 		client.DeleteDiskRequest{
-			Project: data.ProjectParam.ValueString(),
-			Disk:    data.DiskParam.ValueString(),
+			Project: state.ProjectParam.ValueString(),
+			Disk:    state.DiskParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -369,7 +375,7 @@ func (m *DiskResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 func (m *DiskResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "DiskResource.ImportState")
 
-	var data tfmodel.DiskModel
+	var state tfmodel.DiskModel
 
 	ref, err := computeref.ParseDiskRef(ctx, req.ID)
 	if err != nil {
@@ -394,7 +400,7 @@ func (m *DiskResource) ImportState(ctx context.Context, req resource.ImportState
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.DiskAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -403,10 +409,10 @@ func (m *DiskResource) ImportState(ctx context.Context, req resource.ImportState
 		return
 	}
 
-	data.Disk = *tfRes
+	state.Disk = *tfRes
 
-	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.DiskParam = types.StringValue(ref.GetDisk())
+	state.ProjectParam = types.StringValue(ref.GetProject())
+	state.DiskParam = types.StringValue(ref.GetDisk())
 
 	var rwTimeouts timeouts.Value
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
@@ -414,7 +420,7 @@ func (m *DiskResource) ImportState(ctx context.Context, req resource.ImportState
 		tflog.Debug(ctx, "DiskResource.timeouts.GetAttribute")
 		return
 	}
-	data.Timeouts = rwTimeouts
+	state.Timeouts = rwTimeouts
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

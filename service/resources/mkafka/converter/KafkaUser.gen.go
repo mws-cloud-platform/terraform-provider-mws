@@ -11,7 +11,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/pkg/apimodels/sensitive"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
@@ -103,23 +104,23 @@ func KafkaUserAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaUserRe
 	return &t, diags
 }
 
-func KafkaUserTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaUser) (*apimodel.KafkaUserRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func KafkaUserTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaUser) (*apimodel.KafkaUserRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaUserRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfmodel.KafkaUserMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfmodel.KafkaUserMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := KafkaUserMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := KafkaUserMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -127,17 +128,18 @@ func KafkaUserTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaUser) (*
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.Password.IsNull() && !tm.Password.IsUnknown() {
-		am.Spec.Password = tm.Password.ValueString()
+	if !plan.Password.IsNull() && !plan.Password.IsUnknown() {
+		am.Spec.Password = sensitive.New(plan.Password.ValueString())
 	}
 
-	if !tm.Roles.IsNull() && !tm.Roles.IsUnknown() {
+	if !plan.Roles.IsNull() && !plan.Roles.IsUnknown() {
 		roles := make([]tfmodel.KafkaClusterRole, 0)
-		dRoles := tm.Roles.ElementsAs(ctx, &roles, false)
+		dRoles := plan.Roles.ElementsAs(ctx, &roles, false)
 		diags = append(diags, dRoles...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.Spec.Roles = make([]apimodel.KafkaClusterRoleRequest, 0, len(roles))
 
 		for _, entity := range roles {
@@ -147,6 +149,85 @@ func KafkaUserTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaUser) (*
 				return nil, diags
 			}
 			am.Spec.Roles = append(am.Spec.Roles, *tmp)
+		}
+	}
+
+	return &am, diags
+}
+
+func KafkaUserTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaUser) (*apimodel.UpdateKafkaUserRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.KafkaUser{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateKafkaUserRequest
+
+	if !plan.Metadata.Equal(state.Metadata) {
+		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+			metadataPlan := tfmodel.KafkaUserMetadata{}
+			metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, metadataPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			metadataState := tfmodel.KafkaUserMetadata{}
+			if !state.Metadata.IsNull() && !state.Metadata.IsUnknown() {
+				metadataStateDiag := state.Metadata.As(ctx, &metadataState, basetypes.ObjectAsOptions{})
+				diags = append(diags, metadataStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			metadataTmp, metadataDiag := KafkaUserMetadataTFToAPIUpdateRequestModel(ctx, &metadataPlan, &metadataState)
+			diags = append(diags, metadataDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Metadata.SetTo(*metadataTmp)
+		} else if plan.Metadata.IsNull() {
+			am.Metadata.SetToNull()
+		}
+	}
+
+	if !plan.Password.Equal(state.Password) {
+		if !plan.Password.IsNull() && !plan.Password.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateKafkaUserSpecRequest{})
+			}
+			am.Spec.Value.Password.SetTo(sensitive.New(plan.Password.ValueString()))
+		}
+	}
+
+	if !plan.Roles.Equal(state.Roles) {
+		if !plan.Roles.IsNull() && !plan.Roles.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateKafkaUserSpecRequest{})
+			}
+			roles := make([]tfmodel.KafkaClusterRole, 0)
+			dRoles := plan.Roles.ElementsAs(ctx, &roles, false)
+			diags = append(diags, dRoles...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			rolesTmp := make([]apimodel.UpdateKafkaClusterRoleRequest, 0, len(roles))
+
+			for _, entity := range roles {
+				stateEntity := tfmodel.KafkaClusterRole{}
+				tmp, d := KafkaClusterRoleTFToAPIUpdateRequestModel(ctx, &entity, &stateEntity)
+				diags = append(diags, d...)
+				if diags.HasError() {
+					return nil, diags
+				}
+				rolesTmp = append(rolesTmp, *tmp)
+			}
+			am.Spec.Value.Roles.SetTo(rolesTmp)
 		}
 	}
 
@@ -227,26 +308,27 @@ func KafkaUserMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.Kaf
 	return &t, diags
 }
 
-func KafkaUserMetadataTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaUserMetadata) (*apimodel.KafkaUserMetadataRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func KafkaUserMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaUserMetadata) (*apimodel.KafkaUserMetadataRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaUserMetadataRequest
 
-	if !tm.DisplayName.IsNull() && !tm.DisplayName.IsUnknown() {
-		am.DisplayName = tm.DisplayName.ValueStringPointer()
+	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
+		am.DisplayName = plan.DisplayName.ValueStringPointer()
 	}
 
-	if !tm.Usages.IsNull() && !tm.Usages.IsUnknown() {
+	if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
 		usages := make([]tfcommon.TypedUsage, 0)
-		dUsages := tm.Usages.ElementsAs(ctx, &usages, false)
+		dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
 		diags = append(diags, dUsages...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.Usages = make([]common.TypedUsageRequest, 0, len(usages))
+
+		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
@@ -258,8 +340,58 @@ func KafkaUserMetadataTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Kafka
 		}
 	}
 
-	if !tm.Description.IsNull() && !tm.Description.IsUnknown() {
-		am.Description = tm.Description.ValueStringPointer()
+	if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
+		am.Description = plan.Description.ValueStringPointer()
+	}
+
+	return &am, diags
+}
+
+func KafkaUserMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaUserMetadata) (*apimodel.UpdateKafkaUserMetadataRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.KafkaUserMetadata{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateKafkaUserMetadataRequest
+
+	if !plan.DisplayName.Equal(state.DisplayName) {
+		if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
+			am.DisplayName.SetTo(plan.DisplayName.ValueString())
+		}
+	}
+
+	if !plan.Usages.Equal(state.Usages) {
+		if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
+			usages := make([]tfcommon.TypedUsage, 0)
+			dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
+			diags = append(diags, dUsages...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			usagesTmp := make([]commonapimodel.UpdateTypedUsageRequest, 0, len(usages))
+
+			for _, entity := range usages {
+				stateEntity := tfcommon.TypedUsage{}
+				tmp, d := commonconv.TypedUsageTFToAPIUpdateRequestModel(ctx, &entity, &stateEntity)
+				diags = append(diags, d...)
+				if diags.HasError() {
+					return nil, diags
+				}
+				usagesTmp = append(usagesTmp, *tmp)
+			}
+			am.Usages.SetTo(usagesTmp)
+		}
+	}
+
+	if !plan.Description.Equal(state.Description) {
+		if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
+			am.Description.SetTo(plan.Description.ValueString())
+		}
 	}
 
 	return &am, diags

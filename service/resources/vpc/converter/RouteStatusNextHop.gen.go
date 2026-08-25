@@ -11,6 +11,8 @@ import (
 
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
+	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
@@ -35,13 +37,13 @@ func RouteStatusNextHopAPIResponseToTFModel(ctx context.Context, am *apimodel.Ro
 	}
 
 	if am.Address != nil {
-		addressTmp, d := ResourceAddressStatusAPIResponseToTFModel(ctx, am.Address)
+		addressTmp, d := commonconv.ResourceAddressStatusAPIResponseToTFModel(ctx, am.Address)
 		diags = append(diags, d...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		addressTfObject, d := types.ObjectValueFrom(ctx,
-			tfconv.GetAttributesTypes(new(tfmodel.ResourceAddressStatus).GetSchema().Attributes),
+			tfconv.GetAttributesTypes(new(tfcommon.ResourceAddressStatus).GetSchema().Attributes),
 			*addressTmp)
 		diags = append(diags, d...)
 		if diags.HasError() {
@@ -49,7 +51,7 @@ func RouteStatusNextHopAPIResponseToTFModel(ctx context.Context, am *apimodel.Ro
 		}
 		t.Address = addressTfObject
 	} else {
-		t.Address = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.ResourceAddressStatus).GetSchema().Attributes))
+		t.Address = types.ObjectNull(tfconv.GetAttributesTypes(new(tfcommon.ResourceAddressStatus).GetSchema().Attributes))
 	}
 
 	return &t, diags

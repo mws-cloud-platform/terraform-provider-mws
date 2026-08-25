@@ -10,6 +10,7 @@ import (
 
 	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
 func TestNodeTaintSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -70,4 +71,18 @@ func TestNodeTaintSpecResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateNodeTaintSpecRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.NodeTaintSpec
+	var stateTfModel tfmodel.NodeTaintSpec
+
+	expectedUpdateModel := &apimodel.UpdateNodeTaintSpecRequest{}
+
+	result, diags := conv.NodeTaintSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

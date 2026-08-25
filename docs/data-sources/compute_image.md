@@ -33,6 +33,7 @@ data "mws_compute_image" "image" {
 ### Read-Only
 
 - `activity` (String) Актуальность образа
+- `encryption` (Attributes) Способ шифрования ресурса (see [below for nested schema](#nestedatt--encryption))
 - `family` (String) Семейство образа
 - `kind` (String) Тип объекта (image)
 - `metadata` (Attributes) Дополнительная информация об объекте (see [below for nested schema](#nestedatt--metadata))
@@ -46,6 +47,14 @@ data "mws_compute_image" "image" {
 - `os_type` (String) Тип операционной системы
 - `source` (Attributes) Источник для создания образа (see [below for nested schema](#nestedatt--source))
 - `status` (Attributes) Статус образа (see [below for nested schema](#nestedatt--status))
+
+<a id="nestedatt--encryption"></a>
+### Nested Schema for `encryption`
+
+Read-Only:
+
+- `crypto_key_id` (String) Идентификатор пользовательского ключа
+
 
 <a id="nestedatt--metadata"></a>
 ### Nested Schema for `metadata`
@@ -94,6 +103,7 @@ Read-Only:
 Read-Only:
 
 - `activity` (String) Актуальность образа
+- `encryption` (Attributes) Способ шифрования ресурса (see [below for nested schema](#nestedatt--status--encryption))
 - `initial_source_image` (String) Ссылка на исходный образ
 - `min_disk_size` (String) Минимальный допустимый размер диска, создаваемого из образа
 
@@ -112,6 +122,16 @@ Read-Only:
 Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
 Значение базовой единицы измерения (в байтах) должно оставаться целым.
 Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
+
+<a id="nestedatt--status--encryption"></a>
+### Nested Schema for `status.encryption`
+
+Read-Only:
+
+- `crypto_key_id` (String) Идентификатор пользовательского ключа
+- `key_activity` (String) Состояние ключа
+- `version` (Number) Версия пользовательского ключа
+
 
 <a id="nestedatt--status--ready"></a>
 ### Nested Schema for `status.ready`

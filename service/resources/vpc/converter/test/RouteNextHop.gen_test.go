@@ -6,11 +6,15 @@ import (
 	"context"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
 func TestRouteNextHopAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -39,6 +43,31 @@ func TestRouteNextHopOptionalResponseConverters(t *testing.T) {
 	require.Equal(t, *emptyApiModelResponse, *result)
 }
 
+func TestUpdateRouteNextHopRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.RouteNextHop
+	var stateTfModel tfmodel.RouteNextHop
+	stateTfModel.NatGateway = types.StringValue("")
+	stateTfModel.Address = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.RouteNextHopAddress).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateRouteNextHopRequest{
+		NatGateway: optional.OptionalNil[vpc.NatGatewayRef]{
+			Set:  true,
+			Null: true,
+		},
+		Address: optional.OptionalNil[apimodel.UpdateRouteNextHopAddressRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.RouteNextHopTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
+}
+
 func TestRouteNextHopAddressAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
 	emptyApiModel := apimodel.RouteNextHopAddressOptionalResponse{}
@@ -49,7 +78,7 @@ func TestRouteNextHopAddressAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 func TestRouteNextHopAddressOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.RouteNextHopAddressRequest{
-		Ref: vpc.NewAddressRef("projectID", "networkID", "addressID"),
+		Ref: vpc.NewMustAddressRef("projectID", "networkID", "addressID"),
 	}
 
 	emptyApiModelResponse, err := apimodel.RouteNextHopAddressRequestToOptionalResponse(&emptyApiModelRequest)
@@ -65,4 +94,18 @@ func TestRouteNextHopAddressOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateRouteNextHopAddressRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.RouteNextHopAddress
+	var stateTfModel tfmodel.RouteNextHopAddress
+
+	expectedUpdateModel := &apimodel.UpdateRouteNextHopAddressRequest{}
+
+	result, diags := conv.RouteNextHopAddressTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

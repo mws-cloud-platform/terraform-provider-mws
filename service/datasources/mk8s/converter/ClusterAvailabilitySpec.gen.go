@@ -61,23 +61,23 @@ func ClusterAvailabilitySpecAPIOptionalResponseToTFModel(ctx context.Context, am
 	return &t, diags
 }
 
-func ClusterAvailabilitySpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClusterAvailabilitySpec) (*apimodel.ClusterAvailabilitySpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClusterAvailabilitySpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterAvailabilitySpec) (*apimodel.ClusterAvailabilitySpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClusterAvailabilitySpecRequest
 
-	if !tm.Standalone.IsNull() && !tm.Standalone.IsUnknown() {
-		standaloneTfModel := tfmodel.ClusterAvailabilitySpecStandalone{}
-		standaloneDiag := tm.Standalone.As(ctx, &standaloneTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, standaloneDiag...)
+	if !plan.Standalone.IsNull() && !plan.Standalone.IsUnknown() {
+		standalonePlan := tfmodel.ClusterAvailabilitySpecStandalone{}
+		standalonePlanDiag := plan.Standalone.As(ctx, &standalonePlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, standalonePlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		standaloneTmp, standaloneDiag := ClusterAvailabilitySpecStandaloneTFToAPIRequestModel(ctx, &standaloneTfModel)
+		standaloneTmp, standaloneDiag := ClusterAvailabilitySpecStandaloneTFToAPIRequestModel(ctx, &standalonePlan)
 		diags = append(diags, standaloneDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -85,15 +85,15 @@ func ClusterAvailabilitySpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel
 		am.Standalone = standaloneTmp
 	}
 
-	if !tm.ZonalHa.IsNull() && !tm.ZonalHa.IsUnknown() {
-		zonalHaTfModel := tfmodel.ClusterAvailabilitySpecZonalHa{}
-		zonalHaDiag := tm.ZonalHa.As(ctx, &zonalHaTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, zonalHaDiag...)
+	if !plan.ZonalHa.IsNull() && !plan.ZonalHa.IsUnknown() {
+		zonalHaPlan := tfmodel.ClusterAvailabilitySpecZonalHa{}
+		zonalHaPlanDiag := plan.ZonalHa.As(ctx, &zonalHaPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, zonalHaPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		zonalHaTmp, zonalHaDiag := ClusterAvailabilitySpecZonalHaTFToAPIRequestModel(ctx, &zonalHaTfModel)
+		zonalHaTmp, zonalHaDiag := ClusterAvailabilitySpecZonalHaTFToAPIRequestModel(ctx, &zonalHaPlan)
 		diags = append(diags, zonalHaDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -117,16 +117,16 @@ func ClusterAvailabilitySpecStandaloneAPIOptionalResponseToTFModel(ctx context.C
 	return &t, diags
 }
 
-func ClusterAvailabilitySpecStandaloneTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClusterAvailabilitySpecStandalone) (*apimodel.ClusterAvailabilitySpecStandaloneRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClusterAvailabilitySpecStandaloneTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterAvailabilitySpecStandalone) (*apimodel.ClusterAvailabilitySpecStandaloneRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClusterAvailabilitySpecStandaloneRequest
 
-	if !tm.Zone.IsNull() && !tm.Zone.IsUnknown() {
-		am.Zone = tm.Zone.ValueString()
+	if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
+		am.Zone = plan.Zone.ValueString()
 	}
 
 	return &am, diags
@@ -145,16 +145,16 @@ func ClusterAvailabilitySpecZonalHaAPIOptionalResponseToTFModel(ctx context.Cont
 	return &t, diags
 }
 
-func ClusterAvailabilitySpecZonalHaTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClusterAvailabilitySpecZonalHa) (*apimodel.ClusterAvailabilitySpecZonalHaRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClusterAvailabilitySpecZonalHaTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterAvailabilitySpecZonalHa) (*apimodel.ClusterAvailabilitySpecZonalHaRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClusterAvailabilitySpecZonalHaRequest
 
-	if !tm.Zone.IsNull() && !tm.Zone.IsUnknown() {
-		am.Zone = tm.Zone.ValueString()
+	if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
+		am.Zone = plan.Zone.ValueString()
 	}
 
 	return &am, diags

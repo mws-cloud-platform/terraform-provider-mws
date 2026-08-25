@@ -107,13 +107,13 @@ func (m *CryptoKeyResource) Configure(ctx context.Context, req resource.Configur
 func (m *CryptoKeyResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "CryptoKeyResource.Create")
 
-	var data tfmodel.CryptoKeyModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.CryptoKeyModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -121,17 +121,17 @@ func (m *CryptoKeyResource) Create(ctx context.Context, req resource.CreateReque
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CryptoKeyResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.CryptoKeyTFToAPIRequestModel(ctx, &data.CryptoKey)
+	body, diags := conv.CryptoKeyTFToAPIRequestModel(ctx, &plan.CryptoKey)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CryptoKeyResource.TFToAPI")
@@ -141,8 +141,8 @@ func (m *CryptoKeyResource) Create(ctx context.Context, req resource.CreateReque
 	apiRes, err := m.sdk.CreateCryptoKey(
 		ctx,
 		client.UpsertCryptoKeyRequest{
-			Project: data.ProjectParam.ValueString(),
-			Key:     data.KeyParam.ValueString(),
+			Project: plan.ProjectParam.ValueString(),
+			Key:     plan.KeyParam.ValueString(),
 			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
@@ -155,7 +155,7 @@ func (m *CryptoKeyResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.CryptoKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -164,21 +164,21 @@ func (m *CryptoKeyResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	data.CryptoKey = *tfRes
+	plan.CryptoKey = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *CryptoKeyResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "CryptoKeyResource.Read")
 
-	var data tfmodel.CryptoKeyModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.CryptoKeyModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -186,10 +186,10 @@ func (m *CryptoKeyResource) Read(ctx context.Context, req resource.ReadRequest, 
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	apiRes, err := crskms.Read(ctx, req, resp, m.sdk, data)
+	apiRes, err := crskms.Read(ctx, req, resp, m.sdk, state)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Get CryptoKey",
@@ -198,7 +198,7 @@ func (m *CryptoKeyResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.CryptoKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -207,21 +207,27 @@ func (m *CryptoKeyResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	data.CryptoKey = *tfRes
+	state.CryptoKey = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 func (m *CryptoKeyResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "CryptoKeyResource.Update")
 
-	var data tfmodel.CryptoKeyModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.CryptoKeyModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	var state tfmodel.CryptoKeyModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -229,17 +235,17 @@ func (m *CryptoKeyResource) Update(ctx context.Context, req resource.UpdateReque
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CryptoKeyResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.CryptoKeyTFToAPIRequestModel(ctx, &data.CryptoKey)
+	body, diags := conv.CryptoKeyTFToAPIUpdateRequestModel(ctx, &plan.CryptoKey, &state.CryptoKey)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CryptoKeyResource.TFToAPI")
@@ -249,9 +255,9 @@ func (m *CryptoKeyResource) Update(ctx context.Context, req resource.UpdateReque
 	apiRes, err := m.sdk.UpdateCryptoKey(
 		ctx,
 		client.UpdateCryptoKeyRequest{
-			Project: data.ProjectParam.ValueString(),
-			Key:     data.KeyParam.ValueString(),
-			Body:    body.AsUpdateModel(),
+			Project: plan.ProjectParam.ValueString(),
+			Key:     plan.KeyParam.ValueString(),
+			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -263,7 +269,7 @@ func (m *CryptoKeyResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.CryptoKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -272,21 +278,21 @@ func (m *CryptoKeyResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	data.CryptoKey = *tfRes
+	plan.CryptoKey = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *CryptoKeyResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "CryptoKeyResource.Delete")
 
-	var data tfmodel.CryptoKeyModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.CryptoKeyModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -294,17 +300,17 @@ func (m *CryptoKeyResource) Delete(ctx context.Context, req resource.DeleteReque
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := state.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CryptoKeyResource.Timeouts")
 		return
 	}
 
-	err := crskms.Delete(ctx, req, resp, m.sdk, data, &diags, resourceWaiterTimeout)
+	err := crskms.Delete(ctx, req, resp, m.sdk, state, &diags, resourceWaiterTimeout)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Delete CryptoKey",
@@ -317,7 +323,7 @@ func (m *CryptoKeyResource) Delete(ctx context.Context, req resource.DeleteReque
 func (m *CryptoKeyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "CryptoKeyResource.ImportState")
 
-	var data tfmodel.CryptoKeyModel
+	var state tfmodel.CryptoKeyModel
 
 	ref, err := kmsref.ParseCryptoKeyRef(ctx, req.ID)
 	if err != nil {
@@ -342,7 +348,7 @@ func (m *CryptoKeyResource) ImportState(ctx context.Context, req resource.Import
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.CryptoKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -351,10 +357,10 @@ func (m *CryptoKeyResource) ImportState(ctx context.Context, req resource.Import
 		return
 	}
 
-	data.CryptoKey = *tfRes
+	state.CryptoKey = *tfRes
 
-	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.KeyParam = types.StringValue(ref.GetKey())
+	state.ProjectParam = types.StringValue(ref.GetProject())
+	state.KeyParam = types.StringValue(ref.GetKey())
 
 	var rwTimeouts timeouts.Value
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
@@ -362,7 +368,7 @@ func (m *CryptoKeyResource) ImportState(ctx context.Context, req resource.Import
 		tflog.Debug(ctx, "CryptoKeyResource.timeouts.GetAttribute")
 		return
 	}
-	data.Timeouts = rwTimeouts
+	state.Timeouts = rwTimeouts
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

@@ -18,6 +18,7 @@ type ClusterStatus struct {
 	VersionControl       types.Object `tfsdk:"version_control"`
 	ClusterStatus        types.Object `tfsdk:"cluster_status"`
 	Plugins              types.Object `tfsdk:"plugins"`
+	SecurityPosture      types.Object `tfsdk:"security_posture"`
 }
 
 func (s *ClusterStatus) GetSchema() schema.Schema {
@@ -48,6 +49,11 @@ func (s *ClusterStatus) GetSchema() schema.Schema {
 			"plugins": schema.SingleNestedAttribute{
 				Attributes: new(PluginsStatus).GetSchema().Attributes,
 				Computed:   true,
+			},
+			"security_posture": schema.SingleNestedAttribute{
+				Attributes:          new(SecurityPostureStatus).GetSchema().Attributes,
+				MarkdownDescription: `Статус KSP для кластера`,
+				Computed:            true,
 			},
 		},
 	}

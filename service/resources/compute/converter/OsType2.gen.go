@@ -25,11 +25,11 @@ func OsType2APIToTFModel(ctx context.Context, am *apimodel.OsType2) (tfmodel.OsT
 	return t, diags
 }
 
-func OsType2TFToAPIModel(ctx context.Context, tm tfmodel.OsType2) (*apimodel.OsType2, tfdiag.Diagnostics) {
+func OsType2TFToAPIModel(ctx context.Context, plan tfmodel.OsType2) (*apimodel.OsType2, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am apimodel.OsType2
 
-	var tmp = types.String(tm)
+	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}

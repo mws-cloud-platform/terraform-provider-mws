@@ -83,13 +83,13 @@ func (m *ClusterUserDataSource) Configure(ctx context.Context, req datasource.Co
 func (m *ClusterUserDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "ClusterUserDataSource.Read")
 
-	var data tfmodel.ClusterUserModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.ClusterUserModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -97,15 +97,15 @@ func (m *ClusterUserDataSource) Read(ctx context.Context, req datasource.ReadReq
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetKafkaUser(
 		ctx,
 		client.GetKafkaUserRequest{
-			Project: data.ProjectParam.ValueString(),
-			Cluster: data.ClusterParam.ValueString(),
-			User:    data.UserParam.ValueString(),
+			Project: config.ProjectParam.ValueString(),
+			Cluster: config.ClusterParam.ValueString(),
+			User:    config.UserParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -123,7 +123,7 @@ func (m *ClusterUserDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	data.KafkaUser = *tfRes
+	config.KafkaUser = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

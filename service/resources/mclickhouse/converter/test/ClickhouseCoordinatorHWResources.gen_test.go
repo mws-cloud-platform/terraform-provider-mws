@@ -12,6 +12,7 @@ import (
 	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
 	"go.mws.cloud/go-sdk/service/resources/references/mclickhouse"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
 func TestClickhouseCoordinatorHWResourcesAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -24,7 +25,7 @@ func TestClickhouseCoordinatorHWResourcesAPIOptionalResponseToTFModelEmpty(t *te
 func TestClickhouseCoordinatorHWResourcesOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.ClickhouseCoordinatorHWResourcesRequest{
-		VmType: mclickhouse.NewClickhouseVmTypeRef("vmTypeID"),
+		VmType: mclickhouse.NewMustClickhouseVmTypeRef("vmTypeID"),
 		Disk: apimodel.ClickhouseInstanceDiskSpecRequest{
 			Size: bytesize.MustParseString("0 B"),
 			Type: "",
@@ -56,7 +57,7 @@ func TestClickhouseCoordinatorHWResourcesAPIResponseToTFModelEmpty(t *testing.T)
 func TestClickhouseCoordinatorHWResourcesResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.ClickhouseCoordinatorHWResourcesRequest{
-		VmType: mclickhouse.NewClickhouseVmTypeRef("vmTypeID"),
+		VmType: mclickhouse.NewMustClickhouseVmTypeRef("vmTypeID"),
 		Disk: apimodel.ClickhouseInstanceDiskSpecRequest{
 			Size: bytesize.MustParseString("0 B"),
 			Type: "",
@@ -76,4 +77,18 @@ func TestClickhouseCoordinatorHWResourcesResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateClickhouseCoordinatorHWResourcesRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ClickhouseCoordinatorHWResources
+	var stateTfModel tfmodel.ClickhouseCoordinatorHWResources
+
+	expectedUpdateModel := &apimodel.UpdateClickhouseCoordinatorHWResourcesRequest{}
+
+	result, diags := conv.ClickhouseCoordinatorHWResourcesTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

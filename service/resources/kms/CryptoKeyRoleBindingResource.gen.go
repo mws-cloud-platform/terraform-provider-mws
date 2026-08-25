@@ -113,13 +113,13 @@ func (m *CryptoKeyRoleBindingResource) Configure(ctx context.Context, req resour
 func (m *CryptoKeyRoleBindingResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "CryptoKeyRoleBindingResource.Create")
 
-	var data tfmodel.CryptoKeyRoleBindingModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.CryptoKeyRoleBindingModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -127,17 +127,17 @@ func (m *CryptoKeyRoleBindingResource) Create(ctx context.Context, req resource.
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CryptoKeyRoleBindingResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.CryptoKeyRoleBindingTFToAPIRequestModel(ctx, &data.CryptoKeyRoleBinding)
+	body, diags := conv.CryptoKeyRoleBindingTFToAPIRequestModel(ctx, &plan.CryptoKeyRoleBinding)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CryptoKeyRoleBindingResource.TFToAPI")
@@ -147,9 +147,9 @@ func (m *CryptoKeyRoleBindingResource) Create(ctx context.Context, req resource.
 	apiRes, err := m.sdk.CreateCryptoKeyRoleBinding(
 		ctx,
 		client.UpsertCryptoKeyRoleBindingRequest{
-			Project:     data.ProjectParam.ValueString(),
-			Key:         data.KeyParam.ValueString(),
-			RoleBinding: data.RoleBindingParam.ValueString(),
+			Project:     plan.ProjectParam.ValueString(),
+			Key:         plan.KeyParam.ValueString(),
+			RoleBinding: plan.RoleBindingParam.ValueString(),
 			Body:        *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
@@ -162,7 +162,7 @@ func (m *CryptoKeyRoleBindingResource) Create(ctx context.Context, req resource.
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.CryptoKeyRoleBindingAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -171,21 +171,21 @@ func (m *CryptoKeyRoleBindingResource) Create(ctx context.Context, req resource.
 		return
 	}
 
-	data.CryptoKeyRoleBinding = *tfRes
+	plan.CryptoKeyRoleBinding = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *CryptoKeyRoleBindingResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "CryptoKeyRoleBindingResource.Read")
 
-	var data tfmodel.CryptoKeyRoleBindingModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.CryptoKeyRoleBindingModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -193,15 +193,15 @@ func (m *CryptoKeyRoleBindingResource) Read(ctx context.Context, req resource.Re
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetCryptoKeyRoleBinding(
 		ctx,
 		client.GetCryptoKeyRoleBindingRequest{
-			Project:     data.ProjectParam.ValueString(),
-			Key:         data.KeyParam.ValueString(),
-			RoleBinding: data.RoleBindingParam.ValueString(),
+			Project:     state.ProjectParam.ValueString(),
+			Key:         state.KeyParam.ValueString(),
+			RoleBinding: state.RoleBindingParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -212,7 +212,7 @@ func (m *CryptoKeyRoleBindingResource) Read(ctx context.Context, req resource.Re
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.CryptoKeyRoleBindingAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -221,21 +221,27 @@ func (m *CryptoKeyRoleBindingResource) Read(ctx context.Context, req resource.Re
 		return
 	}
 
-	data.CryptoKeyRoleBinding = *tfRes
+	state.CryptoKeyRoleBinding = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 func (m *CryptoKeyRoleBindingResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "CryptoKeyRoleBindingResource.Update")
 
-	var data tfmodel.CryptoKeyRoleBindingModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.CryptoKeyRoleBindingModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	var state tfmodel.CryptoKeyRoleBindingModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -243,17 +249,17 @@ func (m *CryptoKeyRoleBindingResource) Update(ctx context.Context, req resource.
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CryptoKeyRoleBindingResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.CryptoKeyRoleBindingTFToAPIRequestModel(ctx, &data.CryptoKeyRoleBinding)
+	body, diags := conv.CryptoKeyRoleBindingTFToAPIUpdateRequestModel(ctx, &plan.CryptoKeyRoleBinding, &state.CryptoKeyRoleBinding)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CryptoKeyRoleBindingResource.TFToAPI")
@@ -263,10 +269,10 @@ func (m *CryptoKeyRoleBindingResource) Update(ctx context.Context, req resource.
 	apiRes, err := m.sdk.UpdateCryptoKeyRoleBinding(
 		ctx,
 		client.UpdateCryptoKeyRoleBindingRequest{
-			Project:     data.ProjectParam.ValueString(),
-			Key:         data.KeyParam.ValueString(),
-			RoleBinding: data.RoleBindingParam.ValueString(),
-			Body:        body.AsUpdateModel(),
+			Project:     plan.ProjectParam.ValueString(),
+			Key:         plan.KeyParam.ValueString(),
+			RoleBinding: plan.RoleBindingParam.ValueString(),
+			Body:        *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -278,7 +284,7 @@ func (m *CryptoKeyRoleBindingResource) Update(ctx context.Context, req resource.
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.CryptoKeyRoleBindingAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -287,21 +293,21 @@ func (m *CryptoKeyRoleBindingResource) Update(ctx context.Context, req resource.
 		return
 	}
 
-	data.CryptoKeyRoleBinding = *tfRes
+	plan.CryptoKeyRoleBinding = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *CryptoKeyRoleBindingResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "CryptoKeyRoleBindingResource.Delete")
 
-	var data tfmodel.CryptoKeyRoleBindingModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.CryptoKeyRoleBindingModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -309,10 +315,10 @@ func (m *CryptoKeyRoleBindingResource) Delete(ctx context.Context, req resource.
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := state.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CryptoKeyRoleBindingResource.Timeouts")
@@ -322,9 +328,9 @@ func (m *CryptoKeyRoleBindingResource) Delete(ctx context.Context, req resource.
 	err := m.sdk.DeleteCryptoKeyRoleBinding(
 		ctx,
 		client.DeleteCryptoKeyRoleBindingRequest{
-			Project:     data.ProjectParam.ValueString(),
-			Key:         data.KeyParam.ValueString(),
-			RoleBinding: data.RoleBindingParam.ValueString(),
+			Project:     state.ProjectParam.ValueString(),
+			Key:         state.KeyParam.ValueString(),
+			RoleBinding: state.RoleBindingParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -340,7 +346,7 @@ func (m *CryptoKeyRoleBindingResource) Delete(ctx context.Context, req resource.
 func (m *CryptoKeyRoleBindingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "CryptoKeyRoleBindingResource.ImportState")
 
-	var data tfmodel.CryptoKeyRoleBindingModel
+	var state tfmodel.CryptoKeyRoleBindingModel
 
 	ref, err := kmsref.ParseCryptoKeyRoleBindingRef(ctx, req.ID)
 	if err != nil {
@@ -366,7 +372,7 @@ func (m *CryptoKeyRoleBindingResource) ImportState(ctx context.Context, req reso
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.CryptoKeyRoleBindingAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -375,11 +381,11 @@ func (m *CryptoKeyRoleBindingResource) ImportState(ctx context.Context, req reso
 		return
 	}
 
-	data.CryptoKeyRoleBinding = *tfRes
+	state.CryptoKeyRoleBinding = *tfRes
 
-	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.KeyParam = types.StringValue(ref.GetKey())
-	data.RoleBindingParam = types.StringValue(ref.GetRoleBinding())
+	state.ProjectParam = types.StringValue(ref.GetProject())
+	state.KeyParam = types.StringValue(ref.GetKey())
+	state.RoleBindingParam = types.StringValue(ref.GetRoleBinding())
 
 	var rwTimeouts timeouts.Value
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
@@ -387,7 +393,7 @@ func (m *CryptoKeyRoleBindingResource) ImportState(ctx context.Context, req reso
 		tflog.Debug(ctx, "CryptoKeyRoleBindingResource.timeouts.GetAttribute")
 		return
 	}
-	data.Timeouts = rwTimeouts
+	state.Timeouts = rwTimeouts
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

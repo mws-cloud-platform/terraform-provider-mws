@@ -116,26 +116,44 @@ func ImageAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ImageOp
 		t.OsType = types.StringNull()
 	}
 
+	if val, ok := am.Spec.Encryption.Get(); ok {
+		encryptionTmp, d := EncryptionSpecAPIOptionalResponseToTFModel(ctx, &val)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		encryptionTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.EncryptionSpec).GetSchema().Attributes),
+			*encryptionTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.Encryption = encryptionTfObject
+	} else {
+		t.Encryption = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.EncryptionSpec).GetSchema().Attributes))
+	}
+
 	return &t, diags
 }
 
-func ImageTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Image) (*apimodel.ImageRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ImageTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Image) (*apimodel.ImageRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ImageRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfcommon.CommonTypedResourceMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -143,19 +161,19 @@ func ImageTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Image) (*apimodel
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.Family.IsNull() && !tm.Family.IsUnknown() {
-		am.Spec.Family = tm.Family.ValueStringPointer()
+	if !plan.Family.IsNull() && !plan.Family.IsUnknown() {
+		am.Spec.Family = plan.Family.ValueStringPointer()
 	}
 
-	if !tm.Source.IsNull() && !tm.Source.IsUnknown() {
-		sourceTfModel := tfmodel.ImageSpecSource{}
-		sourceDiag := tm.Source.As(ctx, &sourceTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, sourceDiag...)
+	if !plan.Source.IsNull() && !plan.Source.IsUnknown() {
+		sourcePlan := tfmodel.ImageSpecSource{}
+		sourcePlanDiag := plan.Source.As(ctx, &sourcePlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, sourcePlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		sourceTmp, sourceDiag := ImageSpecSourceTFToAPIRequestModel(ctx, &sourceTfModel)
+		sourceTmp, sourceDiag := ImageSpecSourceTFToAPIRequestModel(ctx, &sourcePlan)
 		diags = append(diags, sourceDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -163,8 +181,8 @@ func ImageTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Image) (*apimodel
 		am.Spec.Source = *sourceTmp
 	}
 
-	if !tm.Activity.IsNull() && !tm.Activity.IsUnknown() {
-		activityTmp, activityDiag := ImageActivityTFToAPIModel(ctx, tm.Activity)
+	if !plan.Activity.IsNull() && !plan.Activity.IsUnknown() {
+		activityTmp, activityDiag := ImageActivityTFToAPIModel(ctx, plan.Activity)
 		diags = append(diags, activityDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -172,8 +190,8 @@ func ImageTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Image) (*apimodel
 		am.Spec.Activity = activityTmp
 	}
 
-	if !tm.MinDiskSize.IsNull() && !tm.MinDiskSize.IsUnknown() {
-		tmpMinDiskSize, err := bytesize.ParseString(tm.MinDiskSize.ValueString())
+	if !plan.MinDiskSize.IsNull() && !plan.MinDiskSize.IsUnknown() {
+		tmpMinDiskSize, err := bytesize.ParseString(plan.MinDiskSize.ValueString())
 		if err != nil {
 			diags.AddError("ByteSize string parsing", err.Error())
 			return nil, diags
@@ -181,13 +199,29 @@ func ImageTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Image) (*apimodel
 		am.Spec.MinDiskSize = &tmpMinDiskSize
 	}
 
-	if !tm.OsType.IsNull() && !tm.OsType.IsUnknown() {
-		osTypeTmp, osTypeDiag := OsTypeTFToAPIModel(ctx, tm.OsType)
+	if !plan.OsType.IsNull() && !plan.OsType.IsUnknown() {
+		osTypeTmp, osTypeDiag := OsTypeTFToAPIModel(ctx, plan.OsType)
 		diags = append(diags, osTypeDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.Spec.OsType = osTypeTmp
+	}
+
+	if !plan.Encryption.IsNull() && !plan.Encryption.IsUnknown() {
+		encryptionPlan := tfmodel.EncryptionSpec{}
+		encryptionPlanDiag := plan.Encryption.As(ctx, &encryptionPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, encryptionPlanDiag...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		encryptionTmp, encryptionDiag := EncryptionSpecTFToAPIRequestModel(ctx, &encryptionPlan)
+		diags = append(diags, encryptionDiag...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		am.Spec.Encryption = encryptionTmp
 	}
 
 	return &am, diags

@@ -81,13 +81,13 @@ func (m *AuthorizedKeyDataSource) Configure(ctx context.Context, req datasource.
 func (m *AuthorizedKeyDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "AuthorizedKeyDataSource.Read")
 
-	var data tfmodel.AuthorizedKeyModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.AuthorizedKeyModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -95,15 +95,15 @@ func (m *AuthorizedKeyDataSource) Read(ctx context.Context, req datasource.ReadR
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetAuthorizedKeyV2(
 		ctx,
 		client.GetAuthorizedKeyV2Request{
-			ServiceAccount: data.ServiceAccountParam.ValueString(),
-			AuthorizedKey:  data.AuthorizedKeyParam.ValueString(),
-			Project:        data.ProjectParam.ValueString(),
+			ServiceAccount: config.ServiceAccountParam.ValueString(),
+			AuthorizedKey:  config.AuthorizedKeyParam.ValueString(),
+			Project:        config.ProjectParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -121,7 +121,7 @@ func (m *AuthorizedKeyDataSource) Read(ctx context.Context, req datasource.ReadR
 		return
 	}
 
-	data.AuthorizedKey = *tfRes
+	config.AuthorizedKey = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

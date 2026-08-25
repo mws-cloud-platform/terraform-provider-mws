@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
 	"go.mws.cloud/go-sdk/service/resources/references/rm"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -188,23 +188,23 @@ func KafkaClusterAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaClu
 	return &t, diags
 }
 
-func KafkaClusterTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaCluster) (*apimodel.KafkaClusterRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func KafkaClusterTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaCluster) (*apimodel.KafkaClusterRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaClusterRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfmodel.KafkaClusterMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfmodel.KafkaClusterMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := KafkaClusterMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := KafkaClusterMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -212,16 +212,16 @@ func KafkaClusterTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaClust
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.Active.IsNull() && !tm.Active.IsUnknown() {
-		am.Spec.Active = tm.Active.ValueBoolPointer()
+	if !plan.Active.IsNull() && !plan.Active.IsUnknown() {
+		am.Spec.Active = plan.Active.ValueBoolPointer()
 	}
 
-	if !tm.Version.IsNull() && !tm.Version.IsUnknown() {
-		am.Spec.Version = tm.Version.ValueString()
+	if !plan.Version.IsNull() && !plan.Version.IsUnknown() {
+		am.Spec.Version = plan.Version.ValueString()
 	}
 
-	if !tm.Region.IsNull() && !tm.Region.IsUnknown() {
-		regionRef, err := rm.ParseRegionRef(ctx, tm.Region.ValueString())
+	if !plan.Region.IsNull() && !plan.Region.IsUnknown() {
+		regionRef, err := rm.ParseRegionRef(ctx, plan.Region.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -229,13 +229,14 @@ func KafkaClusterTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaClust
 		am.Spec.Region = &regionRef
 	}
 
-	if !tm.Endpoints.IsNull() && !tm.Endpoints.IsUnknown() {
+	if !plan.Endpoints.IsNull() && !plan.Endpoints.IsUnknown() {
 		endpoints := make([]tfmodel.KafkaEndpoint, 0)
-		dEndpoints := tm.Endpoints.ElementsAs(ctx, &endpoints, false)
+		dEndpoints := plan.Endpoints.ElementsAs(ctx, &endpoints, false)
 		diags = append(diags, dEndpoints...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.Spec.Endpoints = make([]apimodel.KafkaEndpointRequest, 0, len(endpoints))
 
 		for _, entity := range endpoints {
@@ -248,15 +249,15 @@ func KafkaClusterTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaClust
 		}
 	}
 
-	if !tm.Instances.IsNull() && !tm.Instances.IsUnknown() {
-		instancesTfModel := tfmodel.KafkaInstance{}
-		instancesDiag := tm.Instances.As(ctx, &instancesTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, instancesDiag...)
+	if !plan.Instances.IsNull() && !plan.Instances.IsUnknown() {
+		instancesPlan := tfmodel.KafkaInstance{}
+		instancesPlanDiag := plan.Instances.As(ctx, &instancesPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, instancesPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		instancesTmp, instancesDiag := KafkaInstanceTFToAPIRequestModel(ctx, &instancesTfModel)
+		instancesTmp, instancesDiag := KafkaInstanceTFToAPIRequestModel(ctx, &instancesPlan)
 		diags = append(diags, instancesDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -264,19 +265,19 @@ func KafkaClusterTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaClust
 		am.Spec.Instances = *instancesTmp
 	}
 
-	if !tm.ProductConfig.IsNull() && !tm.ProductConfig.IsUnknown() {
-		am.Spec.ProductConfig = tm.ProductConfig.ValueStringPointer()
+	if !plan.ProductConfig.IsNull() && !plan.ProductConfig.IsUnknown() {
+		am.Spec.ProductConfig = plan.ProductConfig.ValueStringPointer()
 	}
 
-	if !tm.MaintenanceWindow.IsNull() && !tm.MaintenanceWindow.IsUnknown() {
-		maintenanceWindowTfModel := tfcommon.MaintenanceWindow{}
-		maintenanceWindowDiag := tm.MaintenanceWindow.As(ctx, &maintenanceWindowTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, maintenanceWindowDiag...)
+	if !plan.MaintenanceWindow.IsNull() && !plan.MaintenanceWindow.IsUnknown() {
+		maintenanceWindowPlan := tfcommon.MaintenanceWindow{}
+		maintenanceWindowPlanDiag := plan.MaintenanceWindow.As(ctx, &maintenanceWindowPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, maintenanceWindowPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		maintenanceWindowTmp, maintenanceWindowDiag := commonconv.MaintenanceWindowTFToAPIRequestModel(ctx, &maintenanceWindowTfModel)
+		maintenanceWindowTmp, maintenanceWindowDiag := commonconv.MaintenanceWindowTFToAPIRequestModel(ctx, &maintenanceWindowPlan)
 		diags = append(diags, maintenanceWindowDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -284,15 +285,15 @@ func KafkaClusterTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaClust
 		am.Spec.MaintenanceWindow = maintenanceWindowTmp
 	}
 
-	if !tm.SchemaRegistry.IsNull() && !tm.SchemaRegistry.IsUnknown() {
-		schemaRegistryTfModel := tfmodel.KafkaSchemaRegistrySpec{}
-		schemaRegistryDiag := tm.SchemaRegistry.As(ctx, &schemaRegistryTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, schemaRegistryDiag...)
+	if !plan.SchemaRegistry.IsNull() && !plan.SchemaRegistry.IsUnknown() {
+		schemaRegistryPlan := tfmodel.KafkaSchemaRegistrySpec{}
+		schemaRegistryPlanDiag := plan.SchemaRegistry.As(ctx, &schemaRegistryPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, schemaRegistryPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		schemaRegistryTmp, schemaRegistryDiag := KafkaSchemaRegistrySpecTFToAPIRequestModel(ctx, &schemaRegistryTfModel)
+		schemaRegistryTmp, schemaRegistryDiag := KafkaSchemaRegistrySpecTFToAPIRequestModel(ctx, &schemaRegistryPlan)
 		diags = append(diags, schemaRegistryDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -300,15 +301,15 @@ func KafkaClusterTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaClust
 		am.Spec.SchemaRegistry = schemaRegistryTmp
 	}
 
-	if !tm.Balancer.IsNull() && !tm.Balancer.IsUnknown() {
-		balancerTfModel := tfmodel.KafkaBalancerSpec{}
-		balancerDiag := tm.Balancer.As(ctx, &balancerTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, balancerDiag...)
+	if !plan.Balancer.IsNull() && !plan.Balancer.IsUnknown() {
+		balancerPlan := tfmodel.KafkaBalancerSpec{}
+		balancerPlanDiag := plan.Balancer.As(ctx, &balancerPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, balancerPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		balancerTmp, balancerDiag := KafkaBalancerSpecTFToAPIRequestModel(ctx, &balancerTfModel)
+		balancerTmp, balancerDiag := KafkaBalancerSpecTFToAPIRequestModel(ctx, &balancerPlan)
 		diags = append(diags, balancerDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -393,26 +394,27 @@ func KafkaClusterMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.
 	return &t, diags
 }
 
-func KafkaClusterMetadataTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaClusterMetadata) (*apimodel.KafkaClusterMetadataRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func KafkaClusterMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaClusterMetadata) (*apimodel.KafkaClusterMetadataRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaClusterMetadataRequest
 
-	if !tm.DisplayName.IsNull() && !tm.DisplayName.IsUnknown() {
-		am.DisplayName = tm.DisplayName.ValueStringPointer()
+	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
+		am.DisplayName = plan.DisplayName.ValueStringPointer()
 	}
 
-	if !tm.Usages.IsNull() && !tm.Usages.IsUnknown() {
+	if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
 		usages := make([]tfcommon.TypedUsage, 0)
-		dUsages := tm.Usages.ElementsAs(ctx, &usages, false)
+		dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
 		diags = append(diags, dUsages...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.Usages = make([]common.TypedUsageRequest, 0, len(usages))
+
+		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
@@ -424,8 +426,8 @@ func KafkaClusterMetadataTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Ka
 		}
 	}
 
-	if !tm.Description.IsNull() && !tm.Description.IsUnknown() {
-		am.Description = tm.Description.ValueStringPointer()
+	if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
+		am.Description = plan.Description.ValueStringPointer()
 	}
 
 	return &am, diags

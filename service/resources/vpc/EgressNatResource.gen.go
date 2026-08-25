@@ -113,13 +113,13 @@ func (m *EgressNatResource) Configure(ctx context.Context, req resource.Configur
 func (m *EgressNatResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "EgressNatResource.Create")
 
-	var data tfmodel.EgressNatModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.EgressNatModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -127,17 +127,17 @@ func (m *EgressNatResource) Create(ctx context.Context, req resource.CreateReque
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "EgressNatResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.EgressNatTFToAPIRequestModel(ctx, &data.EgressNat)
+	body, diags := conv.EgressNatTFToAPIRequestModel(ctx, &plan.EgressNat)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "EgressNatResource.TFToAPI")
@@ -147,9 +147,9 @@ func (m *EgressNatResource) Create(ctx context.Context, req resource.CreateReque
 	apiRes, err := m.sdk.CreateEgressNat(
 		ctx,
 		client.UpsertEgressNatRequest{
-			Project:   data.ProjectParam.ValueString(),
-			Network:   data.NetworkParam.ValueString(),
-			EgressNat: data.EgressNatParam.ValueString(),
+			Project:   plan.ProjectParam.ValueString(),
+			Network:   plan.NetworkParam.ValueString(),
+			EgressNat: plan.EgressNatParam.ValueString(),
 			Body:      *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
@@ -162,7 +162,7 @@ func (m *EgressNatResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.EgressNatAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -171,21 +171,21 @@ func (m *EgressNatResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	data.EgressNat = *tfRes
+	plan.EgressNat = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *EgressNatResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "EgressNatResource.Read")
 
-	var data tfmodel.EgressNatModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.EgressNatModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -193,15 +193,15 @@ func (m *EgressNatResource) Read(ctx context.Context, req resource.ReadRequest, 
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetEgressNat(
 		ctx,
 		client.GetEgressNatRequest{
-			Project:   data.ProjectParam.ValueString(),
-			Network:   data.NetworkParam.ValueString(),
-			EgressNat: data.EgressNatParam.ValueString(),
+			Project:   state.ProjectParam.ValueString(),
+			Network:   state.NetworkParam.ValueString(),
+			EgressNat: state.EgressNatParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -212,7 +212,7 @@ func (m *EgressNatResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.EgressNatAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -221,21 +221,27 @@ func (m *EgressNatResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	data.EgressNat = *tfRes
+	state.EgressNat = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 func (m *EgressNatResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "EgressNatResource.Update")
 
-	var data tfmodel.EgressNatModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.EgressNatModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	var state tfmodel.EgressNatModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -243,17 +249,17 @@ func (m *EgressNatResource) Update(ctx context.Context, req resource.UpdateReque
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "EgressNatResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.EgressNatTFToAPIRequestModel(ctx, &data.EgressNat)
+	body, diags := conv.EgressNatTFToAPIUpdateRequestModel(ctx, &plan.EgressNat, &state.EgressNat)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "EgressNatResource.TFToAPI")
@@ -263,10 +269,10 @@ func (m *EgressNatResource) Update(ctx context.Context, req resource.UpdateReque
 	apiRes, err := m.sdk.UpdateEgressNat(
 		ctx,
 		client.UpdateEgressNatRequest{
-			Project:   data.ProjectParam.ValueString(),
-			Network:   data.NetworkParam.ValueString(),
-			EgressNat: data.EgressNatParam.ValueString(),
-			Body:      body.AsUpdateModel(),
+			Project:   plan.ProjectParam.ValueString(),
+			Network:   plan.NetworkParam.ValueString(),
+			EgressNat: plan.EgressNatParam.ValueString(),
+			Body:      *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -278,7 +284,7 @@ func (m *EgressNatResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.EgressNatAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -287,21 +293,21 @@ func (m *EgressNatResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	data.EgressNat = *tfRes
+	plan.EgressNat = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *EgressNatResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "EgressNatResource.Delete")
 
-	var data tfmodel.EgressNatModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.EgressNatModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -309,10 +315,10 @@ func (m *EgressNatResource) Delete(ctx context.Context, req resource.DeleteReque
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := state.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "EgressNatResource.Timeouts")
@@ -322,9 +328,9 @@ func (m *EgressNatResource) Delete(ctx context.Context, req resource.DeleteReque
 	err := m.sdk.DeleteEgressNat(
 		ctx,
 		client.DeleteEgressNatRequest{
-			Project:   data.ProjectParam.ValueString(),
-			Network:   data.NetworkParam.ValueString(),
-			EgressNat: data.EgressNatParam.ValueString(),
+			Project:   state.ProjectParam.ValueString(),
+			Network:   state.NetworkParam.ValueString(),
+			EgressNat: state.EgressNatParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -340,7 +346,7 @@ func (m *EgressNatResource) Delete(ctx context.Context, req resource.DeleteReque
 func (m *EgressNatResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "EgressNatResource.ImportState")
 
-	var data tfmodel.EgressNatModel
+	var state tfmodel.EgressNatModel
 
 	ref, err := vpcref.ParseEgressNatRef(ctx, req.ID)
 	if err != nil {
@@ -366,7 +372,7 @@ func (m *EgressNatResource) ImportState(ctx context.Context, req resource.Import
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.EgressNatAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -375,11 +381,11 @@ func (m *EgressNatResource) ImportState(ctx context.Context, req resource.Import
 		return
 	}
 
-	data.EgressNat = *tfRes
+	state.EgressNat = *tfRes
 
-	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.NetworkParam = types.StringValue(ref.GetNetwork())
-	data.EgressNatParam = types.StringValue(ref.GetEgressNat())
+	state.ProjectParam = types.StringValue(ref.GetProject())
+	state.NetworkParam = types.StringValue(ref.GetNetwork())
+	state.EgressNatParam = types.StringValue(ref.GetEgressNat())
 
 	var rwTimeouts timeouts.Value
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
@@ -387,7 +393,7 @@ func (m *EgressNatResource) ImportState(ctx context.Context, req resource.Import
 		tflog.Debug(ctx, "EgressNatResource.timeouts.GetAttribute")
 		return
 	}
-	data.Timeouts = rwTimeouts
+	state.Timeouts = rwTimeouts
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

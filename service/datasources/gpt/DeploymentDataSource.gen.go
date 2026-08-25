@@ -80,13 +80,13 @@ func (m *DeploymentDataSource) Configure(ctx context.Context, req datasource.Con
 func (m *DeploymentDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "DeploymentDataSource.Read")
 
-	var data tfmodel.DeploymentModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.DeploymentModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -94,14 +94,14 @@ func (m *DeploymentDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetDeployment(
 		ctx,
 		client.GetDeploymentRequest{
-			Project:        data.ProjectParam.ValueString(),
-			DeploymentName: data.DeploymentNameParam.ValueString(),
+			Project:        config.ProjectParam.ValueString(),
+			DeploymentName: config.DeploymentNameParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -119,7 +119,7 @@ func (m *DeploymentDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		return
 	}
 
-	data.Deployment = *tfRes
+	config.Deployment = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

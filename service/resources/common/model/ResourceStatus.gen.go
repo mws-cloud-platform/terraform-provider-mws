@@ -13,7 +13,7 @@ type ResourceStatus struct {
 
 func (s *ResourceStatus) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Текущее состояние ресурса, вычисляемое системой.`,
 		Attributes: map[string]schema.Attribute{
 			"ready": schema.SingleNestedAttribute{
 				Attributes:          new(ResourceStatusReady).GetSchema().Attributes,

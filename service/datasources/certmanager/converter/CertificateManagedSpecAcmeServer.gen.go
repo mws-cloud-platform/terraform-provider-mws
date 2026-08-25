@@ -25,11 +25,11 @@ func CertificateManagedSpecAcmeServerAPIToTFModel(ctx context.Context, am *apimo
 	return t, diags
 }
 
-func CertificateManagedSpecAcmeServerTFToAPIModel(ctx context.Context, tm tfmodel.CertificateManagedSpecAcmeServer) (*apimodel.CertificateManagedSpecAcmeServer, tfdiag.Diagnostics) {
+func CertificateManagedSpecAcmeServerTFToAPIModel(ctx context.Context, plan tfmodel.CertificateManagedSpecAcmeServer) (*apimodel.CertificateManagedSpecAcmeServer, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am apimodel.CertificateManagedSpecAcmeServer
 
-	var tmp = types.String(tm)
+	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}

@@ -80,13 +80,13 @@ func (m *ModelDataSource) Configure(ctx context.Context, req datasource.Configur
 func (m *ModelDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "ModelDataSource.Read")
 
-	var data tfmodel.ModelModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.ModelModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -94,14 +94,14 @@ func (m *ModelDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetModel(
 		ctx,
 		client.GetModelRequest{
-			Project:   data.ProjectParam.ValueString(),
-			ModelName: data.ModelNameParam.ValueString(),
+			Project:   config.ProjectParam.ValueString(),
+			ModelName: config.ModelNameParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -119,7 +119,7 @@ func (m *ModelDataSource) Read(ctx context.Context, req datasource.ReadRequest, 
 		return
 	}
 
-	data.Model = *tfRes
+	config.Model = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

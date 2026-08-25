@@ -11,6 +11,7 @@ import (
 	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
 	"go.mws.cloud/go-sdk/service/resources/references/rm"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
 func TestKafkaAllocationAPIResponseToTFModelEmpty(t *testing.T) {
@@ -23,7 +24,7 @@ func TestKafkaAllocationAPIResponseToTFModelEmpty(t *testing.T) {
 func TestKafkaAllocationResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.KafkaAllocationRequest{
-		Zone:  rm.NewZoneRef("zoneID"),
+		Zone:  rm.NewMustZoneRef("zoneID"),
 		Count: 0,
 	}
 
@@ -40,4 +41,18 @@ func TestKafkaAllocationResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateKafkaAllocationRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.KafkaAllocation
+	var stateTfModel tfmodel.KafkaAllocation
+
+	expectedUpdateModel := &apimodel.UpdateKafkaAllocationRequest{}
+
+	result, diags := conv.KafkaAllocationTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

@@ -113,13 +113,13 @@ func (m *NodeGroupResource) Configure(ctx context.Context, req resource.Configur
 func (m *NodeGroupResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "NodeGroupResource.Create")
 
-	var data tfmodel.NodeGroupModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.NodeGroupModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -127,10 +127,10 @@ func (m *NodeGroupResource) Create(ctx context.Context, req resource.CreateReque
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	zoneParam := cmp.Or(data.Zone, m.config.Zone)
+	zoneParam := cmp.Or(plan.Zone, m.config.Zone)
 	if zoneParam.IsNull() || zoneParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -138,16 +138,16 @@ func (m *NodeGroupResource) Create(ctx context.Context, req resource.CreateReque
 		)
 		return
 	}
-	data.Zone = zoneParam
+	plan.Zone = zoneParam
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "NodeGroupResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.NodeGroupTFToAPIRequestModel(ctx, &data.NodeGroup)
+	body, diags := conv.NodeGroupTFToAPIRequestModel(ctx, &plan.NodeGroup)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "NodeGroupResource.TFToAPI")
@@ -157,9 +157,9 @@ func (m *NodeGroupResource) Create(ctx context.Context, req resource.CreateReque
 	apiRes, err := m.sdk.CreateMk8sNodeGroup(
 		ctx,
 		client.UpsertMk8sNodeGroupRequest{
-			Project:       data.ProjectParam.ValueString(),
-			ClusterName:   data.ClusterNameParam.ValueString(),
-			NodeGroupName: data.NodeGroupNameParam.ValueString(),
+			Project:       plan.ProjectParam.ValueString(),
+			ClusterName:   plan.ClusterNameParam.ValueString(),
+			NodeGroupName: plan.NodeGroupNameParam.ValueString(),
 			Body:          *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
@@ -172,7 +172,7 @@ func (m *NodeGroupResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.NodeGroupAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -181,21 +181,21 @@ func (m *NodeGroupResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	data.NodeGroup = *tfRes
+	plan.NodeGroup = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *NodeGroupResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "NodeGroupResource.Read")
 
-	var data tfmodel.NodeGroupModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.NodeGroupModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -203,10 +203,10 @@ func (m *NodeGroupResource) Read(ctx context.Context, req resource.ReadRequest, 
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	zoneParam := cmp.Or(data.Zone, m.config.Zone)
+	zoneParam := cmp.Or(state.Zone, m.config.Zone)
 	if zoneParam.IsNull() || zoneParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -214,14 +214,14 @@ func (m *NodeGroupResource) Read(ctx context.Context, req resource.ReadRequest, 
 		)
 		return
 	}
-	data.Zone = zoneParam
+	state.Zone = zoneParam
 
 	apiRes, err := m.sdk.GetMk8sNodeGroup(
 		ctx,
 		client.GetMk8sNodeGroupRequest{
-			Project:       data.ProjectParam.ValueString(),
-			ClusterName:   data.ClusterNameParam.ValueString(),
-			NodeGroupName: data.NodeGroupNameParam.ValueString(),
+			Project:       state.ProjectParam.ValueString(),
+			ClusterName:   state.ClusterNameParam.ValueString(),
+			NodeGroupName: state.NodeGroupNameParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -232,7 +232,7 @@ func (m *NodeGroupResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.NodeGroupAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -241,21 +241,27 @@ func (m *NodeGroupResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	data.NodeGroup = *tfRes
+	state.NodeGroup = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 func (m *NodeGroupResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "NodeGroupResource.Update")
 
-	var data tfmodel.NodeGroupModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.NodeGroupModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	var state tfmodel.NodeGroupModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -263,10 +269,10 @@ func (m *NodeGroupResource) Update(ctx context.Context, req resource.UpdateReque
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	zoneParam := cmp.Or(data.Zone, m.config.Zone)
+	zoneParam := cmp.Or(plan.Zone, m.config.Zone)
 	if zoneParam.IsNull() || zoneParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -274,16 +280,16 @@ func (m *NodeGroupResource) Update(ctx context.Context, req resource.UpdateReque
 		)
 		return
 	}
-	data.Zone = zoneParam
+	plan.Zone = zoneParam
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "NodeGroupResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.NodeGroupTFToAPIRequestModel(ctx, &data.NodeGroup)
+	body, diags := conv.NodeGroupTFToAPIUpdateRequestModel(ctx, &plan.NodeGroup, &state.NodeGroup)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "NodeGroupResource.TFToAPI")
@@ -293,10 +299,10 @@ func (m *NodeGroupResource) Update(ctx context.Context, req resource.UpdateReque
 	apiRes, err := m.sdk.UpdateMk8sNodeGroup(
 		ctx,
 		client.UpdateMk8sNodeGroupRequest{
-			Project:       data.ProjectParam.ValueString(),
-			ClusterName:   data.ClusterNameParam.ValueString(),
-			NodeGroupName: data.NodeGroupNameParam.ValueString(),
-			Body:          body.AsUpdateModel(),
+			Project:       plan.ProjectParam.ValueString(),
+			ClusterName:   plan.ClusterNameParam.ValueString(),
+			NodeGroupName: plan.NodeGroupNameParam.ValueString(),
+			Body:          *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -308,7 +314,7 @@ func (m *NodeGroupResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.NodeGroupAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -317,21 +323,21 @@ func (m *NodeGroupResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	data.NodeGroup = *tfRes
+	plan.NodeGroup = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *NodeGroupResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "NodeGroupResource.Delete")
 
-	var data tfmodel.NodeGroupModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.NodeGroupModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -339,10 +345,10 @@ func (m *NodeGroupResource) Delete(ctx context.Context, req resource.DeleteReque
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	zoneParam := cmp.Or(data.Zone, m.config.Zone)
+	zoneParam := cmp.Or(state.Zone, m.config.Zone)
 	if zoneParam.IsNull() || zoneParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -350,9 +356,9 @@ func (m *NodeGroupResource) Delete(ctx context.Context, req resource.DeleteReque
 		)
 		return
 	}
-	data.Zone = zoneParam
+	state.Zone = zoneParam
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := state.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "NodeGroupResource.Timeouts")
@@ -362,9 +368,9 @@ func (m *NodeGroupResource) Delete(ctx context.Context, req resource.DeleteReque
 	err := m.sdk.DeleteMk8sNodeGroup(
 		ctx,
 		client.DeleteMk8sNodeGroupRequest{
-			Project:       data.ProjectParam.ValueString(),
-			ClusterName:   data.ClusterNameParam.ValueString(),
-			NodeGroupName: data.NodeGroupNameParam.ValueString(),
+			Project:       state.ProjectParam.ValueString(),
+			ClusterName:   state.ClusterNameParam.ValueString(),
+			NodeGroupName: state.NodeGroupNameParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -380,7 +386,7 @@ func (m *NodeGroupResource) Delete(ctx context.Context, req resource.DeleteReque
 func (m *NodeGroupResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "NodeGroupResource.ImportState")
 
-	var data tfmodel.NodeGroupModel
+	var state tfmodel.NodeGroupModel
 
 	ref, err := mk8sref.ParseNodeGroupRef(ctx, req.ID)
 	if err != nil {
@@ -406,7 +412,7 @@ func (m *NodeGroupResource) ImportState(ctx context.Context, req resource.Import
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.NodeGroupAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -415,11 +421,11 @@ func (m *NodeGroupResource) ImportState(ctx context.Context, req resource.Import
 		return
 	}
 
-	data.NodeGroup = *tfRes
+	state.NodeGroup = *tfRes
 
-	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.ClusterNameParam = types.StringValue(ref.GetClusterName())
-	data.NodeGroupNameParam = types.StringValue(ref.GetNodeGroupName())
+	state.ProjectParam = types.StringValue(ref.GetProject())
+	state.ClusterNameParam = types.StringValue(ref.GetClusterName())
+	state.NodeGroupNameParam = types.StringValue(ref.GetNodeGroupName())
 
 	var rwTimeouts timeouts.Value
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
@@ -427,7 +433,7 @@ func (m *NodeGroupResource) ImportState(ctx context.Context, req resource.Import
 		tflog.Debug(ctx, "NodeGroupResource.timeouts.GetAttribute")
 		return
 	}
-	data.Timeouts = rwTimeouts
+	state.Timeouts = rwTimeouts
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

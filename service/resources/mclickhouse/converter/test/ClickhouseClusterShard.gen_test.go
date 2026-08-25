@@ -12,6 +12,7 @@ import (
 	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
 	"go.mws.cloud/go-sdk/service/resources/references/mclickhouse"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
 func TestClickhouseClusterShardAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -26,7 +27,7 @@ func TestClickhouseClusterShardOptionalResponseConverters(t *testing.T) {
 	emptyApiModelRequest := apimodel.ClickhouseClusterShardRequest{
 		Name: "name",
 		Resources: apimodel.ClickhouseInstanceHWResourcesRequest{
-			VmType: mclickhouse.NewClickhouseVmTypeRef("vmTypeID"),
+			VmType: mclickhouse.NewMustClickhouseVmTypeRef("vmTypeID"),
 			Disk: apimodel.ClickhouseInstanceDiskSpecRequest{
 				Size: bytesize.MustParseString("0 B"),
 				Type: "",
@@ -48,4 +49,18 @@ func TestClickhouseClusterShardOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateClickhouseClusterShardRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ClickhouseClusterShard
+	var stateTfModel tfmodel.ClickhouseClusterShard
+
+	expectedUpdateModel := &apimodel.UpdateClickhouseClusterShardRequest{}
+
+	result, diags := conv.ClickhouseClusterShardTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

@@ -26,21 +26,46 @@ func EncryptionSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func EncryptionSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.EncryptionSpec) (*apimodel.EncryptionSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func EncryptionSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.EncryptionSpec) (*apimodel.EncryptionSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.EncryptionSpecRequest
 
-	if !tm.CryptoKeyId.IsNull() && !tm.CryptoKeyId.IsUnknown() {
-		cryptoKeyIdRef, err := kms.ParseCryptoKeyRef(ctx, tm.CryptoKeyId.ValueString())
+	if !plan.CryptoKeyId.IsNull() && !plan.CryptoKeyId.IsUnknown() {
+		cryptoKeyIdRef, err := kms.ParseCryptoKeyRef(ctx, plan.CryptoKeyId.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
 		}
 		am.CryptoKeyId = cryptoKeyIdRef
+	}
+
+	return &am, diags
+}
+
+func EncryptionSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.EncryptionSpec) (*apimodel.UpdateEncryptionSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.EncryptionSpec{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateEncryptionSpecRequest
+
+	if !plan.CryptoKeyId.Equal(state.CryptoKeyId) {
+		if !plan.CryptoKeyId.IsNull() && !plan.CryptoKeyId.IsUnknown() {
+			cryptoKeyIdRef, err := kms.ParseCryptoKeyRef(ctx, plan.CryptoKeyId.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.CryptoKeyId.SetTo(cryptoKeyIdRef)
+		}
 	}
 
 	return &am, diags

@@ -8,8 +8,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
 	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
 func TestPostgresNetworkDirectAddressAPIResponseToTFModelEmpty(t *testing.T) {
@@ -38,4 +41,31 @@ func TestPostgresNetworkDirectAddressResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdatePostgresNetworkDirectAddressRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.PostgresNetworkDirectAddress
+	var stateTfModel tfmodel.PostgresNetworkDirectAddress
+	stateTfModel.Spec = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.PostgresNetworkAddressSpec).GetSchema().Attributes))
+	stateTfModel.ExternalAccess = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.PostgresExternalAccessSpec).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdatePostgresNetworkDirectAddressRequest{
+		UpdatePostgresNetworkAddressRequest: apimodel.UpdatePostgresNetworkAddressRequest{
+			Spec: optional.OptionalNil[apimodel.UpdatePostgresNetworkAddressSpecRequest]{
+				Set:  true,
+				Null: true,
+			},
+			ExternalAccess: optional.OptionalNil[apimodel.UpdatePostgresExternalAccessSpecRequest]{
+				Set:  true,
+				Null: true,
+			},
+		},
+	}
+
+	result, diags := conv.PostgresNetworkDirectAddressTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

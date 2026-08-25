@@ -50,7 +50,7 @@ func (s *DiskBackupSuite) SetupSuite() {
 		Body: computemodel.DiskRequest{
 			Spec: computemodel.DiskSpecRequest{
 				Zone:      "ru-central1-a",
-				DiskType:  new(computeref.NewDiskTypeRef("nbs-pl2")),
+				DiskType:  new(computeref.NewMustDiskTypeRef("nbs-pl2")),
 				Size:      new(bytesize.MustNewFromInt64(10, bytesize.GB)),
 				Iops:      new(computemodel.Iops(1000)),
 				BlockSize: new(bytesize.MustNewFromInt64(4, bytesize.KB)),

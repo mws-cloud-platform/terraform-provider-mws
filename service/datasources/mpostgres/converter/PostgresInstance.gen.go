@@ -31,20 +31,20 @@ func PostgresInstanceAPIResponseToTFModel(ctx context.Context, am *apimodel.Post
 	return &t, diags
 }
 
-func PostgresInstanceTFToAPIRequestModel(ctx context.Context, tm *tfmodel.PostgresInstance) (*apimodel.PostgresInstanceRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func PostgresInstanceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresInstance) (*apimodel.PostgresInstanceRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.PostgresInstanceRequest
 
-	if !tm.Count.IsNull() && !tm.Count.IsUnknown() {
-		am.Count = int(tm.Count.ValueInt64())
+	if !plan.Count.IsNull() && !plan.Count.IsUnknown() {
+		am.Count = int(plan.Count.ValueInt64())
 	}
 
-	if !tm.Zone.IsNull() && !tm.Zone.IsUnknown() {
-		am.Zone = tm.Zone.ValueStringPointer()
+	if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
+		am.Zone = plan.Zone.ValueStringPointer()
 	}
 
 	return &am, diags

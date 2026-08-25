@@ -29,16 +29,16 @@ func KafkaClusterRoleAPIResponseToTFModel(ctx context.Context, am *apimodel.Kafk
 	return &t, diags
 }
 
-func KafkaClusterRoleTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaClusterRole) (*apimodel.KafkaClusterRoleRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func KafkaClusterRoleTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaClusterRole) (*apimodel.KafkaClusterRoleRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaClusterRoleRequest
 
-	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		nameTmp, nameDiag := KafkaClusterRoleNameTFToAPIModel(ctx, tm.Name)
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		nameTmp, nameDiag := KafkaClusterRoleNameTFToAPIModel(ctx, plan.Name)
 		diags = append(diags, nameDiag...)
 		if diags.HasError() {
 			return nil, diags

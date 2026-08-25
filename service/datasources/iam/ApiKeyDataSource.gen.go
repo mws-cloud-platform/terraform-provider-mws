@@ -83,13 +83,13 @@ func (m *ApiKeyDataSource) Configure(ctx context.Context, req datasource.Configu
 func (m *ApiKeyDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "ApiKeyDataSource.Read")
 
-	var data tfmodel.ApiKeyModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.ApiKeyModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -97,15 +97,15 @@ func (m *ApiKeyDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetApiKey(
 		ctx,
 		client.GetApiKeyRequest{
-			ServiceAccount: data.ServiceAccountParam.ValueString(),
-			ApiKey:         data.ApiKeyParam.ValueString(),
-			Project:        data.ProjectParam.ValueString(),
+			ServiceAccount: config.ServiceAccountParam.ValueString(),
+			ApiKey:         config.ApiKeyParam.ValueString(),
+			Project:        config.ProjectParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -123,7 +123,7 @@ func (m *ApiKeyDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		return
 	}
 
-	data.ApiKey = *tfRes
+	config.ApiKey = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

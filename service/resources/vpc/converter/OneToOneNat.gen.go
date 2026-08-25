@@ -97,23 +97,23 @@ func OneToOneNatAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.O
 	return &t, diags
 }
 
-func OneToOneNatTFToAPIRequestModel(ctx context.Context, tm *tfmodel.OneToOneNat) (*apimodel.OneToOneNatRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func OneToOneNatTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OneToOneNat) (*apimodel.OneToOneNatRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.OneToOneNatRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfcommon.CommonTypedResourceMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -121,15 +121,15 @@ func OneToOneNatTFToAPIRequestModel(ctx context.Context, tm *tfmodel.OneToOneNat
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.Internal.IsNull() && !tm.Internal.IsUnknown() {
-		internalTfModel := tfmodel.OneToOneNatSpecInternal{}
-		internalDiag := tm.Internal.As(ctx, &internalTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, internalDiag...)
+	if !plan.Internal.IsNull() && !plan.Internal.IsUnknown() {
+		internalPlan := tfmodel.OneToOneNatSpecInternal{}
+		internalPlanDiag := plan.Internal.As(ctx, &internalPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, internalPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		internalTmp, internalDiag := OneToOneNatSpecInternalTFToAPIRequestModel(ctx, &internalTfModel)
+		internalTmp, internalDiag := OneToOneNatSpecInternalTFToAPIRequestModel(ctx, &internalPlan)
 		diags = append(diags, internalDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -137,20 +137,123 @@ func OneToOneNatTFToAPIRequestModel(ctx context.Context, tm *tfmodel.OneToOneNat
 		am.Spec.Internal = *internalTmp
 	}
 
-	if !tm.External.IsNull() && !tm.External.IsUnknown() {
-		externalTfModel := tfmodel.OneToOneNatSpecExternal{}
-		externalDiag := tm.External.As(ctx, &externalTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, externalDiag...)
+	if !plan.External.IsNull() && !plan.External.IsUnknown() {
+		externalPlan := tfmodel.OneToOneNatSpecExternal{}
+		externalPlanDiag := plan.External.As(ctx, &externalPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, externalPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		externalTmp, externalDiag := OneToOneNatSpecExternalTFToAPIRequestModel(ctx, &externalTfModel)
+		externalTmp, externalDiag := OneToOneNatSpecExternalTFToAPIRequestModel(ctx, &externalPlan)
 		diags = append(diags, externalDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.Spec.External = *externalTmp
+	}
+
+	return &am, diags
+}
+
+func OneToOneNatTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.OneToOneNat) (*apimodel.UpdateOneToOneNatRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.OneToOneNat{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateOneToOneNatRequest
+
+	if !plan.Metadata.Equal(state.Metadata) {
+		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+			metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+			metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, metadataPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			metadataState := tfcommon.CommonTypedResourceMetadata{}
+			if !state.Metadata.IsNull() && !state.Metadata.IsUnknown() {
+				metadataStateDiag := state.Metadata.As(ctx, &metadataState, basetypes.ObjectAsOptions{})
+				diags = append(diags, metadataStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIUpdateRequestModel(ctx, &metadataPlan, &metadataState)
+			diags = append(diags, metadataDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Metadata.SetTo(*metadataTmp)
+		} else if plan.Metadata.IsNull() {
+			am.Metadata.SetToNull()
+		}
+	}
+
+	if !plan.Internal.Equal(state.Internal) {
+		if !plan.Internal.IsNull() && !plan.Internal.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateOneToOneNatSpecRequest{})
+			}
+			internalPlan := tfmodel.OneToOneNatSpecInternal{}
+			internalPlanDiag := plan.Internal.As(ctx, &internalPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, internalPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			internalState := tfmodel.OneToOneNatSpecInternal{}
+			if !state.Internal.IsNull() && !state.Internal.IsUnknown() {
+				internalStateDiag := state.Internal.As(ctx, &internalState, basetypes.ObjectAsOptions{})
+				diags = append(diags, internalStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			internalTmp, internalDiag := OneToOneNatSpecInternalTFToAPIUpdateRequestModel(ctx, &internalPlan, &internalState)
+			diags = append(diags, internalDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Spec.Value.Internal.SetTo(*internalTmp)
+		}
+	}
+
+	if !plan.External.Equal(state.External) {
+		if !plan.External.IsNull() && !plan.External.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateOneToOneNatSpecRequest{})
+			}
+			externalPlan := tfmodel.OneToOneNatSpecExternal{}
+			externalPlanDiag := plan.External.As(ctx, &externalPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, externalPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			externalState := tfmodel.OneToOneNatSpecExternal{}
+			if !state.External.IsNull() && !state.External.IsUnknown() {
+				externalStateDiag := state.External.As(ctx, &externalState, basetypes.ObjectAsOptions{})
+				diags = append(diags, externalStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			externalTmp, externalDiag := OneToOneNatSpecExternalTFToAPIUpdateRequestModel(ctx, &externalPlan, &externalState)
+			diags = append(diags, externalDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Spec.Value.External.SetTo(*externalTmp)
+		}
 	}
 
 	return &am, diags

@@ -7,6 +7,7 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -63,6 +64,12 @@ func PostgresClusterStatusAPIResponseToTFModel(ctx context.Context, am *apimodel
 		t.Message = types.StringPointerValue(am.Message)
 	} else {
 		t.Message = types.StringNull()
+	}
+
+	if am.Region != nil {
+		t.Region = types.StringPointerValue(ptr.Get(am.Region.ID()))
+	} else {
+		t.Region = types.StringNull()
 	}
 
 	if am.Network != nil {

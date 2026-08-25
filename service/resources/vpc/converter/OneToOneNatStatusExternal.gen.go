@@ -10,6 +10,8 @@ import (
 
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
+	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
@@ -21,13 +23,13 @@ func OneToOneNatStatusExternalAPIResponseToTFModel(ctx context.Context, am *apim
 	var diags tfdiag.Diagnostics
 	var t tfmodel.OneToOneNatStatusExternal
 
-	addressTmp, d := ResourceExternalAddressStatusAPIResponseToTFModel(ctx, &am.Address)
+	addressTmp, d := commonconv.ResourceExternalAddressStatusAPIResponseToTFModel(ctx, &am.Address)
 	diags = append(diags, d...)
 	if diags.HasError() {
 		return nil, diags
 	}
 	addressTfObject, d := types.ObjectValueFrom(ctx,
-		tfconv.GetAttributesTypes(new(tfmodel.ResourceExternalAddressStatus).GetSchema().Attributes),
+		tfconv.GetAttributesTypes(new(tfcommon.ResourceExternalAddressStatus).GetSchema().Attributes),
 		*addressTmp)
 	diags = append(diags, d...)
 	if diags.HasError() {

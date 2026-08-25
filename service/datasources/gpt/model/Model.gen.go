@@ -35,8 +35,9 @@ func (s *Model) GetSchema() schema.Schema {
 				Computed:   true,
 			},
 			"status": schema.SingleNestedAttribute{
-				Attributes: new(tfcommon.ResourceStatus).GetSchema().Attributes,
-				Computed:   true,
+				Attributes:          new(tfcommon.ResourceStatus).GetSchema().Attributes,
+				MarkdownDescription: `Текущее состояние ресурса, вычисляемое системой`,
+				Computed:            true,
 			},
 			"context_window_size": schema.Int64Attribute{
 				MarkdownDescription: `Размер контекстного окна модели в токенах`,
@@ -100,8 +101,10 @@ func (s *ModelMetadata) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"purge_time": schema.StringAttribute{
-				MarkdownDescription: `Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
-				Computed:            true,
+				MarkdownDescription: `Время удаления ресурса
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"usages": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{

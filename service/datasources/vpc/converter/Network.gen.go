@@ -82,23 +82,23 @@ func NetworkAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Netwo
 	return &t, diags
 }
 
-func NetworkTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Network) (*apimodel.NetworkRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func NetworkTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Network) (*apimodel.NetworkRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.NetworkRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfcommon.CommonTypedResourceMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -106,12 +106,12 @@ func NetworkTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Network) (*apim
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.Mtu.IsNull() && !tm.Mtu.IsUnknown() {
-		am.Spec.Mtu = ptr.Get(int32(tm.Mtu.ValueInt64()))
+	if !plan.Mtu.IsNull() && !plan.Mtu.IsUnknown() {
+		am.Spec.Mtu = ptr.Get(int32(plan.Mtu.ValueInt64()))
 	}
 
-	if !tm.InternetAccess.IsNull() && !tm.InternetAccess.IsUnknown() {
-		am.Spec.InternetAccess = tm.InternetAccess.ValueBoolPointer()
+	if !plan.InternetAccess.IsNull() && !plan.InternetAccess.IsUnknown() {
+		am.Spec.InternetAccess = plan.InternetAccess.ValueBoolPointer()
 	}
 
 	return &am, diags

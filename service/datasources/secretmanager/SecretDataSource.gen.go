@@ -79,13 +79,13 @@ func (m *SecretDataSource) Configure(ctx context.Context, req datasource.Configu
 func (m *SecretDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "SecretDataSource.Read")
 
-	var data tfmodel.SecretModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.SecretModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -93,14 +93,14 @@ func (m *SecretDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetSecret(
 		ctx,
 		client.GetSecretRequest{
-			Project: data.ProjectParam.ValueString(),
-			Name:    data.NameParam.ValueString(),
+			Project: config.ProjectParam.ValueString(),
+			Name:    config.NameParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -118,7 +118,7 @@ func (m *SecretDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		return
 	}
 
-	data.Secret = *tfRes
+	config.Secret = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

@@ -5,6 +5,8 @@ package model
 import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 )
 
 type EgressNatSpecExternal struct {
@@ -17,7 +19,7 @@ func (s *EgressNatSpecExternal) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"addresses": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
-					Attributes: new(ResourceExternalAddressSpecOrRef).GetSchema().Attributes,
+					Attributes: new(tfcommon.ResourceExternalAddressSpecOrRef).GetSchema().Attributes,
 				},
 				MarkdownDescription: `Список спецификаций внешних адресов, через которых будет осуществляться трансляция`,
 				Computed:            true,

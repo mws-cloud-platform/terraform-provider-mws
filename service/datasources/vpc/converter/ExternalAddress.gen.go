@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
+	"go.mws.cloud/go-sdk/service/resources/references/rm"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -68,6 +69,12 @@ func ExternalAddressAPIOptionalResponseToTFModel(ctx context.Context, am *apimod
 		t.Status = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.ExternalAddressStatus).GetSchema().Attributes))
 	}
 
+	if val, ok := am.Spec.Region.Get(); ok {
+		t.Region = types.StringPointerValue(ptr.Get(val.Path()))
+	} else {
+		t.Region = types.StringNull()
+	}
+
 	if val, ok := am.Spec.NatGateway.Get(); ok {
 		t.NatGateway = types.StringPointerValue(ptr.Get(val.Path()))
 	} else {
@@ -77,23 +84,23 @@ func ExternalAddressAPIOptionalResponseToTFModel(ctx context.Context, am *apimod
 	return &t, diags
 }
 
-func ExternalAddressTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ExternalAddress) (*apimodel.ExternalAddressRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ExternalAddressTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ExternalAddress) (*apimodel.ExternalAddressRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ExternalAddressRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfcommon.CommonTypedResourceMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -101,8 +108,17 @@ func ExternalAddressTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Externa
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.NatGateway.IsNull() && !tm.NatGateway.IsUnknown() {
-		natGatewayRef, err := vpc.ParseNatGatewayRef(ctx, tm.NatGateway.ValueString())
+	if !plan.Region.IsNull() && !plan.Region.IsUnknown() {
+		regionRef, err := rm.ParseRegionRef(ctx, plan.Region.ValueString())
+		if err != nil {
+			diags.AddError("reference parsing", err.Error())
+			return nil, diags
+		}
+		am.Spec.Region = &regionRef
+	}
+
+	if !plan.NatGateway.IsNull() && !plan.NatGateway.IsUnknown() {
+		natGatewayRef, err := vpc.ParseNatGatewayRef(ctx, plan.NatGateway.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags

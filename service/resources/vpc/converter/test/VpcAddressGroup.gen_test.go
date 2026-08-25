@@ -8,8 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
 func TestVpcAddressGroupAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -22,8 +27,8 @@ func TestVpcAddressGroupAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 func TestVpcAddressGroupOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.VpcAddressGroupRequest{
-		Spec: apimodel.VpcAddressGroupSpecRequest{
-			Addresses: []apimodel.ResourceAddressSpecOrRefRequest{},
+		Spec: commonapimodel.VpcAddressGroupSpecRequest{
+			Addresses: []commonapimodel.ResourceAddressSpecOrRefRequest{},
 		},
 	}
 
@@ -40,4 +45,24 @@ func TestVpcAddressGroupOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateVpcAddressGroupRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.VpcAddressGroup
+	var stateTfModel tfmodel.VpcAddressGroup
+	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateVpcAddressGroupRequest{
+		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.VpcAddressGroupTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

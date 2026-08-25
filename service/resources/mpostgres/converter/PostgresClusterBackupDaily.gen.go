@@ -30,16 +30,36 @@ func PostgresClusterBackupDailyAPIResponseToTFModel(ctx context.Context, am *api
 	return &t, diags
 }
 
-func PostgresClusterBackupDailyTFToAPIRequestModel(ctx context.Context, tm *tfmodel.PostgresClusterBackupDaily) (*apimodel.PostgresClusterBackupDailyRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func PostgresClusterBackupDailyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresClusterBackupDaily) (*apimodel.PostgresClusterBackupDailyRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.PostgresClusterBackupDailyRequest
 
-	if !tm.Hour.IsNull() && !tm.Hour.IsUnknown() {
-		am.Hour = ptr.Get(int(tm.Hour.ValueInt64()))
+	if !plan.Hour.IsNull() && !plan.Hour.IsUnknown() {
+		am.Hour = ptr.Get(int(plan.Hour.ValueInt64()))
+	}
+
+	return &am, diags
+}
+
+func PostgresClusterBackupDailyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresClusterBackupDaily) (*apimodel.UpdatePostgresClusterBackupDailyRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.PostgresClusterBackupDaily{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdatePostgresClusterBackupDailyRequest
+
+	if !plan.Hour.Equal(state.Hour) {
+		if !plan.Hour.IsNull() && !plan.Hour.IsUnknown() {
+			am.Hour.SetTo(int(plan.Hour.ValueInt64()))
+		}
 	}
 
 	return &am, diags

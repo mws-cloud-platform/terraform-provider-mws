@@ -62,16 +62,16 @@ func AddressSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.A
 	return &t, diags
 }
 
-func AddressSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.AddressSpec) (*apimodel.AddressSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func AddressSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.AddressSpec) (*apimodel.AddressSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.AddressSpecRequest
 
-	if !tm.Subnet.IsNull() && !tm.Subnet.IsUnknown() {
-		subnetRef, err := vpc.ParseSubnetRef(ctx, tm.Subnet.ValueString())
+	if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {
+		subnetRef, err := vpc.ParseSubnetRef(ctx, plan.Subnet.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -79,8 +79,8 @@ func AddressSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.AddressSpec
 		am.Subnet = subnetRef
 	}
 
-	if !tm.IpAddress.IsNull() && !tm.IpAddress.IsUnknown() {
-		tmpIpAddress, err := ipaddress.ParseIPAddressString(tm.IpAddress.ValueString())
+	if !plan.IpAddress.IsNull() && !plan.IpAddress.IsUnknown() {
+		tmpIpAddress, err := ipaddress.ParseIPAddressString(plan.IpAddress.ValueString())
 		if err != nil {
 			diags.AddError("IPAddress string parsing", err.Error())
 			return nil, diags
@@ -88,13 +88,14 @@ func AddressSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.AddressSpec
 		am.IpAddress = &tmpIpAddress
 	}
 
-	if !tm.Dns.IsNull() && !tm.Dns.IsUnknown() {
+	if !plan.Dns.IsNull() && !plan.Dns.IsUnknown() {
 		dns := make([]tfmodel.AddressDnsSpec, 0)
-		dDns := tm.Dns.ElementsAs(ctx, &dns, false)
+		dDns := plan.Dns.ElementsAs(ctx, &dns, false)
 		diags = append(diags, dDns...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.Dns = make([]apimodel.AddressDnsSpecRequest, 0, len(dns))
 
 		for _, entity := range dns {

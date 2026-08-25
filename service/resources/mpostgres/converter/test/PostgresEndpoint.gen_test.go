@@ -11,6 +11,7 @@ import (
 	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
 func TestPostgresEndpointAPIResponseToTFModelEmpty(t *testing.T) {
@@ -24,7 +25,7 @@ func TestPostgresEndpointResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.PostgresEndpointRequest{
 		Name:             "name",
-		Network:          vpc.NewNetworkRef("projectID", "networkID"),
+		Network:          vpc.NewMustNetworkRef("projectID", "networkID"),
 		PrimaryAddresses: []apimodel.PostgresNetworkAddressRequest{},
 	}
 
@@ -41,4 +42,18 @@ func TestPostgresEndpointResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdatePostgresEndpointRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.PostgresEndpoint
+	var stateTfModel tfmodel.PostgresEndpoint
+
+	expectedUpdateModel := &apimodel.UpdatePostgresEndpointRequest{}
+
+	result, diags := conv.PostgresEndpointTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

@@ -8,8 +8,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
 	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
 func TestAddressSpecOrRefWithAttachmentsAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -38,4 +41,24 @@ func TestAddressSpecOrRefWithAttachmentsOptionalResponseConverters(t *testing.T)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateAddressSpecOrRefWithAttachmentsRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.AddressSpecOrRefWithAttachments
+	var stateTfModel tfmodel.AddressSpecOrRefWithAttachments
+	stateTfModel.OneToOneNat = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.ComputeOneToOneNatSpec).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateAddressSpecOrRefWithAttachmentsRequest{
+		OneToOneNat: optional.OptionalNil[apimodel.UpdateComputeOneToOneNatSpecRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.AddressSpecOrRefWithAttachmentsTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

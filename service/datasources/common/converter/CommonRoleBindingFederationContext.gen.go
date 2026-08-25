@@ -119,27 +119,27 @@ func CommonRoleBindingFederationContextAPIOptionalResponseToTFModel(ctx context.
 	return &t, diags
 }
 
-func CommonRoleBindingFederationContextTFToAPIModel(ctx context.Context, tm *tfcommon.CommonRoleBindingFederationContext) (*commonapimodel.CommonRoleBindingFederationContext, tfdiag.Diagnostics) {
-	if tm == nil {
+func CommonRoleBindingFederationContextTFToAPIModel(ctx context.Context, plan *tfcommon.CommonRoleBindingFederationContext) (*commonapimodel.CommonRoleBindingFederationContext, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.CommonRoleBindingFederationContext
 
-	if !tm.Subject.IsNull() && !tm.Subject.IsUnknown() {
-		am.Subject = tm.Subject.ValueStringPointer()
+	if !plan.Subject.IsNull() && !plan.Subject.IsUnknown() {
+		am.Subject = plan.Subject.ValueStringPointer()
 	}
 
-	if !tm.Attribute.IsNull() && !tm.Attribute.IsUnknown() {
-		attributeTfModel := tfcommon.CommonRoleBindingFederationContextAttribute{}
-		attributeDiag := tm.Attribute.As(ctx, &attributeTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, attributeDiag...)
+	if !plan.Attribute.IsNull() && !plan.Attribute.IsUnknown() {
+		attributePlan := tfcommon.CommonRoleBindingFederationContextAttribute{}
+		attributePlanDiag := plan.Attribute.As(ctx, &attributePlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, attributePlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		attributeTmp, attributeDiag := CommonRoleBindingFederationContextAttributeTFToAPIModel(ctx, &attributeTfModel)
+		attributeTmp, attributeDiag := CommonRoleBindingFederationContextAttributeTFToAPIModel(ctx, &attributePlan)
 		diags = append(diags, attributeDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -150,27 +150,27 @@ func CommonRoleBindingFederationContextTFToAPIModel(ctx context.Context, tm *tfc
 	return &am, diags
 }
 
-func CommonRoleBindingFederationContextTFToAPIRequestModel(ctx context.Context, tm *tfcommon.CommonRoleBindingFederationContext) (*commonapimodel.CommonRoleBindingFederationContextRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func CommonRoleBindingFederationContextTFToAPIRequestModel(ctx context.Context, plan *tfcommon.CommonRoleBindingFederationContext) (*commonapimodel.CommonRoleBindingFederationContextRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.CommonRoleBindingFederationContextRequest
 
-	if !tm.Subject.IsNull() && !tm.Subject.IsUnknown() {
-		am.Subject = tm.Subject.ValueStringPointer()
+	if !plan.Subject.IsNull() && !plan.Subject.IsUnknown() {
+		am.Subject = plan.Subject.ValueStringPointer()
 	}
 
-	if !tm.Attribute.IsNull() && !tm.Attribute.IsUnknown() {
-		attributeTfModel := tfcommon.CommonRoleBindingFederationContextAttribute{}
-		attributeDiag := tm.Attribute.As(ctx, &attributeTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, attributeDiag...)
+	if !plan.Attribute.IsNull() && !plan.Attribute.IsUnknown() {
+		attributePlan := tfcommon.CommonRoleBindingFederationContextAttribute{}
+		attributePlanDiag := plan.Attribute.As(ctx, &attributePlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, attributePlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		attributeTmp, attributeDiag := CommonRoleBindingFederationContextAttributeTFToAPIRequestModel(ctx, &attributeTfModel)
+		attributeTmp, attributeDiag := CommonRoleBindingFederationContextAttributeTFToAPIRequestModel(ctx, &attributePlan)
 		diags = append(diags, attributeDiag...)
 		if diags.HasError() {
 			return nil, diags

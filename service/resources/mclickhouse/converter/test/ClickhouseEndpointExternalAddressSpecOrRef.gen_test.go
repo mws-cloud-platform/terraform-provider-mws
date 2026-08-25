@@ -8,8 +8,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
 	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
 func TestClickhouseEndpointExternalAddressSpecOrRefAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -38,6 +41,26 @@ func TestClickhouseEndpointExternalAddressSpecOrRefOptionalResponseConverters(t 
 	require.Equal(t, *emptyApiModelResponse, *result)
 }
 
+func TestUpdateClickhouseEndpointExternalAddressSpecOrRefRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ClickhouseEndpointExternalAddressSpecOrRef
+	var stateTfModel tfmodel.ClickhouseEndpointExternalAddressSpecOrRef
+	stateTfModel.Spec = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.ClickhouseEndpointExternalAddressSpecOrRefSpec).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateClickhouseEndpointExternalAddressSpecOrRefRequest{
+		Spec: optional.OptionalNil[apimodel.UpdateClickhouseEndpointExternalAddressSpecOrRefSpecRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.ClickhouseEndpointExternalAddressSpecOrRefTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
+}
+
 func TestClickhouseEndpointExternalAddressSpecOrRefSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
 	emptyApiModel := apimodel.ClickhouseEndpointExternalAddressSpecOrRefSpecOptionalResponse{}
@@ -62,4 +85,18 @@ func TestClickhouseEndpointExternalAddressSpecOrRefSpecOptionalResponseConverter
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateClickhouseEndpointExternalAddressSpecOrRefSpecRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ClickhouseEndpointExternalAddressSpecOrRefSpec
+	var stateTfModel tfmodel.ClickhouseEndpointExternalAddressSpecOrRefSpec
+
+	expectedUpdateModel := &apimodel.UpdateClickhouseEndpointExternalAddressSpecOrRefSpecRequest{}
+
+	result, diags := conv.ClickhouseEndpointExternalAddressSpecOrRefSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

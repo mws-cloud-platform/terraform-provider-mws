@@ -51,16 +51,16 @@ func OneToOneNatAddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context
 	return &t, diags
 }
 
-func OneToOneNatAddressSpecOrRefTFToAPIRequestModel(ctx context.Context, tm *tfmodel.OneToOneNatAddressSpecOrRef) (*apimodel.OneToOneNatAddressSpecOrRefRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func OneToOneNatAddressSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OneToOneNatAddressSpecOrRef) (*apimodel.OneToOneNatAddressSpecOrRefRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.OneToOneNatAddressSpecOrRefRequest
 
-	if !tm.Ref.IsNull() && !tm.Ref.IsUnknown() {
-		refRef, err := vpc.ParseExternalAddressRef(ctx, tm.Ref.ValueString())
+	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
+		refRef, err := vpc.ParseExternalAddressRef(ctx, plan.Ref.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -68,20 +68,74 @@ func OneToOneNatAddressSpecOrRefTFToAPIRequestModel(ctx context.Context, tm *tfm
 		am.Ref = &refRef
 	}
 
-	if !tm.Spec.IsNull() && !tm.Spec.IsUnknown() {
-		specTfModel := tfmodel.OneToOneNatAddressSpecOrRefSpec{}
-		specDiag := tm.Spec.As(ctx, &specTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, specDiag...)
+	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
+		specPlan := tfmodel.OneToOneNatAddressSpecOrRefSpec{}
+		specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, specPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		specTmp, specDiag := OneToOneNatAddressSpecOrRefSpecTFToAPIRequestModel(ctx, &specTfModel)
+		specTmp, specDiag := OneToOneNatAddressSpecOrRefSpecTFToAPIRequestModel(ctx, &specPlan)
 		diags = append(diags, specDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.Spec = specTmp
+	}
+
+	return &am, diags
+}
+
+func OneToOneNatAddressSpecOrRefTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.OneToOneNatAddressSpecOrRef) (*apimodel.UpdateOneToOneNatAddressSpecOrRefRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.OneToOneNatAddressSpecOrRef{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateOneToOneNatAddressSpecOrRefRequest
+
+	if !plan.Ref.Equal(state.Ref) {
+		if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
+			refRef, err := vpc.ParseExternalAddressRef(ctx, plan.Ref.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.Ref.SetTo(refRef)
+		}
+	}
+
+	if !plan.Spec.Equal(state.Spec) {
+		if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
+			specPlan := tfmodel.OneToOneNatAddressSpecOrRefSpec{}
+			specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, specPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			specState := tfmodel.OneToOneNatAddressSpecOrRefSpec{}
+			if !state.Spec.IsNull() && !state.Spec.IsUnknown() {
+				specStateDiag := state.Spec.As(ctx, &specState, basetypes.ObjectAsOptions{})
+				diags = append(diags, specStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			specTmp, specDiag := OneToOneNatAddressSpecOrRefSpecTFToAPIUpdateRequestModel(ctx, &specPlan, &specState)
+			diags = append(diags, specDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Spec.SetTo(*specTmp)
+		} else if plan.Spec.IsNull() {
+			am.Spec.SetToNull()
+		}
 	}
 
 	return &am, diags
@@ -98,13 +152,27 @@ func OneToOneNatAddressSpecOrRefSpecAPIOptionalResponseToTFModel(ctx context.Con
 	return &t, diags
 }
 
-func OneToOneNatAddressSpecOrRefSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.OneToOneNatAddressSpecOrRefSpec) (*apimodel.OneToOneNatAddressSpecOrRefSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func OneToOneNatAddressSpecOrRefSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OneToOneNatAddressSpecOrRefSpec) (*apimodel.OneToOneNatAddressSpecOrRefSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.OneToOneNatAddressSpecOrRefSpecRequest
+
+	return &am, diags
+}
+
+func OneToOneNatAddressSpecOrRefSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.OneToOneNatAddressSpecOrRefSpec) (*apimodel.UpdateOneToOneNatAddressSpecOrRefSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.OneToOneNatAddressSpecOrRefSpec{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateOneToOneNatAddressSpecOrRefSpecRequest
 
 	return &am, diags
 }

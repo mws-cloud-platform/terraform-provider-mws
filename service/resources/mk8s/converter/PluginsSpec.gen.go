@@ -45,28 +45,71 @@ func PluginsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.P
 	return &t, diags
 }
 
-func PluginsSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.PluginsSpec) (*apimodel.PluginsSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func PluginsSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PluginsSpec) (*apimodel.PluginsSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.PluginsSpecRequest
 
-	if !tm.Cni.IsNull() && !tm.Cni.IsUnknown() {
-		cniTfModel := tfmodel.PluginsSpecCni{}
-		cniDiag := tm.Cni.As(ctx, &cniTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, cniDiag...)
+	if !plan.Cni.IsNull() && !plan.Cni.IsUnknown() {
+		cniPlan := tfmodel.PluginsSpecCni{}
+		cniPlanDiag := plan.Cni.As(ctx, &cniPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, cniPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		cniTmp, cniDiag := PluginsSpecCniTFToAPIRequestModel(ctx, &cniTfModel)
+		cniTmp, cniDiag := PluginsSpecCniTFToAPIRequestModel(ctx, &cniPlan)
 		diags = append(diags, cniDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.Cni = cniTmp
+	}
+
+	return &am, diags
+}
+
+func PluginsSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PluginsSpec) (*apimodel.UpdatePluginsSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.PluginsSpec{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdatePluginsSpecRequest
+
+	if !plan.Cni.Equal(state.Cni) {
+		if !plan.Cni.IsNull() && !plan.Cni.IsUnknown() {
+			cniPlan := tfmodel.PluginsSpecCni{}
+			cniPlanDiag := plan.Cni.As(ctx, &cniPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, cniPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			cniState := tfmodel.PluginsSpecCni{}
+			if !state.Cni.IsNull() && !state.Cni.IsUnknown() {
+				cniStateDiag := state.Cni.As(ctx, &cniState, basetypes.ObjectAsOptions{})
+				diags = append(diags, cniStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			cniTmp, cniDiag := PluginsSpecCniTFToAPIUpdateRequestModel(ctx, &cniPlan, &cniState)
+			diags = append(diags, cniDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Cni.SetTo(*cniTmp)
+		} else if plan.Cni.IsNull() {
+			am.Cni.SetToNull()
+		}
 	}
 
 	return &am, diags
@@ -95,20 +138,46 @@ func PluginsSpecCniAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func PluginsSpecCniTFToAPIRequestModel(ctx context.Context, tm *tfmodel.PluginsSpecCni) (*apimodel.PluginsSpecCniRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func PluginsSpecCniTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PluginsSpecCni) (*apimodel.PluginsSpecCniRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.PluginsSpecCniRequest
 
-	if !tm.Calico.IsNull() && !tm.Calico.IsUnknown() {
-		am.Calico = json.RawMessage(tm.Calico.ValueString())
+	if !plan.Calico.IsNull() && !plan.Calico.IsUnknown() {
+		am.Calico = json.RawMessage(plan.Calico.ValueString())
 	}
 
-	if !tm.Cilium.IsNull() && !tm.Cilium.IsUnknown() {
-		am.Cilium = json.RawMessage(tm.Cilium.ValueString())
+	if !plan.Cilium.IsNull() && !plan.Cilium.IsUnknown() {
+		am.Cilium = json.RawMessage(plan.Cilium.ValueString())
+	}
+
+	return &am, diags
+}
+
+func PluginsSpecCniTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PluginsSpecCni) (*apimodel.UpdatePluginsSpecCniRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.PluginsSpecCni{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdatePluginsSpecCniRequest
+
+	if !plan.Calico.Equal(state.Calico) {
+		if !plan.Calico.IsNull() && !plan.Calico.IsUnknown() {
+			am.Calico.SetTo(json.RawMessage(plan.Calico.ValueString()))
+		}
+	}
+
+	if !plan.Cilium.Equal(state.Cilium) {
+		if !plan.Cilium.IsNull() && !plan.Cilium.IsUnknown() {
+			am.Cilium.SetTo(json.RawMessage(plan.Cilium.ValueString()))
+		}
 	}
 
 	return &am, diags

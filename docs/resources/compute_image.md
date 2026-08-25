@@ -51,6 +51,7 @@ variable "image_source_url" {
 ### Optional
 
 - `activity` (String) Актуальность образа
+- `encryption` (Attributes) Способ шифрования ресурса (see [below for nested schema](#nestedatt--encryption))
 - `family` (String) Семейство образа
 - `kind` (String) Тип объекта (image)
 - `metadata` (Attributes) Дополнительная информация об объекте (see [below for nested schema](#nestedatt--metadata))
@@ -78,6 +79,14 @@ Optional:
 - `disk_id` (String) ID диска-источника
 - `external_url` (String) URL для загрузки образа
 - `image_id` (String) ID образа-источника
+
+
+<a id="nestedatt--encryption"></a>
+### Nested Schema for `encryption`
+
+Optional:
+
+- `crypto_key_id` (String) Идентификатор пользовательского ключа
 
 
 <a id="nestedatt--metadata"></a>
@@ -130,6 +139,7 @@ Optional:
 Read-Only:
 
 - `activity` (String) Актуальность образа
+- `encryption` (Attributes) Способ шифрования ресурса (see [below for nested schema](#nestedatt--status--encryption))
 - `initial_source_image` (String) Ссылка на исходный образ
 - `min_disk_size` (String) Минимальный допустимый размер диска, создаваемого из образа
 
@@ -148,6 +158,16 @@ Read-Only:
 Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
 Значение базовой единицы измерения (в байтах) должно оставаться целым.
 Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
+
+<a id="nestedatt--status--encryption"></a>
+### Nested Schema for `status.encryption`
+
+Read-Only:
+
+- `crypto_key_id` (String) Идентификатор пользовательского ключа
+- `key_activity` (String) Состояние ключа
+- `version` (Number) Версия пользовательского ключа
+
 
 <a id="nestedatt--status--ready"></a>
 ### Nested Schema for `status.ready`

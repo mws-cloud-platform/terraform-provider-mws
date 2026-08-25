@@ -45,16 +45,16 @@ func DataDiskSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.DataDisk
 	return &t, diags
 }
 
-func DataDiskSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.DataDiskSpec) (*apimodel.DataDiskSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func DataDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DataDiskSpec) (*apimodel.DataDiskSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.DataDiskSpecRequest
 
-	if !tm.Size.IsNull() && !tm.Size.IsUnknown() {
-		tmpSize, err := bytesize.ParseString(tm.Size.ValueString())
+	if !plan.Size.IsNull() && !plan.Size.IsUnknown() {
+		tmpSize, err := bytesize.ParseString(plan.Size.ValueString())
 		if err != nil {
 			diags.AddError("ByteSize string parsing", err.Error())
 			return nil, diags
@@ -62,8 +62,8 @@ func DataDiskSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.DataDiskSp
 		am.Size = tmpSize
 	}
 
-	if !tm.Type.IsNull() && !tm.Type.IsUnknown() {
-		typeTmp, typeDiag := DataDiskTypeTFToAPIModel(ctx, tm.Type)
+	if !plan.Type.IsNull() && !plan.Type.IsUnknown() {
+		typeTmp, typeDiag := DataDiskTypeTFToAPIModel(ctx, plan.Type)
 		diags = append(diags, typeDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -71,8 +71,8 @@ func DataDiskSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.DataDiskSp
 		am.Type = *typeTmp
 	}
 
-	if !tm.Iops.IsNull() && !tm.Iops.IsUnknown() {
-		iopsTmp, iopsDiag := IopsTFToAPIModel(ctx, tm.Iops)
+	if !plan.Iops.IsNull() && !plan.Iops.IsUnknown() {
+		iopsTmp, iopsDiag := IopsTFToAPIModel(ctx, plan.Iops)
 		diags = append(diags, iopsDiag...)
 		if diags.HasError() {
 			return nil, diags

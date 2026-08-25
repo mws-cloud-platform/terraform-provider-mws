@@ -115,15 +115,15 @@ func (m *ClusterUserResource) Configure(ctx context.Context, req resource.Config
 func (m *ClusterUserResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "ClusterUserResource.Create")
 
-	var data tfmodel.ClusterUserModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.ClusterUserModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	var specPasswordVersion types.Int64
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -131,17 +131,17 @@ func (m *ClusterUserResource) Create(ctx context.Context, req resource.CreateReq
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ClusterUserResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.PostgresClusterUserTFToAPIRequestModel(ctx, &data.PostgresClusterUser)
+	body, diags := conv.PostgresClusterUserTFToAPIRequestModel(ctx, &plan.PostgresClusterUser)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ClusterUserResource.TFToAPI")
@@ -181,9 +181,9 @@ func (m *ClusterUserResource) Create(ctx context.Context, req resource.CreateReq
 	apiRes, err := m.sdk.CreatePostgresClusterUser(
 		ctx,
 		client.UpsertPostgresClusterUserRequest{
-			Project: data.ProjectParam.ValueString(),
-			Cluster: data.ClusterParam.ValueString(),
-			User:    data.UserParam.ValueString(),
+			Project: plan.ProjectParam.ValueString(),
+			Cluster: plan.ClusterParam.ValueString(),
+			User:    plan.UserParam.ValueString(),
 			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
@@ -196,7 +196,7 @@ func (m *ClusterUserResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.PostgresClusterUserAPIResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -205,9 +205,9 @@ func (m *ClusterUserResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	data.PostgresClusterUser = *tfRes
+	plan.PostgresClusterUser = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 	if !specPasswordVersion.IsNull() && !specPasswordVersion.IsUnknown() {
 		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("password_version"), specPasswordVersion)...)
 	}
@@ -216,15 +216,15 @@ func (m *ClusterUserResource) Create(ctx context.Context, req resource.CreateReq
 func (m *ClusterUserResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "ClusterUserResource.Read")
 
-	var data tfmodel.ClusterUserModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.ClusterUserModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	var specPasswordVersion types.Int64
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -232,15 +232,15 @@ func (m *ClusterUserResource) Read(ctx context.Context, req resource.ReadRequest
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetPostgresClusterUser(
 		ctx,
 		client.GetPostgresClusterUserRequest{
-			Project: data.ProjectParam.ValueString(),
-			Cluster: data.ClusterParam.ValueString(),
-			User:    data.UserParam.ValueString(),
+			Project: state.ProjectParam.ValueString(),
+			Cluster: state.ClusterParam.ValueString(),
+			User:    state.UserParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -251,7 +251,7 @@ func (m *ClusterUserResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.PostgresClusterUserAPIResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -260,9 +260,9 @@ func (m *ClusterUserResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
-	data.PostgresClusterUser = *tfRes
+	state.PostgresClusterUser = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 	resp.Diagnostics.Append(req.State.GetAttribute(ctx, tfpath.Root("password_version"), &specPasswordVersion)...)
 	if !specPasswordVersion.IsNull() && !specPasswordVersion.IsUnknown() {
 		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("password_version"), specPasswordVersion)...)
@@ -272,15 +272,21 @@ func (m *ClusterUserResource) Read(ctx context.Context, req resource.ReadRequest
 func (m *ClusterUserResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "ClusterUserResource.Update")
 
-	var data tfmodel.ClusterUserModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.ClusterUserModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	var state tfmodel.ClusterUserModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	var specPasswordVersion types.Int64
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -288,24 +294,24 @@ func (m *ClusterUserResource) Update(ctx context.Context, req resource.UpdateReq
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ClusterUserResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.PostgresClusterUserTFToAPIRequestModel(ctx, &data.PostgresClusterUser)
+	body, diags := conv.PostgresClusterUserTFToAPIUpdateRequestModel(ctx, &plan.PostgresClusterUser, &state.PostgresClusterUser)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ClusterUserResource.TFToAPI")
 		return
 	}
 
-	body, diags = func(ctx context.Context, planApiRequest *apimodel.PostgresClusterUserRequest) (*apimodel.PostgresClusterUserRequest, tfdiag.Diagnostics) {
+	body, diags = func(ctx context.Context, planApiRequest *apimodel.UpdatePostgresClusterUserRequest) (*apimodel.UpdatePostgresClusterUserRequest, tfdiag.Diagnostics) {
 
 		var configData tfmodel.ClusterUserModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
@@ -313,7 +319,7 @@ func (m *ClusterUserResource) Update(ctx context.Context, req resource.UpdateReq
 			return nil, resp.Diagnostics
 		}
 
-		configRequest, wdiags := conv.PostgresClusterUserTFToAPIRequestModel(ctx, &configData.PostgresClusterUser)
+		configRequest, wdiags := conv.PostgresClusterUserTFToAPIUpdateRequestModel(ctx, &configData.PostgresClusterUser, &state.PostgresClusterUser)
 		if wdiags.HasError() {
 			return nil, wdiags
 		}
@@ -324,7 +330,7 @@ func (m *ClusterUserResource) Update(ctx context.Context, req resource.UpdateReq
 			return nil, resp.Diagnostics
 		}
 		if !specPasswordVersion.IsNull() && !specPasswordVersion.IsUnknown() {
-			planApiRequest.Spec.Password = configRequest.Spec.Password
+			planApiRequest.Spec.Value.Password = configRequest.Spec.Value.Password
 		}
 
 		return planApiRequest, nil
@@ -338,10 +344,10 @@ func (m *ClusterUserResource) Update(ctx context.Context, req resource.UpdateReq
 	apiRes, err := m.sdk.UpdatePostgresClusterUser(
 		ctx,
 		client.UpdatePostgresClusterUserRequest{
-			Project: data.ProjectParam.ValueString(),
-			Cluster: data.ClusterParam.ValueString(),
-			User:    data.UserParam.ValueString(),
-			Body:    body.AsUpdateModel(),
+			Project: plan.ProjectParam.ValueString(),
+			Cluster: plan.ClusterParam.ValueString(),
+			User:    plan.UserParam.ValueString(),
+			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -353,7 +359,7 @@ func (m *ClusterUserResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.PostgresClusterUserAPIResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -362,9 +368,9 @@ func (m *ClusterUserResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	data.PostgresClusterUser = *tfRes
+	plan.PostgresClusterUser = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 	if !specPasswordVersion.IsNull() && !specPasswordVersion.IsUnknown() {
 		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("password_version"), specPasswordVersion)...)
 	}
@@ -373,13 +379,13 @@ func (m *ClusterUserResource) Update(ctx context.Context, req resource.UpdateReq
 func (m *ClusterUserResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "ClusterUserResource.Delete")
 
-	var data tfmodel.ClusterUserModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.ClusterUserModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -387,10 +393,10 @@ func (m *ClusterUserResource) Delete(ctx context.Context, req resource.DeleteReq
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := state.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ClusterUserResource.Timeouts")
@@ -400,9 +406,9 @@ func (m *ClusterUserResource) Delete(ctx context.Context, req resource.DeleteReq
 	err := m.sdk.DeletePostgresClusterUser(
 		ctx,
 		client.DeletePostgresClusterUserRequest{
-			Project: data.ProjectParam.ValueString(),
-			Cluster: data.ClusterParam.ValueString(),
-			User:    data.UserParam.ValueString(),
+			Project: state.ProjectParam.ValueString(),
+			Cluster: state.ClusterParam.ValueString(),
+			User:    state.UserParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -418,7 +424,7 @@ func (m *ClusterUserResource) Delete(ctx context.Context, req resource.DeleteReq
 func (m *ClusterUserResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "ClusterUserResource.ImportState")
 
-	var data tfmodel.ClusterUserModel
+	var state tfmodel.ClusterUserModel
 
 	ref, err := mpostgresref.ParsePostgresClusterUserRef(ctx, req.ID)
 	if err != nil {
@@ -444,7 +450,7 @@ func (m *ClusterUserResource) ImportState(ctx context.Context, req resource.Impo
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.PostgresClusterUserAPIResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -453,11 +459,11 @@ func (m *ClusterUserResource) ImportState(ctx context.Context, req resource.Impo
 		return
 	}
 
-	data.PostgresClusterUser = *tfRes
+	state.PostgresClusterUser = *tfRes
 
-	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.ClusterParam = types.StringValue(ref.GetCluster())
-	data.UserParam = types.StringValue(ref.GetUser())
+	state.ProjectParam = types.StringValue(ref.GetProject())
+	state.ClusterParam = types.StringValue(ref.GetCluster())
+	state.UserParam = types.StringValue(ref.GetUser())
 
 	var rwTimeouts timeouts.Value
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
@@ -465,7 +471,7 @@ func (m *ClusterUserResource) ImportState(ctx context.Context, req resource.Impo
 		tflog.Debug(ctx, "ClusterUserResource.timeouts.GetAttribute")
 		return
 	}
-	data.Timeouts = rwTimeouts
+	state.Timeouts = rwTimeouts
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

@@ -61,23 +61,23 @@ func ClusterAvailabilitySpecAPIOptionalResponseToTFModel(ctx context.Context, am
 	return &t, diags
 }
 
-func ClusterAvailabilitySpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClusterAvailabilitySpec) (*apimodel.ClusterAvailabilitySpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClusterAvailabilitySpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterAvailabilitySpec) (*apimodel.ClusterAvailabilitySpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClusterAvailabilitySpecRequest
 
-	if !tm.Standalone.IsNull() && !tm.Standalone.IsUnknown() {
-		standaloneTfModel := tfmodel.ClusterAvailabilitySpecStandalone{}
-		standaloneDiag := tm.Standalone.As(ctx, &standaloneTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, standaloneDiag...)
+	if !plan.Standalone.IsNull() && !plan.Standalone.IsUnknown() {
+		standalonePlan := tfmodel.ClusterAvailabilitySpecStandalone{}
+		standalonePlanDiag := plan.Standalone.As(ctx, &standalonePlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, standalonePlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		standaloneTmp, standaloneDiag := ClusterAvailabilitySpecStandaloneTFToAPIRequestModel(ctx, &standaloneTfModel)
+		standaloneTmp, standaloneDiag := ClusterAvailabilitySpecStandaloneTFToAPIRequestModel(ctx, &standalonePlan)
 		diags = append(diags, standaloneDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -85,20 +85,92 @@ func ClusterAvailabilitySpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel
 		am.Standalone = standaloneTmp
 	}
 
-	if !tm.ZonalHa.IsNull() && !tm.ZonalHa.IsUnknown() {
-		zonalHaTfModel := tfmodel.ClusterAvailabilitySpecZonalHa{}
-		zonalHaDiag := tm.ZonalHa.As(ctx, &zonalHaTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, zonalHaDiag...)
+	if !plan.ZonalHa.IsNull() && !plan.ZonalHa.IsUnknown() {
+		zonalHaPlan := tfmodel.ClusterAvailabilitySpecZonalHa{}
+		zonalHaPlanDiag := plan.ZonalHa.As(ctx, &zonalHaPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, zonalHaPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		zonalHaTmp, zonalHaDiag := ClusterAvailabilitySpecZonalHaTFToAPIRequestModel(ctx, &zonalHaTfModel)
+		zonalHaTmp, zonalHaDiag := ClusterAvailabilitySpecZonalHaTFToAPIRequestModel(ctx, &zonalHaPlan)
 		diags = append(diags, zonalHaDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.ZonalHa = zonalHaTmp
+	}
+
+	return &am, diags
+}
+
+func ClusterAvailabilitySpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClusterAvailabilitySpec) (*apimodel.UpdateClusterAvailabilitySpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.ClusterAvailabilitySpec{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateClusterAvailabilitySpecRequest
+
+	if !plan.Standalone.Equal(state.Standalone) {
+		if !plan.Standalone.IsNull() && !plan.Standalone.IsUnknown() {
+			standalonePlan := tfmodel.ClusterAvailabilitySpecStandalone{}
+			standalonePlanDiag := plan.Standalone.As(ctx, &standalonePlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, standalonePlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			standaloneState := tfmodel.ClusterAvailabilitySpecStandalone{}
+			if !state.Standalone.IsNull() && !state.Standalone.IsUnknown() {
+				standaloneStateDiag := state.Standalone.As(ctx, &standaloneState, basetypes.ObjectAsOptions{})
+				diags = append(diags, standaloneStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			standaloneTmp, standaloneDiag := ClusterAvailabilitySpecStandaloneTFToAPIUpdateRequestModel(ctx, &standalonePlan, &standaloneState)
+			diags = append(diags, standaloneDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Standalone.SetTo(*standaloneTmp)
+		} else if plan.Standalone.IsNull() {
+			am.Standalone.SetToNull()
+		}
+	}
+
+	if !plan.ZonalHa.Equal(state.ZonalHa) {
+		if !plan.ZonalHa.IsNull() && !plan.ZonalHa.IsUnknown() {
+			zonalHaPlan := tfmodel.ClusterAvailabilitySpecZonalHa{}
+			zonalHaPlanDiag := plan.ZonalHa.As(ctx, &zonalHaPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, zonalHaPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			zonalHaState := tfmodel.ClusterAvailabilitySpecZonalHa{}
+			if !state.ZonalHa.IsNull() && !state.ZonalHa.IsUnknown() {
+				zonalHaStateDiag := state.ZonalHa.As(ctx, &zonalHaState, basetypes.ObjectAsOptions{})
+				diags = append(diags, zonalHaStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			zonalHaTmp, zonalHaDiag := ClusterAvailabilitySpecZonalHaTFToAPIUpdateRequestModel(ctx, &zonalHaPlan, &zonalHaState)
+			diags = append(diags, zonalHaDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.ZonalHa.SetTo(*zonalHaTmp)
+		} else if plan.ZonalHa.IsNull() {
+			am.ZonalHa.SetToNull()
+		}
 	}
 
 	return &am, diags
@@ -117,16 +189,36 @@ func ClusterAvailabilitySpecStandaloneAPIOptionalResponseToTFModel(ctx context.C
 	return &t, diags
 }
 
-func ClusterAvailabilitySpecStandaloneTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClusterAvailabilitySpecStandalone) (*apimodel.ClusterAvailabilitySpecStandaloneRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClusterAvailabilitySpecStandaloneTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterAvailabilitySpecStandalone) (*apimodel.ClusterAvailabilitySpecStandaloneRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClusterAvailabilitySpecStandaloneRequest
 
-	if !tm.Zone.IsNull() && !tm.Zone.IsUnknown() {
-		am.Zone = tm.Zone.ValueString()
+	if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
+		am.Zone = plan.Zone.ValueString()
+	}
+
+	return &am, diags
+}
+
+func ClusterAvailabilitySpecStandaloneTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClusterAvailabilitySpecStandalone) (*apimodel.UpdateClusterAvailabilitySpecStandaloneRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.ClusterAvailabilitySpecStandalone{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateClusterAvailabilitySpecStandaloneRequest
+
+	if !plan.Zone.Equal(state.Zone) {
+		if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
+			am.Zone.SetTo(plan.Zone.ValueString())
+		}
 	}
 
 	return &am, diags
@@ -145,16 +237,36 @@ func ClusterAvailabilitySpecZonalHaAPIOptionalResponseToTFModel(ctx context.Cont
 	return &t, diags
 }
 
-func ClusterAvailabilitySpecZonalHaTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClusterAvailabilitySpecZonalHa) (*apimodel.ClusterAvailabilitySpecZonalHaRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClusterAvailabilitySpecZonalHaTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterAvailabilitySpecZonalHa) (*apimodel.ClusterAvailabilitySpecZonalHaRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClusterAvailabilitySpecZonalHaRequest
 
-	if !tm.Zone.IsNull() && !tm.Zone.IsUnknown() {
-		am.Zone = tm.Zone.ValueString()
+	if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
+		am.Zone = plan.Zone.ValueString()
+	}
+
+	return &am, diags
+}
+
+func ClusterAvailabilitySpecZonalHaTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClusterAvailabilitySpecZonalHa) (*apimodel.UpdateClusterAvailabilitySpecZonalHaRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.ClusterAvailabilitySpecZonalHa{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateClusterAvailabilitySpecZonalHaRequest
+
+	if !plan.Zone.Equal(state.Zone) {
+		if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
+			am.Zone.SetTo(plan.Zone.ValueString())
+		}
 	}
 
 	return &am, diags

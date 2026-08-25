@@ -83,13 +83,13 @@ func (m *ClusterDatabaseDataSource) Configure(ctx context.Context, req datasourc
 func (m *ClusterDatabaseDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "ClusterDatabaseDataSource.Read")
 
-	var data tfmodel.ClusterDatabaseModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.ClusterDatabaseModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -97,15 +97,15 @@ func (m *ClusterDatabaseDataSource) Read(ctx context.Context, req datasource.Rea
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetPostgresClusterDatabase(
 		ctx,
 		client.GetPostgresClusterDatabaseRequest{
-			Project:  data.ProjectParam.ValueString(),
-			Cluster:  data.ClusterParam.ValueString(),
-			Database: data.DatabaseParam.ValueString(),
+			Project:  config.ProjectParam.ValueString(),
+			Cluster:  config.ClusterParam.ValueString(),
+			Database: config.DatabaseParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -123,7 +123,7 @@ func (m *ClusterDatabaseDataSource) Read(ctx context.Context, req datasource.Rea
 		return
 	}
 
-	data.PostgresClusterDatabase = *tfRes
+	config.PostgresClusterDatabase = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

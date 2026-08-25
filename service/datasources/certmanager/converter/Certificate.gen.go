@@ -75,23 +75,23 @@ func CertificateAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.C
 	return &t, diags
 }
 
-func CertificateTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Certificate) (*apimodel.CertificateRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func CertificateTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Certificate) (*apimodel.CertificateRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.CertificateRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfcommon.CommonTypedResourceMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -99,15 +99,15 @@ func CertificateTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Certificate
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.Managed.IsNull() && !tm.Managed.IsUnknown() {
-		managedTfModel := tfmodel.CertificateManagedSpec{}
-		managedDiag := tm.Managed.As(ctx, &managedTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, managedDiag...)
+	if !plan.Managed.IsNull() && !plan.Managed.IsUnknown() {
+		managedPlan := tfmodel.CertificateManagedSpec{}
+		managedPlanDiag := plan.Managed.As(ctx, &managedPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, managedPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		managedTmp, managedDiag := CertificateManagedSpecTFToAPIRequestModel(ctx, &managedTfModel)
+		managedTmp, managedDiag := CertificateManagedSpecTFToAPIRequestModel(ctx, &managedPlan)
 		diags = append(diags, managedDiag...)
 		if diags.HasError() {
 			return nil, diags

@@ -26,21 +26,46 @@ func KafkaEndpointBrokerAddressSpecAPIResponseToTFModel(ctx context.Context, am 
 	return &t, diags
 }
 
-func KafkaEndpointBrokerAddressSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaEndpointBrokerAddressSpec) (*apimodel.KafkaEndpointBrokerAddressSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func KafkaEndpointBrokerAddressSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaEndpointBrokerAddressSpec) (*apimodel.KafkaEndpointBrokerAddressSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaEndpointBrokerAddressSpecRequest
 
-	if !tm.Subnet.IsNull() && !tm.Subnet.IsUnknown() {
-		subnetRef, err := vpc.ParseSubnetRef(ctx, tm.Subnet.ValueString())
+	if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {
+		subnetRef, err := vpc.ParseSubnetRef(ctx, plan.Subnet.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
 		}
 		am.Subnet = subnetRef
+	}
+
+	return &am, diags
+}
+
+func KafkaEndpointBrokerAddressSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaEndpointBrokerAddressSpec) (*apimodel.UpdateKafkaEndpointBrokerAddressSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.KafkaEndpointBrokerAddressSpec{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateKafkaEndpointBrokerAddressSpecRequest
+
+	if !plan.Subnet.Equal(state.Subnet) {
+		if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {
+			subnetRef, err := vpc.ParseSubnetRef(ctx, plan.Subnet.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.Subnet.SetTo(subnetRef)
+		}
 	}
 
 	return &am, diags

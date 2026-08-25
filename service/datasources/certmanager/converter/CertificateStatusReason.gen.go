@@ -25,11 +25,11 @@ func CertificateStatusReasonAPIToTFModel(ctx context.Context, am *apimodel.Certi
 	return t, diags
 }
 
-func CertificateStatusReasonTFToAPIModel(ctx context.Context, tm tfmodel.CertificateStatusReason) (*apimodel.CertificateStatusReason, tfdiag.Diagnostics) {
+func CertificateStatusReasonTFToAPIModel(ctx context.Context, plan tfmodel.CertificateStatusReason) (*apimodel.CertificateStatusReason, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am apimodel.CertificateStatusReason
 
-	var tmp = types.String(tm)
+	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}

@@ -3,13 +3,9 @@
 package model
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/mapvalidator"
-	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	localboolplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/boolplanmodifier"
@@ -17,12 +13,11 @@ import (
 )
 
 type SecretVersion struct {
-	Kind        types.String          `tfsdk:"kind"`
-	Metadata    types.Object          `tfsdk:"metadata"`
-	Status      types.Object          `tfsdk:"status"`
-	Active      types.Bool            `tfsdk:"active"`
-	DataVersion types.Int64           `tfsdk:"data_version"`
-	Data        SecretVersionDataSpec `tfsdk:"data"`
+	Kind     types.String          `tfsdk:"kind"`
+	Metadata types.Object          `tfsdk:"metadata"`
+	Status   types.Object          `tfsdk:"status"`
+	Active   types.Bool            `tfsdk:"active"`
+	Data     SecretVersionDataSpec `tfsdk:"data"`
 }
 
 func (s *SecretVersion) GetSchema() schema.Schema {
@@ -54,21 +49,12 @@ func (s *SecretVersion) GetSchema() schema.Schema {
 					localboolplanmodifier.RequiresReplaceIfRemoved(),
 				},
 			},
-			"data_version": schema.Int64Attribute{
-				MarkdownDescription: `Increase this field's value if you want to force updating the associated write-only field.`,
-				Validators: []validator.Int64{
-					int64validator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("data")),
-				},
-				Optional: true,
-			},
 			"data": schema.MapAttribute{
 				ElementType:         types.StringType,
 				MarkdownDescription: `Содержимое секрета`,
-				Validators: []validator.Map{
-					mapvalidator.AlsoRequires(tfpath.MatchRelative().AtParent().AtName("data_version")),
-				},
-				WriteOnly: true,
-				Optional:  true,
+				Sensitive:           true,
+				WriteOnly:           true,
+				Optional:            true,
 			},
 		},
 	}

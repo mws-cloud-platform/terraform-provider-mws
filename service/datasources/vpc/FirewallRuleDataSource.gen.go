@@ -83,13 +83,13 @@ func (m *FirewallRuleDataSource) Configure(ctx context.Context, req datasource.C
 func (m *FirewallRuleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "FirewallRuleDataSource.Read")
 
-	var data tfmodel.FirewallRuleModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.FirewallRuleModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -97,15 +97,15 @@ func (m *FirewallRuleDataSource) Read(ctx context.Context, req datasource.ReadRe
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetFirewallRule(
 		ctx,
 		client.GetFirewallRuleRequest{
-			Project:      data.ProjectParam.ValueString(),
-			Network:      data.NetworkParam.ValueString(),
-			FirewallRule: data.FirewallRuleParam.ValueString(),
+			Project:      config.ProjectParam.ValueString(),
+			Network:      config.NetworkParam.ValueString(),
+			FirewallRule: config.FirewallRuleParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -123,7 +123,7 @@ func (m *FirewallRuleDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 
-	data.FirewallRule = *tfRes
+	config.FirewallRule = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

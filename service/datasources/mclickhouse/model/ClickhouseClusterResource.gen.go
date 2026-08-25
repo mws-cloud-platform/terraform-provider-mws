@@ -12,6 +12,7 @@ import (
 type ClickhouseClusterResource struct {
 	Active            types.Bool   `tfsdk:"active"`
 	Version           types.String `tfsdk:"version"`
+	Region            types.String `tfsdk:"region"`
 	Endpoints         types.List   `tfsdk:"endpoints"`
 	Coordinator       types.Object `tfsdk:"coordinator"`
 	Shards            types.List   `tfsdk:"shards"`
@@ -31,6 +32,10 @@ func (s *ClickhouseClusterResource) GetSchema() schema.Schema {
 			},
 			"version": schema.StringAttribute{
 				MarkdownDescription: `Версия продукта`,
+				Computed:            true,
+			},
+			"region": schema.StringAttribute{
+				MarkdownDescription: `Регион, в котором располагается кластер`,
 				Computed:            true,
 			},
 			"endpoints": schema.ListNestedAttribute{

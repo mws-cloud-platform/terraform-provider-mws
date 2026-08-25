@@ -11,6 +11,8 @@ import (
 
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
+	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
@@ -22,13 +24,13 @@ func OneToOneNatSpecExternalAPIOptionalResponseToTFModel(ctx context.Context, am
 	var diags tfdiag.Diagnostics
 	var t tfmodel.OneToOneNatSpecExternal
 
-	addressTmp, d := ResourceExternalAddressSpecOrRefAPIOptionalResponseToTFModel(ctx, &am.Address)
+	addressTmp, d := commonconv.ResourceExternalAddressSpecOrRefAPIOptionalResponseToTFModel(ctx, &am.Address)
 	diags = append(diags, d...)
 	if diags.HasError() {
 		return nil, diags
 	}
 	addressTfObject, d := types.ObjectValueFrom(ctx,
-		tfconv.GetAttributesTypes(new(tfmodel.ResourceExternalAddressSpecOrRef).GetSchema().Attributes),
+		tfconv.GetAttributesTypes(new(tfcommon.ResourceExternalAddressSpecOrRef).GetSchema().Attributes),
 		*addressTmp)
 	diags = append(diags, d...)
 	if diags.HasError() {
@@ -39,28 +41,69 @@ func OneToOneNatSpecExternalAPIOptionalResponseToTFModel(ctx context.Context, am
 	return &t, diags
 }
 
-func OneToOneNatSpecExternalTFToAPIRequestModel(ctx context.Context, tm *tfmodel.OneToOneNatSpecExternal) (*apimodel.OneToOneNatSpecExternalRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func OneToOneNatSpecExternalTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OneToOneNatSpecExternal) (*apimodel.OneToOneNatSpecExternalRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.OneToOneNatSpecExternalRequest
 
-	if !tm.Address.IsNull() && !tm.Address.IsUnknown() {
-		addressTfModel := tfmodel.ResourceExternalAddressSpecOrRef{}
-		addressDiag := tm.Address.As(ctx, &addressTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, addressDiag...)
+	if !plan.Address.IsNull() && !plan.Address.IsUnknown() {
+		addressPlan := tfcommon.ResourceExternalAddressSpecOrRef{}
+		addressPlanDiag := plan.Address.As(ctx, &addressPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, addressPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		addressTmp, addressDiag := ResourceExternalAddressSpecOrRefTFToAPIRequestModel(ctx, &addressTfModel)
+		addressTmp, addressDiag := commonconv.ResourceExternalAddressSpecOrRefTFToAPIRequestModel(ctx, &addressPlan)
 		diags = append(diags, addressDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.Address = *addressTmp
+	}
+
+	return &am, diags
+}
+
+func OneToOneNatSpecExternalTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.OneToOneNatSpecExternal) (*apimodel.UpdateOneToOneNatSpecExternalRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.OneToOneNatSpecExternal{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateOneToOneNatSpecExternalRequest
+
+	if !plan.Address.Equal(state.Address) {
+		if !plan.Address.IsNull() && !plan.Address.IsUnknown() {
+			addressPlan := tfcommon.ResourceExternalAddressSpecOrRef{}
+			addressPlanDiag := plan.Address.As(ctx, &addressPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, addressPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			addressState := tfcommon.ResourceExternalAddressSpecOrRef{}
+			if !state.Address.IsNull() && !state.Address.IsUnknown() {
+				addressStateDiag := state.Address.As(ctx, &addressState, basetypes.ObjectAsOptions{})
+				diags = append(diags, addressStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			addressTmp, addressDiag := commonconv.ResourceExternalAddressSpecOrRefTFToAPIUpdateRequestModel(ctx, &addressPlan, &addressState)
+			diags = append(diags, addressDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Address.SetTo(*addressTmp)
+		}
 	}
 
 	return &am, diags

@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
 	"go.mws.cloud/go-sdk/service/resources/references/mpostgres"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
@@ -25,7 +25,7 @@ func TestPostgresClusterDatabaseResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.PostgresClusterDatabaseRequest{
 		Spec: apimodel.PostgresClusterDatabaseSpecRequest{
-			Owner: mpostgres.NewMustPostgresClusterUserRef("projectID", "p", "e"),
+			Owner: mpostgres.NewMustPostgresClusterUserRef("projectID", "fkioer50vs2", "bg6EAsn1oJfI"),
 		},
 	}
 
@@ -54,7 +54,7 @@ func TestPostgresClusterDatabaseMetadataAPIResponseToTFModelEmpty(t *testing.T) 
 func TestPostgresClusterDatabaseMetadataResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.PostgresClusterDatabaseMetadataRequest{
-		TypedResourceMetadataRequest: common.TypedResourceMetadataRequest{},
+		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
 	}
 
 	emptyApiModelResponse, err := apimodel.PostgresClusterDatabaseMetadataRequestToResponse(&emptyApiModelRequest)

@@ -10,6 +10,7 @@ import (
 
 	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
 func TestClickhouseClusterBootstrapAdminSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -38,4 +39,18 @@ func TestClickhouseClusterBootstrapAdminSpecOptionalResponseConverters(t *testin
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateClickhouseClusterBootstrapAdminSpecRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ClickhouseClusterBootstrapAdminSpec
+	var stateTfModel tfmodel.ClickhouseClusterBootstrapAdminSpec
+
+	expectedUpdateModel := &apimodel.UpdateClickhouseClusterBootstrapAdminSpecRequest{}
+
+	result, diags := conv.ClickhouseClusterBootstrapAdminSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

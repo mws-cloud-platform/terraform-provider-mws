@@ -26,16 +26,16 @@ func PostgresNetworkAddressSpecAPIResponseToTFModel(ctx context.Context, am *api
 	return &t, diags
 }
 
-func PostgresNetworkAddressSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.PostgresNetworkAddressSpec) (*apimodel.PostgresNetworkAddressSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func PostgresNetworkAddressSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresNetworkAddressSpec) (*apimodel.PostgresNetworkAddressSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.PostgresNetworkAddressSpecRequest
 
-	if !tm.Subnet.IsNull() && !tm.Subnet.IsUnknown() {
-		subnetRef, err := vpc.ParseSubnetRef(ctx, tm.Subnet.ValueString())
+	if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {
+		subnetRef, err := vpc.ParseSubnetRef(ctx, plan.Subnet.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags

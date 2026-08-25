@@ -41,23 +41,23 @@ func RouteDestinationAPIOptionalResponseToTFModel(ctx context.Context, am *apimo
 	return &t, diags
 }
 
-func RouteDestinationTFToAPIRequestModel(ctx context.Context, tm *tfmodel.RouteDestination) (*apimodel.RouteDestinationRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func RouteDestinationTFToAPIRequestModel(ctx context.Context, plan *tfmodel.RouteDestination) (*apimodel.RouteDestinationRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.RouteDestinationRequest
 
-	if !tm.Spec.IsNull() && !tm.Spec.IsUnknown() {
-		specTfModel := tfmodel.RouteDestinationSpec{}
-		specDiag := tm.Spec.As(ctx, &specTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, specDiag...)
+	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
+		specPlan := tfmodel.RouteDestinationSpec{}
+		specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, specPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		specTmp, specDiag := RouteDestinationSpecTFToAPIRequestModel(ctx, &specTfModel)
+		specTmp, specDiag := RouteDestinationSpecTFToAPIRequestModel(ctx, &specPlan)
 		diags = append(diags, specDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -97,21 +97,22 @@ func RouteDestinationSpecAPIOptionalResponseToTFModel(ctx context.Context, am *a
 	return &t, diags
 }
 
-func RouteDestinationSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.RouteDestinationSpec) (*apimodel.RouteDestinationSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func RouteDestinationSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.RouteDestinationSpec) (*apimodel.RouteDestinationSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.RouteDestinationSpecRequest
 
-	if !tm.Cidrs.IsNull() && !tm.Cidrs.IsUnknown() {
+	if !plan.Cidrs.IsNull() && !plan.Cidrs.IsUnknown() {
 		cidrs := make([]types.String, 0)
-		dCidrs := tm.Cidrs.ElementsAs(ctx, &cidrs, false)
+		dCidrs := plan.Cidrs.ElementsAs(ctx, &cidrs, false)
 		diags = append(diags, dCidrs...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.Cidrs = make([]cidraddress.CIDRAddress, 0, len(cidrs))
 
 		for _, entity := range cidrs {

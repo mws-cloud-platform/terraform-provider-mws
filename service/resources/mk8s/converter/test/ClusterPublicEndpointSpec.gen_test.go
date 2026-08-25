@@ -10,6 +10,7 @@ import (
 
 	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
 func TestClusterPublicEndpointSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -36,4 +37,18 @@ func TestClusterPublicEndpointSpecOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateClusterPublicEndpointSpecRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ClusterPublicEndpointSpec
+	var stateTfModel tfmodel.ClusterPublicEndpointSpec
+
+	expectedUpdateModel := &apimodel.UpdateClusterPublicEndpointSpecRequest{}
+
+	result, diags := conv.ClusterPublicEndpointSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

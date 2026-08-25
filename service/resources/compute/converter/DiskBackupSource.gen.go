@@ -44,28 +44,71 @@ func DiskBackupSourceAPIOptionalResponseToTFModel(ctx context.Context, am *apimo
 	return &t, diags
 }
 
-func DiskBackupSourceTFToAPIRequestModel(ctx context.Context, tm *tfmodel.DiskBackupSource) (*apimodel.DiskBackupSourceRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func DiskBackupSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DiskBackupSource) (*apimodel.DiskBackupSourceRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.DiskBackupSourceRequest
 
-	if !tm.Disk.IsNull() && !tm.Disk.IsUnknown() {
-		diskTfModel := tfmodel.DiskBackupSourceDisk{}
-		diskDiag := tm.Disk.As(ctx, &diskTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, diskDiag...)
+	if !plan.Disk.IsNull() && !plan.Disk.IsUnknown() {
+		diskPlan := tfmodel.DiskBackupSourceDisk{}
+		diskPlanDiag := plan.Disk.As(ctx, &diskPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, diskPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		diskTmp, diskDiag := DiskBackupSourceDiskTFToAPIRequestModel(ctx, &diskTfModel)
+		diskTmp, diskDiag := DiskBackupSourceDiskTFToAPIRequestModel(ctx, &diskPlan)
 		diags = append(diags, diskDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.Disk = diskTmp
+	}
+
+	return &am, diags
+}
+
+func DiskBackupSourceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.DiskBackupSource) (*apimodel.UpdateDiskBackupSourceRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.DiskBackupSource{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateDiskBackupSourceRequest
+
+	if !plan.Disk.Equal(state.Disk) {
+		if !plan.Disk.IsNull() && !plan.Disk.IsUnknown() {
+			diskPlan := tfmodel.DiskBackupSourceDisk{}
+			diskPlanDiag := plan.Disk.As(ctx, &diskPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, diskPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			diskState := tfmodel.DiskBackupSourceDisk{}
+			if !state.Disk.IsNull() && !state.Disk.IsUnknown() {
+				diskStateDiag := state.Disk.As(ctx, &diskState, basetypes.ObjectAsOptions{})
+				diags = append(diags, diskStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			diskTmp, diskDiag := DiskBackupSourceDiskTFToAPIUpdateRequestModel(ctx, &diskPlan, &diskState)
+			diags = append(diags, diskDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Disk.SetTo(*diskTmp)
+		} else if plan.Disk.IsNull() {
+			am.Disk.SetToNull()
+		}
 	}
 
 	return &am, diags
@@ -84,21 +127,46 @@ func DiskBackupSourceDiskAPIOptionalResponseToTFModel(ctx context.Context, am *a
 	return &t, diags
 }
 
-func DiskBackupSourceDiskTFToAPIRequestModel(ctx context.Context, tm *tfmodel.DiskBackupSourceDisk) (*apimodel.DiskBackupSourceDiskRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func DiskBackupSourceDiskTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DiskBackupSourceDisk) (*apimodel.DiskBackupSourceDiskRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.DiskBackupSourceDiskRequest
 
-	if !tm.Id.IsNull() && !tm.Id.IsUnknown() {
-		idRef, err := compute.ParseDiskRef(ctx, tm.Id.ValueString())
+	if !plan.Id.IsNull() && !plan.Id.IsUnknown() {
+		idRef, err := compute.ParseDiskRef(ctx, plan.Id.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
 		}
 		am.Id = idRef
+	}
+
+	return &am, diags
+}
+
+func DiskBackupSourceDiskTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.DiskBackupSourceDisk) (*apimodel.UpdateDiskBackupSourceDiskRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.DiskBackupSourceDisk{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateDiskBackupSourceDiskRequest
+
+	if !plan.Id.Equal(state.Id) {
+		if !plan.Id.IsNull() && !plan.Id.IsUnknown() {
+			idRef, err := compute.ParseDiskRef(ctx, plan.Id.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.Id.SetTo(idRef)
+		}
 	}
 
 	return &am, diags

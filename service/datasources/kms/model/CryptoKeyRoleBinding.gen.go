@@ -31,12 +31,14 @@ func (s *CryptoKeyRoleBinding) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"status": schema.SingleNestedAttribute{
-				Attributes: new(tfcommon.CommonRoleBindingStatus).GetSchema().Attributes,
-				Computed:   true,
+				Attributes:          new(tfcommon.CommonRoleBindingStatus).GetSchema().Attributes,
+				MarkdownDescription: `Текущее состояние привязки роли, вычисляемое системой`,
+				Computed:            true,
 			},
 			"subject": schema.SingleNestedAttribute{
-				Attributes: new(tfcommon.CommonRoleBindingSpecSubject).GetSchema().Attributes,
-				Computed:   true,
+				Attributes:          new(tfcommon.CommonRoleBindingSpecSubject).GetSchema().Attributes,
+				MarkdownDescription: `Субъект привязки роли — пользователь, сервисный аккаунт, группа пользователей или другая сущность, которой выдаются права. Должно быть заполнено ровно одно из полей`,
+				Computed:            true,
 			},
 			"role": schema.StringAttribute{
 				MarkdownDescription: `Роль, определяющая права субъекта на ресурс`,

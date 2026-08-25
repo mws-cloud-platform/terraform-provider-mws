@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
@@ -90,23 +90,23 @@ func KafkaTopicAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaTopic
 	return &t, diags
 }
 
-func KafkaTopicTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaTopic) (*apimodel.KafkaTopicRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func KafkaTopicTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaTopic) (*apimodel.KafkaTopicRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaTopicRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfmodel.KafkaTopicMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfmodel.KafkaTopicMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := KafkaTopicMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := KafkaTopicMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -114,16 +114,86 @@ func KafkaTopicTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaTopic) 
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.Partitions.IsNull() && !tm.Partitions.IsUnknown() {
-		am.Spec.Partitions = ptr.Get(int32(tm.Partitions.ValueInt64()))
+	if !plan.Partitions.IsNull() && !plan.Partitions.IsUnknown() {
+		am.Spec.Partitions = ptr.Get(int32(plan.Partitions.ValueInt64()))
 	}
 
-	if !tm.ReplicationFactor.IsNull() && !tm.ReplicationFactor.IsUnknown() {
-		am.Spec.ReplicationFactor = ptr.Get(int32(tm.ReplicationFactor.ValueInt64()))
+	if !plan.ReplicationFactor.IsNull() && !plan.ReplicationFactor.IsUnknown() {
+		am.Spec.ReplicationFactor = ptr.Get(int32(plan.ReplicationFactor.ValueInt64()))
 	}
 
-	if !tm.Config.IsNull() && !tm.Config.IsUnknown() {
-		am.Spec.Config = tm.Config.ValueStringPointer()
+	if !plan.Config.IsNull() && !plan.Config.IsUnknown() {
+		am.Spec.Config = plan.Config.ValueStringPointer()
+	}
+
+	return &am, diags
+}
+
+func KafkaTopicTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaTopic) (*apimodel.UpdateKafkaTopicRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.KafkaTopic{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateKafkaTopicRequest
+
+	if !plan.Metadata.Equal(state.Metadata) {
+		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+			metadataPlan := tfmodel.KafkaTopicMetadata{}
+			metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, metadataPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			metadataState := tfmodel.KafkaTopicMetadata{}
+			if !state.Metadata.IsNull() && !state.Metadata.IsUnknown() {
+				metadataStateDiag := state.Metadata.As(ctx, &metadataState, basetypes.ObjectAsOptions{})
+				diags = append(diags, metadataStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			metadataTmp, metadataDiag := KafkaTopicMetadataTFToAPIUpdateRequestModel(ctx, &metadataPlan, &metadataState)
+			diags = append(diags, metadataDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Metadata.SetTo(*metadataTmp)
+		} else if plan.Metadata.IsNull() {
+			am.Metadata.SetToNull()
+		}
+	}
+
+	if !plan.Partitions.Equal(state.Partitions) {
+		if !plan.Partitions.IsNull() && !plan.Partitions.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateKafkaTopicSpecRequest{})
+			}
+			am.Spec.Value.Partitions.SetTo(int32(plan.Partitions.ValueInt64()))
+		}
+	}
+
+	if !plan.ReplicationFactor.Equal(state.ReplicationFactor) {
+		if !plan.ReplicationFactor.IsNull() && !plan.ReplicationFactor.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateKafkaTopicSpecRequest{})
+			}
+			am.Spec.Value.ReplicationFactor.SetTo(int32(plan.ReplicationFactor.ValueInt64()))
+		}
+	}
+
+	if !plan.Config.Equal(state.Config) {
+		if !plan.Config.IsNull() && !plan.Config.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateKafkaTopicSpecRequest{})
+			}
+			am.Spec.Value.Config.SetTo(plan.Config.ValueString())
+		}
 	}
 
 	return &am, diags
@@ -203,26 +273,27 @@ func KafkaTopicMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.Ka
 	return &t, diags
 }
 
-func KafkaTopicMetadataTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaTopicMetadata) (*apimodel.KafkaTopicMetadataRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func KafkaTopicMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaTopicMetadata) (*apimodel.KafkaTopicMetadataRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaTopicMetadataRequest
 
-	if !tm.DisplayName.IsNull() && !tm.DisplayName.IsUnknown() {
-		am.DisplayName = tm.DisplayName.ValueStringPointer()
+	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
+		am.DisplayName = plan.DisplayName.ValueStringPointer()
 	}
 
-	if !tm.Usages.IsNull() && !tm.Usages.IsUnknown() {
+	if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
 		usages := make([]tfcommon.TypedUsage, 0)
-		dUsages := tm.Usages.ElementsAs(ctx, &usages, false)
+		dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
 		diags = append(diags, dUsages...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.Usages = make([]common.TypedUsageRequest, 0, len(usages))
+
+		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
@@ -234,8 +305,58 @@ func KafkaTopicMetadataTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Kafk
 		}
 	}
 
-	if !tm.Description.IsNull() && !tm.Description.IsUnknown() {
-		am.Description = tm.Description.ValueStringPointer()
+	if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
+		am.Description = plan.Description.ValueStringPointer()
+	}
+
+	return &am, diags
+}
+
+func KafkaTopicMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaTopicMetadata) (*apimodel.UpdateKafkaTopicMetadataRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.KafkaTopicMetadata{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateKafkaTopicMetadataRequest
+
+	if !plan.DisplayName.Equal(state.DisplayName) {
+		if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
+			am.DisplayName.SetTo(plan.DisplayName.ValueString())
+		}
+	}
+
+	if !plan.Usages.Equal(state.Usages) {
+		if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
+			usages := make([]tfcommon.TypedUsage, 0)
+			dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
+			diags = append(diags, dUsages...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			usagesTmp := make([]commonapimodel.UpdateTypedUsageRequest, 0, len(usages))
+
+			for _, entity := range usages {
+				stateEntity := tfcommon.TypedUsage{}
+				tmp, d := commonconv.TypedUsageTFToAPIUpdateRequestModel(ctx, &entity, &stateEntity)
+				diags = append(diags, d...)
+				if diags.HasError() {
+					return nil, diags
+				}
+				usagesTmp = append(usagesTmp, *tmp)
+			}
+			am.Usages.SetTo(usagesTmp)
+		}
+	}
+
+	if !plan.Description.Equal(state.Description) {
+		if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
+			am.Description.SetTo(plan.Description.ValueString())
+		}
 	}
 
 	return &am, diags

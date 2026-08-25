@@ -84,20 +84,20 @@ func KafkaControllerInstanceSpecAPIResponseToTFModel(ctx context.Context, am *ap
 	return &t, diags
 }
 
-func KafkaControllerInstanceSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaControllerInstanceSpec) (*apimodel.KafkaControllerInstanceSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func KafkaControllerInstanceSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaControllerInstanceSpec) (*apimodel.KafkaControllerInstanceSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaControllerInstanceSpecRequest
 
-	if !tm.CombinedWithBroker.IsNull() && !tm.CombinedWithBroker.IsUnknown() {
-		am.CombinedWithBroker = tm.CombinedWithBroker.ValueBoolPointer()
+	if !plan.CombinedWithBroker.IsNull() && !plan.CombinedWithBroker.IsUnknown() {
+		am.CombinedWithBroker = plan.CombinedWithBroker.ValueBoolPointer()
 	}
 
-	if !tm.VmType.IsNull() && !tm.VmType.IsUnknown() {
-		vmTypeRef, err := compute.ParseVmTypeRef(ctx, tm.VmType.ValueString())
+	if !plan.VmType.IsNull() && !plan.VmType.IsUnknown() {
+		vmTypeRef, err := compute.ParseVmTypeRef(ctx, plan.VmType.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -105,15 +105,15 @@ func KafkaControllerInstanceSpecTFToAPIRequestModel(ctx context.Context, tm *tfm
 		am.VmType = &vmTypeRef
 	}
 
-	if !tm.Disk.IsNull() && !tm.Disk.IsUnknown() {
-		diskTfModel := tfmodel.KafkaDataDiskSpec{}
-		diskDiag := tm.Disk.As(ctx, &diskTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, diskDiag...)
+	if !plan.Disk.IsNull() && !plan.Disk.IsUnknown() {
+		diskPlan := tfmodel.KafkaDataDiskSpec{}
+		diskPlanDiag := plan.Disk.As(ctx, &diskPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, diskPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		diskTmp, diskDiag := KafkaDataDiskSpecTFToAPIRequestModel(ctx, &diskTfModel)
+		diskTmp, diskDiag := KafkaDataDiskSpecTFToAPIRequestModel(ctx, &diskPlan)
 		diags = append(diags, diskDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -121,13 +121,14 @@ func KafkaControllerInstanceSpecTFToAPIRequestModel(ctx context.Context, tm *tfm
 		am.Disk = diskTmp
 	}
 
-	if !tm.Allocation.IsNull() && !tm.Allocation.IsUnknown() {
+	if !plan.Allocation.IsNull() && !plan.Allocation.IsUnknown() {
 		allocation := make([]tfmodel.KafkaAllocation, 0)
-		dAllocation := tm.Allocation.ElementsAs(ctx, &allocation, false)
+		dAllocation := plan.Allocation.ElementsAs(ctx, &allocation, false)
 		diags = append(diags, dAllocation...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.Allocation = make([]apimodel.KafkaAllocationRequest, 0, len(allocation))
 
 		for _, entity := range allocation {
@@ -137,6 +138,90 @@ func KafkaControllerInstanceSpecTFToAPIRequestModel(ctx context.Context, tm *tfm
 				return nil, diags
 			}
 			am.Allocation = append(am.Allocation, *tmp)
+		}
+	}
+
+	return &am, diags
+}
+
+func KafkaControllerInstanceSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaControllerInstanceSpec) (*apimodel.UpdateKafkaControllerInstanceSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.KafkaControllerInstanceSpec{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateKafkaControllerInstanceSpecRequest
+
+	if !plan.CombinedWithBroker.Equal(state.CombinedWithBroker) {
+		if !plan.CombinedWithBroker.IsNull() && !plan.CombinedWithBroker.IsUnknown() {
+			am.CombinedWithBroker.SetTo(plan.CombinedWithBroker.ValueBool())
+		}
+	}
+
+	if !plan.VmType.Equal(state.VmType) {
+		if !plan.VmType.IsNull() && !plan.VmType.IsUnknown() {
+			vmTypeRef, err := compute.ParseVmTypeRef(ctx, plan.VmType.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.VmType.SetTo(vmTypeRef)
+		}
+	}
+
+	if !plan.Disk.Equal(state.Disk) {
+		if !plan.Disk.IsNull() && !plan.Disk.IsUnknown() {
+			diskPlan := tfmodel.KafkaDataDiskSpec{}
+			diskPlanDiag := plan.Disk.As(ctx, &diskPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, diskPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			diskState := tfmodel.KafkaDataDiskSpec{}
+			if !state.Disk.IsNull() && !state.Disk.IsUnknown() {
+				diskStateDiag := state.Disk.As(ctx, &diskState, basetypes.ObjectAsOptions{})
+				diags = append(diags, diskStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			diskTmp, diskDiag := KafkaDataDiskSpecTFToAPIUpdateRequestModel(ctx, &diskPlan, &diskState)
+			diags = append(diags, diskDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Disk.SetTo(*diskTmp)
+		} else if plan.Disk.IsNull() {
+			am.Disk.SetToNull()
+		}
+	}
+
+	if !plan.Allocation.Equal(state.Allocation) {
+		if !plan.Allocation.IsNull() && !plan.Allocation.IsUnknown() {
+			allocation := make([]tfmodel.KafkaAllocation, 0)
+			dAllocation := plan.Allocation.ElementsAs(ctx, &allocation, false)
+			diags = append(diags, dAllocation...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			allocationTmp := make([]apimodel.UpdateKafkaAllocationRequest, 0, len(allocation))
+
+			for _, entity := range allocation {
+				stateEntity := tfmodel.KafkaAllocation{}
+				tmp, d := KafkaAllocationTFToAPIUpdateRequestModel(ctx, &entity, &stateEntity)
+				diags = append(diags, d...)
+				if diags.HasError() {
+					return nil, diags
+				}
+				allocationTmp = append(allocationTmp, *tmp)
+			}
+			am.Allocation.SetTo(allocationTmp)
 		}
 	}
 

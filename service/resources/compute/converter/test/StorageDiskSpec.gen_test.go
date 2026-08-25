@@ -8,8 +8,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
 	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
 func TestStorageDiskSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -38,6 +41,26 @@ func TestStorageDiskSpecOptionalResponseConverters(t *testing.T) {
 	require.Equal(t, *emptyApiModelResponse, *result)
 }
 
+func TestUpdateStorageDiskSpecRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.StorageDiskSpec
+	var stateTfModel tfmodel.StorageDiskSpec
+	stateTfModel.Source = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.StorageDiskSpecSource).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateStorageDiskSpecRequest{
+		Source: optional.OptionalNil[apimodel.UpdateStorageDiskSpecSourceRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.StorageDiskSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
+}
+
 func TestStorageDiskSpecSourceAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
 	emptyApiModel := apimodel.StorageDiskSpecSourceOptionalResponse{}
@@ -62,4 +85,18 @@ func TestStorageDiskSpecSourceOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateStorageDiskSpecSourceRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.StorageDiskSpecSource
+	var stateTfModel tfmodel.StorageDiskSpecSource
+
+	expectedUpdateModel := &apimodel.UpdateStorageDiskSpecSourceRequest{}
+
+	result, diags := conv.StorageDiskSpecSourceTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

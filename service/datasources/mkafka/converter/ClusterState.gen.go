@@ -25,11 +25,11 @@ func ClusterStateAPIToTFModel(ctx context.Context, am *apimodel.ClusterState) (t
 	return t, diags
 }
 
-func ClusterStateTFToAPIModel(ctx context.Context, tm tfmodel.ClusterState) (*apimodel.ClusterState, tfdiag.Diagnostics) {
+func ClusterStateTFToAPIModel(ctx context.Context, plan tfmodel.ClusterState) (*apimodel.ClusterState, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClusterState
 
-	var tmp = types.String(tm)
+	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}

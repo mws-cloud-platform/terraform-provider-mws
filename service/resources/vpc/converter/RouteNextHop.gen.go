@@ -57,16 +57,16 @@ func RouteNextHopAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.
 	return &t, diags
 }
 
-func RouteNextHopTFToAPIRequestModel(ctx context.Context, tm *tfmodel.RouteNextHop) (*apimodel.RouteNextHopRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func RouteNextHopTFToAPIRequestModel(ctx context.Context, plan *tfmodel.RouteNextHop) (*apimodel.RouteNextHopRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.RouteNextHopRequest
 
-	if !tm.NatGateway.IsNull() && !tm.NatGateway.IsUnknown() {
-		natGatewayRef, err := vpc.ParseNatGatewayRef(ctx, tm.NatGateway.ValueString())
+	if !plan.NatGateway.IsNull() && !plan.NatGateway.IsUnknown() {
+		natGatewayRef, err := vpc.ParseNatGatewayRef(ctx, plan.NatGateway.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -74,20 +74,76 @@ func RouteNextHopTFToAPIRequestModel(ctx context.Context, tm *tfmodel.RouteNextH
 		am.NatGateway = &natGatewayRef
 	}
 
-	if !tm.Address.IsNull() && !tm.Address.IsUnknown() {
-		addressTfModel := tfmodel.RouteNextHopAddress{}
-		addressDiag := tm.Address.As(ctx, &addressTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, addressDiag...)
+	if !plan.Address.IsNull() && !plan.Address.IsUnknown() {
+		addressPlan := tfmodel.RouteNextHopAddress{}
+		addressPlanDiag := plan.Address.As(ctx, &addressPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, addressPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		addressTmp, addressDiag := RouteNextHopAddressTFToAPIRequestModel(ctx, &addressTfModel)
+		addressTmp, addressDiag := RouteNextHopAddressTFToAPIRequestModel(ctx, &addressPlan)
 		diags = append(diags, addressDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.Address = addressTmp
+	}
+
+	return &am, diags
+}
+
+func RouteNextHopTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.RouteNextHop) (*apimodel.UpdateRouteNextHopRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.RouteNextHop{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateRouteNextHopRequest
+
+	if !plan.NatGateway.Equal(state.NatGateway) {
+		if !plan.NatGateway.IsNull() && !plan.NatGateway.IsUnknown() {
+			natGatewayRef, err := vpc.ParseNatGatewayRef(ctx, plan.NatGateway.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.NatGateway.SetTo(natGatewayRef)
+		} else if plan.NatGateway.IsNull() {
+			am.NatGateway.SetToNull()
+		}
+	}
+
+	if !plan.Address.Equal(state.Address) {
+		if !plan.Address.IsNull() && !plan.Address.IsUnknown() {
+			addressPlan := tfmodel.RouteNextHopAddress{}
+			addressPlanDiag := plan.Address.As(ctx, &addressPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, addressPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			addressState := tfmodel.RouteNextHopAddress{}
+			if !state.Address.IsNull() && !state.Address.IsUnknown() {
+				addressStateDiag := state.Address.As(ctx, &addressState, basetypes.ObjectAsOptions{})
+				diags = append(diags, addressStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			addressTmp, addressDiag := RouteNextHopAddressTFToAPIUpdateRequestModel(ctx, &addressPlan, &addressState)
+			diags = append(diags, addressDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Address.SetTo(*addressTmp)
+		} else if plan.Address.IsNull() {
+			am.Address.SetToNull()
+		}
 	}
 
 	return &am, diags
@@ -106,21 +162,46 @@ func RouteNextHopAddressAPIOptionalResponseToTFModel(ctx context.Context, am *ap
 	return &t, diags
 }
 
-func RouteNextHopAddressTFToAPIRequestModel(ctx context.Context, tm *tfmodel.RouteNextHopAddress) (*apimodel.RouteNextHopAddressRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func RouteNextHopAddressTFToAPIRequestModel(ctx context.Context, plan *tfmodel.RouteNextHopAddress) (*apimodel.RouteNextHopAddressRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.RouteNextHopAddressRequest
 
-	if !tm.Ref.IsNull() && !tm.Ref.IsUnknown() {
-		refRef, err := vpc.ParseAddressRef(ctx, tm.Ref.ValueString())
+	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
+		refRef, err := vpc.ParseAddressRef(ctx, plan.Ref.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
 		}
 		am.Ref = refRef
+	}
+
+	return &am, diags
+}
+
+func RouteNextHopAddressTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.RouteNextHopAddress) (*apimodel.UpdateRouteNextHopAddressRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.RouteNextHopAddress{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateRouteNextHopAddressRequest
+
+	if !plan.Ref.Equal(state.Ref) {
+		if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
+			refRef, err := vpc.ParseAddressRef(ctx, plan.Ref.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.Ref.SetTo(refRef)
+		}
 	}
 
 	return &am, diags

@@ -188,7 +188,9 @@ Read-Only:
 - `description` (String) Описание ресурса
 - `display_name` (String) Отображаемое имя. Необязательное поле, можно свободно задавать и изменять для удобства организации ресурсов
 - `id` (String) Ссылка на типизированный референс
-- `purge_time` (String) Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
+- `purge_time` (String) Время удаления ресурса
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `usages` (Attributes List) Связи с другими ресурсами. В зависимости от типа связи операции над ресурсом могут быть ограничены (see [below for nested schema](#nestedatt--metadata--usages))
 
 <a id="nestedatt--metadata--usages"></a>
@@ -342,7 +344,6 @@ Read-Only:
   * "FAILED"   - Неработоспособен;
   * "UNKNOWN"  - Не удаётся определить состояние (на этапе создания)
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
-- `region` (String) Регион, в котором располагается кластер
 - `state` (String) Состояние кластера:
   * "CREATING"     - Создаётся;
   * "RUNNING"      - Работает в штатном режиме;
@@ -367,6 +368,7 @@ Read-Only:
 - `coordinator` (Attributes) Описание координаторов кластера (see [below for nested schema](#nestedatt--status--cluster--coordinator))
 - `endpoints` (Attributes List) Список эндпойнтов для подключения к кластеру (see [below for nested schema](#nestedatt--status--cluster--endpoints))
 - `maintenance_window` (Attributes) (see [below for nested schema](#nestedatt--status--cluster--maintenance_window))
+- `region` (String) Регион, в котором располагается кластер
 - `shards` (Attributes List) Описание шардов кластера (see [below for nested schema](#nestedatt--status--cluster--shards))
 - `storage` (Attributes) Конфигурация схемы хранилищ ClickHouse (see [below for nested schema](#nestedatt--status--cluster--storage))
 - `version` (String) Версия продукта

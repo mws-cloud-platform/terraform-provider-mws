@@ -36,20 +36,46 @@ func ClickhouseClusterBackupAPIOptionalResponseToTFModel(ctx context.Context, am
 	return &t, diags
 }
 
-func ClickhouseClusterBackupTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClickhouseClusterBackup) (*apimodel.ClickhouseClusterBackupRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClickhouseClusterBackupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterBackup) (*apimodel.ClickhouseClusterBackupRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClickhouseClusterBackupRequest
 
-	if !tm.Hour.IsNull() && !tm.Hour.IsUnknown() {
-		am.Hour = ptr.Get(int(tm.Hour.ValueInt64()))
+	if !plan.Hour.IsNull() && !plan.Hour.IsUnknown() {
+		am.Hour = ptr.Get(int(plan.Hour.ValueInt64()))
 	}
 
-	if !tm.RetainPeriodDays.IsNull() && !tm.RetainPeriodDays.IsUnknown() {
-		am.RetainPeriodDays = ptr.Get(int(tm.RetainPeriodDays.ValueInt64()))
+	if !plan.RetainPeriodDays.IsNull() && !plan.RetainPeriodDays.IsUnknown() {
+		am.RetainPeriodDays = ptr.Get(int(plan.RetainPeriodDays.ValueInt64()))
+	}
+
+	return &am, diags
+}
+
+func ClickhouseClusterBackupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseClusterBackup) (*apimodel.UpdateClickhouseClusterBackupRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.ClickhouseClusterBackup{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateClickhouseClusterBackupRequest
+
+	if !plan.Hour.Equal(state.Hour) {
+		if !plan.Hour.IsNull() && !plan.Hour.IsUnknown() {
+			am.Hour.SetTo(int(plan.Hour.ValueInt64()))
+		}
+	}
+
+	if !plan.RetainPeriodDays.Equal(state.RetainPeriodDays) {
+		if !plan.RetainPeriodDays.IsNull() && !plan.RetainPeriodDays.IsUnknown() {
+			am.RetainPeriodDays.SetTo(int(plan.RetainPeriodDays.ValueInt64()))
+		}
 	}
 
 	return &am, diags

@@ -43,16 +43,16 @@ func DiskSpecSourceAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func DiskSpecSourceTFToAPIRequestModel(ctx context.Context, tm *tfmodel.DiskSpecSource) (*apimodel.DiskSpecSourceRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func DiskSpecSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DiskSpecSource) (*apimodel.DiskSpecSourceRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.DiskSpecSourceRequest
 
-	if !tm.Image.IsNull() && !tm.Image.IsUnknown() {
-		imageRef, err := compute.ParseImageRef(ctx, tm.Image.ValueString())
+	if !plan.Image.IsNull() && !plan.Image.IsUnknown() {
+		imageRef, err := compute.ParseImageRef(ctx, plan.Image.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -60,8 +60,8 @@ func DiskSpecSourceTFToAPIRequestModel(ctx context.Context, tm *tfmodel.DiskSpec
 		am.Image = &imageRef
 	}
 
-	if !tm.Snapshot.IsNull() && !tm.Snapshot.IsUnknown() {
-		snapshotRef, err := compute.ParseSnapshotRef(ctx, tm.Snapshot.ValueString())
+	if !plan.Snapshot.IsNull() && !plan.Snapshot.IsUnknown() {
+		snapshotRef, err := compute.ParseSnapshotRef(ctx, plan.Snapshot.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -69,13 +69,60 @@ func DiskSpecSourceTFToAPIRequestModel(ctx context.Context, tm *tfmodel.DiskSpec
 		am.Snapshot = &snapshotRef
 	}
 
-	if !tm.DiskBackup.IsNull() && !tm.DiskBackup.IsUnknown() {
-		diskBackupRef, err := compute.ParseDiskBackupRef(ctx, tm.DiskBackup.ValueString())
+	if !plan.DiskBackup.IsNull() && !plan.DiskBackup.IsUnknown() {
+		diskBackupRef, err := compute.ParseDiskBackupRef(ctx, plan.DiskBackup.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
 		}
 		am.DiskBackup = &diskBackupRef
+	}
+
+	return &am, diags
+}
+
+func DiskSpecSourceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.DiskSpecSource) (*apimodel.UpdateDiskSpecSourceRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.DiskSpecSource{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateDiskSpecSourceRequest
+
+	if !plan.Image.Equal(state.Image) {
+		if !plan.Image.IsNull() && !plan.Image.IsUnknown() {
+			imageRef, err := compute.ParseImageRef(ctx, plan.Image.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.Image.SetTo(imageRef)
+		}
+	}
+
+	if !plan.Snapshot.Equal(state.Snapshot) {
+		if !plan.Snapshot.IsNull() && !plan.Snapshot.IsUnknown() {
+			snapshotRef, err := compute.ParseSnapshotRef(ctx, plan.Snapshot.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.Snapshot.SetTo(snapshotRef)
+		}
+	}
+
+	if !plan.DiskBackup.Equal(state.DiskBackup) {
+		if !plan.DiskBackup.IsNull() && !plan.DiskBackup.IsUnknown() {
+			diskBackupRef, err := compute.ParseDiskBackupRef(ctx, plan.DiskBackup.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.DiskBackup.SetTo(diskBackupRef)
+		}
 	}
 
 	return &am, diags

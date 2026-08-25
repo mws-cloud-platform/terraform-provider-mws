@@ -53,40 +53,99 @@ func StorageDiskSpecOrRefWithAttachmentsAPIOptionalResponseToTFModel(ctx context
 	return &t, diags
 }
 
-func StorageDiskSpecOrRefWithAttachmentsTFToAPIRequestModel(ctx context.Context, tm *tfmodel.StorageDiskSpecOrRefWithAttachments) (*apimodel.StorageDiskSpecOrRefWithAttachmentsRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func StorageDiskSpecOrRefWithAttachmentsTFToAPIRequestModel(ctx context.Context, plan *tfmodel.StorageDiskSpecOrRefWithAttachments) (*apimodel.StorageDiskSpecOrRefWithAttachmentsRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.StorageDiskSpecOrRefWithAttachmentsRequest
 
-	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		am.Name = tm.Name.ValueString()
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		am.Name = plan.Name.ValueString()
 	}
 
-	if !tm.Boot.IsNull() && !tm.Boot.IsUnknown() {
-		am.Boot = tm.Boot.ValueBoolPointer()
+	if !plan.Boot.IsNull() && !plan.Boot.IsUnknown() {
+		am.Boot = plan.Boot.ValueBoolPointer()
 	}
 
-	if !tm.DeviceName.IsNull() && !tm.DeviceName.IsUnknown() {
-		am.DeviceName = tm.DeviceName.ValueStringPointer()
+	if !plan.DeviceName.IsNull() && !plan.DeviceName.IsUnknown() {
+		am.DeviceName = plan.DeviceName.ValueStringPointer()
 	}
 
-	if !tm.Disk.IsNull() && !tm.Disk.IsUnknown() {
-		diskTfModel := tfmodel.StorageDiskSpecOrRef{}
-		diskDiag := tm.Disk.As(ctx, &diskTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, diskDiag...)
+	if !plan.Disk.IsNull() && !plan.Disk.IsUnknown() {
+		diskPlan := tfmodel.StorageDiskSpecOrRef{}
+		diskPlanDiag := plan.Disk.As(ctx, &diskPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, diskPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		diskTmp, diskDiag := StorageDiskSpecOrRefTFToAPIRequestModel(ctx, &diskTfModel)
+		diskTmp, diskDiag := StorageDiskSpecOrRefTFToAPIRequestModel(ctx, &diskPlan)
 		diags = append(diags, diskDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.Disk = *diskTmp
+	}
+
+	return &am, diags
+}
+
+func StorageDiskSpecOrRefWithAttachmentsTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.StorageDiskSpecOrRefWithAttachments) (*apimodel.UpdateStorageDiskSpecOrRefWithAttachmentsRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.StorageDiskSpecOrRefWithAttachments{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateStorageDiskSpecOrRefWithAttachmentsRequest
+
+	if !plan.Name.Equal(state.Name) {
+		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+			am.Name.SetTo(plan.Name.ValueString())
+		}
+	}
+
+	if !plan.Boot.Equal(state.Boot) {
+		if !plan.Boot.IsNull() && !plan.Boot.IsUnknown() {
+			am.Boot.SetTo(plan.Boot.ValueBool())
+		}
+	}
+
+	if !plan.DeviceName.Equal(state.DeviceName) {
+		if !plan.DeviceName.IsNull() && !plan.DeviceName.IsUnknown() {
+			am.DeviceName.SetTo(plan.DeviceName.ValueString())
+		}
+	}
+
+	if !plan.Disk.Equal(state.Disk) {
+		if !plan.Disk.IsNull() && !plan.Disk.IsUnknown() {
+			diskPlan := tfmodel.StorageDiskSpecOrRef{}
+			diskPlanDiag := plan.Disk.As(ctx, &diskPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, diskPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			diskState := tfmodel.StorageDiskSpecOrRef{}
+			if !state.Disk.IsNull() && !state.Disk.IsUnknown() {
+				diskStateDiag := state.Disk.As(ctx, &diskState, basetypes.ObjectAsOptions{})
+				diags = append(diags, diskStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			diskTmp, diskDiag := StorageDiskSpecOrRefTFToAPIUpdateRequestModel(ctx, &diskPlan, &diskState)
+			diags = append(diags, diskDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Disk.SetTo(*diskTmp)
+		}
 	}
 
 	return &am, diags

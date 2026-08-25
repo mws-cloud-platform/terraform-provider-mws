@@ -25,7 +25,7 @@ func TestClickhouseClusterCoordinatorOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.ClickhouseClusterCoordinatorRequest{
 		Resources: apimodel.ClickhouseCoordinatorHWResourcesRequest{
-			VmType: mclickhouse.NewClickhouseVmTypeRef("vmTypeID"),
+			VmType: mclickhouse.NewMustClickhouseVmTypeRef("vmTypeID"),
 			Disk: apimodel.ClickhouseInstanceDiskSpecRequest{
 				Size: bytesize.MustParseString("0 B"),
 				Type: "",

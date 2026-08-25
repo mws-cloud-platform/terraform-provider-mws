@@ -105,13 +105,13 @@ func (m *VirtualMachineResource) Configure(ctx context.Context, req resource.Con
 func (m *VirtualMachineResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "VirtualMachineResource.Create")
 
-	var data tfmodel.VirtualMachineModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.VirtualMachineModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -119,10 +119,10 @@ func (m *VirtualMachineResource) Create(ctx context.Context, req resource.Create
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	zoneParam := cmp.Or(data.Zone, m.config.Zone)
+	zoneParam := cmp.Or(plan.Zone, m.config.Zone)
 	if zoneParam.IsNull() || zoneParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -130,16 +130,16 @@ func (m *VirtualMachineResource) Create(ctx context.Context, req resource.Create
 		)
 		return
 	}
-	data.Zone = zoneParam
+	plan.Zone = zoneParam
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "VirtualMachineResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.VirtualMachineTFToAPIRequestModel(ctx, &data.VirtualMachine)
+	body, diags := conv.VirtualMachineTFToAPIRequestModel(ctx, &plan.VirtualMachine)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "VirtualMachineResource.TFToAPI")
@@ -149,8 +149,8 @@ func (m *VirtualMachineResource) Create(ctx context.Context, req resource.Create
 	apiRes, err := m.sdk.CreateVirtualMachine(
 		ctx,
 		client.UpsertVirtualMachineRequest{
-			Project:        data.ProjectParam.ValueString(),
-			VirtualMachine: data.VirtualMachineParam.ValueString(),
+			Project:        plan.ProjectParam.ValueString(),
+			VirtualMachine: plan.VirtualMachineParam.ValueString(),
 			Body:           *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
@@ -163,7 +163,7 @@ func (m *VirtualMachineResource) Create(ctx context.Context, req resource.Create
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.VirtualMachineAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -172,21 +172,21 @@ func (m *VirtualMachineResource) Create(ctx context.Context, req resource.Create
 		return
 	}
 
-	data.VirtualMachine = *tfRes
+	plan.VirtualMachine = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *VirtualMachineResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "VirtualMachineResource.Read")
 
-	var data tfmodel.VirtualMachineModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.VirtualMachineModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -194,10 +194,10 @@ func (m *VirtualMachineResource) Read(ctx context.Context, req resource.ReadRequ
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	zoneParam := cmp.Or(data.Zone, m.config.Zone)
+	zoneParam := cmp.Or(state.Zone, m.config.Zone)
 	if zoneParam.IsNull() || zoneParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -205,13 +205,13 @@ func (m *VirtualMachineResource) Read(ctx context.Context, req resource.ReadRequ
 		)
 		return
 	}
-	data.Zone = zoneParam
+	state.Zone = zoneParam
 
 	apiRes, err := m.sdk.GetVirtualMachine(
 		ctx,
 		client.GetVirtualMachineRequest{
-			Project:        data.ProjectParam.ValueString(),
-			VirtualMachine: data.VirtualMachineParam.ValueString(),
+			Project:        state.ProjectParam.ValueString(),
+			VirtualMachine: state.VirtualMachineParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -222,7 +222,7 @@ func (m *VirtualMachineResource) Read(ctx context.Context, req resource.ReadRequ
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.VirtualMachineAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -231,21 +231,27 @@ func (m *VirtualMachineResource) Read(ctx context.Context, req resource.ReadRequ
 		return
 	}
 
-	data.VirtualMachine = *tfRes
+	state.VirtualMachine = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 func (m *VirtualMachineResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "VirtualMachineResource.Update")
 
-	var data tfmodel.VirtualMachineModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.VirtualMachineModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	var state tfmodel.VirtualMachineModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -253,10 +259,10 @@ func (m *VirtualMachineResource) Update(ctx context.Context, req resource.Update
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	zoneParam := cmp.Or(data.Zone, m.config.Zone)
+	zoneParam := cmp.Or(plan.Zone, m.config.Zone)
 	if zoneParam.IsNull() || zoneParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -264,16 +270,16 @@ func (m *VirtualMachineResource) Update(ctx context.Context, req resource.Update
 		)
 		return
 	}
-	data.Zone = zoneParam
+	plan.Zone = zoneParam
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "VirtualMachineResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.VirtualMachineTFToAPIRequestModel(ctx, &data.VirtualMachine)
+	body, diags := conv.VirtualMachineTFToAPIUpdateRequestModel(ctx, &plan.VirtualMachine, &state.VirtualMachine)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "VirtualMachineResource.TFToAPI")
@@ -283,9 +289,9 @@ func (m *VirtualMachineResource) Update(ctx context.Context, req resource.Update
 	apiRes, err := m.sdk.UpdateVirtualMachine(
 		ctx,
 		client.UpdateVirtualMachineRequest{
-			Project:        data.ProjectParam.ValueString(),
-			VirtualMachine: data.VirtualMachineParam.ValueString(),
-			Body:           body.AsUpdateModel(),
+			Project:        plan.ProjectParam.ValueString(),
+			VirtualMachine: plan.VirtualMachineParam.ValueString(),
+			Body:           *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -297,7 +303,7 @@ func (m *VirtualMachineResource) Update(ctx context.Context, req resource.Update
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.VirtualMachineAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -306,21 +312,21 @@ func (m *VirtualMachineResource) Update(ctx context.Context, req resource.Update
 		return
 	}
 
-	data.VirtualMachine = *tfRes
+	plan.VirtualMachine = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *VirtualMachineResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "VirtualMachineResource.Delete")
 
-	var data tfmodel.VirtualMachineModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.VirtualMachineModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -328,10 +334,10 @@ func (m *VirtualMachineResource) Delete(ctx context.Context, req resource.Delete
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	zoneParam := cmp.Or(data.Zone, m.config.Zone)
+	zoneParam := cmp.Or(state.Zone, m.config.Zone)
 	if zoneParam.IsNull() || zoneParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -339,9 +345,9 @@ func (m *VirtualMachineResource) Delete(ctx context.Context, req resource.Delete
 		)
 		return
 	}
-	data.Zone = zoneParam
+	state.Zone = zoneParam
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := state.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "VirtualMachineResource.Timeouts")
@@ -351,8 +357,8 @@ func (m *VirtualMachineResource) Delete(ctx context.Context, req resource.Delete
 	err := m.sdk.DeleteVirtualMachine(
 		ctx,
 		client.DeleteVirtualMachineRequest{
-			Project:        data.ProjectParam.ValueString(),
-			VirtualMachine: data.VirtualMachineParam.ValueString(),
+			Project:        state.ProjectParam.ValueString(),
+			VirtualMachine: state.VirtualMachineParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -368,7 +374,7 @@ func (m *VirtualMachineResource) Delete(ctx context.Context, req resource.Delete
 func (m *VirtualMachineResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "VirtualMachineResource.ImportState")
 
-	var data tfmodel.VirtualMachineModel
+	var state tfmodel.VirtualMachineModel
 
 	ref, err := computeref.ParseVirtualMachineRef(ctx, req.ID)
 	if err != nil {
@@ -393,7 +399,7 @@ func (m *VirtualMachineResource) ImportState(ctx context.Context, req resource.I
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.VirtualMachineAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -402,10 +408,10 @@ func (m *VirtualMachineResource) ImportState(ctx context.Context, req resource.I
 		return
 	}
 
-	data.VirtualMachine = *tfRes
+	state.VirtualMachine = *tfRes
 
-	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.VirtualMachineParam = types.StringValue(ref.GetVirtualMachine())
+	state.ProjectParam = types.StringValue(ref.GetProject())
+	state.VirtualMachineParam = types.StringValue(ref.GetVirtualMachine())
 
 	var rwTimeouts timeouts.Value
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
@@ -413,7 +419,7 @@ func (m *VirtualMachineResource) ImportState(ctx context.Context, req resource.I
 		tflog.Debug(ctx, "VirtualMachineResource.timeouts.GetAttribute")
 		return
 	}
-	data.Timeouts = rwTimeouts
+	state.Timeouts = rwTimeouts
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

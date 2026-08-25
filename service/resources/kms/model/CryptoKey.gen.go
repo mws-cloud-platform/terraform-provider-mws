@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	localobjectplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/objectplanmodifier"
 	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
@@ -67,25 +66,16 @@ func (s *CryptoKey) GetSchema() schema.Schema {
 				Attributes:          new(CryptoKeySpecDestructionPolicy).GetSchema().Attributes,
 				MarkdownDescription: `Политика уничтожения ключа. Определяет параметры и расписание`,
 				Optional:            true,
-				PlanModifiers: []planmodifier.Object{
-					localobjectplanmodifier.RequiresReplaceIfRemoved(),
-				},
 			},
 			"usage_policy": schema.SingleNestedAttribute{
 				Attributes:          new(CryptoKeySpecUsagePolicy).GetSchema().Attributes,
 				MarkdownDescription: `Политика использования ключа. Определяет, разрешены ли криптографические операции с этим ключом`,
 				Optional:            true,
-				PlanModifiers: []planmodifier.Object{
-					localobjectplanmodifier.RequiresReplaceIfRemoved(),
-				},
 			},
 			"rotation_policy": schema.SingleNestedAttribute{
 				Attributes:          new(CryptoKeySpecRotationPolicy).GetSchema().Attributes,
 				MarkdownDescription: `Параметры политики, управляющие ротацией криптографического ключа`,
 				Optional:            true,
-				PlanModifiers: []planmodifier.Object{
-					localobjectplanmodifier.RequiresReplaceIfRemoved(),
-				},
 			},
 			"primary_key_version_ref": schema.StringAttribute{
 				MarkdownDescription: `Идентификатор основной версии криптографического ключа.

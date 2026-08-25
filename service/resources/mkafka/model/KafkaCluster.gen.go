@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	localboolplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/boolplanmodifier"
-	localobjectplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/objectplanmodifier"
 	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
@@ -91,25 +90,16 @@ func (s *KafkaCluster) GetSchema() schema.Schema {
 			"maintenance_window": schema.SingleNestedAttribute{
 				Attributes: new(tfcommon.MaintenanceWindow).GetSchema().Attributes,
 				Optional:   true,
-				PlanModifiers: []planmodifier.Object{
-					localobjectplanmodifier.RequiresReplaceIfRemoved(),
-				},
 			},
 			"schema_registry": schema.SingleNestedAttribute{
 				Attributes:          new(KafkaSchemaRegistrySpec).GetSchema().Attributes,
 				MarkdownDescription: `Настройка Schema Registry для кластера`,
 				Optional:            true,
-				PlanModifiers: []planmodifier.Object{
-					localobjectplanmodifier.RequiresReplaceIfRemoved(),
-				},
 			},
 			"balancer": schema.SingleNestedAttribute{
 				Attributes:          new(KafkaBalancerSpec).GetSchema().Attributes,
 				MarkdownDescription: `Настройка балансировщика кластера`,
 				Optional:            true,
-				PlanModifiers: []planmodifier.Object{
-					localobjectplanmodifier.RequiresReplaceIfRemoved(),
-				},
 			},
 		},
 	}
@@ -144,8 +134,10 @@ func (s *KafkaClusterMetadata) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"purge_time": schema.StringAttribute{
-				MarkdownDescription: `Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
-				Computed:            true,
+				MarkdownDescription: `Время удаления ресурса
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
+				Computed: true,
 			},
 			"usages": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{

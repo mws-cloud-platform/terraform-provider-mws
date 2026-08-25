@@ -140,21 +140,22 @@ func WeeklyMaintenanceWindowAPIOptionalResponseToTFModel(ctx context.Context, am
 	return &t, diags
 }
 
-func WeeklyMaintenanceWindowTFToAPIModel(ctx context.Context, tm *tfcommon.WeeklyMaintenanceWindow) (*commonapimodel.WeeklyMaintenanceWindow, tfdiag.Diagnostics) {
-	if tm == nil {
+func WeeklyMaintenanceWindowTFToAPIModel(ctx context.Context, plan *tfcommon.WeeklyMaintenanceWindow) (*commonapimodel.WeeklyMaintenanceWindow, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.WeeklyMaintenanceWindow
 
-	if !tm.Days.IsNull() && !tm.Days.IsUnknown() {
+	if !plan.Days.IsNull() && !plan.Days.IsUnknown() {
 		days := make([]tfcommon.DayOfWeek, 0)
-		dDays := tm.Days.ElementsAs(ctx, &days, false)
+		dDays := plan.Days.ElementsAs(ctx, &days, false)
 		diags = append(diags, dDays...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.Days = make([]commonapimodel.DayOfWeek, 0, len(days))
 
 		for _, entity := range days {
@@ -167,12 +168,12 @@ func WeeklyMaintenanceWindowTFToAPIModel(ctx context.Context, tm *tfcommon.Weekl
 		}
 	}
 
-	if !tm.Hour.IsNull() && !tm.Hour.IsUnknown() {
-		am.Hour = int(tm.Hour.ValueInt64())
+	if !plan.Hour.IsNull() && !plan.Hour.IsUnknown() {
+		am.Hour = int(plan.Hour.ValueInt64())
 	}
 
-	if !tm.Duration.IsNull() && !tm.Duration.IsUnknown() {
-		tmpDuration, err := duration.ParseString(tm.Duration.ValueString())
+	if !plan.Duration.IsNull() && !plan.Duration.IsUnknown() {
+		tmpDuration, err := duration.ParseString(plan.Duration.ValueString())
 		if err != nil {
 			diags.AddError("Duration string parsing", err.Error())
 			return nil, diags
@@ -183,21 +184,22 @@ func WeeklyMaintenanceWindowTFToAPIModel(ctx context.Context, tm *tfcommon.Weekl
 	return &am, diags
 }
 
-func WeeklyMaintenanceWindowTFToAPIRequestModel(ctx context.Context, tm *tfcommon.WeeklyMaintenanceWindow) (*commonapimodel.WeeklyMaintenanceWindowRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func WeeklyMaintenanceWindowTFToAPIRequestModel(ctx context.Context, plan *tfcommon.WeeklyMaintenanceWindow) (*commonapimodel.WeeklyMaintenanceWindowRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.WeeklyMaintenanceWindowRequest
 
-	if !tm.Days.IsNull() && !tm.Days.IsUnknown() {
+	if !plan.Days.IsNull() && !plan.Days.IsUnknown() {
 		days := make([]tfcommon.DayOfWeek, 0)
-		dDays := tm.Days.ElementsAs(ctx, &days, false)
+		dDays := plan.Days.ElementsAs(ctx, &days, false)
 		diags = append(diags, dDays...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.Days = make([]commonapimodel.DayOfWeek, 0, len(days))
 
 		for _, entity := range days {
@@ -210,12 +212,12 @@ func WeeklyMaintenanceWindowTFToAPIRequestModel(ctx context.Context, tm *tfcommo
 		}
 	}
 
-	if !tm.Hour.IsNull() && !tm.Hour.IsUnknown() {
-		am.Hour = int(tm.Hour.ValueInt64())
+	if !plan.Hour.IsNull() && !plan.Hour.IsUnknown() {
+		am.Hour = int(plan.Hour.ValueInt64())
 	}
 
-	if !tm.Duration.IsNull() && !tm.Duration.IsUnknown() {
-		tmpDuration, err := duration.ParseString(tm.Duration.ValueString())
+	if !plan.Duration.IsNull() && !plan.Duration.IsUnknown() {
+		tmpDuration, err := duration.ParseString(plan.Duration.ValueString())
 		if err != nil {
 			diags.AddError("Duration string parsing", err.Error())
 			return nil, diags

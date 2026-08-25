@@ -6,11 +6,18 @@ import (
 	"context"
 	"testing"
 
+	tfattr "github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
 func TestAddressAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -24,7 +31,7 @@ func TestAddressOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.AddressRequest{
 		Spec: apimodel.VpcAddressSpecRequest{
-			Subnet: vpc.NewSubnetRef("projectID", "networkID", "subnetID"),
+			Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
 		},
 	}
 
@@ -41,4 +48,33 @@ func TestAddressOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateAddressRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.Address
+	var stateTfModel tfmodel.Address
+	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
+	stateTfModel.Dns = types.ListValueMust(types.ObjectType{
+		AttrTypes: tfconv.GetAttributesTypes(new(tfcommon.VpcAddressDnsSpec).GetSchema().Attributes),
+	}, []tfattr.Value{})
+
+	expectedUpdateModel := &apimodel.UpdateAddressRequest{
+		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+			Set:  true,
+			Null: true,
+		},
+		Spec: optional.NewOptional(apimodel.UpdateVpcAddressSpecRequest{
+			Dns: optional.OptionalNil[[]commonapimodel.UpdateVpcAddressDnsSpecRequest]{
+				Set:  true,
+				Null: true,
+			},
+		}),
+	}
+
+	result, diags := conv.AddressTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

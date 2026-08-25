@@ -8,8 +8,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
 	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
 func TestPluginsSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -38,6 +41,26 @@ func TestPluginsSpecOptionalResponseConverters(t *testing.T) {
 	require.Equal(t, *emptyApiModelResponse, *result)
 }
 
+func TestUpdatePluginsSpecRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.PluginsSpec
+	var stateTfModel tfmodel.PluginsSpec
+	stateTfModel.Cni = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.PluginsSpecCni).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdatePluginsSpecRequest{
+		Cni: optional.OptionalNil[apimodel.UpdatePluginsSpecCniRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.PluginsSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
+}
+
 func TestPluginsSpecCniAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
 	emptyApiModel := apimodel.PluginsSpecCniOptionalResponse{}
@@ -62,4 +85,18 @@ func TestPluginsSpecCniOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdatePluginsSpecCniRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.PluginsSpecCni
+	var stateTfModel tfmodel.PluginsSpecCni
+
+	expectedUpdateModel := &apimodel.UpdatePluginsSpecCniRequest{}
+
+	result, diags := conv.PluginsSpecCniTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

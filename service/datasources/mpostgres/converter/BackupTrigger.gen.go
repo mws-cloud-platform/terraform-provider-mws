@@ -25,11 +25,11 @@ func BackupTriggerAPIToTFModel(ctx context.Context, am *apimodel.BackupTrigger) 
 	return t, diags
 }
 
-func BackupTriggerTFToAPIModel(ctx context.Context, tm tfmodel.BackupTrigger) (*apimodel.BackupTrigger, tfdiag.Diagnostics) {
+func BackupTriggerTFToAPIModel(ctx context.Context, plan tfmodel.BackupTrigger) (*apimodel.BackupTrigger, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am apimodel.BackupTrigger
 
-	var tmp = types.String(tm)
+	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}

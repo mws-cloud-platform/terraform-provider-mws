@@ -83,16 +83,16 @@ func CertificateManagedSpecAPIOptionalResponseToTFModel(ctx context.Context, am 
 	return &t, diags
 }
 
-func CertificateManagedSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.CertificateManagedSpec) (*apimodel.CertificateManagedSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func CertificateManagedSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CertificateManagedSpec) (*apimodel.CertificateManagedSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.CertificateManagedSpecRequest
 
-	if !tm.PreferredChallengeType.IsNull() && !tm.PreferredChallengeType.IsUnknown() {
-		preferredChallengeTypeTmp, preferredChallengeTypeDiag := CertificateChallengeTypeTFToAPIModel(ctx, tm.PreferredChallengeType)
+	if !plan.PreferredChallengeType.IsNull() && !plan.PreferredChallengeType.IsUnknown() {
+		preferredChallengeTypeTmp, preferredChallengeTypeDiag := CertificateChallengeTypeTFToAPIModel(ctx, plan.PreferredChallengeType)
 		diags = append(diags, preferredChallengeTypeDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -100,8 +100,8 @@ func CertificateManagedSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.
 		am.PreferredChallengeType = preferredChallengeTypeTmp
 	}
 
-	if !tm.Provider.IsNull() && !tm.Provider.IsUnknown() {
-		providerTmp, providerDiag := CertificateProviderTFToAPIModel(ctx, tm.Provider)
+	if !plan.Provider.IsNull() && !plan.Provider.IsUnknown() {
+		providerTmp, providerDiag := CertificateProviderTFToAPIModel(ctx, plan.Provider)
 		diags = append(diags, providerDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -109,15 +109,15 @@ func CertificateManagedSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.
 		am.Provider = providerTmp
 	}
 
-	if !tm.Issuer.IsNull() && !tm.Issuer.IsUnknown() {
-		issuerTfModel := tfmodel.CertificateManagedSpecIssuer{}
-		issuerDiag := tm.Issuer.As(ctx, &issuerTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, issuerDiag...)
+	if !plan.Issuer.IsNull() && !plan.Issuer.IsUnknown() {
+		issuerPlan := tfmodel.CertificateManagedSpecIssuer{}
+		issuerPlanDiag := plan.Issuer.As(ctx, &issuerPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, issuerPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		issuerTmp, issuerDiag := CertificateManagedSpecIssuerTFToAPIRequestModel(ctx, &issuerTfModel)
+		issuerTmp, issuerDiag := CertificateManagedSpecIssuerTFToAPIRequestModel(ctx, &issuerPlan)
 		diags = append(diags, issuerDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -125,17 +125,101 @@ func CertificateManagedSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.
 		am.Issuer = issuerTmp
 	}
 
-	if !tm.Domains.IsNull() && !tm.Domains.IsUnknown() {
+	if !plan.Domains.IsNull() && !plan.Domains.IsUnknown() {
 		domains := make([]types.String, 0)
-		dDomains := tm.Domains.ElementsAs(ctx, &domains, false)
+		dDomains := plan.Domains.ElementsAs(ctx, &domains, false)
 		diags = append(diags, dDomains...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.Domains = make([]string, 0, len(domains))
 
 		for _, entity := range domains {
 			am.Domains = append(am.Domains, entity.ValueString())
+		}
+	}
+
+	return &am, diags
+}
+
+func CertificateManagedSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.CertificateManagedSpec) (*apimodel.UpdateCertificateManagedSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.CertificateManagedSpec{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateCertificateManagedSpecRequest
+
+	if !plan.PreferredChallengeType.Equal(state.PreferredChallengeType) {
+		if !plan.PreferredChallengeType.IsNull() && !plan.PreferredChallengeType.IsUnknown() {
+			preferredChallengeTypeTmp, preferredChallengeTypeDiag := CertificateChallengeTypeTFToAPIModel(ctx, plan.PreferredChallengeType)
+			diags = append(diags, preferredChallengeTypeDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.PreferredChallengeType.SetTo(*preferredChallengeTypeTmp)
+		}
+	}
+
+	if !plan.Provider.Equal(state.Provider) {
+		if !plan.Provider.IsNull() && !plan.Provider.IsUnknown() {
+			providerTmp, providerDiag := CertificateProviderTFToAPIModel(ctx, plan.Provider)
+			diags = append(diags, providerDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Provider.SetTo(*providerTmp)
+		}
+	}
+
+	if !plan.Issuer.Equal(state.Issuer) {
+		if !plan.Issuer.IsNull() && !plan.Issuer.IsUnknown() {
+			issuerPlan := tfmodel.CertificateManagedSpecIssuer{}
+			issuerPlanDiag := plan.Issuer.As(ctx, &issuerPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, issuerPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			issuerState := tfmodel.CertificateManagedSpecIssuer{}
+			if !state.Issuer.IsNull() && !state.Issuer.IsUnknown() {
+				issuerStateDiag := state.Issuer.As(ctx, &issuerState, basetypes.ObjectAsOptions{})
+				diags = append(diags, issuerStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			issuerTmp, issuerDiag := CertificateManagedSpecIssuerTFToAPIUpdateRequestModel(ctx, &issuerPlan, &issuerState)
+			diags = append(diags, issuerDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Issuer.SetTo(*issuerTmp)
+		} else if plan.Issuer.IsNull() {
+			am.Issuer.SetToNull()
+		}
+	}
+
+	if !plan.Domains.Equal(state.Domains) {
+		if !plan.Domains.IsNull() && !plan.Domains.IsUnknown() {
+			domains := make([]types.String, 0)
+			dDomains := plan.Domains.ElementsAs(ctx, &domains, false)
+			diags = append(diags, dDomains...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			domainsTmp := make([]string, 0, len(domains))
+
+			for _, entity := range domains {
+				domainsTmp = append(domainsTmp, entity.ValueString())
+			}
+			am.Domains.SetTo(domainsTmp)
 		}
 	}
 

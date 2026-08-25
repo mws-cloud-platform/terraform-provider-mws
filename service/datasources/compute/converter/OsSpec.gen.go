@@ -61,35 +61,35 @@ func OsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.OsSpec
 	return &t, diags
 }
 
-func OsSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.OsSpec) (*apimodel.OsSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func OsSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OsSpec) (*apimodel.OsSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.OsSpecRequest
 
-	if !tm.Hostname.IsNull() && !tm.Hostname.IsUnknown() {
-		am.Hostname = tm.Hostname.ValueStringPointer()
+	if !plan.Hostname.IsNull() && !plan.Hostname.IsUnknown() {
+		am.Hostname = plan.Hostname.ValueStringPointer()
 	}
 
-	if !tm.LocalDomain.IsNull() && !tm.LocalDomain.IsUnknown() {
-		am.LocalDomain = tm.LocalDomain.ValueStringPointer()
+	if !plan.LocalDomain.IsNull() && !plan.LocalDomain.IsUnknown() {
+		am.LocalDomain = plan.LocalDomain.ValueStringPointer()
 	}
 
-	if !tm.StandardDnsRecords.IsNull() && !tm.StandardDnsRecords.IsUnknown() {
-		am.StandardDnsRecords = tm.StandardDnsRecords.ValueBoolPointer()
+	if !plan.StandardDnsRecords.IsNull() && !plan.StandardDnsRecords.IsUnknown() {
+		am.StandardDnsRecords = plan.StandardDnsRecords.ValueBoolPointer()
 	}
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfmodel.OsSpecMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfmodel.OsSpecMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := OsSpecMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := OsSpecMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -129,17 +129,17 @@ func OsSpecMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func OsSpecMetadataTFToAPIRequestModel(ctx context.Context, tm *tfmodel.OsSpecMetadata) (*apimodel.OsSpecMetadataRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func OsSpecMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OsSpecMetadata) (*apimodel.OsSpecMetadataRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.OsSpecMetadataRequest
 
-	if !tm.Attributes.IsNull() && !tm.Attributes.IsUnknown() {
+	if !plan.Attributes.IsNull() && !plan.Attributes.IsUnknown() {
 		attributes := make(map[string]types.String)
-		dAttributes := tm.Attributes.ElementsAs(ctx, &attributes, false)
+		dAttributes := plan.Attributes.ElementsAs(ctx, &attributes, false)
 		diags = append(diags, dAttributes...)
 		if diags.HasError() {
 			return nil, diags

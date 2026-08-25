@@ -25,16 +25,36 @@ func PostgresExtensionSpecAPIResponseToTFModel(ctx context.Context, am *apimodel
 	return &t, diags
 }
 
-func PostgresExtensionSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.PostgresExtensionSpec) (*apimodel.PostgresExtensionSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func PostgresExtensionSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresExtensionSpec) (*apimodel.PostgresExtensionSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.PostgresExtensionSpecRequest
 
-	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		am.Name = tm.Name.ValueString()
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		am.Name = plan.Name.ValueString()
+	}
+
+	return &am, diags
+}
+
+func PostgresExtensionSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresExtensionSpec) (*apimodel.UpdatePostgresExtensionSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.PostgresExtensionSpec{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdatePostgresExtensionSpecRequest
+
+	if !plan.Name.Equal(state.Name) {
+		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+			am.Name.SetTo(plan.Name.ValueString())
+		}
 	}
 
 	return &am, diags

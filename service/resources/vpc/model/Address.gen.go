@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	locallistplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/listplanmodifier"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
@@ -56,12 +55,9 @@ IPv4- или IPv6-адрес`,
 			},
 			"dns": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
-					Attributes: new(VpcAddressDnsSpec).GetSchema().Attributes,
+					Attributes: new(tfcommon.VpcAddressDnsSpec).GetSchema().Attributes,
 				},
 				Optional: true,
-				PlanModifiers: []planmodifier.List{
-					locallistplanmodifier.RequiresReplaceIfRemoved(),
-				},
 			},
 		},
 	}

@@ -107,13 +107,13 @@ func (m *DeploymentResource) Configure(ctx context.Context, req resource.Configu
 func (m *DeploymentResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "DeploymentResource.Create")
 
-	var data tfmodel.DeploymentModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.DeploymentModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -121,17 +121,17 @@ func (m *DeploymentResource) Create(ctx context.Context, req resource.CreateRequ
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "DeploymentResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.DeploymentTFToAPIRequestModel(ctx, &data.Deployment)
+	body, diags := conv.DeploymentTFToAPIRequestModel(ctx, &plan.Deployment)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "DeploymentResource.TFToAPI")
@@ -141,8 +141,8 @@ func (m *DeploymentResource) Create(ctx context.Context, req resource.CreateRequ
 	apiRes, err := m.sdk.CreateDeployment(
 		ctx,
 		client.UpsertDeploymentRequest{
-			Project:        data.ProjectParam.ValueString(),
-			DeploymentName: data.DeploymentNameParam.ValueString(),
+			Project:        plan.ProjectParam.ValueString(),
+			DeploymentName: plan.DeploymentNameParam.ValueString(),
 			Body:           *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
@@ -155,7 +155,7 @@ func (m *DeploymentResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.DeploymentAPIResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -164,21 +164,21 @@ func (m *DeploymentResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 
-	data.Deployment = *tfRes
+	plan.Deployment = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *DeploymentResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "DeploymentResource.Read")
 
-	var data tfmodel.DeploymentModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.DeploymentModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -186,14 +186,14 @@ func (m *DeploymentResource) Read(ctx context.Context, req resource.ReadRequest,
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetDeployment(
 		ctx,
 		client.GetDeploymentRequest{
-			Project:        data.ProjectParam.ValueString(),
-			DeploymentName: data.DeploymentNameParam.ValueString(),
+			Project:        state.ProjectParam.ValueString(),
+			DeploymentName: state.DeploymentNameParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -204,7 +204,7 @@ func (m *DeploymentResource) Read(ctx context.Context, req resource.ReadRequest,
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.DeploymentAPIResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -213,21 +213,27 @@ func (m *DeploymentResource) Read(ctx context.Context, req resource.ReadRequest,
 		return
 	}
 
-	data.Deployment = *tfRes
+	state.Deployment = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 func (m *DeploymentResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "DeploymentResource.Update")
 
-	var data tfmodel.DeploymentModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.DeploymentModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	var state tfmodel.DeploymentModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -235,17 +241,17 @@ func (m *DeploymentResource) Update(ctx context.Context, req resource.UpdateRequ
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "DeploymentResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.DeploymentTFToAPIRequestModel(ctx, &data.Deployment)
+	body, diags := conv.DeploymentTFToAPIUpdateRequestModel(ctx, &plan.Deployment, &state.Deployment)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "DeploymentResource.TFToAPI")
@@ -255,9 +261,9 @@ func (m *DeploymentResource) Update(ctx context.Context, req resource.UpdateRequ
 	apiRes, err := m.sdk.UpdateDeployment(
 		ctx,
 		client.UpdateDeploymentRequest{
-			Project:        data.ProjectParam.ValueString(),
-			DeploymentName: data.DeploymentNameParam.ValueString(),
-			Body:           body.AsUpdateModel(),
+			Project:        plan.ProjectParam.ValueString(),
+			DeploymentName: plan.DeploymentNameParam.ValueString(),
+			Body:           *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -269,7 +275,7 @@ func (m *DeploymentResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.DeploymentAPIResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -278,21 +284,21 @@ func (m *DeploymentResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 
-	data.Deployment = *tfRes
+	plan.Deployment = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *DeploymentResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "DeploymentResource.Delete")
 
-	var data tfmodel.DeploymentModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.DeploymentModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -300,10 +306,10 @@ func (m *DeploymentResource) Delete(ctx context.Context, req resource.DeleteRequ
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := state.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "DeploymentResource.Timeouts")
@@ -313,8 +319,8 @@ func (m *DeploymentResource) Delete(ctx context.Context, req resource.DeleteRequ
 	err := m.sdk.DeleteDeployment(
 		ctx,
 		client.DeleteDeploymentRequest{
-			Project:        data.ProjectParam.ValueString(),
-			DeploymentName: data.DeploymentNameParam.ValueString(),
+			Project:        state.ProjectParam.ValueString(),
+			DeploymentName: state.DeploymentNameParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -330,7 +336,7 @@ func (m *DeploymentResource) Delete(ctx context.Context, req resource.DeleteRequ
 func (m *DeploymentResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "DeploymentResource.ImportState")
 
-	var data tfmodel.DeploymentModel
+	var state tfmodel.DeploymentModel
 
 	ref, err := gptref.ParseDeploymentRef(ctx, req.ID)
 	if err != nil {
@@ -355,7 +361,7 @@ func (m *DeploymentResource) ImportState(ctx context.Context, req resource.Impor
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.DeploymentAPIResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -364,10 +370,10 @@ func (m *DeploymentResource) ImportState(ctx context.Context, req resource.Impor
 		return
 	}
 
-	data.Deployment = *tfRes
+	state.Deployment = *tfRes
 
-	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.DeploymentNameParam = types.StringValue(ref.GetDeploymentName())
+	state.ProjectParam = types.StringValue(ref.GetProject())
+	state.DeploymentNameParam = types.StringValue(ref.GetDeploymentName())
 
 	var rwTimeouts timeouts.Value
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
@@ -375,7 +381,7 @@ func (m *DeploymentResource) ImportState(ctx context.Context, req resource.Impor
 		tflog.Debug(ctx, "DeploymentResource.timeouts.GetAttribute")
 		return
 	}
-	data.Timeouts = rwTimeouts
+	state.Timeouts = rwTimeouts
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

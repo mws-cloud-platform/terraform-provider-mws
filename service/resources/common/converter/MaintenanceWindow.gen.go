@@ -89,23 +89,23 @@ func MaintenanceWindowAPIOptionalResponseToTFModel(ctx context.Context, am *comm
 	return &t, diags
 }
 
-func MaintenanceWindowTFToAPIModel(ctx context.Context, tm *tfcommon.MaintenanceWindow) (*commonapimodel.MaintenanceWindow, tfdiag.Diagnostics) {
-	if tm == nil {
+func MaintenanceWindowTFToAPIModel(ctx context.Context, plan *tfcommon.MaintenanceWindow) (*commonapimodel.MaintenanceWindow, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.MaintenanceWindow
 
-	if !tm.Weekly.IsNull() && !tm.Weekly.IsUnknown() {
-		weeklyTfModel := tfcommon.WeeklyMaintenanceWindow{}
-		weeklyDiag := tm.Weekly.As(ctx, &weeklyTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, weeklyDiag...)
+	if !plan.Weekly.IsNull() && !plan.Weekly.IsUnknown() {
+		weeklyPlan := tfcommon.WeeklyMaintenanceWindow{}
+		weeklyPlanDiag := plan.Weekly.As(ctx, &weeklyPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, weeklyPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		weeklyTmp, weeklyDiag := WeeklyMaintenanceWindowTFToAPIModel(ctx, &weeklyTfModel)
+		weeklyTmp, weeklyDiag := WeeklyMaintenanceWindowTFToAPIModel(ctx, &weeklyPlan)
 		diags = append(diags, weeklyDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -116,28 +116,110 @@ func MaintenanceWindowTFToAPIModel(ctx context.Context, tm *tfcommon.Maintenance
 	return &am, diags
 }
 
-func MaintenanceWindowTFToAPIRequestModel(ctx context.Context, tm *tfcommon.MaintenanceWindow) (*commonapimodel.MaintenanceWindowRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func MaintenanceWindowTFToAPIRequestModel(ctx context.Context, plan *tfcommon.MaintenanceWindow) (*commonapimodel.MaintenanceWindowRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.MaintenanceWindowRequest
 
-	if !tm.Weekly.IsNull() && !tm.Weekly.IsUnknown() {
-		weeklyTfModel := tfcommon.WeeklyMaintenanceWindow{}
-		weeklyDiag := tm.Weekly.As(ctx, &weeklyTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, weeklyDiag...)
+	if !plan.Weekly.IsNull() && !plan.Weekly.IsUnknown() {
+		weeklyPlan := tfcommon.WeeklyMaintenanceWindow{}
+		weeklyPlanDiag := plan.Weekly.As(ctx, &weeklyPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, weeklyPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		weeklyTmp, weeklyDiag := WeeklyMaintenanceWindowTFToAPIRequestModel(ctx, &weeklyTfModel)
+		weeklyTmp, weeklyDiag := WeeklyMaintenanceWindowTFToAPIRequestModel(ctx, &weeklyPlan)
 		diags = append(diags, weeklyDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.Weekly = *weeklyTmp
+	}
+
+	return &am, diags
+}
+
+func MaintenanceWindowTFToAPIUpdateModel(ctx context.Context, plan, state *tfcommon.MaintenanceWindow) (*commonapimodel.UpdateMaintenanceWindow, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfcommon.MaintenanceWindow{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am commonapimodel.UpdateMaintenanceWindow
+
+	if !plan.Weekly.Equal(state.Weekly) {
+		if !plan.Weekly.IsNull() && !plan.Weekly.IsUnknown() {
+			weeklyPlan := tfcommon.WeeklyMaintenanceWindow{}
+			weeklyPlanDiag := plan.Weekly.As(ctx, &weeklyPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, weeklyPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			weeklyState := tfcommon.WeeklyMaintenanceWindow{}
+			if !state.Weekly.IsNull() && !state.Weekly.IsUnknown() {
+				weeklyStateDiag := state.Weekly.As(ctx, &weeklyState, basetypes.ObjectAsOptions{})
+				diags = append(diags, weeklyStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			weeklyTmp, weeklyDiag := WeeklyMaintenanceWindowTFToAPIUpdateModel(ctx, &weeklyPlan, &weeklyState)
+			diags = append(diags, weeklyDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Weekly.SetTo(*weeklyTmp)
+		}
+	}
+
+	return &am, diags
+}
+
+func MaintenanceWindowTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfcommon.MaintenanceWindow) (*commonapimodel.UpdateMaintenanceWindowRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfcommon.MaintenanceWindow{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am commonapimodel.UpdateMaintenanceWindowRequest
+
+	if !plan.Weekly.Equal(state.Weekly) {
+		if !plan.Weekly.IsNull() && !plan.Weekly.IsUnknown() {
+			weeklyPlan := tfcommon.WeeklyMaintenanceWindow{}
+			weeklyPlanDiag := plan.Weekly.As(ctx, &weeklyPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, weeklyPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			weeklyState := tfcommon.WeeklyMaintenanceWindow{}
+			if !state.Weekly.IsNull() && !state.Weekly.IsUnknown() {
+				weeklyStateDiag := state.Weekly.As(ctx, &weeklyState, basetypes.ObjectAsOptions{})
+				diags = append(diags, weeklyStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			weeklyTmp, weeklyDiag := WeeklyMaintenanceWindowTFToAPIUpdateRequestModel(ctx, &weeklyPlan, &weeklyState)
+			diags = append(diags, weeklyDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Weekly.SetTo(*weeklyTmp)
+		}
 	}
 
 	return &am, diags

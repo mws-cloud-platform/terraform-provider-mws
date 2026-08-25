@@ -58,7 +58,7 @@ func (s *KafkaUserSuite) SetupSuite() {
 	s.Require().NoError(err)
 	addressRef, err := vpcref.ParseAddressRef(ctx, s.address1ID)
 	s.Require().NoError(err)
-	gen24 := compute.NewVmTypeRef("gen-2-4")
+	gen24 := compute.NewMustVmTypeRef("gen-2-4")
 	disk10GB := bytesize.MustParseString("10GB")
 	isActive := true
 	s.kafkaCluster, err = s.kafkaSDK.CreateKafkaCluster(ctx, mkafkaclient.UpsertKafkaClusterRequest{
@@ -79,7 +79,7 @@ func (s *KafkaUserSuite) SetupSuite() {
 						VmType: gen24,
 						Disk:   mkafkamodel.KafkaDataDiskSpecRequest{Size: disk10GB},
 						Allocation: []mkafkamodel.KafkaAllocationRequest{{
-							Zone:  rmref.NewZoneRef("ru-central1-a"),
+							Zone:  rmref.NewMustZoneRef("ru-central1-a"),
 							Count: 1,
 						}},
 					},

@@ -69,16 +69,16 @@ func ClickhouseInstanceHWResourcesAPIResponseToTFModel(ctx context.Context, am *
 	return &t, diags
 }
 
-func ClickhouseInstanceHWResourcesTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClickhouseInstanceHWResources) (*apimodel.ClickhouseInstanceHWResourcesRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClickhouseInstanceHWResourcesTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseInstanceHWResources) (*apimodel.ClickhouseInstanceHWResourcesRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClickhouseInstanceHWResourcesRequest
 
-	if !tm.VmType.IsNull() && !tm.VmType.IsUnknown() {
-		vmTypeRef, err := mclickhouse.ParseClickhouseVmTypeRef(ctx, tm.VmType.ValueString())
+	if !plan.VmType.IsNull() && !plan.VmType.IsUnknown() {
+		vmTypeRef, err := mclickhouse.ParseClickhouseVmTypeRef(ctx, plan.VmType.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -86,15 +86,15 @@ func ClickhouseInstanceHWResourcesTFToAPIRequestModel(ctx context.Context, tm *t
 		am.VmType = vmTypeRef
 	}
 
-	if !tm.Disk.IsNull() && !tm.Disk.IsUnknown() {
-		diskTfModel := tfmodel.ClickhouseInstanceDiskSpec{}
-		diskDiag := tm.Disk.As(ctx, &diskTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, diskDiag...)
+	if !plan.Disk.IsNull() && !plan.Disk.IsUnknown() {
+		diskPlan := tfmodel.ClickhouseInstanceDiskSpec{}
+		diskPlanDiag := plan.Disk.As(ctx, &diskPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, diskPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		diskTmp, diskDiag := ClickhouseInstanceDiskSpecTFToAPIRequestModel(ctx, &diskTfModel)
+		diskTmp, diskDiag := ClickhouseInstanceDiskSpecTFToAPIRequestModel(ctx, &diskPlan)
 		diags = append(diags, diskDiag...)
 		if diags.HasError() {
 			return nil, diags

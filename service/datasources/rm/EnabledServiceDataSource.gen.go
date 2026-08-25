@@ -78,13 +78,13 @@ func (m *EnabledServiceDataSource) Configure(ctx context.Context, req datasource
 func (m *EnabledServiceDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "EnabledServiceDataSource.Read")
 
-	var data tfmodel.EnabledServiceModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.EnabledServiceModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -92,14 +92,14 @@ func (m *EnabledServiceDataSource) Read(ctx context.Context, req datasource.Read
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetEnabledService(
 		ctx,
 		client.GetEnabledServiceRequest{
-			Project: data.ProjectParam.ValueString(),
-			Service: data.ServiceParam.ValueString(),
+			Project: config.ProjectParam.ValueString(),
+			Service: config.ServiceParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -117,7 +117,7 @@ func (m *EnabledServiceDataSource) Read(ctx context.Context, req datasource.Read
 		return
 	}
 
-	data.EnabledService = *tfRes
+	config.EnabledService = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

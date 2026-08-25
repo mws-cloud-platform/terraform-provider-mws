@@ -80,13 +80,13 @@ func (m *SnapshotDataSource) Configure(ctx context.Context, req datasource.Confi
 func (m *SnapshotDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "SnapshotDataSource.Read")
 
-	var data tfmodel.SnapshotModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.SnapshotModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -94,14 +94,14 @@ func (m *SnapshotDataSource) Read(ctx context.Context, req datasource.ReadReques
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetSnapshot(
 		ctx,
 		client.GetSnapshotRequest{
-			Project:  data.ProjectParam.ValueString(),
-			Snapshot: data.SnapshotParam.ValueString(),
+			Project:  config.ProjectParam.ValueString(),
+			Snapshot: config.SnapshotParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -119,7 +119,7 @@ func (m *SnapshotDataSource) Read(ctx context.Context, req datasource.ReadReques
 		return
 	}
 
-	data.Snapshot = *tfRes
+	config.Snapshot = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

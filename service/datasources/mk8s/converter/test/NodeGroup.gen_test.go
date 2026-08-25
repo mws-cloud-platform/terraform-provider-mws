@@ -28,16 +28,16 @@ func TestNodeGroupOptionalResponseConverters(t *testing.T) {
 		Spec: apimodel.NodeGroupSpecRequest{
 			Zone: "zone",
 			Subnet: apimodel.NodeGroupSpecSubnetRequest{
-				Ref: vpc.NewSubnetRef("projectID", "networkID", "subnetID"),
+				Ref: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
 			},
 			VmType: apimodel.NodeGroupSpecVmTypeRequest{
-				Ref: compute.NewVmTypeRef("vmTypeID"),
+				Ref: compute.NewMustVmTypeRef("vmTypeID"),
 			},
 			Scale:           apimodel.NodeGroupSpecScaleRequest{},
 			VersionControl:  apimodel.NodeGroupVersionControlSpecRequest{},
 			RolloutStrategy: apimodel.NodeGroupSpecRolloutStrategyRequest{},
 			ServiceAccount: apimodel.NodeGroupSpecServiceAccountRequest{
-				Ref: iam.NewServiceAccountRef("projectID", "serviceAccountID"),
+				Ref: iam.NewMustServiceAccountRef("projectID", "serviceAccountID"),
 			},
 		},
 	}

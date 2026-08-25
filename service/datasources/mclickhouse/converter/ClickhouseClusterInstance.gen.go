@@ -63,24 +63,24 @@ func ClickhouseClusterInstanceAPIOptionalResponseToTFModel(ctx context.Context, 
 	return &t, diags
 }
 
-func ClickhouseClusterInstanceTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClickhouseClusterInstance) (*apimodel.ClickhouseClusterInstanceRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClickhouseClusterInstanceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterInstance) (*apimodel.ClickhouseClusterInstanceRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClickhouseClusterInstanceRequest
 
-	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		am.Name = tm.Name.ValueString()
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		am.Name = plan.Name.ValueString()
 	}
 
-	if !tm.Count.IsNull() && !tm.Count.IsUnknown() {
-		am.Count = ptr.Get(int(tm.Count.ValueInt64()))
+	if !plan.Count.IsNull() && !plan.Count.IsUnknown() {
+		am.Count = ptr.Get(int(plan.Count.ValueInt64()))
 	}
 
-	if !tm.Zone.IsNull() && !tm.Zone.IsUnknown() {
-		zoneRef, err := rm.ParseZoneRef(ctx, tm.Zone.ValueString())
+	if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
+		zoneRef, err := rm.ParseZoneRef(ctx, plan.Zone.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -88,13 +88,14 @@ func ClickhouseClusterInstanceTFToAPIRequestModel(ctx context.Context, tm *tfmod
 		am.Zone = zoneRef
 	}
 
-	if !tm.Endpoints.IsNull() && !tm.Endpoints.IsUnknown() {
+	if !plan.Endpoints.IsNull() && !plan.Endpoints.IsUnknown() {
 		endpoints := make([]tfmodel.ClickhouseEndpoint, 0)
-		dEndpoints := tm.Endpoints.ElementsAs(ctx, &endpoints, false)
+		dEndpoints := plan.Endpoints.ElementsAs(ctx, &endpoints, false)
 		diags = append(diags, dEndpoints...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.Endpoints = make([]apimodel.ClickhouseEndpointRequest, 0, len(endpoints))
 
 		for _, entity := range endpoints {

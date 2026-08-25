@@ -8,8 +8,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
 	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
 func TestClickhouseEndpointAPIOptionalResponseToTFModelEmpty(t *testing.T) {
@@ -38,4 +41,24 @@ func TestClickhouseEndpointOptionalResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateClickhouseEndpointRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.ClickhouseEndpoint
+	var stateTfModel tfmodel.ClickhouseEndpoint
+	stateTfModel.ExternalAddress = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.ClickhouseEndpointExternalAddressSpecOrRef).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdateClickhouseEndpointRequest{
+		ExternalAddress: optional.OptionalNil[apimodel.UpdateClickhouseEndpointExternalAddressSpecOrRefRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.ClickhouseEndpointTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

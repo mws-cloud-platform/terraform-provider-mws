@@ -89,23 +89,23 @@ func ResourceStatusAPIOptionalResponseToTFModel(ctx context.Context, am *commona
 	return &t, diags
 }
 
-func ResourceStatusTFToAPIModel(ctx context.Context, tm *tfcommon.ResourceStatus) (*commonapimodel.ResourceStatus, tfdiag.Diagnostics) {
-	if tm == nil {
+func ResourceStatusTFToAPIModel(ctx context.Context, plan *tfcommon.ResourceStatus) (*commonapimodel.ResourceStatus, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.ResourceStatus
 
-	if !tm.Ready.IsNull() && !tm.Ready.IsUnknown() {
-		readyTfModel := tfcommon.ResourceStatusReady{}
-		readyDiag := tm.Ready.As(ctx, &readyTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, readyDiag...)
+	if !plan.Ready.IsNull() && !plan.Ready.IsUnknown() {
+		readyPlan := tfcommon.ResourceStatusReady{}
+		readyPlanDiag := plan.Ready.As(ctx, &readyPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, readyPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		readyTmp, readyDiag := ResourceStatusReadyTFToAPIModel(ctx, &readyTfModel)
+		readyTmp, readyDiag := ResourceStatusReadyTFToAPIModel(ctx, &readyPlan)
 		diags = append(diags, readyDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -116,28 +116,110 @@ func ResourceStatusTFToAPIModel(ctx context.Context, tm *tfcommon.ResourceStatus
 	return &am, diags
 }
 
-func ResourceStatusTFToAPIRequestModel(ctx context.Context, tm *tfcommon.ResourceStatus) (*commonapimodel.ResourceStatusRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ResourceStatusTFToAPIRequestModel(ctx context.Context, plan *tfcommon.ResourceStatus) (*commonapimodel.ResourceStatusRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.ResourceStatusRequest
 
-	if !tm.Ready.IsNull() && !tm.Ready.IsUnknown() {
-		readyTfModel := tfcommon.ResourceStatusReady{}
-		readyDiag := tm.Ready.As(ctx, &readyTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, readyDiag...)
+	if !plan.Ready.IsNull() && !plan.Ready.IsUnknown() {
+		readyPlan := tfcommon.ResourceStatusReady{}
+		readyPlanDiag := plan.Ready.As(ctx, &readyPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, readyPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		readyTmp, readyDiag := ResourceStatusReadyTFToAPIRequestModel(ctx, &readyTfModel)
+		readyTmp, readyDiag := ResourceStatusReadyTFToAPIRequestModel(ctx, &readyPlan)
 		diags = append(diags, readyDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.Ready = *readyTmp
+	}
+
+	return &am, diags
+}
+
+func ResourceStatusTFToAPIUpdateModel(ctx context.Context, plan, state *tfcommon.ResourceStatus) (*commonapimodel.UpdateResourceStatus, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfcommon.ResourceStatus{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am commonapimodel.UpdateResourceStatus
+
+	if !plan.Ready.Equal(state.Ready) {
+		if !plan.Ready.IsNull() && !plan.Ready.IsUnknown() {
+			readyPlan := tfcommon.ResourceStatusReady{}
+			readyPlanDiag := plan.Ready.As(ctx, &readyPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, readyPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			readyState := tfcommon.ResourceStatusReady{}
+			if !state.Ready.IsNull() && !state.Ready.IsUnknown() {
+				readyStateDiag := state.Ready.As(ctx, &readyState, basetypes.ObjectAsOptions{})
+				diags = append(diags, readyStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			readyTmp, readyDiag := ResourceStatusReadyTFToAPIUpdateModel(ctx, &readyPlan, &readyState)
+			diags = append(diags, readyDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Ready.SetTo(*readyTmp)
+		}
+	}
+
+	return &am, diags
+}
+
+func ResourceStatusTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfcommon.ResourceStatus) (*commonapimodel.UpdateResourceStatusRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfcommon.ResourceStatus{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am commonapimodel.UpdateResourceStatusRequest
+
+	if !plan.Ready.Equal(state.Ready) {
+		if !plan.Ready.IsNull() && !plan.Ready.IsUnknown() {
+			readyPlan := tfcommon.ResourceStatusReady{}
+			readyPlanDiag := plan.Ready.As(ctx, &readyPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, readyPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			readyState := tfcommon.ResourceStatusReady{}
+			if !state.Ready.IsNull() && !state.Ready.IsUnknown() {
+				readyStateDiag := state.Ready.As(ctx, &readyState, basetypes.ObjectAsOptions{})
+				diags = append(diags, readyStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			readyTmp, readyDiag := ResourceStatusReadyTFToAPIUpdateRequestModel(ctx, &readyPlan, &readyState)
+			diags = append(diags, readyDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Ready.SetTo(*readyTmp)
+		}
 	}
 
 	return &am, diags

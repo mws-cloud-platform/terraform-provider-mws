@@ -84,16 +84,16 @@ func ResourceStatusReadyAPIOptionalResponseToTFModel(ctx context.Context, am *co
 	return &t, diags
 }
 
-func ResourceStatusReadyTFToAPIModel(ctx context.Context, tm *tfcommon.ResourceStatusReady) (*commonapimodel.ResourceStatusReady, tfdiag.Diagnostics) {
-	if tm == nil {
+func ResourceStatusReadyTFToAPIModel(ctx context.Context, plan *tfcommon.ResourceStatusReady) (*commonapimodel.ResourceStatusReady, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.ResourceStatusReady
 
-	if !tm.State.IsNull() && !tm.State.IsUnknown() {
-		stateTmp, stateDiag := ResourceStatusStateTFToAPIModel(ctx, tm.State)
+	if !plan.State.IsNull() && !plan.State.IsUnknown() {
+		stateTmp, stateDiag := ResourceStatusStateTFToAPIModel(ctx, plan.State)
 		diags = append(diags, stateDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -101,23 +101,23 @@ func ResourceStatusReadyTFToAPIModel(ctx context.Context, tm *tfcommon.ResourceS
 		am.State = *stateTmp
 	}
 
-	if !tm.Message.IsNull() && !tm.Message.IsUnknown() {
-		am.Message = tm.Message.ValueStringPointer()
+	if !plan.Message.IsNull() && !plan.Message.IsUnknown() {
+		am.Message = plan.Message.ValueStringPointer()
 	}
 
 	return &am, diags
 }
 
-func ResourceStatusReadyTFToAPIRequestModel(ctx context.Context, tm *tfcommon.ResourceStatusReady) (*commonapimodel.ResourceStatusReadyRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ResourceStatusReadyTFToAPIRequestModel(ctx context.Context, plan *tfcommon.ResourceStatusReady) (*commonapimodel.ResourceStatusReadyRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.ResourceStatusReadyRequest
 
-	if !tm.State.IsNull() && !tm.State.IsUnknown() {
-		stateTmp, stateDiag := ResourceStatusStateTFToAPIModel(ctx, tm.State)
+	if !plan.State.IsNull() && !plan.State.IsUnknown() {
+		stateTmp, stateDiag := ResourceStatusStateTFToAPIModel(ctx, plan.State)
 		diags = append(diags, stateDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -125,8 +125,8 @@ func ResourceStatusReadyTFToAPIRequestModel(ctx context.Context, tm *tfcommon.Re
 		am.State = *stateTmp
 	}
 
-	if !tm.Message.IsNull() && !tm.Message.IsUnknown() {
-		am.Message = tm.Message.ValueStringPointer()
+	if !plan.Message.IsNull() && !plan.Message.IsUnknown() {
+		am.Message = plan.Message.ValueStringPointer()
 	}
 
 	return &am, diags

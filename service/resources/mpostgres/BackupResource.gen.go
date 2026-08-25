@@ -113,13 +113,13 @@ func (m *BackupResource) Configure(ctx context.Context, req resource.ConfigureRe
 func (m *BackupResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "BackupResource.Create")
 
-	var data tfmodel.BackupModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.BackupModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -127,17 +127,17 @@ func (m *BackupResource) Create(ctx context.Context, req resource.CreateRequest,
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "BackupResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.PostgresBackupTFToAPIRequestModel(ctx, &data.PostgresBackup)
+	body, diags := conv.PostgresBackupTFToAPIRequestModel(ctx, &plan.PostgresBackup)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "BackupResource.TFToAPI")
@@ -147,9 +147,9 @@ func (m *BackupResource) Create(ctx context.Context, req resource.CreateRequest,
 	apiRes, err := m.sdk.CreatePostgresBackup(
 		ctx,
 		client.UpsertPostgresBackupRequest{
-			Project: data.ProjectParam.ValueString(),
-			Cluster: data.ClusterParam.ValueString(),
-			Backup:  data.BackupParam.ValueString(),
+			Project: plan.ProjectParam.ValueString(),
+			Cluster: plan.ClusterParam.ValueString(),
+			Backup:  plan.BackupParam.ValueString(),
 			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
@@ -162,7 +162,7 @@ func (m *BackupResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.PostgresBackupAPIResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -171,21 +171,21 @@ func (m *BackupResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	data.PostgresBackup = *tfRes
+	plan.PostgresBackup = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *BackupResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "BackupResource.Read")
 
-	var data tfmodel.BackupModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.BackupModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -193,15 +193,15 @@ func (m *BackupResource) Read(ctx context.Context, req resource.ReadRequest, res
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetPostgresBackup(
 		ctx,
 		client.GetPostgresBackupRequest{
-			Project: data.ProjectParam.ValueString(),
-			Cluster: data.ClusterParam.ValueString(),
-			Backup:  data.BackupParam.ValueString(),
+			Project: state.ProjectParam.ValueString(),
+			Cluster: state.ClusterParam.ValueString(),
+			Backup:  state.BackupParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -212,7 +212,7 @@ func (m *BackupResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.PostgresBackupAPIResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -221,21 +221,27 @@ func (m *BackupResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
-	data.PostgresBackup = *tfRes
+	state.PostgresBackup = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 func (m *BackupResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "BackupResource.Update")
 
-	var data tfmodel.BackupModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.BackupModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	var state tfmodel.BackupModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -243,17 +249,17 @@ func (m *BackupResource) Update(ctx context.Context, req resource.UpdateRequest,
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "BackupResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.PostgresBackupTFToAPIRequestModel(ctx, &data.PostgresBackup)
+	body, diags := conv.PostgresBackupTFToAPIUpdateRequestModel(ctx, &plan.PostgresBackup, &state.PostgresBackup)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "BackupResource.TFToAPI")
@@ -263,10 +269,10 @@ func (m *BackupResource) Update(ctx context.Context, req resource.UpdateRequest,
 	apiRes, err := m.sdk.UpdatePostgresBackup(
 		ctx,
 		client.UpdatePostgresBackupRequest{
-			Project: data.ProjectParam.ValueString(),
-			Cluster: data.ClusterParam.ValueString(),
-			Backup:  data.BackupParam.ValueString(),
-			Body:    body.AsUpdateModel(),
+			Project: plan.ProjectParam.ValueString(),
+			Cluster: plan.ClusterParam.ValueString(),
+			Backup:  plan.BackupParam.ValueString(),
+			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -278,7 +284,7 @@ func (m *BackupResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.PostgresBackupAPIResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -287,21 +293,21 @@ func (m *BackupResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	data.PostgresBackup = *tfRes
+	plan.PostgresBackup = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *BackupResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "BackupResource.Delete")
 
-	var data tfmodel.BackupModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.BackupModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -309,10 +315,10 @@ func (m *BackupResource) Delete(ctx context.Context, req resource.DeleteRequest,
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := state.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "BackupResource.Timeouts")
@@ -322,9 +328,9 @@ func (m *BackupResource) Delete(ctx context.Context, req resource.DeleteRequest,
 	err := m.sdk.DeletePostgresBackup(
 		ctx,
 		client.DeletePostgresBackupRequest{
-			Project: data.ProjectParam.ValueString(),
-			Cluster: data.ClusterParam.ValueString(),
-			Backup:  data.BackupParam.ValueString(),
+			Project: state.ProjectParam.ValueString(),
+			Cluster: state.ClusterParam.ValueString(),
+			Backup:  state.BackupParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -340,7 +346,7 @@ func (m *BackupResource) Delete(ctx context.Context, req resource.DeleteRequest,
 func (m *BackupResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "BackupResource.ImportState")
 
-	var data tfmodel.BackupModel
+	var state tfmodel.BackupModel
 
 	ref, err := mpostgresref.ParsePostgresBackupRef(ctx, req.ID)
 	if err != nil {
@@ -366,7 +372,7 @@ func (m *BackupResource) ImportState(ctx context.Context, req resource.ImportSta
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.PostgresBackupAPIResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -375,11 +381,11 @@ func (m *BackupResource) ImportState(ctx context.Context, req resource.ImportSta
 		return
 	}
 
-	data.PostgresBackup = *tfRes
+	state.PostgresBackup = *tfRes
 
-	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.ClusterParam = types.StringValue(ref.GetCluster())
-	data.BackupParam = types.StringValue(ref.GetBackup())
+	state.ProjectParam = types.StringValue(ref.GetProject())
+	state.ClusterParam = types.StringValue(ref.GetCluster())
+	state.BackupParam = types.StringValue(ref.GetBackup())
 
 	var rwTimeouts timeouts.Value
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
@@ -387,7 +393,7 @@ func (m *BackupResource) ImportState(ctx context.Context, req resource.ImportSta
 		tflog.Debug(ctx, "BackupResource.timeouts.GetAttribute")
 		return
 	}
-	data.Timeouts = rwTimeouts
+	state.Timeouts = rwTimeouts
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

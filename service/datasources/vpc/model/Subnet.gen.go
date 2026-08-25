@@ -13,6 +13,7 @@ type Subnet struct {
 	Kind        types.String `tfsdk:"kind"`
 	Metadata    types.Object `tfsdk:"metadata"`
 	Status      types.Object `tfsdk:"status"`
+	Region      types.String `tfsdk:"region"`
 	Cidr        types.String `tfsdk:"cidr"`
 	DhcpOptions types.Object `tfsdk:"dhcp_options"`
 }
@@ -32,6 +33,10 @@ func (s *Subnet) GetSchema() schema.Schema {
 			"status": schema.SingleNestedAttribute{
 				Attributes: new(SubnetStatus).GetSchema().Attributes,
 				Computed:   true,
+			},
+			"region": schema.StringAttribute{
+				MarkdownDescription: `Регион, которому принадлежит подсеть`,
+				Computed:            true,
 			},
 			"cidr": schema.StringAttribute{
 				MarkdownDescription: `IPv4 подсеть в CIDR нотации`,

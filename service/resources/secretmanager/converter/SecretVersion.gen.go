@@ -60,30 +60,28 @@ func SecretVersionAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel
 		t.Active = types.BoolNull()
 	}
 
-	t.DataVersion = types.Int64Null()
-
 	t.Data = types.MapNull(types.StringType)
 
 	return &t, diags
 }
 
-func SecretVersionTFToAPIRequestModel(ctx context.Context, tm *tfmodel.SecretVersion) (*apimodel.SecretVersionRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func SecretVersionTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SecretVersion) (*apimodel.SecretVersionRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.SecretVersionRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfcommon.CommonTypedResourceMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -91,17 +89,83 @@ func SecretVersionTFToAPIRequestModel(ctx context.Context, tm *tfmodel.SecretVer
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.Active.IsNull() && !tm.Active.IsUnknown() {
-		am.Spec.Active = tm.Active.ValueBoolPointer()
+	if !plan.Active.IsNull() && !plan.Active.IsUnknown() {
+		am.Spec.Active = plan.Active.ValueBoolPointer()
 	}
 
-	if !tm.Data.IsNull() && !tm.Data.IsUnknown() {
-		dataTmp, dataDiag := SecretVersionDataSpecTFToAPIModel(ctx, tm.Data)
+	if !plan.Data.IsNull() && !plan.Data.IsUnknown() {
+		dataTmp, dataDiag := SecretVersionDataSpecTFToAPIModel(ctx, plan.Data)
 		diags = append(diags, dataDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.Spec.Data = dataTmp
+	}
+
+	return &am, diags
+}
+
+func SecretVersionTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.SecretVersion) (*apimodel.UpdateSecretVersionRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.SecretVersion{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateSecretVersionRequest
+
+	if !plan.Metadata.Equal(state.Metadata) {
+		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+			metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+			metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, metadataPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			metadataState := tfcommon.CommonTypedResourceMetadata{}
+			if !state.Metadata.IsNull() && !state.Metadata.IsUnknown() {
+				metadataStateDiag := state.Metadata.As(ctx, &metadataState, basetypes.ObjectAsOptions{})
+				diags = append(diags, metadataStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIUpdateRequestModel(ctx, &metadataPlan, &metadataState)
+			diags = append(diags, metadataDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Metadata.SetTo(*metadataTmp)
+		} else if plan.Metadata.IsNull() {
+			am.Metadata.SetToNull()
+		}
+	}
+
+	if !plan.Active.Equal(state.Active) {
+		if !plan.Active.IsNull() && !plan.Active.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateSecretVersionSpecRequest{})
+			}
+			am.Spec.Value.Active.SetTo(plan.Active.ValueBool())
+		}
+	}
+
+	if !plan.Data.Equal(state.Data) {
+		if !plan.Data.IsNull() && !plan.Data.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(apimodel.UpdateSecretVersionSpecRequest{})
+			}
+			dataTmp, dataDiag := SecretVersionDataSpecTFToAPIUpdateModel(ctx, plan.Data)
+			diags = append(diags, dataDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Spec.Value.Data.SetTo(dataTmp)
+		}
 	}
 
 	return &am, diags

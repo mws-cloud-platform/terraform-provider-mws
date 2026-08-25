@@ -26,16 +26,16 @@ func EncryptionSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func EncryptionSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.EncryptionSpec) (*apimodel.EncryptionSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func EncryptionSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.EncryptionSpec) (*apimodel.EncryptionSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.EncryptionSpecRequest
 
-	if !tm.CryptoKeyId.IsNull() && !tm.CryptoKeyId.IsUnknown() {
-		cryptoKeyIdRef, err := kms.ParseCryptoKeyRef(ctx, tm.CryptoKeyId.ValueString())
+	if !plan.CryptoKeyId.IsNull() && !plan.CryptoKeyId.IsUnknown() {
+		cryptoKeyIdRef, err := kms.ParseCryptoKeyRef(ctx, plan.CryptoKeyId.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags

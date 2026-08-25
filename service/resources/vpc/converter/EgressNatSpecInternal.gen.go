@@ -42,21 +42,22 @@ func EgressNatSpecInternalAPIOptionalResponseToTFModel(ctx context.Context, am *
 	return &t, diags
 }
 
-func EgressNatSpecInternalTFToAPIRequestModel(ctx context.Context, tm *tfmodel.EgressNatSpecInternal) (*apimodel.EgressNatSpecInternalRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func EgressNatSpecInternalTFToAPIRequestModel(ctx context.Context, plan *tfmodel.EgressNatSpecInternal) (*apimodel.EgressNatSpecInternalRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.EgressNatSpecInternalRequest
 
-	if !tm.Subnets.IsNull() && !tm.Subnets.IsUnknown() {
+	if !plan.Subnets.IsNull() && !plan.Subnets.IsUnknown() {
 		subnets := make([]types.String, 0)
-		dSubnets := tm.Subnets.ElementsAs(ctx, &subnets, false)
+		dSubnets := plan.Subnets.ElementsAs(ctx, &subnets, false)
 		diags = append(diags, dSubnets...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.Subnets = make([]vpc.SubnetRef, 0, len(subnets))
 
 		for _, entity := range subnets {
@@ -66,6 +67,43 @@ func EgressNatSpecInternalTFToAPIRequestModel(ctx context.Context, tm *tfmodel.E
 				return nil, diags
 			}
 			am.Subnets = append(am.Subnets, ref)
+		}
+	}
+
+	return &am, diags
+}
+
+func EgressNatSpecInternalTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.EgressNatSpecInternal) (*apimodel.UpdateEgressNatSpecInternalRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.EgressNatSpecInternal{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateEgressNatSpecInternalRequest
+
+	if !plan.Subnets.Equal(state.Subnets) {
+		if !plan.Subnets.IsNull() && !plan.Subnets.IsUnknown() {
+			subnets := make([]types.String, 0)
+			dSubnets := plan.Subnets.ElementsAs(ctx, &subnets, false)
+			diags = append(diags, dSubnets...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			subnetsTmp := make([]vpc.SubnetRef, 0, len(subnets))
+
+			for _, entity := range subnets {
+				ref, err := vpc.ParseSubnetRef(ctx, entity.ValueString())
+				if err != nil {
+					diags.AddError("reference parsing", err.Error())
+					return nil, diags
+				}
+				subnetsTmp = append(subnetsTmp, ref)
+			}
+			am.Subnets.SetTo(subnetsTmp)
 		}
 	}
 

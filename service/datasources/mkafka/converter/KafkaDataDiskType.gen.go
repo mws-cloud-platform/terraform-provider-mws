@@ -25,11 +25,11 @@ func KafkaDataDiskTypeAPIToTFModel(ctx context.Context, am *apimodel.KafkaDataDi
 	return t, diags
 }
 
-func KafkaDataDiskTypeTFToAPIModel(ctx context.Context, tm tfmodel.KafkaDataDiskType) (*apimodel.KafkaDataDiskType, tfdiag.Diagnostics) {
+func KafkaDataDiskTypeTFToAPIModel(ctx context.Context, plan tfmodel.KafkaDataDiskType) (*apimodel.KafkaDataDiskType, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaDataDiskType
 
-	var tmp = types.String(tm)
+	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}

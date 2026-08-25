@@ -18,7 +18,7 @@ type CommonRoleBindingSpecSubject struct {
 
 func (s *CommonRoleBindingSpecSubject) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Субъект привязки роли — пользователь, сервисный аккаунт, группа пользователей или другая сущность, которой выдаются права. Должно быть заполнено ровно одно из полей.`,
 		Attributes: map[string]schema.Attribute{
 			"user": schema.StringAttribute{
 				MarkdownDescription: `Идентификатор пользователя`,

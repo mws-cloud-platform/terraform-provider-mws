@@ -42,16 +42,16 @@ func PostgresInstanceTemplateAPIResponseToTFModel(ctx context.Context, am *apimo
 	return &t, diags
 }
 
-func PostgresInstanceTemplateTFToAPIRequestModel(ctx context.Context, tm *tfmodel.PostgresInstanceTemplate) (*apimodel.PostgresInstanceTemplateRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func PostgresInstanceTemplateTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresInstanceTemplate) (*apimodel.PostgresInstanceTemplateRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.PostgresInstanceTemplateRequest
 
-	if !tm.VmType.IsNull() && !tm.VmType.IsUnknown() {
-		vmTypeRef, err := compute.ParseVmTypeRef(ctx, tm.VmType.ValueString())
+	if !plan.VmType.IsNull() && !plan.VmType.IsUnknown() {
+		vmTypeRef, err := compute.ParseVmTypeRef(ctx, plan.VmType.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -59,20 +59,72 @@ func PostgresInstanceTemplateTFToAPIRequestModel(ctx context.Context, tm *tfmode
 		am.VmType = vmTypeRef
 	}
 
-	if !tm.Disk.IsNull() && !tm.Disk.IsUnknown() {
-		diskTfModel := tfmodel.DataDiskSpec{}
-		diskDiag := tm.Disk.As(ctx, &diskTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, diskDiag...)
+	if !plan.Disk.IsNull() && !plan.Disk.IsUnknown() {
+		diskPlan := tfmodel.DataDiskSpec{}
+		diskPlanDiag := plan.Disk.As(ctx, &diskPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, diskPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		diskTmp, diskDiag := DataDiskSpecTFToAPIRequestModel(ctx, &diskTfModel)
+		diskTmp, diskDiag := DataDiskSpecTFToAPIRequestModel(ctx, &diskPlan)
 		diags = append(diags, diskDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.Disk = *diskTmp
+	}
+
+	return &am, diags
+}
+
+func PostgresInstanceTemplateTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresInstanceTemplate) (*apimodel.UpdatePostgresInstanceTemplateRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.PostgresInstanceTemplate{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdatePostgresInstanceTemplateRequest
+
+	if !plan.VmType.Equal(state.VmType) {
+		if !plan.VmType.IsNull() && !plan.VmType.IsUnknown() {
+			vmTypeRef, err := compute.ParseVmTypeRef(ctx, plan.VmType.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.VmType.SetTo(vmTypeRef)
+		}
+	}
+
+	if !plan.Disk.Equal(state.Disk) {
+		if !plan.Disk.IsNull() && !plan.Disk.IsUnknown() {
+			diskPlan := tfmodel.DataDiskSpec{}
+			diskPlanDiag := plan.Disk.As(ctx, &diskPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, diskPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			diskState := tfmodel.DataDiskSpec{}
+			if !state.Disk.IsNull() && !state.Disk.IsUnknown() {
+				diskStateDiag := state.Disk.As(ctx, &diskState, basetypes.ObjectAsOptions{})
+				diags = append(diags, diskStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			diskTmp, diskDiag := DataDiskSpecTFToAPIUpdateRequestModel(ctx, &diskPlan, &diskState)
+			diags = append(diags, diskDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Disk.SetTo(*diskTmp)
+		}
 	}
 
 	return &am, diags

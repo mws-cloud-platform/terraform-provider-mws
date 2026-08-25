@@ -23,7 +23,7 @@ func TestKafkaAllocationAPIResponseToTFModelEmpty(t *testing.T) {
 func TestKafkaAllocationResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.KafkaAllocationRequest{
-		Zone:  rm.NewZoneRef("zoneID"),
+		Zone:  rm.NewMustZoneRef("zoneID"),
 		Count: 0,
 	}
 

@@ -6,37 +6,41 @@ import (
 	"context"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/units/duration"
 
-	apimodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/pkg/optional"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
 func TestWeeklyMaintenanceWindowAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.WeeklyMaintenanceWindow{}
+	emptyApiModel := commonapimodel.WeeklyMaintenanceWindow{}
 	_, diags := commonconv.WeeklyMaintenanceWindowAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestWeeklyMaintenanceWindowAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.WeeklyMaintenanceWindowResponse{}
+	emptyApiModel := commonapimodel.WeeklyMaintenanceWindowResponse{}
 	_, diags := commonconv.WeeklyMaintenanceWindowAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestWeeklyMaintenanceWindowAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.WeeklyMaintenanceWindowOptionalResponse{}
+	emptyApiModel := commonapimodel.WeeklyMaintenanceWindowOptionalResponse{}
 	_, diags := commonconv.WeeklyMaintenanceWindowAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestWeeklyMaintenanceWindowConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.WeeklyMaintenanceWindow{
-		Days: []apimodel.DayOfWeek{},
+	emptyApiModel := commonapimodel.WeeklyMaintenanceWindow{
+		Days: []commonapimodel.DayOfWeek{},
 		Hour: 0,
 	}
 
@@ -51,12 +55,12 @@ func TestWeeklyMaintenanceWindowConverters(t *testing.T) {
 
 func TestWeeklyMaintenanceWindowResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.WeeklyMaintenanceWindowRequest{
-		Days: []apimodel.DayOfWeek{},
+	emptyApiModelRequest := commonapimodel.WeeklyMaintenanceWindowRequest{
+		Days: []commonapimodel.DayOfWeek{},
 		Hour: 0,
 	}
 
-	emptyApiModelResponse, err := apimodel.WeeklyMaintenanceWindowRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonapimodel.WeeklyMaintenanceWindowRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.WeeklyMaintenanceWindowAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -65,7 +69,7 @@ func TestWeeklyMaintenanceWindowResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := commonconv.WeeklyMaintenanceWindowTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.WeeklyMaintenanceWindowRequestToResponse(filledApiModelRequest)
+	result, err := commonapimodel.WeeklyMaintenanceWindowRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -73,12 +77,12 @@ func TestWeeklyMaintenanceWindowResponseConverters(t *testing.T) {
 
 func TestWeeklyMaintenanceWindowOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.WeeklyMaintenanceWindowRequest{
-		Days: []apimodel.DayOfWeek{},
+	emptyApiModelRequest := commonapimodel.WeeklyMaintenanceWindowRequest{
+		Days: []commonapimodel.DayOfWeek{},
 		Hour: 0,
 	}
 
-	emptyApiModelResponse, err := apimodel.WeeklyMaintenanceWindowRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonapimodel.WeeklyMaintenanceWindowRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.WeeklyMaintenanceWindowAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -87,8 +91,48 @@ func TestWeeklyMaintenanceWindowOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := commonconv.WeeklyMaintenanceWindowTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.WeeklyMaintenanceWindowRequestToOptionalResponse(filledApiModelRequest)
+	result, err := commonapimodel.WeeklyMaintenanceWindowRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdateWeeklyMaintenanceWindowConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfcommon.WeeklyMaintenanceWindow
+	var stateTfModel tfcommon.WeeklyMaintenanceWindow
+	stateTfModel.Duration = types.StringValue("")
+
+	expectedUpdateModel := &commonapimodel.UpdateWeeklyMaintenanceWindow{
+		Duration: optional.OptionalNil[duration.Duration]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := commonconv.WeeklyMaintenanceWindowTFToAPIUpdateModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
+}
+
+func TestUpdateWeeklyMaintenanceWindowRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfcommon.WeeklyMaintenanceWindow
+	var stateTfModel tfcommon.WeeklyMaintenanceWindow
+	stateTfModel.Duration = types.StringValue("")
+
+	expectedUpdateModel := &commonapimodel.UpdateWeeklyMaintenanceWindowRequest{
+		Duration: optional.OptionalNil[duration.Duration]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := commonconv.WeeklyMaintenanceWindowTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

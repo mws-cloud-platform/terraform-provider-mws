@@ -46,24 +46,56 @@ func NodeTaintSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.NodeTai
 	return &t, diags
 }
 
-func NodeTaintSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.NodeTaintSpec) (*apimodel.NodeTaintSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func NodeTaintSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeTaintSpec) (*apimodel.NodeTaintSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.NodeTaintSpecRequest
 
-	if !tm.Key.IsNull() && !tm.Key.IsUnknown() {
-		am.Key = tm.Key.ValueString()
+	if !plan.Key.IsNull() && !plan.Key.IsUnknown() {
+		am.Key = plan.Key.ValueString()
 	}
 
-	if !tm.Value.IsNull() && !tm.Value.IsUnknown() {
-		am.Value = tm.Value.ValueString()
+	if !plan.Value.IsNull() && !plan.Value.IsUnknown() {
+		am.Value = plan.Value.ValueString()
 	}
 
-	if !tm.Effect.IsNull() && !tm.Effect.IsUnknown() {
-		am.Effect = apimodel.NodeTaintSpecEffectRequest(tm.Effect.ValueString())
+	if !plan.Effect.IsNull() && !plan.Effect.IsUnknown() {
+		am.Effect = apimodel.NodeTaintSpecEffectRequest(plan.Effect.ValueString())
+	}
+
+	return &am, diags
+}
+
+func NodeTaintSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NodeTaintSpec) (*apimodel.UpdateNodeTaintSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.NodeTaintSpec{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateNodeTaintSpecRequest
+
+	if !plan.Key.Equal(state.Key) {
+		if !plan.Key.IsNull() && !plan.Key.IsUnknown() {
+			am.Key.SetTo(plan.Key.ValueString())
+		}
+	}
+
+	if !plan.Value.Equal(state.Value) {
+		if !plan.Value.IsNull() && !plan.Value.IsUnknown() {
+			am.Value.SetTo(plan.Value.ValueString())
+		}
+	}
+
+	if !plan.Effect.Equal(state.Effect) {
+		if !plan.Effect.IsNull() && !plan.Effect.IsUnknown() {
+			am.Effect.SetTo(apimodel.NodeTaintSpecEffectRequest(plan.Effect.ValueString()))
+		}
 	}
 
 	return &am, diags

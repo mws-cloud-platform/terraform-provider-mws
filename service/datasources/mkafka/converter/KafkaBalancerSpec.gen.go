@@ -35,20 +35,20 @@ func KafkaBalancerSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.Kaf
 	return &t, diags
 }
 
-func KafkaBalancerSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaBalancerSpec) (*apimodel.KafkaBalancerSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func KafkaBalancerSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaBalancerSpec) (*apimodel.KafkaBalancerSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaBalancerSpecRequest
 
-	if !tm.Enabled.IsNull() && !tm.Enabled.IsUnknown() {
-		am.Enabled = tm.Enabled.ValueBoolPointer()
+	if !plan.Enabled.IsNull() && !plan.Enabled.IsUnknown() {
+		am.Enabled = plan.Enabled.ValueBoolPointer()
 	}
 
-	if !tm.AutoRebalance.IsNull() && !tm.AutoRebalance.IsUnknown() {
-		am.AutoRebalance = tm.AutoRebalance.ValueBoolPointer()
+	if !plan.AutoRebalance.IsNull() && !plan.AutoRebalance.IsUnknown() {
+		am.AutoRebalance = plan.AutoRebalance.ValueBoolPointer()
 	}
 
 	return &am, diags

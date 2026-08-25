@@ -25,11 +25,11 @@ func PossiblyZeroIopsAPIToTFModel(ctx context.Context, am *apimodel.PossiblyZero
 	return t, diags
 }
 
-func PossiblyZeroIopsTFToAPIModel(ctx context.Context, tm tfmodel.PossiblyZeroIops) (*apimodel.PossiblyZeroIops, tfdiag.Diagnostics) {
+func PossiblyZeroIopsTFToAPIModel(ctx context.Context, plan tfmodel.PossiblyZeroIops) (*apimodel.PossiblyZeroIops, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am apimodel.PossiblyZeroIops
 
-	var tmp = types.Int64(tm)
+	var tmp = types.Int64(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}

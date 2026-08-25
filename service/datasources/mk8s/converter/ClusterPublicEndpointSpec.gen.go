@@ -30,16 +30,16 @@ func ClusterPublicEndpointSpecAPIOptionalResponseToTFModel(ctx context.Context, 
 	return &t, diags
 }
 
-func ClusterPublicEndpointSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ClusterPublicEndpointSpec) (*apimodel.ClusterPublicEndpointSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ClusterPublicEndpointSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterPublicEndpointSpec) (*apimodel.ClusterPublicEndpointSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClusterPublicEndpointSpecRequest
 
-	if !tm.Version.IsNull() && !tm.Version.IsUnknown() {
-		am.Version = ptr.Get(apimodel.ClusterPublicEndpointSpecVersionRequest(tm.Version.ValueString()))
+	if !plan.Version.IsNull() && !plan.Version.IsUnknown() {
+		am.Version = ptr.Get(apimodel.ClusterPublicEndpointSpecVersionRequest(plan.Version.ValueString()))
 	}
 
 	return &am, diags

@@ -18,6 +18,7 @@ type NodeGroupStatus struct {
 	Memory           types.String `tfsdk:"memory"`
 	ImageStorageSize types.String `tfsdk:"image_storage_size"`
 	ImageStorageIops types.Int64  `tfsdk:"image_storage_iops"`
+	LocalDisks       types.List   `tfsdk:"local_disks"`
 	Scale            types.Object `tfsdk:"scale"`
 	NodesReady       types.Int64  `tfsdk:"nodes_ready"`
 	Labels           types.List   `tfsdk:"labels"`
@@ -30,7 +31,7 @@ type NodeGroupStatus struct {
 
 func (s *NodeGroupStatus) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Описывает статусную модель k8s нод групп.`,
+		MarkdownDescription: `Описывает статусную модель групп узлов Kubernetes.`,
 		Attributes: map[string]schema.Attribute{
 			"ready": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.ResourceStatusReady).GetSchema().Attributes,
@@ -42,11 +43,11 @@ func (s *NodeGroupStatus) GetSchema() schema.Schema {
 				Computed:   true,
 			},
 			"cpu": schema.StringAttribute{
-				MarkdownDescription: `Количество виртуальных ядер на ноде`,
+				MarkdownDescription: `Количество ядер vCPU на узле`,
 				Computed:            true,
 			},
 			"memory": schema.StringAttribute{
-				MarkdownDescription: `Количество оперативной памяти на ноде
+				MarkdownDescription: `Объем оперативной памяти на узле
 
 Размер в байтах. Формат: <число> [единица измерения].
 Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".
@@ -64,7 +65,14 @@ func (s *NodeGroupStatus) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"image_storage_iops": schema.Int64Attribute{
-				MarkdownDescription: `Количество операций ввода-вывода в секунду (IOPS) для хранилища image-ей и контейнеров`,
+				MarkdownDescription: `Количество операций ввода-вывода в секунду (IOPS) для хранилища образов и контейнеров`,
+				Computed:            true,
+			},
+			"local_disks": schema.ListNestedAttribute{
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: new(LocalDiskStatus).GetSchema().Attributes,
+				},
+				MarkdownDescription: `Параметры локальных дисков для каждого узла в группе узлов`,
 				Computed:            true,
 			},
 			"scale": schema.SingleNestedAttribute{
@@ -72,7 +80,7 @@ func (s *NodeGroupStatus) GetSchema() schema.Schema {
 				Computed:   true,
 			},
 			"nodes_ready": schema.Int64Attribute{
-				MarkdownDescription: `Текущее количество нод готовых для работы`,
+				MarkdownDescription: `Текущее количество узлов, готовых для работы`,
 				Computed:            true,
 			},
 			"labels": schema.ListNestedAttribute{
@@ -89,7 +97,7 @@ func (s *NodeGroupStatus) GetSchema() schema.Schema {
 			},
 			"rollout_strategy": schema.SingleNestedAttribute{
 				Attributes:          new(NodeGroupStatusRolloutStrategy).GetSchema().Attributes,
-				MarkdownDescription: `Стратегия перекатки (rollout) worker нод в нод группе`,
+				MarkdownDescription: `Стратегия обновления (rollout) узлов в группе узлов`,
 				Computed:            true,
 			},
 			"version_control": schema.SingleNestedAttribute{
@@ -118,7 +126,7 @@ func (s *NodeGroupStatusNodeGroupStatus) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля NodeGroupStatus анонимного типа структуры NodeGroupStatus`,
 		Attributes: map[string]schema.Attribute{
 			"state": schema.StringAttribute{
-				MarkdownDescription: `Текущий статус node group`,
+				MarkdownDescription: `Текущий статус группы узлов`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"INIT",
@@ -190,11 +198,11 @@ func (s *NodeGroupStatusScaleAutoscaling) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля Autoscaling анонимного типа структуры NodeGroupStatusScale`,
 		Attributes: map[string]schema.Attribute{
 			"min": schema.Int64Attribute{
-				MarkdownDescription: `Минимально количество нод в Node group`,
+				MarkdownDescription: `Минимальное количество узлов в группе узлов`,
 				Computed:            true,
 			},
 			"max": schema.Int64Attribute{
-				MarkdownDescription: `Максимальное количество нод в Node group`,
+				MarkdownDescription: `Максимальное количество узлов в группе узлов`,
 				Computed:            true,
 			},
 		},

@@ -97,23 +97,23 @@ func RouteAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.RouteOp
 	return &t, diags
 }
 
-func RouteTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Route) (*apimodel.RouteRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func RouteTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Route) (*apimodel.RouteRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.RouteRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfcommon.CommonTypedResourceMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -121,15 +121,15 @@ func RouteTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Route) (*apimodel
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.Destination.IsNull() && !tm.Destination.IsUnknown() {
-		destinationTfModel := tfmodel.RouteDestination{}
-		destinationDiag := tm.Destination.As(ctx, &destinationTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, destinationDiag...)
+	if !plan.Destination.IsNull() && !plan.Destination.IsUnknown() {
+		destinationPlan := tfmodel.RouteDestination{}
+		destinationPlanDiag := plan.Destination.As(ctx, &destinationPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, destinationPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		destinationTmp, destinationDiag := RouteDestinationTFToAPIRequestModel(ctx, &destinationTfModel)
+		destinationTmp, destinationDiag := RouteDestinationTFToAPIRequestModel(ctx, &destinationPlan)
 		diags = append(diags, destinationDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -137,15 +137,15 @@ func RouteTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Route) (*apimodel
 		am.Spec.Destination = *destinationTmp
 	}
 
-	if !tm.NextHop.IsNull() && !tm.NextHop.IsUnknown() {
-		nextHopTfModel := tfmodel.RouteNextHop{}
-		nextHopDiag := tm.NextHop.As(ctx, &nextHopTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, nextHopDiag...)
+	if !plan.NextHop.IsNull() && !plan.NextHop.IsUnknown() {
+		nextHopPlan := tfmodel.RouteNextHop{}
+		nextHopPlanDiag := plan.NextHop.As(ctx, &nextHopPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, nextHopPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		nextHopTmp, nextHopDiag := RouteNextHopTFToAPIRequestModel(ctx, &nextHopTfModel)
+		nextHopTmp, nextHopDiag := RouteNextHopTFToAPIRequestModel(ctx, &nextHopPlan)
 		diags = append(diags, nextHopDiag...)
 		if diags.HasError() {
 			return nil, diags

@@ -108,15 +108,15 @@ func (m *CertificateResource) Configure(ctx context.Context, req resource.Config
 func (m *CertificateResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "CertificateResource.Create")
 
-	var data tfmodel.CertificateModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.CertificateModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	var specSelfManagedVersion types.Int64
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -124,17 +124,17 @@ func (m *CertificateResource) Create(ctx context.Context, req resource.CreateReq
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CertificateResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.CertificateTFToAPIRequestModel(ctx, &data.Certificate)
+	body, diags := conv.CertificateTFToAPIRequestModel(ctx, &plan.Certificate)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CertificateResource.TFToAPI")
@@ -174,8 +174,8 @@ func (m *CertificateResource) Create(ctx context.Context, req resource.CreateReq
 	apiRes, err := m.sdk.CreateCertificate(
 		ctx,
 		client.UpsertCertificateRequest{
-			Project: data.ProjectParam.ValueString(),
-			Name:    data.NameParam.ValueString(),
+			Project: plan.ProjectParam.ValueString(),
+			Name:    plan.NameParam.ValueString(),
 			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
@@ -188,7 +188,7 @@ func (m *CertificateResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.CertificateAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -197,9 +197,9 @@ func (m *CertificateResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	data.Certificate = *tfRes
+	plan.Certificate = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 	if !specSelfManagedVersion.IsNull() && !specSelfManagedVersion.IsUnknown() {
 		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("self_managed_version"), specSelfManagedVersion)...)
 	}
@@ -208,15 +208,15 @@ func (m *CertificateResource) Create(ctx context.Context, req resource.CreateReq
 func (m *CertificateResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "CertificateResource.Read")
 
-	var data tfmodel.CertificateModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.CertificateModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	var specSelfManagedVersion types.Int64
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -224,14 +224,14 @@ func (m *CertificateResource) Read(ctx context.Context, req resource.ReadRequest
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetCertificate(
 		ctx,
 		client.GetCertificateRequest{
-			Project: data.ProjectParam.ValueString(),
-			Name:    data.NameParam.ValueString(),
+			Project: state.ProjectParam.ValueString(),
+			Name:    state.NameParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -242,7 +242,7 @@ func (m *CertificateResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.CertificateAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -251,9 +251,9 @@ func (m *CertificateResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
-	data.Certificate = *tfRes
+	state.Certificate = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 	resp.Diagnostics.Append(req.State.GetAttribute(ctx, tfpath.Root("self_managed_version"), &specSelfManagedVersion)...)
 	if !specSelfManagedVersion.IsNull() && !specSelfManagedVersion.IsUnknown() {
 		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("self_managed_version"), specSelfManagedVersion)...)
@@ -263,15 +263,21 @@ func (m *CertificateResource) Read(ctx context.Context, req resource.ReadRequest
 func (m *CertificateResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "CertificateResource.Update")
 
-	var data tfmodel.CertificateModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.CertificateModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	var state tfmodel.CertificateModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
 	var specSelfManagedVersion types.Int64
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -279,24 +285,24 @@ func (m *CertificateResource) Update(ctx context.Context, req resource.UpdateReq
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CertificateResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.CertificateTFToAPIRequestModel(ctx, &data.Certificate)
+	body, diags := conv.CertificateTFToAPIUpdateRequestModel(ctx, &plan.Certificate, &state.Certificate)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CertificateResource.TFToAPI")
 		return
 	}
 
-	body, diags = func(ctx context.Context, planApiRequest *apimodel.CertificateRequest) (*apimodel.CertificateRequest, tfdiag.Diagnostics) {
+	body, diags = func(ctx context.Context, planApiRequest *apimodel.UpdateCertificateRequest) (*apimodel.UpdateCertificateRequest, tfdiag.Diagnostics) {
 
 		var configData tfmodel.CertificateModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
@@ -304,7 +310,7 @@ func (m *CertificateResource) Update(ctx context.Context, req resource.UpdateReq
 			return nil, resp.Diagnostics
 		}
 
-		configRequest, wdiags := conv.CertificateTFToAPIRequestModel(ctx, &configData.Certificate)
+		configRequest, wdiags := conv.CertificateTFToAPIUpdateRequestModel(ctx, &configData.Certificate, &state.Certificate)
 		if wdiags.HasError() {
 			return nil, wdiags
 		}
@@ -315,7 +321,7 @@ func (m *CertificateResource) Update(ctx context.Context, req resource.UpdateReq
 			return nil, resp.Diagnostics
 		}
 		if !specSelfManagedVersion.IsNull() && !specSelfManagedVersion.IsUnknown() {
-			planApiRequest.Spec.SelfManaged = configRequest.Spec.SelfManaged
+			planApiRequest.Spec.Value.SelfManaged = configRequest.Spec.Value.SelfManaged
 		}
 
 		return planApiRequest, nil
@@ -329,9 +335,9 @@ func (m *CertificateResource) Update(ctx context.Context, req resource.UpdateReq
 	apiRes, err := m.sdk.UpdateCertificate(
 		ctx,
 		client.UpdateCertificateRequest{
-			Project: data.ProjectParam.ValueString(),
-			Name:    data.NameParam.ValueString(),
-			Body:    body.AsUpdateModel(),
+			Project: plan.ProjectParam.ValueString(),
+			Name:    plan.NameParam.ValueString(),
+			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -343,7 +349,7 @@ func (m *CertificateResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.CertificateAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -352,9 +358,9 @@ func (m *CertificateResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	data.Certificate = *tfRes
+	plan.Certificate = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 	if !specSelfManagedVersion.IsNull() && !specSelfManagedVersion.IsUnknown() {
 		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("self_managed_version"), specSelfManagedVersion)...)
 	}
@@ -363,13 +369,13 @@ func (m *CertificateResource) Update(ctx context.Context, req resource.UpdateReq
 func (m *CertificateResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "CertificateResource.Delete")
 
-	var data tfmodel.CertificateModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.CertificateModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -377,10 +383,10 @@ func (m *CertificateResource) Delete(ctx context.Context, req resource.DeleteReq
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := state.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "CertificateResource.Timeouts")
@@ -390,8 +396,8 @@ func (m *CertificateResource) Delete(ctx context.Context, req resource.DeleteReq
 	err := m.sdk.DeleteCertificate(
 		ctx,
 		client.DeleteCertificateRequest{
-			Project: data.ProjectParam.ValueString(),
-			Name:    data.NameParam.ValueString(),
+			Project: state.ProjectParam.ValueString(),
+			Name:    state.NameParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -407,7 +413,7 @@ func (m *CertificateResource) Delete(ctx context.Context, req resource.DeleteReq
 func (m *CertificateResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "CertificateResource.ImportState")
 
-	var data tfmodel.CertificateModel
+	var state tfmodel.CertificateModel
 
 	ref, err := certmanagerref.ParseCertificateRef(ctx, req.ID)
 	if err != nil {
@@ -432,7 +438,7 @@ func (m *CertificateResource) ImportState(ctx context.Context, req resource.Impo
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Id.ID())
 
 	tfRes, diags := conv.CertificateAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -441,10 +447,10 @@ func (m *CertificateResource) ImportState(ctx context.Context, req resource.Impo
 		return
 	}
 
-	data.Certificate = *tfRes
+	state.Certificate = *tfRes
 
-	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.NameParam = types.StringValue(ref.GetName())
+	state.ProjectParam = types.StringValue(ref.GetProject())
+	state.NameParam = types.StringValue(ref.GetName())
 
 	var rwTimeouts timeouts.Value
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
@@ -452,7 +458,7 @@ func (m *CertificateResource) ImportState(ctx context.Context, req resource.Impo
 		tflog.Debug(ctx, "CertificateResource.timeouts.GetAttribute")
 		return
 	}
-	data.Timeouts = rwTimeouts
+	state.Timeouts = rwTimeouts
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

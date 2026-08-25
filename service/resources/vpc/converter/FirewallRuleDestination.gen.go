@@ -43,28 +43,71 @@ func FirewallRuleDestinationAPIOptionalResponseToTFModel(ctx context.Context, am
 	return &t, diags
 }
 
-func FirewallRuleDestinationTFToAPIRequestModel(ctx context.Context, tm *tfmodel.FirewallRuleDestination) (*apimodel.FirewallRuleDestinationRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func FirewallRuleDestinationTFToAPIRequestModel(ctx context.Context, plan *tfmodel.FirewallRuleDestination) (*apimodel.FirewallRuleDestinationRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.FirewallRuleDestinationRequest
 
-	if !tm.Spec.IsNull() && !tm.Spec.IsUnknown() {
-		specTfModel := tfmodel.FirewallRuleDestinationSpec{}
-		specDiag := tm.Spec.As(ctx, &specTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, specDiag...)
+	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
+		specPlan := tfmodel.FirewallRuleDestinationSpec{}
+		specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, specPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		specTmp, specDiag := FirewallRuleDestinationSpecTFToAPIRequestModel(ctx, &specTfModel)
+		specTmp, specDiag := FirewallRuleDestinationSpecTFToAPIRequestModel(ctx, &specPlan)
 		diags = append(diags, specDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.Spec = specTmp
+	}
+
+	return &am, diags
+}
+
+func FirewallRuleDestinationTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.FirewallRuleDestination) (*apimodel.UpdateFirewallRuleDestinationRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.FirewallRuleDestination{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateFirewallRuleDestinationRequest
+
+	if !plan.Spec.Equal(state.Spec) {
+		if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
+			specPlan := tfmodel.FirewallRuleDestinationSpec{}
+			specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, specPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			specState := tfmodel.FirewallRuleDestinationSpec{}
+			if !state.Spec.IsNull() && !state.Spec.IsUnknown() {
+				specStateDiag := state.Spec.As(ctx, &specState, basetypes.ObjectAsOptions{})
+				diags = append(diags, specStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			specTmp, specDiag := FirewallRuleDestinationSpecTFToAPIUpdateRequestModel(ctx, &specPlan, &specState)
+			diags = append(diags, specDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Spec.SetTo(*specTmp)
+		} else if plan.Spec.IsNull() {
+			am.Spec.SetToNull()
+		}
 	}
 
 	return &am, diags

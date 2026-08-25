@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	localobjectplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/objectplanmodifier"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
@@ -58,9 +57,6 @@ func (s *EgressNat) GetSchema() schema.Schema {
 				Attributes:          new(EgressNatSpecPortAllocation).GetSchema().Attributes,
 				MarkdownDescription: `Описывает настройки управления портами`,
 				Optional:            true,
-				PlanModifiers: []planmodifier.Object{
-					localobjectplanmodifier.RequiresReplaceIfRemoved(),
-				},
 			},
 		},
 	}

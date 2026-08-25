@@ -24,7 +24,7 @@ func TestKafkaEndpointResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.KafkaEndpointRequest{
 		Name:            "name",
-		Network:         vpc.NewNetworkRef("projectID", "networkID"),
+		Network:         vpc.NewMustNetworkRef("projectID", "networkID"),
 		BrokerAddresses: []apimodel.KafkaEndpointBrokerAddressRequest{},
 	}
 

@@ -120,25 +120,26 @@ func SubnetDhcpOptionsAPIResponseToTFModel(ctx context.Context, am *apimodel.Sub
 	return &t, diags
 }
 
-func SubnetDhcpOptionsTFToAPIRequestModel(ctx context.Context, tm *tfmodel.SubnetDhcpOptions) (*apimodel.SubnetDhcpOptionsRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func SubnetDhcpOptionsTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SubnetDhcpOptions) (*apimodel.SubnetDhcpOptionsRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.SubnetDhcpOptionsRequest
 
-	if !tm.DomainName.IsNull() && !tm.DomainName.IsUnknown() {
-		am.DomainName = tm.DomainName.ValueStringPointer()
+	if !plan.DomainName.IsNull() && !plan.DomainName.IsUnknown() {
+		am.DomainName = plan.DomainName.ValueStringPointer()
 	}
 
-	if !tm.DomainNameServers.IsNull() && !tm.DomainNameServers.IsUnknown() {
+	if !plan.DomainNameServers.IsNull() && !plan.DomainNameServers.IsUnknown() {
 		domainNameServers := make([]types.String, 0)
-		dDomainNameServers := tm.DomainNameServers.ElementsAs(ctx, &domainNameServers, false)
+		dDomainNameServers := plan.DomainNameServers.ElementsAs(ctx, &domainNameServers, false)
 		diags = append(diags, dDomainNameServers...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.DomainNameServers = make([]ipaddress.IP4Address, 0, len(domainNameServers))
 
 		for _, entity := range domainNameServers {
@@ -151,13 +152,14 @@ func SubnetDhcpOptionsTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Subne
 		}
 	}
 
-	if !tm.NtpServers.IsNull() && !tm.NtpServers.IsUnknown() {
+	if !plan.NtpServers.IsNull() && !plan.NtpServers.IsUnknown() {
 		ntpServers := make([]types.String, 0)
-		dNtpServers := tm.NtpServers.ElementsAs(ctx, &ntpServers, false)
+		dNtpServers := plan.NtpServers.ElementsAs(ctx, &ntpServers, false)
 		diags = append(diags, dNtpServers...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.NtpServers = make([]ipaddress.IP4Address, 0, len(ntpServers))
 
 		for _, entity := range ntpServers {

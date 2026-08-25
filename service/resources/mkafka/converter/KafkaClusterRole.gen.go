@@ -29,21 +29,46 @@ func KafkaClusterRoleAPIResponseToTFModel(ctx context.Context, am *apimodel.Kafk
 	return &t, diags
 }
 
-func KafkaClusterRoleTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaClusterRole) (*apimodel.KafkaClusterRoleRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func KafkaClusterRoleTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaClusterRole) (*apimodel.KafkaClusterRoleRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaClusterRoleRequest
 
-	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		nameTmp, nameDiag := KafkaClusterRoleNameTFToAPIModel(ctx, tm.Name)
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		nameTmp, nameDiag := KafkaClusterRoleNameTFToAPIModel(ctx, plan.Name)
 		diags = append(diags, nameDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.Name = *nameTmp
+	}
+
+	return &am, diags
+}
+
+func KafkaClusterRoleTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaClusterRole) (*apimodel.UpdateKafkaClusterRoleRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.KafkaClusterRole{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateKafkaClusterRoleRequest
+
+	if !plan.Name.Equal(state.Name) {
+		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+			nameTmp, nameDiag := KafkaClusterRoleNameTFToAPIModel(ctx, plan.Name)
+			diags = append(diags, nameDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Name.SetTo(*nameTmp)
+		}
 	}
 
 	return &am, diags

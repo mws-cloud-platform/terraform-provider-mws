@@ -23,7 +23,7 @@ func TestEncryptionSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 func TestEncryptionSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.EncryptionSpecRequest{
-		CryptoKeyId: kms.NewCryptoKeyRef("projectID", "keyID"),
+		CryptoKeyId: kms.NewMustCryptoKeyRef("projectID", "keyID"),
 	}
 
 	emptyApiModelResponse, err := apimodel.EncryptionSpecRequestToOptionalResponse(&emptyApiModelRequest)

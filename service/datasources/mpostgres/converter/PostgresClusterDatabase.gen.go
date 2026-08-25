@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	common "go.mws.cloud/go-sdk/service/common/model"
+	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
 	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
 	"go.mws.cloud/go-sdk/service/resources/references/mpostgres"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -126,23 +126,23 @@ func PostgresClusterDatabaseAPIResponseToTFModel(ctx context.Context, am *apimod
 	return &t, diags
 }
 
-func PostgresClusterDatabaseTFToAPIRequestModel(ctx context.Context, tm *tfmodel.PostgresClusterDatabase) (*apimodel.PostgresClusterDatabaseRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func PostgresClusterDatabaseTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresClusterDatabase) (*apimodel.PostgresClusterDatabaseRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.PostgresClusterDatabaseRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfmodel.PostgresClusterDatabaseMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfmodel.PostgresClusterDatabaseMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := PostgresClusterDatabaseMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := PostgresClusterDatabaseMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -150,8 +150,8 @@ func PostgresClusterDatabaseTFToAPIRequestModel(ctx context.Context, tm *tfmodel
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.Owner.IsNull() && !tm.Owner.IsUnknown() {
-		ownerRef, err := mpostgres.ParsePostgresClusterUserRef(ctx, tm.Owner.ValueString())
+	if !plan.Owner.IsNull() && !plan.Owner.IsUnknown() {
+		ownerRef, err := mpostgres.ParsePostgresClusterUserRef(ctx, plan.Owner.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -159,16 +159,16 @@ func PostgresClusterDatabaseTFToAPIRequestModel(ctx context.Context, tm *tfmodel
 		am.Spec.Owner = ownerRef
 	}
 
-	if !tm.LcCollate.IsNull() && !tm.LcCollate.IsUnknown() {
-		am.Spec.LcCollate = tm.LcCollate.ValueStringPointer()
+	if !plan.LcCollate.IsNull() && !plan.LcCollate.IsUnknown() {
+		am.Spec.LcCollate = plan.LcCollate.ValueStringPointer()
 	}
 
-	if !tm.LcCtype.IsNull() && !tm.LcCtype.IsUnknown() {
-		am.Spec.LcCtype = tm.LcCtype.ValueStringPointer()
+	if !plan.LcCtype.IsNull() && !plan.LcCtype.IsUnknown() {
+		am.Spec.LcCtype = plan.LcCtype.ValueStringPointer()
 	}
 
-	if !tm.Template.IsNull() && !tm.Template.IsUnknown() {
-		templateRef, err := mpostgres.ParsePostgresClusterDatabaseRef(ctx, tm.Template.ValueString())
+	if !plan.Template.IsNull() && !plan.Template.IsUnknown() {
+		templateRef, err := mpostgres.ParsePostgresClusterDatabaseRef(ctx, plan.Template.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -176,17 +176,18 @@ func PostgresClusterDatabaseTFToAPIRequestModel(ctx context.Context, tm *tfmodel
 		am.Spec.Template = &templateRef
 	}
 
-	if !tm.DeletionProtection.IsNull() && !tm.DeletionProtection.IsUnknown() {
-		am.Spec.DeletionProtection = tm.DeletionProtection.ValueBoolPointer()
+	if !plan.DeletionProtection.IsNull() && !plan.DeletionProtection.IsUnknown() {
+		am.Spec.DeletionProtection = plan.DeletionProtection.ValueBoolPointer()
 	}
 
-	if !tm.Extensions.IsNull() && !tm.Extensions.IsUnknown() {
+	if !plan.Extensions.IsNull() && !plan.Extensions.IsUnknown() {
 		extensions := make([]tfmodel.PostgresExtensionSpec, 0)
-		dExtensions := tm.Extensions.ElementsAs(ctx, &extensions, false)
+		dExtensions := plan.Extensions.ElementsAs(ctx, &extensions, false)
 		diags = append(diags, dExtensions...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.Spec.Extensions = make([]apimodel.PostgresExtensionSpecRequest, 0, len(extensions))
 
 		for _, entity := range extensions {
@@ -276,26 +277,27 @@ func PostgresClusterDatabaseMetadataAPIResponseToTFModel(ctx context.Context, am
 	return &t, diags
 }
 
-func PostgresClusterDatabaseMetadataTFToAPIRequestModel(ctx context.Context, tm *tfmodel.PostgresClusterDatabaseMetadata) (*apimodel.PostgresClusterDatabaseMetadataRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func PostgresClusterDatabaseMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresClusterDatabaseMetadata) (*apimodel.PostgresClusterDatabaseMetadataRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.PostgresClusterDatabaseMetadataRequest
 
-	if !tm.DisplayName.IsNull() && !tm.DisplayName.IsUnknown() {
-		am.DisplayName = tm.DisplayName.ValueStringPointer()
+	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
+		am.DisplayName = plan.DisplayName.ValueStringPointer()
 	}
 
-	if !tm.Usages.IsNull() && !tm.Usages.IsUnknown() {
+	if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
 		usages := make([]tfcommon.TypedUsage, 0)
-		dUsages := tm.Usages.ElementsAs(ctx, &usages, false)
+		dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
 		diags = append(diags, dUsages...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.Usages = make([]common.TypedUsageRequest, 0, len(usages))
+
+		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
@@ -307,8 +309,8 @@ func PostgresClusterDatabaseMetadataTFToAPIRequestModel(ctx context.Context, tm 
 		}
 	}
 
-	if !tm.Description.IsNull() && !tm.Description.IsUnknown() {
-		am.Description = tm.Description.ValueStringPointer()
+	if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
+		am.Description = plan.Description.ValueStringPointer()
 	}
 
 	return &am, diags

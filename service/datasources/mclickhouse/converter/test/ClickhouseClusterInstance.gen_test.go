@@ -24,7 +24,7 @@ func TestClickhouseClusterInstanceOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.ClickhouseClusterInstanceRequest{
 		Name: "name",
-		Zone: rm.NewZoneRef("zoneID"),
+		Zone: rm.NewMustZoneRef("zoneID"),
 	}
 
 	emptyApiModelResponse, err := apimodel.ClickhouseClusterInstanceRequestToOptionalResponse(&emptyApiModelRequest)

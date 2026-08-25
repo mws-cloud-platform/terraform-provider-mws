@@ -8,8 +8,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
 	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
 func TestPostgresClusterBackupAPIResponseToTFModelEmpty(t *testing.T) {
@@ -36,4 +39,24 @@ func TestPostgresClusterBackupResponseConverters(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
+}
+
+func TestUpdatePostgresClusterBackupRequestConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.PostgresClusterBackup
+	var stateTfModel tfmodel.PostgresClusterBackup
+	stateTfModel.Daily = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.PostgresClusterBackupDaily).GetSchema().Attributes))
+
+	expectedUpdateModel := &apimodel.UpdatePostgresClusterBackupRequest{
+		Daily: optional.OptionalNil[apimodel.UpdatePostgresClusterBackupDailyRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
+
+	result, diags := conv.PostgresClusterBackupTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

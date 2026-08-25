@@ -25,11 +25,11 @@ func DataDiskTypeAPIToTFModel(ctx context.Context, am *apimodel.DataDiskType) (t
 	return t, diags
 }
 
-func DataDiskTypeTFToAPIModel(ctx context.Context, tm tfmodel.DataDiskType) (*apimodel.DataDiskType, tfdiag.Diagnostics) {
+func DataDiskTypeTFToAPIModel(ctx context.Context, plan tfmodel.DataDiskType) (*apimodel.DataDiskType, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am apimodel.DataDiskType
 
-	var tmp = types.String(tm)
+	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}

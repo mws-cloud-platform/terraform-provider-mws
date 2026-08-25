@@ -31,8 +31,8 @@ func CryptoKeyVersionSpecDestructionPolicyAPIOptionalResponseToTFModel(ctx conte
 	return &t, diags
 }
 
-func CryptoKeyVersionSpecDestructionPolicyTFToAPIRequestModel(ctx context.Context, tm *tfmodel.CryptoKeyVersionSpecDestructionPolicy) (*apimodel.CryptoKeyVersionSpecDestructionPolicyRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func CryptoKeyVersionSpecDestructionPolicyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CryptoKeyVersionSpecDestructionPolicy) (*apimodel.CryptoKeyVersionSpecDestructionPolicyRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
@@ -59,16 +59,16 @@ func CryptoKeyVersionSpecUsagePolicyAPIOptionalResponseToTFModel(ctx context.Con
 	return &t, diags
 }
 
-func CryptoKeyVersionSpecUsagePolicyTFToAPIRequestModel(ctx context.Context, tm *tfmodel.CryptoKeyVersionSpecUsagePolicy) (*apimodel.CryptoKeyVersionSpecUsagePolicyRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func CryptoKeyVersionSpecUsagePolicyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CryptoKeyVersionSpecUsagePolicy) (*apimodel.CryptoKeyVersionSpecUsagePolicyRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.CryptoKeyVersionSpecUsagePolicyRequest
 
-	if !tm.Enabled.IsNull() && !tm.Enabled.IsUnknown() {
-		am.Enabled = tm.Enabled.ValueBoolPointer()
+	if !plan.Enabled.IsNull() && !plan.Enabled.IsUnknown() {
+		am.Enabled = plan.Enabled.ValueBoolPointer()
 	}
 
 	return &am, diags

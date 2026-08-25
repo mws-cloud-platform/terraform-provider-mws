@@ -69,16 +69,16 @@ func StorageDiskSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimod
 	return &t, diags
 }
 
-func StorageDiskSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.StorageDiskSpec) (*apimodel.StorageDiskSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func StorageDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.StorageDiskSpec) (*apimodel.StorageDiskSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.StorageDiskSpecRequest
 
-	if !tm.Size.IsNull() && !tm.Size.IsUnknown() {
-		tmpSize, err := bytesize.ParseString(tm.Size.ValueString())
+	if !plan.Size.IsNull() && !plan.Size.IsUnknown() {
+		tmpSize, err := bytesize.ParseString(plan.Size.ValueString())
 		if err != nil {
 			diags.AddError("ByteSize string parsing", err.Error())
 			return nil, diags
@@ -86,15 +86,15 @@ func StorageDiskSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Storage
 		am.Size = &tmpSize
 	}
 
-	if !tm.Source.IsNull() && !tm.Source.IsUnknown() {
-		sourceTfModel := tfmodel.StorageDiskSpecSource{}
-		sourceDiag := tm.Source.As(ctx, &sourceTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, sourceDiag...)
+	if !plan.Source.IsNull() && !plan.Source.IsUnknown() {
+		sourcePlan := tfmodel.StorageDiskSpecSource{}
+		sourcePlanDiag := plan.Source.As(ctx, &sourcePlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, sourcePlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		sourceTmp, sourceDiag := StorageDiskSpecSourceTFToAPIRequestModel(ctx, &sourceTfModel)
+		sourceTmp, sourceDiag := StorageDiskSpecSourceTFToAPIRequestModel(ctx, &sourcePlan)
 		diags = append(diags, sourceDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -102,8 +102,8 @@ func StorageDiskSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Storage
 		am.Source = sourceTmp
 	}
 
-	if !tm.DiskType.IsNull() && !tm.DiskType.IsUnknown() {
-		diskTypeRef, err := compute.ParseDiskTypeRef(ctx, tm.DiskType.ValueString())
+	if !plan.DiskType.IsNull() && !plan.DiskType.IsUnknown() {
+		diskTypeRef, err := compute.ParseDiskTypeRef(ctx, plan.DiskType.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -111,8 +111,8 @@ func StorageDiskSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Storage
 		am.DiskType = &diskTypeRef
 	}
 
-	if !tm.Iops.IsNull() && !tm.Iops.IsUnknown() {
-		iopsTmp, iopsDiag := IopsTFToAPIModel(ctx, tm.Iops)
+	if !plan.Iops.IsNull() && !plan.Iops.IsUnknown() {
+		iopsTmp, iopsDiag := IopsTFToAPIModel(ctx, plan.Iops)
 		diags = append(diags, iopsDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -146,16 +146,16 @@ func StorageDiskSpecSourceAPIOptionalResponseToTFModel(ctx context.Context, am *
 	return &t, diags
 }
 
-func StorageDiskSpecSourceTFToAPIRequestModel(ctx context.Context, tm *tfmodel.StorageDiskSpecSource) (*apimodel.StorageDiskSpecSourceRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func StorageDiskSpecSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.StorageDiskSpecSource) (*apimodel.StorageDiskSpecSourceRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.StorageDiskSpecSourceRequest
 
-	if !tm.Image.IsNull() && !tm.Image.IsUnknown() {
-		imageRef, err := compute.ParseImageRef(ctx, tm.Image.ValueString())
+	if !plan.Image.IsNull() && !plan.Image.IsUnknown() {
+		imageRef, err := compute.ParseImageRef(ctx, plan.Image.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -163,8 +163,8 @@ func StorageDiskSpecSourceTFToAPIRequestModel(ctx context.Context, tm *tfmodel.S
 		am.Image = &imageRef
 	}
 
-	if !tm.DiskBackup.IsNull() && !tm.DiskBackup.IsUnknown() {
-		diskBackupRef, err := compute.ParseDiskBackupRef(ctx, tm.DiskBackup.ValueString())
+	if !plan.DiskBackup.IsNull() && !plan.DiskBackup.IsUnknown() {
+		diskBackupRef, err := compute.ParseDiskBackupRef(ctx, plan.DiskBackup.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags

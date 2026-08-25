@@ -39,28 +39,69 @@ func ComputeOneToOneNatSpecAPIOptionalResponseToTFModel(ctx context.Context, am 
 	return &t, diags
 }
 
-func ComputeOneToOneNatSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ComputeOneToOneNatSpec) (*apimodel.ComputeOneToOneNatSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ComputeOneToOneNatSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ComputeOneToOneNatSpec) (*apimodel.ComputeOneToOneNatSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ComputeOneToOneNatSpecRequest
 
-	if !tm.External.IsNull() && !tm.External.IsUnknown() {
-		externalTfModel := tfmodel.ComputeOneToOneNatSpecExternal{}
-		externalDiag := tm.External.As(ctx, &externalTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, externalDiag...)
+	if !plan.External.IsNull() && !plan.External.IsUnknown() {
+		externalPlan := tfmodel.ComputeOneToOneNatSpecExternal{}
+		externalPlanDiag := plan.External.As(ctx, &externalPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, externalPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		externalTmp, externalDiag := ComputeOneToOneNatSpecExternalTFToAPIRequestModel(ctx, &externalTfModel)
+		externalTmp, externalDiag := ComputeOneToOneNatSpecExternalTFToAPIRequestModel(ctx, &externalPlan)
 		diags = append(diags, externalDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.External = *externalTmp
+	}
+
+	return &am, diags
+}
+
+func ComputeOneToOneNatSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ComputeOneToOneNatSpec) (*apimodel.UpdateComputeOneToOneNatSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.ComputeOneToOneNatSpec{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateComputeOneToOneNatSpecRequest
+
+	if !plan.External.Equal(state.External) {
+		if !plan.External.IsNull() && !plan.External.IsUnknown() {
+			externalPlan := tfmodel.ComputeOneToOneNatSpecExternal{}
+			externalPlanDiag := plan.External.As(ctx, &externalPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, externalPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			externalState := tfmodel.ComputeOneToOneNatSpecExternal{}
+			if !state.External.IsNull() && !state.External.IsUnknown() {
+				externalStateDiag := state.External.As(ctx, &externalState, basetypes.ObjectAsOptions{})
+				diags = append(diags, externalStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			externalTmp, externalDiag := ComputeOneToOneNatSpecExternalTFToAPIUpdateRequestModel(ctx, &externalPlan, &externalState)
+			diags = append(diags, externalDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.External.SetTo(*externalTmp)
+		}
 	}
 
 	return &am, diags
@@ -91,28 +132,69 @@ func ComputeOneToOneNatSpecExternalAPIOptionalResponseToTFModel(ctx context.Cont
 	return &t, diags
 }
 
-func ComputeOneToOneNatSpecExternalTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ComputeOneToOneNatSpecExternal) (*apimodel.ComputeOneToOneNatSpecExternalRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ComputeOneToOneNatSpecExternalTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ComputeOneToOneNatSpecExternal) (*apimodel.ComputeOneToOneNatSpecExternalRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ComputeOneToOneNatSpecExternalRequest
 
-	if !tm.Address.IsNull() && !tm.Address.IsUnknown() {
-		addressTfModel := tfmodel.OneToOneNatAddressSpecOrRef{}
-		addressDiag := tm.Address.As(ctx, &addressTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, addressDiag...)
+	if !plan.Address.IsNull() && !plan.Address.IsUnknown() {
+		addressPlan := tfmodel.OneToOneNatAddressSpecOrRef{}
+		addressPlanDiag := plan.Address.As(ctx, &addressPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, addressPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		addressTmp, addressDiag := OneToOneNatAddressSpecOrRefTFToAPIRequestModel(ctx, &addressTfModel)
+		addressTmp, addressDiag := OneToOneNatAddressSpecOrRefTFToAPIRequestModel(ctx, &addressPlan)
 		diags = append(diags, addressDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		am.Address = *addressTmp
+	}
+
+	return &am, diags
+}
+
+func ComputeOneToOneNatSpecExternalTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ComputeOneToOneNatSpecExternal) (*apimodel.UpdateComputeOneToOneNatSpecExternalRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.ComputeOneToOneNatSpecExternal{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateComputeOneToOneNatSpecExternalRequest
+
+	if !plan.Address.Equal(state.Address) {
+		if !plan.Address.IsNull() && !plan.Address.IsUnknown() {
+			addressPlan := tfmodel.OneToOneNatAddressSpecOrRef{}
+			addressPlanDiag := plan.Address.As(ctx, &addressPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, addressPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			addressState := tfmodel.OneToOneNatAddressSpecOrRef{}
+			if !state.Address.IsNull() && !state.Address.IsUnknown() {
+				addressStateDiag := state.Address.As(ctx, &addressState, basetypes.ObjectAsOptions{})
+				diags = append(diags, addressStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			addressTmp, addressDiag := OneToOneNatAddressSpecOrRefTFToAPIUpdateRequestModel(ctx, &addressPlan, &addressState)
+			diags = append(diags, addressDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Address.SetTo(*addressTmp)
+		}
 	}
 
 	return &am, diags

@@ -25,11 +25,11 @@ func ResourceStatusStateAPIToTFModel(ctx context.Context, am *commonapimodel.Res
 	return t, diags
 }
 
-func ResourceStatusStateTFToAPIModel(ctx context.Context, tm tfcommon.ResourceStatusState) (*commonapimodel.ResourceStatusState, tfdiag.Diagnostics) {
+func ResourceStatusStateTFToAPIModel(ctx context.Context, plan tfcommon.ResourceStatusState) (*commonapimodel.ResourceStatusState, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.ResourceStatusState
 
-	var tmp = types.String(tm)
+	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}

@@ -64,49 +64,131 @@ func TypedUsageAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimo
 	return &t, diags
 }
 
-func TypedUsageTFToAPIModel(ctx context.Context, tm *tfcommon.TypedUsage) (*commonapimodel.TypedUsage, tfdiag.Diagnostics) {
-	if tm == nil {
+func TypedUsageTFToAPIModel(ctx context.Context, plan *tfcommon.TypedUsage) (*commonapimodel.TypedUsage, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.TypedUsage
 
-	if !tm.UsageType.IsNull() && !tm.UsageType.IsUnknown() {
-		am.UsageType = tm.UsageType.ValueString()
+	if !plan.UsageType.IsNull() && !plan.UsageType.IsUnknown() {
+		am.UsageType = plan.UsageType.ValueString()
 	}
 
-	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		am.Name = tm.Name.ValueString()
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		am.Name = plan.Name.ValueString()
 	}
 
-	if !tm.Resource.IsNull() && !tm.Resource.IsUnknown() {
-		resourceID := resmodels.ParseAnyResourceID(tm.Resource.ValueString())
+	if !plan.Resource.IsNull() && !plan.Resource.IsUnknown() {
+		resourceID, err := resmodels.ParseAnyResourceID(plan.Resource.ValueString())
+		if err != nil {
+			diags.AddError("reference parsing", err.Error())
+			return nil, diags
+		}
 		am.Resource = resourceID
 	}
 
 	return &am, diags
 }
 
-func TypedUsageTFToAPIRequestModel(ctx context.Context, tm *tfcommon.TypedUsage) (*commonapimodel.TypedUsageRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func TypedUsageTFToAPIRequestModel(ctx context.Context, plan *tfcommon.TypedUsage) (*commonapimodel.TypedUsageRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.TypedUsageRequest
 
-	if !tm.UsageType.IsNull() && !tm.UsageType.IsUnknown() {
-		am.UsageType = tm.UsageType.ValueString()
+	if !plan.UsageType.IsNull() && !plan.UsageType.IsUnknown() {
+		am.UsageType = plan.UsageType.ValueString()
 	}
 
-	if !tm.Name.IsNull() && !tm.Name.IsUnknown() {
-		am.Name = tm.Name.ValueString()
+	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+		am.Name = plan.Name.ValueString()
 	}
 
-	if !tm.Resource.IsNull() && !tm.Resource.IsUnknown() {
-		resourceID := resmodels.ParseAnyResourceID(tm.Resource.ValueString())
+	if !plan.Resource.IsNull() && !plan.Resource.IsUnknown() {
+		resourceID, err := resmodels.ParseAnyResourceID(plan.Resource.ValueString())
+		if err != nil {
+			diags.AddError("reference parsing", err.Error())
+			return nil, diags
+		}
 		am.Resource = resourceID
+	}
+
+	return &am, diags
+}
+
+func TypedUsageTFToAPIUpdateModel(ctx context.Context, plan, state *tfcommon.TypedUsage) (*commonapimodel.UpdateTypedUsage, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfcommon.TypedUsage{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am commonapimodel.UpdateTypedUsage
+
+	if !plan.UsageType.Equal(state.UsageType) {
+		if !plan.UsageType.IsNull() && !plan.UsageType.IsUnknown() {
+			am.UsageType.SetTo(plan.UsageType.ValueString())
+		}
+	}
+
+	if !plan.Name.Equal(state.Name) {
+		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+			am.Name.SetTo(plan.Name.ValueString())
+		}
+	}
+
+	if !plan.Resource.Equal(state.Resource) {
+		if !plan.Resource.IsNull() && !plan.Resource.IsUnknown() {
+			resourceID, err := resmodels.ParseAnyResourceID(plan.Resource.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.Resource.SetTo(resourceID)
+		}
+	}
+
+	return &am, diags
+}
+
+func TypedUsageTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfcommon.TypedUsage) (*commonapimodel.UpdateTypedUsageRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfcommon.TypedUsage{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am commonapimodel.UpdateTypedUsageRequest
+
+	if !plan.UsageType.Equal(state.UsageType) {
+		if !plan.UsageType.IsNull() && !plan.UsageType.IsUnknown() {
+			am.UsageType.SetTo(plan.UsageType.ValueString())
+		}
+	}
+
+	if !plan.Name.Equal(state.Name) {
+		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
+			am.Name.SetTo(plan.Name.ValueString())
+		}
+	}
+
+	if !plan.Resource.Equal(state.Resource) {
+		if !plan.Resource.IsNull() && !plan.Resource.IsUnknown() {
+			resourceID, err := resmodels.ParseAnyResourceID(plan.Resource.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.Resource.SetTo(resourceID)
+		}
 	}
 
 	return &am, diags

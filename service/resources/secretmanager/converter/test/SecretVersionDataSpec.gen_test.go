@@ -8,8 +8,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/apimodels/sensitive"
 	apimodel "go.mws.cloud/go-sdk/service/secretmanager/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager/converter"
+	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager/model"
 )
 
 func TestSecretVersionDataSpecAPIToTFModelEmpty(t *testing.T) {
@@ -21,7 +23,7 @@ func TestSecretVersionDataSpecAPIToTFModelEmpty(t *testing.T) {
 
 func TestSecretVersionDataSpecConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.SecretVersionDataSpec(make(map[string]string))
+	emptyApiModel := apimodel.SecretVersionDataSpec(make(map[string]sensitive.Sensitive[string]))
 
 	tfModel, diags := conv.SecretVersionDataSpecAPIToTFModel(context.Background(), emptyApiModel)
 	require.False(t, diags.HasError())
@@ -30,4 +32,16 @@ func TestSecretVersionDataSpecConverters(t *testing.T) {
 	require.False(t, diags.HasError())
 
 	require.Equal(t, emptyApiModel, result)
+}
+
+func TestUpdateSecretVersionDataSpecConverters(t *testing.T) {
+	t.Parallel()
+
+	var nullPlanTfModel tfmodel.SecretVersionDataSpec
+	var expectedUpdateModel apimodel.UpdateSecretVersionDataSpec
+
+	result, diags := conv.SecretVersionDataSpecTFToAPIUpdateModel(context.Background(), nullPlanTfModel)
+	require.False(t, diags.HasError())
+
+	require.Equal(t, expectedUpdateModel, result)
 }

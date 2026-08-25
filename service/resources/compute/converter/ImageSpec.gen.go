@@ -43,20 +43,20 @@ func ImageSpecSourceAPIOptionalResponseToTFModel(ctx context.Context, am *apimod
 	return &t, diags
 }
 
-func ImageSpecSourceTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ImageSpecSource) (*apimodel.ImageSpecSourceRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func ImageSpecSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ImageSpecSource) (*apimodel.ImageSpecSourceRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.ImageSpecSourceRequest
 
-	if !tm.ExternalUrl.IsNull() && !tm.ExternalUrl.IsUnknown() {
-		am.ExternalUrl = tm.ExternalUrl.ValueStringPointer()
+	if !plan.ExternalUrl.IsNull() && !plan.ExternalUrl.IsUnknown() {
+		am.ExternalUrl = plan.ExternalUrl.ValueStringPointer()
 	}
 
-	if !tm.DiskId.IsNull() && !tm.DiskId.IsUnknown() {
-		diskIdRef, err := compute.ParseDiskRef(ctx, tm.DiskId.ValueString())
+	if !plan.DiskId.IsNull() && !plan.DiskId.IsUnknown() {
+		diskIdRef, err := compute.ParseDiskRef(ctx, plan.DiskId.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -64,13 +64,55 @@ func ImageSpecSourceTFToAPIRequestModel(ctx context.Context, tm *tfmodel.ImageSp
 		am.DiskId = &diskIdRef
 	}
 
-	if !tm.ImageId.IsNull() && !tm.ImageId.IsUnknown() {
-		imageIdRef, err := compute.ParseImageRef(ctx, tm.ImageId.ValueString())
+	if !plan.ImageId.IsNull() && !plan.ImageId.IsUnknown() {
+		imageIdRef, err := compute.ParseImageRef(ctx, plan.ImageId.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
 		}
 		am.ImageId = &imageIdRef
+	}
+
+	return &am, diags
+}
+
+func ImageSpecSourceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ImageSpecSource) (*apimodel.UpdateImageSpecSourceRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.ImageSpecSource{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateImageSpecSourceRequest
+
+	if !plan.ExternalUrl.Equal(state.ExternalUrl) {
+		if !plan.ExternalUrl.IsNull() && !plan.ExternalUrl.IsUnknown() {
+			am.ExternalUrl.SetTo(plan.ExternalUrl.ValueString())
+		}
+	}
+
+	if !plan.DiskId.Equal(state.DiskId) {
+		if !plan.DiskId.IsNull() && !plan.DiskId.IsUnknown() {
+			diskIdRef, err := compute.ParseDiskRef(ctx, plan.DiskId.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.DiskId.SetTo(diskIdRef)
+		}
+	}
+
+	if !plan.ImageId.Equal(state.ImageId) {
+		if !plan.ImageId.IsNull() && !plan.ImageId.IsUnknown() {
+			imageIdRef, err := compute.ParseImageRef(ctx, plan.ImageId.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.ImageId.SetTo(imageIdRef)
+		}
 	}
 
 	return &am, diags

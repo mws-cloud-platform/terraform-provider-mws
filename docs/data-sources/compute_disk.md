@@ -39,6 +39,7 @@ data "mws_compute_disk" "disk" {
 Значение базовой единицы измерения (в байтах) должно оставаться целым.
 Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
 - `disk_type` (String) ID типа диска
+- `encryption` (Attributes) Способ шифрования ресурса (see [below for nested schema](#nestedatt--encryption))
 - `iops` (Number) Запрашиваемое пользователем количество операций ввода-вывода в секунду (IOPS)
 - `kind` (String) Тип объекта (disk)
 - `metadata` (Attributes) Дополнительная информация об объекте (see [below for nested schema](#nestedatt--metadata))
@@ -53,6 +54,14 @@ data "mws_compute_disk" "disk" {
 - `source` (Attributes) Источник для создания диска (see [below for nested schema](#nestedatt--source))
 - `status` (Attributes) Статус глобального диска (see [below for nested schema](#nestedatt--status))
 - `zone` (String) Зона доступности (ЦОД)
+
+<a id="nestedatt--encryption"></a>
+### Nested Schema for `encryption`
+
+Read-Only:
+
+- `crypto_key_id` (String) Идентификатор пользовательского ключа
+
 
 <a id="nestedatt--metadata"></a>
 ### Nested Schema for `metadata`
@@ -108,6 +117,7 @@ Read-Only:
 Значение базовой единицы измерения (в байтах) должно оставаться целым.
 Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
 - `disk_type` (String) ID типа диска
+- `encryption` (Attributes) Способ шифрования ресурса (see [below for nested schema](#nestedatt--status--encryption))
 - `initial_source_image` (String) Ссылка на исходный образ
 - `iops` (Attributes) Запрашиваемое базовое и дополнительное количество операций ввода-вывода в секунду (IOPS) (see [below for nested schema](#nestedatt--status--iops))
 - `linked_vms` (Attributes List) Информация о ВМ, использующих этот диск (see [below for nested schema](#nestedatt--status--linked_vms))
@@ -122,6 +132,16 @@ Read-Only:
 Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
 - `source_exists` (Boolean) Признак, указывающий, удален ли родительский ресурс-источник
 - `throughput` (String) Пропускная способность диска
+
+<a id="nestedatt--status--encryption"></a>
+### Nested Schema for `status.encryption`
+
+Read-Only:
+
+- `crypto_key_id` (String) Идентификатор пользовательского ключа
+- `key_activity` (String) Состояние ключа
+- `version` (Number) Версия пользовательского ключа
+
 
 <a id="nestedatt--status--iops"></a>
 ### Nested Schema for `status.iops`

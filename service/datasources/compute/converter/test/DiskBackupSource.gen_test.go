@@ -49,7 +49,7 @@ func TestDiskBackupSourceDiskAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 func TestDiskBackupSourceDiskOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.DiskBackupSourceDiskRequest{
-		Id: compute.NewDiskRef("projectID", "diskID"),
+		Id: compute.NewMustDiskRef("projectID", "diskID"),
 	}
 
 	emptyApiModelResponse, err := apimodel.DiskBackupSourceDiskRequestToOptionalResponse(&emptyApiModelRequest)

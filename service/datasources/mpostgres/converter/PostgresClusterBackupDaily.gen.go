@@ -30,16 +30,16 @@ func PostgresClusterBackupDailyAPIResponseToTFModel(ctx context.Context, am *api
 	return &t, diags
 }
 
-func PostgresClusterBackupDailyTFToAPIRequestModel(ctx context.Context, tm *tfmodel.PostgresClusterBackupDaily) (*apimodel.PostgresClusterBackupDailyRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func PostgresClusterBackupDailyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresClusterBackupDaily) (*apimodel.PostgresClusterBackupDailyRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.PostgresClusterBackupDailyRequest
 
-	if !tm.Hour.IsNull() && !tm.Hour.IsUnknown() {
-		am.Hour = ptr.Get(int(tm.Hour.ValueInt64()))
+	if !plan.Hour.IsNull() && !plan.Hour.IsUnknown() {
+		am.Hour = ptr.Get(int(plan.Hour.ValueInt64()))
 	}
 
 	return &am, diags

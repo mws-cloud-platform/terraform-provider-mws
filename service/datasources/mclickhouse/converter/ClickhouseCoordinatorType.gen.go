@@ -25,11 +25,11 @@ func ClickhouseCoordinatorTypeAPIToTFModel(ctx context.Context, am *apimodel.Cli
 	return t, diags
 }
 
-func ClickhouseCoordinatorTypeTFToAPIModel(ctx context.Context, tm tfmodel.ClickhouseCoordinatorType) (*apimodel.ClickhouseCoordinatorType, tfdiag.Diagnostics) {
+func ClickhouseCoordinatorTypeTFToAPIModel(ctx context.Context, plan tfmodel.ClickhouseCoordinatorType) (*apimodel.ClickhouseCoordinatorType, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am apimodel.ClickhouseCoordinatorType
 
-	var tmp = types.String(tm)
+	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}

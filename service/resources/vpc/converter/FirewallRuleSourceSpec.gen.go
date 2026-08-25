@@ -43,21 +43,22 @@ func FirewallRuleSourceSpecAPIOptionalResponseToTFModel(ctx context.Context, am 
 	return &t, diags
 }
 
-func FirewallRuleSourceSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.FirewallRuleSourceSpec) (*apimodel.FirewallRuleSourceSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func FirewallRuleSourceSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.FirewallRuleSourceSpec) (*apimodel.FirewallRuleSourceSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.FirewallRuleSourceSpecRequest
 
-	if !tm.Cidrs.IsNull() && !tm.Cidrs.IsUnknown() {
+	if !plan.Cidrs.IsNull() && !plan.Cidrs.IsUnknown() {
 		cidrs := make([]types.String, 0)
-		dCidrs := tm.Cidrs.ElementsAs(ctx, &cidrs, false)
+		dCidrs := plan.Cidrs.ElementsAs(ctx, &cidrs, false)
 		diags = append(diags, dCidrs...)
 		if diags.HasError() {
 			return nil, diags
 		}
+
 		am.Cidrs = make([]cidraddress.CIDR4Address, 0, len(cidrs))
 
 		for _, entity := range cidrs {
@@ -67,6 +68,43 @@ func FirewallRuleSourceSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.
 				return nil, diags
 			}
 			am.Cidrs = append(am.Cidrs, tmp)
+		}
+	}
+
+	return &am, diags
+}
+
+func FirewallRuleSourceSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.FirewallRuleSourceSpec) (*apimodel.UpdateFirewallRuleSourceSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.FirewallRuleSourceSpec{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am apimodel.UpdateFirewallRuleSourceSpecRequest
+
+	if !plan.Cidrs.Equal(state.Cidrs) {
+		if !plan.Cidrs.IsNull() && !plan.Cidrs.IsUnknown() {
+			cidrs := make([]types.String, 0)
+			dCidrs := plan.Cidrs.ElementsAs(ctx, &cidrs, false)
+			diags = append(diags, dCidrs...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			cidrsTmp := make([]cidraddress.CIDR4Address, 0, len(cidrs))
+
+			for _, entity := range cidrs {
+				tmp, err := cidraddress.ParseCIDR4AddressString(entity.ValueString())
+				if err != nil {
+					diags.AddError("CIDR4Address string parsing", err.Error())
+					return nil, diags
+				}
+				cidrsTmp = append(cidrsTmp, tmp)
+			}
+			am.Cidrs.SetTo(cidrsTmp)
 		}
 	}
 

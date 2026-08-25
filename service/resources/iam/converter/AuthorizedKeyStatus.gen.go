@@ -40,13 +40,13 @@ func AuthorizedKeyStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.A
 	t.Ready = readyTfObject
 
 	if am.PrivateKey != nil {
-		t.PrivateKey = types.StringPointerValue(am.PrivateKey)
+		t.PrivateKey = types.StringValue(am.PrivateKey.Value())
 	} else {
 		t.PrivateKey = types.StringNull()
 	}
 
 	if am.PrivateKeyFile != nil {
-		t.PrivateKeyFile = types.StringPointerValue(am.PrivateKeyFile)
+		t.PrivateKeyFile = types.StringValue(am.PrivateKeyFile.Value())
 	} else {
 		t.PrivateKeyFile = types.StringNull()
 	}

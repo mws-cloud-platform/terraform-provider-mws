@@ -49,16 +49,16 @@ func KafkaDataDiskSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.Kaf
 	return &t, diags
 }
 
-func KafkaDataDiskSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.KafkaDataDiskSpec) (*apimodel.KafkaDataDiskSpecRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func KafkaDataDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaDataDiskSpec) (*apimodel.KafkaDataDiskSpecRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.KafkaDataDiskSpecRequest
 
-	if !tm.Size.IsNull() && !tm.Size.IsUnknown() {
-		tmpSize, err := bytesize.ParseString(tm.Size.ValueString())
+	if !plan.Size.IsNull() && !plan.Size.IsUnknown() {
+		tmpSize, err := bytesize.ParseString(plan.Size.ValueString())
 		if err != nil {
 			diags.AddError("ByteSize string parsing", err.Error())
 			return nil, diags
@@ -66,8 +66,8 @@ func KafkaDataDiskSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Kafka
 		am.Size = tmpSize
 	}
 
-	if !tm.Type.IsNull() && !tm.Type.IsUnknown() {
-		typeTmp, typeDiag := KafkaDataDiskTypeTFToAPIModel(ctx, tm.Type)
+	if !plan.Type.IsNull() && !plan.Type.IsUnknown() {
+		typeTmp, typeDiag := KafkaDataDiskTypeTFToAPIModel(ctx, plan.Type)
 		diags = append(diags, typeDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -75,8 +75,8 @@ func KafkaDataDiskSpecTFToAPIRequestModel(ctx context.Context, tm *tfmodel.Kafka
 		am.Type = typeTmp
 	}
 
-	if !tm.Iops.IsNull() && !tm.Iops.IsUnknown() {
-		iopsTmp, iopsDiag := KafkaDataDiskIopsTFToAPIModel(ctx, tm.Iops)
+	if !plan.Iops.IsNull() && !plan.Iops.IsUnknown() {
+		iopsTmp, iopsDiag := KafkaDataDiskIopsTFToAPIModel(ctx, plan.Iops)
 		diags = append(diags, iopsDiag...)
 		if diags.HasError() {
 			return nil, diags

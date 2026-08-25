@@ -23,7 +23,7 @@ func TestAddressSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 func TestAddressSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	emptyApiModelRequest := apimodel.AddressSpecRequest{
-		Subnet: vpc.NewSubnetRef("projectID", "networkID", "subnetID"),
+		Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
 	}
 
 	emptyApiModelResponse, err := apimodel.AddressSpecRequestToOptionalResponse(&emptyApiModelRequest)

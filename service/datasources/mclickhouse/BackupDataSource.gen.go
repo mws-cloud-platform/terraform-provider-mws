@@ -83,13 +83,13 @@ func (m *BackupDataSource) Configure(ctx context.Context, req datasource.Configu
 func (m *BackupDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "BackupDataSource.Read")
 
-	var data tfmodel.BackupModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.BackupModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(config.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -97,15 +97,15 @@ func (m *BackupDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetClickhouseClusterBackup(
 		ctx,
 		client.GetClickhouseClusterBackupRequest{
-			Project: data.ProjectParam.ValueString(),
-			Cluster: data.ClusterParam.ValueString(),
-			Backup:  data.BackupParam.ValueString(),
+			Project: config.ProjectParam.ValueString(),
+			Cluster: config.ClusterParam.ValueString(),
+			Backup:  config.BackupParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -123,7 +123,7 @@ func (m *BackupDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		return
 	}
 
-	data.ClickhouseBackup = *tfRes
+	config.ClickhouseBackup = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

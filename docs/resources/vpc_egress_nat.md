@@ -109,8 +109,8 @@ Required:
 
 Optional:
 
-- `ref` (String) Относительная ссылка на статический внешний адрес
-- `spec` (Attributes) Спецификация внешнего адреса (see [below for nested schema](#nestedatt--external--addresses--spec))
+- `ref` (String) Относительная ссылка на статический внешний IP-адрес
+- `spec` (Attributes) Спецификация внешнего IP-адреса (see [below for nested schema](#nestedatt--external--addresses--spec))
 
 <a id="nestedatt--external--addresses--spec"></a>
 ### Nested Schema for `external.addresses.spec`
@@ -197,6 +197,7 @@ Read-Only:
 - `internal` (Attributes) Группирующий элемент для всего, что касается внутренних ресурсов (see [below for nested schema](#nestedatt--status--internal))
 - `port_allocation` (Attributes) Описывает примененные настройки управления портами (see [below for nested schema](#nestedatt--status--port_allocation))
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
+- `region` (String) Регион, которому принадлежит Egress NAT-шлюз
 
 <a id="nestedatt--status--external"></a>
 ### Nested Schema for `status.external`
@@ -208,7 +209,7 @@ Read-Only:
 <a id="nestedatt--status--external--addresses"></a>
 ### Nested Schema for `status.external.addresses`
 
-Read-Only:
+Required:
 
 - `ip_address` (String) Значение IP адреса
 

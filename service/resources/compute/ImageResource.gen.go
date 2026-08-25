@@ -106,13 +106,13 @@ func (m *ImageResource) Configure(ctx context.Context, req resource.ConfigureReq
 func (m *ImageResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "ImageResource.Create")
 
-	var data tfmodel.ImageModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.ImageModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -120,17 +120,17 @@ func (m *ImageResource) Create(ctx context.Context, req resource.CreateRequest, 
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Create(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ImageResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.ImageTFToAPIRequestModel(ctx, &data.Image)
+	body, diags := conv.ImageTFToAPIRequestModel(ctx, &plan.Image)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ImageResource.TFToAPI")
@@ -140,8 +140,8 @@ func (m *ImageResource) Create(ctx context.Context, req resource.CreateRequest, 
 	apiRes, err := m.sdk.CreateImage(
 		ctx,
 		client.UpsertImageRequest{
-			Project: data.ProjectParam.ValueString(),
-			Image:   data.ImageParam.ValueString(),
+			Project: plan.ProjectParam.ValueString(),
+			Image:   plan.ImageParam.ValueString(),
 			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
@@ -154,7 +154,7 @@ func (m *ImageResource) Create(ctx context.Context, req resource.CreateRequest, 
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.ImageAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -163,21 +163,21 @@ func (m *ImageResource) Create(ctx context.Context, req resource.CreateRequest, 
 		return
 	}
 
-	data.Image = *tfRes
+	plan.Image = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *ImageResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "ImageResource.Read")
 
-	var data tfmodel.ImageModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.ImageModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -185,14 +185,14 @@ func (m *ImageResource) Read(ctx context.Context, req resource.ReadRequest, resp
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
 	apiRes, err := m.sdk.GetImage(
 		ctx,
 		client.GetImageRequest{
-			Project: data.ProjectParam.ValueString(),
-			Image:   data.ImageParam.ValueString(),
+			Project: state.ProjectParam.ValueString(),
+			Image:   state.ImageParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -203,7 +203,7 @@ func (m *ImageResource) Read(ctx context.Context, req resource.ReadRequest, resp
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.ImageAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -212,21 +212,27 @@ func (m *ImageResource) Read(ctx context.Context, req resource.ReadRequest, resp
 		return
 	}
 
-	data.Image = *tfRes
+	state.Image = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 func (m *ImageResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "ImageResource.Update")
 
-	var data tfmodel.ImageModel
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan tfmodel.ImageModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	var state tfmodel.ImageModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	projectParam := cmp.Or(plan.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -234,17 +240,17 @@ func (m *ImageResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	plan.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Update(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := plan.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ImageResource.Timeouts")
 		return
 	}
 
-	body, diags := conv.ImageTFToAPIRequestModel(ctx, &data.Image)
+	body, diags := conv.ImageTFToAPIUpdateRequestModel(ctx, &plan.Image, &state.Image)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ImageResource.TFToAPI")
@@ -254,9 +260,9 @@ func (m *ImageResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	apiRes, err := m.sdk.UpdateImage(
 		ctx,
 		client.UpdateImageRequest{
-			Project: data.ProjectParam.ValueString(),
-			Image:   data.ImageParam.ValueString(),
-			Body:    body.AsUpdateModel(),
+			Project: plan.ProjectParam.ValueString(),
+			Image:   plan.ImageParam.ValueString(),
+			Body:    *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -268,7 +274,7 @@ func (m *ImageResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.ImageAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -277,21 +283,21 @@ func (m *ImageResource) Update(ctx context.Context, req resource.UpdateRequest, 
 		return
 	}
 
-	data.Image = *tfRes
+	plan.Image = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (m *ImageResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "ImageResource.Delete")
 
-	var data tfmodel.ImageModel
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	var state tfmodel.ImageModel
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	projectParam := cmp.Or(data.ProjectParam, m.config.Project)
+	projectParam := cmp.Or(state.ProjectParam, m.config.Project)
 	if projectParam.IsNull() || projectParam.IsUnknown() {
 		resp.Diagnostics.AddError(
 			"Configuration Error",
@@ -299,10 +305,10 @@ func (m *ImageResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 		)
 		return
 	}
-	data.ProjectParam = projectParam
+	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
-	resourceWaiterTimeout, diags := data.Timeouts.Delete(ctx, 3600*time.Second)
+	resourceWaiterTimeout, diags := state.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "ImageResource.Timeouts")
@@ -312,8 +318,8 @@ func (m *ImageResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 	err := m.sdk.DeleteImage(
 		ctx,
 		client.DeleteImageRequest{
-			Project: data.ProjectParam.ValueString(),
-			Image:   data.ImageParam.ValueString(),
+			Project: state.ProjectParam.ValueString(),
+			Image:   state.ImageParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -329,7 +335,7 @@ func (m *ImageResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 func (m *ImageResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "ImageResource.ImportState")
 
-	var data tfmodel.ImageModel
+	var state tfmodel.ImageModel
 
 	ref, err := computeref.ParseImageRef(ctx, req.ID)
 	if err != nil {
@@ -354,7 +360,7 @@ func (m *ImageResource) ImportState(ctx context.Context, req resource.ImportStat
 		return
 	}
 
-	data.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
 	tfRes, diags := conv.ImageAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
@@ -363,10 +369,10 @@ func (m *ImageResource) ImportState(ctx context.Context, req resource.ImportStat
 		return
 	}
 
-	data.Image = *tfRes
+	state.Image = *tfRes
 
-	data.ProjectParam = types.StringValue(ref.GetProject())
-	data.ImageParam = types.StringValue(ref.GetImage())
+	state.ProjectParam = types.StringValue(ref.GetProject())
+	state.ImageParam = types.StringValue(ref.GetImage())
 
 	var rwTimeouts timeouts.Value
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
@@ -374,7 +380,7 @@ func (m *ImageResource) ImportState(ctx context.Context, req resource.ImportStat
 		tflog.Debug(ctx, "ImageResource.timeouts.GetAttribute")
 		return
 	}
-	data.Timeouts = rwTimeouts
+	state.Timeouts = rwTimeouts
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

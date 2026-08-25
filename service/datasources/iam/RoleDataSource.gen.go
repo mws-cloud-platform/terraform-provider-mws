@@ -71,8 +71,8 @@ func (m *RoleDataSource) Configure(ctx context.Context, req datasource.Configure
 func (m *RoleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "RoleDataSource.Read")
 
-	var data tfmodel.RoleModel
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	var config tfmodel.RoleModel
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -80,7 +80,7 @@ func (m *RoleDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 	apiRes, err := m.sdk.GetGlobalRoleV2(
 		ctx,
 		client.GetGlobalRoleV2Request{
-			Role: data.RoleParam.ValueString(),
+			Role: config.RoleParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -98,7 +98,7 @@ func (m *RoleDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 		return
 	}
 
-	data.GlobalRoleV2 = *tfRes
+	config.GlobalRoleV2 = *tfRes
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &config)...)
 }

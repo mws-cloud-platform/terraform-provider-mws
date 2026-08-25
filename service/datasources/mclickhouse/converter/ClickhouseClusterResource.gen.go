@@ -27,6 +27,8 @@ func ClickhouseClusterResourceAPIResponseToTFModel(ctx context.Context, am *apim
 
 	t.Version = types.StringValue(am.Version)
 
+	t.Region = types.StringValue(am.Region.ID())
+
 	if am.Endpoints != nil {
 		endpoints := make([]tfmodel.ClickhouseEndpointResource, 0, len(am.Endpoints))
 

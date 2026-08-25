@@ -94,23 +94,23 @@ func DiskBackupAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Di
 	return &t, diags
 }
 
-func DiskBackupTFToAPIRequestModel(ctx context.Context, tm *tfmodel.DiskBackup) (*apimodel.DiskBackupRequest, tfdiag.Diagnostics) {
-	if tm == nil {
+func DiskBackupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DiskBackup) (*apimodel.DiskBackupRequest, tfdiag.Diagnostics) {
+	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
 	var am apimodel.DiskBackupRequest
 
-	if !tm.Metadata.IsNull() && !tm.Metadata.IsUnknown() {
-		metadataTfModel := tfcommon.CommonTypedResourceMetadata{}
-		metadataDiag := tm.Metadata.As(ctx, &metadataTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataDiag...)
+	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
+		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
+		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, metadataPlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataTfModel)
+		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
 		diags = append(diags, metadataDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -118,15 +118,15 @@ func DiskBackupTFToAPIRequestModel(ctx context.Context, tm *tfmodel.DiskBackup) 
 		am.Metadata = metadataTmp
 	}
 
-	if !tm.Source.IsNull() && !tm.Source.IsUnknown() {
-		sourceTfModel := tfmodel.DiskBackupSource{}
-		sourceDiag := tm.Source.As(ctx, &sourceTfModel, basetypes.ObjectAsOptions{})
-		diags = append(diags, sourceDiag...)
+	if !plan.Source.IsNull() && !plan.Source.IsUnknown() {
+		sourcePlan := tfmodel.DiskBackupSource{}
+		sourcePlanDiag := plan.Source.As(ctx, &sourcePlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, sourcePlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		sourceTmp, sourceDiag := DiskBackupSourceTFToAPIRequestModel(ctx, &sourceTfModel)
+		sourceTmp, sourceDiag := DiskBackupSourceTFToAPIRequestModel(ctx, &sourcePlan)
 		diags = append(diags, sourceDiag...)
 		if diags.HasError() {
 			return nil, diags
@@ -134,8 +134,8 @@ func DiskBackupTFToAPIRequestModel(ctx context.Context, tm *tfmodel.DiskBackup) 
 		am.Spec.Source = *sourceTmp
 	}
 
-	if !tm.OsType.IsNull() && !tm.OsType.IsUnknown() {
-		osTypeTmp, osTypeDiag := OsTypeTFToAPIModel(ctx, tm.OsType)
+	if !plan.OsType.IsNull() && !plan.OsType.IsUnknown() {
+		osTypeTmp, osTypeDiag := OsTypeTFToAPIModel(ctx, plan.OsType)
 		diags = append(diags, osTypeDiag...)
 		if diags.HasError() {
 			return nil, diags

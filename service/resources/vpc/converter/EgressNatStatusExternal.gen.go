@@ -10,6 +10,8 @@ import (
 
 	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
+	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
+	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
@@ -22,10 +24,10 @@ func EgressNatStatusExternalAPIResponseToTFModel(ctx context.Context, am *apimod
 	var t tfmodel.EgressNatStatusExternal
 
 	if am.Addresses != nil {
-		addresses := make([]tfmodel.ResourceExternalAddressStatus, 0, len(am.Addresses))
+		addresses := make([]tfcommon.ResourceExternalAddressStatus, 0, len(am.Addresses))
 
 		for _, entity := range am.Addresses {
-			tmp, d := ResourceExternalAddressStatusAPIResponseToTFModel(ctx, &entity)
+			tmp, d := commonconv.ResourceExternalAddressStatusAPIResponseToTFModel(ctx, &entity)
 			diags = append(diags, d...)
 			if diags.HasError() {
 				return nil, diags
@@ -34,7 +36,7 @@ func EgressNatStatusExternalAPIResponseToTFModel(ctx context.Context, am *apimod
 		}
 
 		addressesList, d := types.ListValueFrom(ctx, types.ObjectType{
-			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.ResourceExternalAddressStatus).GetSchema().Attributes),
+			AttrTypes: tfconv.GetAttributesTypes(new(tfcommon.ResourceExternalAddressStatus).GetSchema().Attributes),
 		}, addresses)
 		diags = append(diags, d...)
 		if diags.HasError() {
@@ -44,7 +46,7 @@ func EgressNatStatusExternalAPIResponseToTFModel(ctx context.Context, am *apimod
 		t.Addresses = addressesList
 	} else {
 		t.Addresses = types.ListNull(types.ObjectType{
-			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.ResourceExternalAddressStatus).GetSchema().Attributes),
+			AttrTypes: tfconv.GetAttributesTypes(new(tfcommon.ResourceExternalAddressStatus).GetSchema().Attributes),
 		})
 	}
 

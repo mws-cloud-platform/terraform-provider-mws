@@ -34,6 +34,7 @@ data "mws_vpc_external_address" "external_address" {
 - `kind` (String)
 - `metadata` (Attributes) Метаданные внешнего адреса (see [below for nested schema](#nestedatt--metadata))
 - `nat_gateway` (String) Шлюз, к которому относится адрес. Если шлюз не указан, для трансляции IP-адресов используется шлюз по умолчанию для выхода в интернет (ref=natGateways/internet-gateway)
+- `region` (String) Регион, которому принадлежит адрес
 - `status` (Attributes) Статус внешнего адреса (see [below for nested schema](#nestedatt--status))
 
 <a id="nestedatt--metadata"></a>
@@ -72,11 +73,12 @@ Read-Only:
 
 Read-Only:
 
-- `active` (Boolean) Состояние внешнего адреса активен или не активен
+- `active` (Boolean) Состояние внешнего адреса: активен или не активен
 - `ip_address` (String) Присвоенный адрес
 
 IPv4- или IPv6-адрес
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
+- `region` (String) Регион, которому принадлежит адрес
 
 <a id="nestedatt--status--ready"></a>
 ### Nested Schema for `status.ready`

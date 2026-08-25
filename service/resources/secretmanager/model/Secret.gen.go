@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	localboolplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/boolplanmodifier"
-	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
@@ -54,9 +53,6 @@ func (s *Secret) GetSchema() schema.Schema {
 			"current_secret_version": schema.StringAttribute{
 				MarkdownDescription: `Номер текущей версии секрета`,
 				Optional:            true,
-				PlanModifiers: []planmodifier.String{
-					localstringplanmodifier.RequiresReplaceIfRemoved(),
-				},
 			},
 			"encryption": schema.SingleNestedAttribute{
 				Attributes: new(EncryptionSpec).GetSchema().Attributes,

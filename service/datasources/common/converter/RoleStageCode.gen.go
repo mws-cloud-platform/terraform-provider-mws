@@ -25,11 +25,11 @@ func RoleStageCodeAPIToTFModel(ctx context.Context, am *commonapimodel.RoleStage
 	return t, diags
 }
 
-func RoleStageCodeTFToAPIModel(ctx context.Context, tm tfcommon.RoleStageCode) (*commonapimodel.RoleStageCode, tfdiag.Diagnostics) {
+func RoleStageCodeTFToAPIModel(ctx context.Context, plan tfcommon.RoleStageCode) (*commonapimodel.RoleStageCode, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
 	var am commonapimodel.RoleStageCode
 
-	var tmp = types.String(tm)
+	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}
