@@ -8,26 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
 func TestDayOfWeekAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.DayOfWeek("")
+	emptyApiModel := commonmodel.DayOfWeek("")
 	_, diags := commonconv.DayOfWeekAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestDayOfWeekConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonapimodel.DayOfWeek("")
-
-	tfModel, diags := commonconv.DayOfWeekAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-
-	result, diags := commonconv.DayOfWeekTFToAPIModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	require.Equal(t, emptyApiModel, *result)
 }

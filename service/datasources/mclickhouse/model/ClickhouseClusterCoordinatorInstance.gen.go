@@ -14,10 +14,10 @@ type ClickhouseClusterCoordinatorInstance struct {
 
 func (s *ClickhouseClusterCoordinatorInstance) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Описание инстанса координатора.`,
+		MarkdownDescription: `Описание узла координатора.`,
 		Attributes: map[string]schema.Attribute{
 			"count": schema.Int64Attribute{
-				MarkdownDescription: `Количество инстансов в зоне доступности`,
+				MarkdownDescription: `Количество узлов в зоне доступности`,
 				Computed:            true,
 			},
 			"zone": schema.StringAttribute{

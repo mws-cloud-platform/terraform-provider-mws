@@ -9,11 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func PostgresClusterBackupDailyAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresClusterBackupDailyResponse) (*tfmodel.PostgresClusterBackupDaily, tfdiag.Diagnostics) {
+func PostgresClusterBackupDailyAPIResponseToTFModel(ctx context.Context, am *model.PostgresClusterBackupDailyResponse) (*tfmodel.PostgresClusterBackupDaily, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -30,13 +30,13 @@ func PostgresClusterBackupDailyAPIResponseToTFModel(ctx context.Context, am *api
 	return &t, diags
 }
 
-func PostgresClusterBackupDailyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresClusterBackupDaily) (*apimodel.PostgresClusterBackupDailyRequest, tfdiag.Diagnostics) {
+func PostgresClusterBackupDailyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresClusterBackupDaily) (*model.PostgresClusterBackupDailyRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresClusterBackupDailyRequest
+	var am model.PostgresClusterBackupDailyRequest
 
 	if !plan.Hour.IsNull() && !plan.Hour.IsUnknown() {
 		am.Hour = ptr.Get(int(plan.Hour.ValueInt64()))
@@ -45,7 +45,7 @@ func PostgresClusterBackupDailyTFToAPIRequestModel(ctx context.Context, plan *tf
 	return &am, diags
 }
 
-func PostgresClusterBackupDailyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresClusterBackupDaily) (*apimodel.UpdatePostgresClusterBackupDailyRequest, tfdiag.Diagnostics) {
+func PostgresClusterBackupDailyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresClusterBackupDaily) (*model.UpdatePostgresClusterBackupDailyRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -54,7 +54,7 @@ func PostgresClusterBackupDailyTFToAPIUpdateRequestModel(ctx context.Context, pl
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdatePostgresClusterBackupDailyRequest
+	var am model.UpdatePostgresClusterBackupDailyRequest
 
 	if !plan.Hour.Equal(state.Hour) {
 		if !plan.Hour.IsNull() && !plan.Hour.IsUnknown() {

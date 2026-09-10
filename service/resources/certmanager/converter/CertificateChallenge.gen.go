@@ -10,12 +10,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/model"
 )
 
-func CertificateChallengeAPIResponseToTFModel(ctx context.Context, am *apimodel.CertificateChallengeResponse) (*tfmodel.CertificateChallenge, tfdiag.Diagnostics) {
+func CertificateChallengeAPIResponseToTFModel(ctx context.Context, am *model.CertificateChallengeResponse) (*tfmodel.CertificateChallenge, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -23,7 +23,11 @@ func CertificateChallengeAPIResponseToTFModel(ctx context.Context, am *apimodel.
 	var diags tfdiag.Diagnostics
 	var t tfmodel.CertificateChallenge
 
-	t.Domain = types.StringValue(am.Domain)
+	if am.Domain != nil {
+		t.Domain = types.StringPointerValue(am.Domain)
+	} else {
+		t.Domain = types.StringNull()
+	}
 
 	t.CreatedAt = types.StringValue(am.CreatedAt.Format(time.RFC3339))
 

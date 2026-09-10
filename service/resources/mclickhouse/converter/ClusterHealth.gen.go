@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func ClusterHealthAPIToTFModel(ctx context.Context, am *apimodel.ClusterHealth) (tfmodel.ClusterHealth, tfdiag.Diagnostics) {
+func ClusterHealthAPIToTFModel(ctx context.Context, am *model.ClusterHealth) (tfmodel.ClusterHealth, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.ClusterHealth{}, nil
 	}
@@ -25,15 +25,15 @@ func ClusterHealthAPIToTFModel(ctx context.Context, am *apimodel.ClusterHealth) 
 	return t, diags
 }
 
-func ClusterHealthTFToAPIModel(ctx context.Context, plan tfmodel.ClusterHealth) (*apimodel.ClusterHealth, tfdiag.Diagnostics) {
+func ClusterHealthTFToAPIModel(ctx context.Context, plan tfmodel.ClusterHealth) (*model.ClusterHealth, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClusterHealth
+	var am model.ClusterHealth
 
 	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}
-	am = apimodel.ClusterHealth(tmp.ValueString())
+	am = model.ClusterHealth(tmp.ValueString())
 
 	return &am, diags
 }

@@ -10,11 +10,11 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/duration"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
-func WeeklyMaintenanceWindowAPIToTFModel(ctx context.Context, am *commonapimodel.WeeklyMaintenanceWindow) (*tfcommon.WeeklyMaintenanceWindow, tfdiag.Diagnostics) {
+func WeeklyMaintenanceWindowAPIToTFModel(ctx context.Context, am *commonmodel.WeeklyMaintenanceWindow) (*tfcommon.WeeklyMaintenanceWindow, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -56,7 +56,7 @@ func WeeklyMaintenanceWindowAPIToTFModel(ctx context.Context, am *commonapimodel
 	return &t, diags
 }
 
-func WeeklyMaintenanceWindowAPIResponseToTFModel(ctx context.Context, am *commonapimodel.WeeklyMaintenanceWindowResponse) (*tfcommon.WeeklyMaintenanceWindow, tfdiag.Diagnostics) {
+func WeeklyMaintenanceWindowAPIResponseToTFModel(ctx context.Context, am *commonmodel.WeeklyMaintenanceWindowResponse) (*tfcommon.WeeklyMaintenanceWindow, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -98,7 +98,7 @@ func WeeklyMaintenanceWindowAPIResponseToTFModel(ctx context.Context, am *common
 	return &t, diags
 }
 
-func WeeklyMaintenanceWindowAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.WeeklyMaintenanceWindowOptionalResponse) (*tfcommon.WeeklyMaintenanceWindow, tfdiag.Diagnostics) {
+func WeeklyMaintenanceWindowAPIOptionalResponseToTFModel(ctx context.Context, am *commonmodel.WeeklyMaintenanceWindowOptionalResponse) (*tfcommon.WeeklyMaintenanceWindow, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -140,13 +140,13 @@ func WeeklyMaintenanceWindowAPIOptionalResponseToTFModel(ctx context.Context, am
 	return &t, diags
 }
 
-func WeeklyMaintenanceWindowTFToAPIModel(ctx context.Context, plan *tfcommon.WeeklyMaintenanceWindow) (*commonapimodel.WeeklyMaintenanceWindow, tfdiag.Diagnostics) {
+func WeeklyMaintenanceWindowTFToAPIModel(ctx context.Context, plan *tfcommon.WeeklyMaintenanceWindow) (*commonmodel.WeeklyMaintenanceWindow, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.WeeklyMaintenanceWindow
+	var am commonmodel.WeeklyMaintenanceWindow
 
 	if !plan.Days.IsNull() && !plan.Days.IsUnknown() {
 		days := make([]tfcommon.DayOfWeek, 0)
@@ -156,7 +156,7 @@ func WeeklyMaintenanceWindowTFToAPIModel(ctx context.Context, plan *tfcommon.Wee
 			return nil, diags
 		}
 
-		am.Days = make([]commonapimodel.DayOfWeek, 0, len(days))
+		am.Days = make([]commonmodel.DayOfWeek, 0, len(days))
 
 		for _, entity := range days {
 			tmp, d := DayOfWeekTFToAPIModel(ctx, entity)
@@ -184,13 +184,13 @@ func WeeklyMaintenanceWindowTFToAPIModel(ctx context.Context, plan *tfcommon.Wee
 	return &am, diags
 }
 
-func WeeklyMaintenanceWindowTFToAPIRequestModel(ctx context.Context, plan *tfcommon.WeeklyMaintenanceWindow) (*commonapimodel.WeeklyMaintenanceWindowRequest, tfdiag.Diagnostics) {
+func WeeklyMaintenanceWindowTFToAPIRequestModel(ctx context.Context, plan *tfcommon.WeeklyMaintenanceWindow) (*commonmodel.WeeklyMaintenanceWindowRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.WeeklyMaintenanceWindowRequest
+	var am commonmodel.WeeklyMaintenanceWindowRequest
 
 	if !plan.Days.IsNull() && !plan.Days.IsUnknown() {
 		days := make([]tfcommon.DayOfWeek, 0)
@@ -200,7 +200,7 @@ func WeeklyMaintenanceWindowTFToAPIRequestModel(ctx context.Context, plan *tfcom
 			return nil, diags
 		}
 
-		am.Days = make([]commonapimodel.DayOfWeek, 0, len(days))
+		am.Days = make([]commonmodel.DayOfWeek, 0, len(days))
 
 		for _, entity := range days {
 			tmp, d := DayOfWeekTFToAPIModel(ctx, entity)
@@ -228,7 +228,7 @@ func WeeklyMaintenanceWindowTFToAPIRequestModel(ctx context.Context, plan *tfcom
 	return &am, diags
 }
 
-func WeeklyMaintenanceWindowTFToAPIUpdateModel(ctx context.Context, plan, state *tfcommon.WeeklyMaintenanceWindow) (*commonapimodel.UpdateWeeklyMaintenanceWindow, tfdiag.Diagnostics) {
+func WeeklyMaintenanceWindowTFToAPIUpdateModel(ctx context.Context, plan, state *tfcommon.WeeklyMaintenanceWindow) (*commonmodel.UpdateWeeklyMaintenanceWindow, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -237,7 +237,7 @@ func WeeklyMaintenanceWindowTFToAPIUpdateModel(ctx context.Context, plan, state 
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.UpdateWeeklyMaintenanceWindow
+	var am commonmodel.UpdateWeeklyMaintenanceWindow
 
 	if !plan.Days.Equal(state.Days) {
 		if !plan.Days.IsNull() && !plan.Days.IsUnknown() {
@@ -248,7 +248,7 @@ func WeeklyMaintenanceWindowTFToAPIUpdateModel(ctx context.Context, plan, state 
 				return nil, diags
 			}
 
-			daysTmp := make([]commonapimodel.DayOfWeek, 0, len(days))
+			daysTmp := make([]commonmodel.DayOfWeek, 0, len(days))
 
 			for _, entity := range days {
 				tmp, d := DayOfWeekTFToAPIModel(ctx, entity)
@@ -284,7 +284,7 @@ func WeeklyMaintenanceWindowTFToAPIUpdateModel(ctx context.Context, plan, state 
 	return &am, diags
 }
 
-func WeeklyMaintenanceWindowTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfcommon.WeeklyMaintenanceWindow) (*commonapimodel.UpdateWeeklyMaintenanceWindowRequest, tfdiag.Diagnostics) {
+func WeeklyMaintenanceWindowTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfcommon.WeeklyMaintenanceWindow) (*commonmodel.UpdateWeeklyMaintenanceWindowRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -293,7 +293,7 @@ func WeeklyMaintenanceWindowTFToAPIUpdateRequestModel(ctx context.Context, plan,
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.UpdateWeeklyMaintenanceWindowRequest
+	var am commonmodel.UpdateWeeklyMaintenanceWindowRequest
 
 	if !plan.Days.Equal(state.Days) {
 		if !plan.Days.IsNull() && !plan.Days.IsUnknown() {
@@ -304,7 +304,7 @@ func WeeklyMaintenanceWindowTFToAPIUpdateRequestModel(ctx context.Context, plan,
 				return nil, diags
 			}
 
-			daysTmp := make([]commonapimodel.DayOfWeek, 0, len(days))
+			daysTmp := make([]commonmodel.DayOfWeek, 0, len(days))
 
 			for _, entity := range days {
 				tmp, d := DayOfWeekTFToAPIModel(ctx, entity)

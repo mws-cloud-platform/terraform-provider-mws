@@ -7,16 +7,14 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 )
 
-func VpcAddressGroupSpecOrRefAPIToTFModel(ctx context.Context, am *commonapimodel.VpcAddressGroupSpecOrRef) (*tfcommon.VpcAddressGroupSpecOrRef, tfdiag.Diagnostics) {
+func VpcAddressGroupSpecOrRefAPIToTFModel(ctx context.Context, am *commonmodel.VpcAddressGroupSpecOrRef) (*tfcommon.VpcAddressGroupSpecOrRef, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -51,7 +49,7 @@ func VpcAddressGroupSpecOrRefAPIToTFModel(ctx context.Context, am *commonapimode
 	return &t, diags
 }
 
-func VpcAddressGroupSpecOrRefAPIResponseToTFModel(ctx context.Context, am *commonapimodel.VpcAddressGroupSpecOrRefResponse) (*tfcommon.VpcAddressGroupSpecOrRef, tfdiag.Diagnostics) {
+func VpcAddressGroupSpecOrRefAPIResponseToTFModel(ctx context.Context, am *commonmodel.VpcAddressGroupSpecOrRefResponse) (*tfcommon.VpcAddressGroupSpecOrRef, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -86,7 +84,7 @@ func VpcAddressGroupSpecOrRefAPIResponseToTFModel(ctx context.Context, am *commo
 	return &t, diags
 }
 
-func VpcAddressGroupSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.VpcAddressGroupSpecOrRefOptionalResponse) (*tfcommon.VpcAddressGroupSpecOrRef, tfdiag.Diagnostics) {
+func VpcAddressGroupSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *commonmodel.VpcAddressGroupSpecOrRefOptionalResponse) (*tfcommon.VpcAddressGroupSpecOrRef, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -119,76 +117,4 @@ func VpcAddressGroupSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, a
 	}
 
 	return &t, diags
-}
-
-func VpcAddressGroupSpecOrRefTFToAPIModel(ctx context.Context, plan *tfcommon.VpcAddressGroupSpecOrRef) (*commonapimodel.VpcAddressGroupSpecOrRef, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am commonapimodel.VpcAddressGroupSpecOrRef
-
-	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
-		refRef, err := vpc.ParseAddressGroupRef(ctx, plan.Ref.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Ref = &refRef
-	}
-
-	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
-		specPlan := tfcommon.VpcAddressGroupSpec{}
-		specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, specPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		specTmp, specDiag := VpcAddressGroupSpecTFToAPIModel(ctx, &specPlan)
-		diags = append(diags, specDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec = specTmp
-	}
-
-	return &am, diags
-}
-
-func VpcAddressGroupSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfcommon.VpcAddressGroupSpecOrRef) (*commonapimodel.VpcAddressGroupSpecOrRefRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am commonapimodel.VpcAddressGroupSpecOrRefRequest
-
-	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
-		refRef, err := vpc.ParseAddressGroupRef(ctx, plan.Ref.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Ref = &refRef
-	}
-
-	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
-		specPlan := tfcommon.VpcAddressGroupSpec{}
-		specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, specPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		specTmp, specDiag := VpcAddressGroupSpecTFToAPIRequestModel(ctx, &specPlan)
-		diags = append(diags, specDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec = specTmp
-	}
-
-	return &am, diags
 }

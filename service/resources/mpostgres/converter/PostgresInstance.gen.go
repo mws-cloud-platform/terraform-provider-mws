@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func PostgresInstanceAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresInstanceResponse) (*tfmodel.PostgresInstance, tfdiag.Diagnostics) {
+func PostgresInstanceAPIResponseToTFModel(ctx context.Context, am *model.PostgresInstanceResponse) (*tfmodel.PostgresInstance, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -31,13 +31,13 @@ func PostgresInstanceAPIResponseToTFModel(ctx context.Context, am *apimodel.Post
 	return &t, diags
 }
 
-func PostgresInstanceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresInstance) (*apimodel.PostgresInstanceRequest, tfdiag.Diagnostics) {
+func PostgresInstanceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresInstance) (*model.PostgresInstanceRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresInstanceRequest
+	var am model.PostgresInstanceRequest
 
 	if !plan.Count.IsNull() && !plan.Count.IsUnknown() {
 		am.Count = int(plan.Count.ValueInt64())
@@ -50,7 +50,7 @@ func PostgresInstanceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Post
 	return &am, diags
 }
 
-func PostgresInstanceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresInstance) (*apimodel.UpdatePostgresInstanceRequest, tfdiag.Diagnostics) {
+func PostgresInstanceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresInstance) (*model.UpdatePostgresInstanceRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -59,7 +59,7 @@ func PostgresInstanceTFToAPIUpdateRequestModel(ctx context.Context, plan, state 
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdatePostgresInstanceRequest
+	var am model.UpdatePostgresInstanceRequest
 
 	if !plan.Count.Equal(state.Count) {
 		if !plan.Count.IsNull() && !plan.Count.IsUnknown() {

@@ -8,66 +8,20 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
-	"go.mws.cloud/go-sdk/service/resources/references/mpostgres"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
 )
 
 func TestPostgresClusterDatabaseAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.PostgresClusterDatabaseResponse{}
+	emptyApiModel := model.PostgresClusterDatabaseResponse{}
 	_, diags := conv.PostgresClusterDatabaseAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestPostgresClusterDatabaseResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.PostgresClusterDatabaseRequest{
-		Spec: apimodel.PostgresClusterDatabaseSpecRequest{
-			Owner: mpostgres.NewMustPostgresClusterUserRef("projectID", "fkioer50vs2", "bg6EAsn1oJfI"),
-		},
-	}
-
-	emptyApiModelResponse, err := apimodel.PostgresClusterDatabaseRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.PostgresClusterDatabaseAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.PostgresClusterDatabaseTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.PostgresClusterDatabaseRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
 func TestPostgresClusterDatabaseMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.PostgresClusterDatabaseMetadataResponse{}
+	emptyApiModel := model.PostgresClusterDatabaseMetadataResponse{}
 	_, diags := conv.PostgresClusterDatabaseMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestPostgresClusterDatabaseMetadataResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.PostgresClusterDatabaseMetadataRequest{
-		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
-	}
-
-	emptyApiModelResponse, err := apimodel.PostgresClusterDatabaseMetadataRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.PostgresClusterDatabaseMetadataAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.PostgresClusterDatabaseMetadataTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.PostgresClusterDatabaseMetadataRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

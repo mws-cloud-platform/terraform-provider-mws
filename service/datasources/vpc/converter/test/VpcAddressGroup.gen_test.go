@@ -8,37 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
 func TestVpcAddressGroupAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.VpcAddressGroupOptionalResponse{}
+	emptyApiModel := model.VpcAddressGroupOptionalResponse{}
 	_, diags := conv.VpcAddressGroupAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestVpcAddressGroupOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.VpcAddressGroupRequest{
-		Spec: commonapimodel.VpcAddressGroupSpecRequest{
-			Addresses: []commonapimodel.ResourceAddressSpecOrRefRequest{},
-		},
-	}
-
-	emptyApiModelResponse, err := apimodel.VpcAddressGroupRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.VpcAddressGroupAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.VpcAddressGroupTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.VpcAddressGroupRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

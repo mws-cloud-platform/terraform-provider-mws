@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/certmanager/model"
 )
 
-func Dns01ChallengeAPIResponseToTFModel(ctx context.Context, am *apimodel.Dns01ChallengeResponse) (*tfmodel.Dns01Challenge, tfdiag.Diagnostics) {
+func Dns01ChallengeAPIResponseToTFModel(ctx context.Context, am *model.Dns01ChallengeResponse) (*tfmodel.Dns01Challenge, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

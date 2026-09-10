@@ -10,11 +10,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func PostgresUserAdditionalRoleAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresUserAdditionalRoleResponse) (*tfmodel.PostgresUserAdditionalRole, tfdiag.Diagnostics) {
+func PostgresUserAdditionalRoleAPIResponseToTFModel(ctx context.Context, am *model.PostgresUserAdditionalRoleResponse) (*tfmodel.PostgresUserAdditionalRole, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -37,16 +37,16 @@ func PostgresUserAdditionalRoleAPIResponseToTFModel(ctx context.Context, am *api
 	return &t, diags
 }
 
-func PostgresUserAdditionalRoleTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresUserAdditionalRole) (*apimodel.PostgresUserAdditionalRoleRequest, tfdiag.Diagnostics) {
+func PostgresUserAdditionalRoleTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresUserAdditionalRole) (*model.PostgresUserAdditionalRoleRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresUserAdditionalRoleRequest
+	var am model.PostgresUserAdditionalRoleRequest
 
 	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
-		am.Name = ptr.Get(apimodel.PostgresUserAdditionalRoleNameRequest(plan.Name.ValueString()))
+		am.Name = ptr.Get(model.PostgresUserAdditionalRoleNameRequest(plan.Name.ValueString()))
 	}
 
 	if !plan.ExpiresAt.IsNull() && !plan.ExpiresAt.IsUnknown() {
@@ -61,7 +61,7 @@ func PostgresUserAdditionalRoleTFToAPIRequestModel(ctx context.Context, plan *tf
 	return &am, diags
 }
 
-func PostgresUserAdditionalRoleTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresUserAdditionalRole) (*apimodel.UpdatePostgresUserAdditionalRoleRequest, tfdiag.Diagnostics) {
+func PostgresUserAdditionalRoleTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresUserAdditionalRole) (*model.UpdatePostgresUserAdditionalRoleRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -70,11 +70,11 @@ func PostgresUserAdditionalRoleTFToAPIUpdateRequestModel(ctx context.Context, pl
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdatePostgresUserAdditionalRoleRequest
+	var am model.UpdatePostgresUserAdditionalRoleRequest
 
 	if !plan.Name.Equal(state.Name) {
 		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
-			am.Name.SetTo(apimodel.PostgresUserAdditionalRoleNameRequest(plan.Name.ValueString()))
+			am.Name.SetTo(model.PostgresUserAdditionalRoleNameRequest(plan.Name.ValueString()))
 		}
 	}
 

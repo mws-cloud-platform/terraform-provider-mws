@@ -10,14 +10,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/iam/model"
+	"go.mws.cloud/go-sdk/service/iam/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/iam/model"
 )
 
-func HmacKeyResourceStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.HmacKeyResourceStatusResponse) (*tfmodel.HmacKeyResourceStatus, tfdiag.Diagnostics) {
+func HmacKeyResourceStatusAPIResponseToTFModel(ctx context.Context, am *model.HmacKeyResourceStatusResponse) (*tfmodel.HmacKeyResourceStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
-func ClusterAvailabilitySpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClusterAvailabilitySpecOptionalResponse) (*tfmodel.ClusterAvailabilitySpec, tfdiag.Diagnostics) {
+func ClusterAvailabilitySpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClusterAvailabilitySpecOptionalResponse) (*tfmodel.ClusterAvailabilitySpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -58,16 +58,34 @@ func ClusterAvailabilitySpecAPIOptionalResponseToTFModel(ctx context.Context, am
 		t.ZonalHa = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.ClusterAvailabilitySpecZonalHa).GetSchema().Attributes))
 	}
 
+	if val, ok := am.Regional.Get(); ok {
+		regionalTmp, d := ClusterAvailabilitySpecRegionalAPIOptionalResponseToTFModel(ctx, &val)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		regionalTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.ClusterAvailabilitySpecRegional).GetSchema().Attributes),
+			*regionalTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.Regional = regionalTfObject
+	} else {
+		t.Regional = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.ClusterAvailabilitySpecRegional).GetSchema().Attributes))
+	}
+
 	return &t, diags
 }
 
-func ClusterAvailabilitySpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterAvailabilitySpec) (*apimodel.ClusterAvailabilitySpecRequest, tfdiag.Diagnostics) {
+func ClusterAvailabilitySpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterAvailabilitySpec) (*model.ClusterAvailabilitySpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClusterAvailabilitySpecRequest
+	var am model.ClusterAvailabilitySpecRequest
 
 	if !plan.Standalone.IsNull() && !plan.Standalone.IsUnknown() {
 		standalonePlan := tfmodel.ClusterAvailabilitySpecStandalone{}
@@ -101,10 +119,26 @@ func ClusterAvailabilitySpecTFToAPIRequestModel(ctx context.Context, plan *tfmod
 		am.ZonalHa = zonalHaTmp
 	}
 
+	if !plan.Regional.IsNull() && !plan.Regional.IsUnknown() {
+		regionalPlan := tfmodel.ClusterAvailabilitySpecRegional{}
+		regionalPlanDiag := plan.Regional.As(ctx, &regionalPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, regionalPlanDiag...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		regionalTmp, regionalDiag := ClusterAvailabilitySpecRegionalTFToAPIRequestModel(ctx, &regionalPlan)
+		diags = append(diags, regionalDiag...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		am.Regional = regionalTmp
+	}
+
 	return &am, diags
 }
 
-func ClusterAvailabilitySpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClusterAvailabilitySpec) (*apimodel.UpdateClusterAvailabilitySpecRequest, tfdiag.Diagnostics) {
+func ClusterAvailabilitySpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClusterAvailabilitySpec) (*model.UpdateClusterAvailabilitySpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -113,7 +147,7 @@ func ClusterAvailabilitySpecTFToAPIUpdateRequestModel(ctx context.Context, plan,
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateClusterAvailabilitySpecRequest
+	var am model.UpdateClusterAvailabilitySpecRequest
 
 	if !plan.Standalone.Equal(state.Standalone) {
 		if !plan.Standalone.IsNull() && !plan.Standalone.IsUnknown() {
@@ -173,10 +207,126 @@ func ClusterAvailabilitySpecTFToAPIUpdateRequestModel(ctx context.Context, plan,
 		}
 	}
 
+	if !plan.Regional.Equal(state.Regional) {
+		if !plan.Regional.IsNull() && !plan.Regional.IsUnknown() {
+			regionalPlan := tfmodel.ClusterAvailabilitySpecRegional{}
+			regionalPlanDiag := plan.Regional.As(ctx, &regionalPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, regionalPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			regionalState := tfmodel.ClusterAvailabilitySpecRegional{}
+			if !state.Regional.IsNull() && !state.Regional.IsUnknown() {
+				regionalStateDiag := state.Regional.As(ctx, &regionalState, basetypes.ObjectAsOptions{})
+				diags = append(diags, regionalStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			regionalTmp, regionalDiag := ClusterAvailabilitySpecRegionalTFToAPIUpdateRequestModel(ctx, &regionalPlan, &regionalState)
+			diags = append(diags, regionalDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Regional.SetTo(*regionalTmp)
+		} else if plan.Regional.IsNull() {
+			am.Regional.SetToNull()
+		}
+	}
+
 	return &am, diags
 }
 
-func ClusterAvailabilitySpecStandaloneAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClusterAvailabilitySpecStandaloneOptionalResponse) (*tfmodel.ClusterAvailabilitySpecStandalone, tfdiag.Diagnostics) {
+func ClusterAvailabilitySpecRegionalAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClusterAvailabilitySpecRegionalOptionalResponse) (*tfmodel.ClusterAvailabilitySpecRegional, tfdiag.Diagnostics) {
+	if am == nil {
+		return nil, nil
+	}
+
+	var diags tfdiag.Diagnostics
+	var t tfmodel.ClusterAvailabilitySpecRegional
+
+	if am.Zones != nil {
+		zones := make([]types.String, 0, len(am.Zones))
+
+		for _, entity := range am.Zones {
+			zones = append(zones, types.StringValue(entity))
+		}
+
+		zonesList, d := types.ListValueFrom(ctx, types.StringType, zones)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		t.Zones = zonesList
+	} else {
+		t.Zones = types.ListNull(types.StringType)
+	}
+
+	return &t, diags
+}
+
+func ClusterAvailabilitySpecRegionalTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterAvailabilitySpecRegional) (*model.ClusterAvailabilitySpecRegionalRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+
+	var diags tfdiag.Diagnostics
+	var am model.ClusterAvailabilitySpecRegionalRequest
+
+	if !plan.Zones.IsNull() && !plan.Zones.IsUnknown() {
+		zones := make([]types.String, 0)
+		dZones := plan.Zones.ElementsAs(ctx, &zones, false)
+		diags = append(diags, dZones...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		am.Zones = make([]string, 0, len(zones))
+
+		for _, entity := range zones {
+			am.Zones = append(am.Zones, entity.ValueString())
+		}
+	}
+
+	return &am, diags
+}
+
+func ClusterAvailabilitySpecRegionalTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClusterAvailabilitySpecRegional) (*model.UpdateClusterAvailabilitySpecRegionalRequest, tfdiag.Diagnostics) {
+	if plan == nil {
+		return nil, nil
+	}
+	if state == nil {
+		state = &tfmodel.ClusterAvailabilitySpecRegional{}
+	}
+
+	var diags tfdiag.Diagnostics
+	var am model.UpdateClusterAvailabilitySpecRegionalRequest
+
+	if !plan.Zones.Equal(state.Zones) {
+		if !plan.Zones.IsNull() && !plan.Zones.IsUnknown() {
+			zones := make([]types.String, 0)
+			dZones := plan.Zones.ElementsAs(ctx, &zones, false)
+			diags = append(diags, dZones...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			zonesTmp := make([]string, 0, len(zones))
+
+			for _, entity := range zones {
+				zonesTmp = append(zonesTmp, entity.ValueString())
+			}
+			am.Zones.SetTo(zonesTmp)
+		}
+	}
+
+	return &am, diags
+}
+
+func ClusterAvailabilitySpecStandaloneAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClusterAvailabilitySpecStandaloneOptionalResponse) (*tfmodel.ClusterAvailabilitySpecStandalone, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -189,13 +339,13 @@ func ClusterAvailabilitySpecStandaloneAPIOptionalResponseToTFModel(ctx context.C
 	return &t, diags
 }
 
-func ClusterAvailabilitySpecStandaloneTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterAvailabilitySpecStandalone) (*apimodel.ClusterAvailabilitySpecStandaloneRequest, tfdiag.Diagnostics) {
+func ClusterAvailabilitySpecStandaloneTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterAvailabilitySpecStandalone) (*model.ClusterAvailabilitySpecStandaloneRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClusterAvailabilitySpecStandaloneRequest
+	var am model.ClusterAvailabilitySpecStandaloneRequest
 
 	if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
 		am.Zone = plan.Zone.ValueString()
@@ -204,7 +354,7 @@ func ClusterAvailabilitySpecStandaloneTFToAPIRequestModel(ctx context.Context, p
 	return &am, diags
 }
 
-func ClusterAvailabilitySpecStandaloneTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClusterAvailabilitySpecStandalone) (*apimodel.UpdateClusterAvailabilitySpecStandaloneRequest, tfdiag.Diagnostics) {
+func ClusterAvailabilitySpecStandaloneTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClusterAvailabilitySpecStandalone) (*model.UpdateClusterAvailabilitySpecStandaloneRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -213,7 +363,7 @@ func ClusterAvailabilitySpecStandaloneTFToAPIUpdateRequestModel(ctx context.Cont
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateClusterAvailabilitySpecStandaloneRequest
+	var am model.UpdateClusterAvailabilitySpecStandaloneRequest
 
 	if !plan.Zone.Equal(state.Zone) {
 		if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
@@ -224,7 +374,7 @@ func ClusterAvailabilitySpecStandaloneTFToAPIUpdateRequestModel(ctx context.Cont
 	return &am, diags
 }
 
-func ClusterAvailabilitySpecZonalHaAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClusterAvailabilitySpecZonalHaOptionalResponse) (*tfmodel.ClusterAvailabilitySpecZonalHa, tfdiag.Diagnostics) {
+func ClusterAvailabilitySpecZonalHaAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClusterAvailabilitySpecZonalHaOptionalResponse) (*tfmodel.ClusterAvailabilitySpecZonalHa, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -237,13 +387,13 @@ func ClusterAvailabilitySpecZonalHaAPIOptionalResponseToTFModel(ctx context.Cont
 	return &t, diags
 }
 
-func ClusterAvailabilitySpecZonalHaTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterAvailabilitySpecZonalHa) (*apimodel.ClusterAvailabilitySpecZonalHaRequest, tfdiag.Diagnostics) {
+func ClusterAvailabilitySpecZonalHaTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterAvailabilitySpecZonalHa) (*model.ClusterAvailabilitySpecZonalHaRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClusterAvailabilitySpecZonalHaRequest
+	var am model.ClusterAvailabilitySpecZonalHaRequest
 
 	if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
 		am.Zone = plan.Zone.ValueString()
@@ -252,7 +402,7 @@ func ClusterAvailabilitySpecZonalHaTFToAPIRequestModel(ctx context.Context, plan
 	return &am, diags
 }
 
-func ClusterAvailabilitySpecZonalHaTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClusterAvailabilitySpecZonalHa) (*apimodel.UpdateClusterAvailabilitySpecZonalHaRequest, tfdiag.Diagnostics) {
+func ClusterAvailabilitySpecZonalHaTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClusterAvailabilitySpecZonalHa) (*model.UpdateClusterAvailabilitySpecZonalHaRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -261,7 +411,7 @@ func ClusterAvailabilitySpecZonalHaTFToAPIUpdateRequestModel(ctx context.Context
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateClusterAvailabilitySpecZonalHaRequest
+	var am model.UpdateClusterAvailabilitySpecZonalHaRequest
 
 	if !plan.Zone.Equal(state.Zone) {
 		if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {

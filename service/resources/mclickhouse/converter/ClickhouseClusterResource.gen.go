@@ -8,14 +8,14 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func ClickhouseClusterResourceAPIResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseClusterResourceResponse) (*tfmodel.ClickhouseClusterResource, tfdiag.Diagnostics) {
+func ClickhouseClusterResourceAPIResponseToTFModel(ctx context.Context, am *model.ClickhouseClusterResourceResponse) (*tfmodel.ClickhouseClusterResource, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

@@ -9,12 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/model"
 )
 
-func PostgresExternalAccessSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresExternalAccessSpecResponse) (*tfmodel.PostgresExternalAccessSpec, tfdiag.Diagnostics) {
+func PostgresExternalAccessSpecAPIResponseToTFModel(ctx context.Context, am *model.PostgresExternalAccessSpecResponse) (*tfmodel.PostgresExternalAccessSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -31,28 +30,4 @@ func PostgresExternalAccessSpecAPIResponseToTFModel(ctx context.Context, am *api
 	}
 
 	return &t, diags
-}
-
-func PostgresExternalAccessSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresExternalAccessSpec) (*apimodel.PostgresExternalAccessSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresExternalAccessSpecRequest
-
-	if !plan.Allowed.IsNull() && !plan.Allowed.IsUnknown() {
-		am.Allowed = plan.Allowed.ValueBool()
-	}
-
-	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
-		refRef, err := vpc.ParseExternalAddressRef(ctx, plan.Ref.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Ref = &refRef
-	}
-
-	return &am, diags
 }

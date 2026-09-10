@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
@@ -17,22 +17,22 @@ import (
 
 func TestPostgresInstanceTemplateAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.PostgresInstanceTemplateResponse{}
+	emptyApiModel := model.PostgresInstanceTemplateResponse{}
 	_, diags := conv.PostgresInstanceTemplateAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestPostgresInstanceTemplateResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.PostgresInstanceTemplateRequest{
+	emptyApiModelRequest := model.PostgresInstanceTemplateRequest{
 		VmType: compute.NewMustVmTypeRef("vmTypeID"),
-		Disk: apimodel.DataDiskSpecRequest{
+		Disk: model.DataDiskSpecRequest{
 			Size: bytesize.MustParseString("0 B"),
 			Type: "",
 		},
 	}
 
-	emptyApiModelResponse, err := apimodel.PostgresInstanceTemplateRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.PostgresInstanceTemplateRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.PostgresInstanceTemplateAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -41,7 +41,7 @@ func TestPostgresInstanceTemplateResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.PostgresInstanceTemplateTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.PostgresInstanceTemplateRequestToResponse(filledApiModelRequest)
+	result, err := model.PostgresInstanceTemplateRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -53,7 +53,7 @@ func TestUpdatePostgresInstanceTemplateRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.PostgresInstanceTemplate
 	var stateTfModel tfmodel.PostgresInstanceTemplate
 
-	expectedUpdateModel := &apimodel.UpdatePostgresInstanceTemplateRequest{}
+	expectedUpdateModel := &model.UpdatePostgresInstanceTemplateRequest{}
 
 	result, diags := conv.PostgresInstanceTemplateTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

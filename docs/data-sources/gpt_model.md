@@ -14,7 +14,7 @@ description: |-
 
 ```terraform
 data "mws_gpt_model" "model" {
-  model_name = "glm-5.2"
+  model_name = "glm-5.3"
 }
 ```
 
@@ -38,7 +38,7 @@ data "mws_gpt_model" "model" {
 - `input_modalities` (Attributes) (see [below for nested schema](#nestedatt--input_modalities))
 - `kind` (String)
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
-- `modalities` (Attributes) (see [below for nested schema](#nestedatt--modalities))
+- `modalities` (Attributes, Deprecated) (see [below for nested schema](#nestedatt--modalities))
 - `output_modalities` (Attributes) (see [below for nested schema](#nestedatt--output_modalities))
 - `size` (Number) Размер модели в миллиардах параметров
 - `status` (Attributes) Текущее состояние ресурса, вычисляемое системой (see [below for nested schema](#nestedatt--status))

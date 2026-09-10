@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/iam"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/converter"
@@ -20,21 +20,21 @@ import (
 
 func TestCertificateRoleBindingAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.CertificateRoleBindingOptionalResponse{}
+	emptyApiModel := model.CertificateRoleBindingOptionalResponse{}
 	_, diags := conv.CertificateRoleBindingAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestCertificateRoleBindingOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.CertificateRoleBindingRequest{
-		Spec: commonapimodel.CommonRoleBindingSpecRequest{
-			Subject: commonapimodel.CommonRoleBindingSpecSubjectRequest{},
+	emptyApiModelRequest := model.CertificateRoleBindingRequest{
+		Spec: commonmodel.CommonRoleBindingSpecRequest{
+			Subject: commonmodel.CommonRoleBindingSpecSubjectRequest{},
 			Role:    iam.NewMustRoleRef("roleID"),
 		},
 	}
 
-	emptyApiModelResponse, err := apimodel.CertificateRoleBindingRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.CertificateRoleBindingRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.CertificateRoleBindingAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -43,7 +43,7 @@ func TestCertificateRoleBindingOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.CertificateRoleBindingTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.CertificateRoleBindingRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.CertificateRoleBindingRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -56,8 +56,8 @@ func TestUpdateCertificateRoleBindingRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.CertificateRoleBinding
 	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateCertificateRoleBindingRequest{
-		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+	expectedUpdateModel := &model.UpdateCertificateRoleBindingRequest{
+		Metadata: optional.OptionalNil[commonmodel.UpdateCommonTypedResourceMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},

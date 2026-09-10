@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/secretmanager/model"
+	"go.mws.cloud/go-sdk/service/secretmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager/model"
 )
 
-func SecretStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.SecretStatusResponse) (*tfmodel.SecretStatus, tfdiag.Diagnostics) {
+func SecretStatusAPIResponseToTFModel(ctx context.Context, am *model.SecretStatusResponse) (*tfmodel.SecretStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

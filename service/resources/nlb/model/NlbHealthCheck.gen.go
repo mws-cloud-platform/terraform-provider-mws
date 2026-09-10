@@ -35,7 +35,7 @@ func (s *NlbHealthCheck) GetSchema() schema.Schema {
 
 Отрицательные значения обозначаются префиксом "-", в простом формате могут быть ограничены скобками.
 Регистр и пробелы игнорируются`,
-				Required: true,
+				Optional: true,
 			},
 			"timeout": schema.StringAttribute{
 				MarkdownDescription: `Таймаут запроса

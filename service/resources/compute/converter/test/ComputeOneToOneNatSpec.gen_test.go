@@ -8,27 +8,27 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
 func TestComputeOneToOneNatSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ComputeOneToOneNatSpecOptionalResponse{}
+	emptyApiModel := model.ComputeOneToOneNatSpecOptionalResponse{}
 	_, diags := conv.ComputeOneToOneNatSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestComputeOneToOneNatSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.ComputeOneToOneNatSpecRequest{
-		External: apimodel.ComputeOneToOneNatSpecExternalRequest{
-			Address: apimodel.OneToOneNatAddressSpecOrRefRequest{},
+	emptyApiModelRequest := model.ComputeOneToOneNatSpecRequest{
+		External: model.ComputeOneToOneNatSpecExternalRequest{
+			Address: model.OneToOneNatAddressSpecOrRefRequest{},
 		},
 	}
 
-	emptyApiModelResponse, err := apimodel.ComputeOneToOneNatSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.ComputeOneToOneNatSpecRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.ComputeOneToOneNatSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -37,7 +37,7 @@ func TestComputeOneToOneNatSpecOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.ComputeOneToOneNatSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.ComputeOneToOneNatSpecRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.ComputeOneToOneNatSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -49,7 +49,7 @@ func TestUpdateComputeOneToOneNatSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.ComputeOneToOneNatSpec
 	var stateTfModel tfmodel.ComputeOneToOneNatSpec
 
-	expectedUpdateModel := &apimodel.UpdateComputeOneToOneNatSpecRequest{}
+	expectedUpdateModel := &model.UpdateComputeOneToOneNatSpecRequest{}
 
 	result, diags := conv.ComputeOneToOneNatSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())
@@ -59,18 +59,18 @@ func TestUpdateComputeOneToOneNatSpecRequestConverters(t *testing.T) {
 
 func TestComputeOneToOneNatSpecExternalAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ComputeOneToOneNatSpecExternalOptionalResponse{}
+	emptyApiModel := model.ComputeOneToOneNatSpecExternalOptionalResponse{}
 	_, diags := conv.ComputeOneToOneNatSpecExternalAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestComputeOneToOneNatSpecExternalOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.ComputeOneToOneNatSpecExternalRequest{
-		Address: apimodel.OneToOneNatAddressSpecOrRefRequest{},
+	emptyApiModelRequest := model.ComputeOneToOneNatSpecExternalRequest{
+		Address: model.OneToOneNatAddressSpecOrRefRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.ComputeOneToOneNatSpecExternalRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.ComputeOneToOneNatSpecExternalRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.ComputeOneToOneNatSpecExternalAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -79,7 +79,7 @@ func TestComputeOneToOneNatSpecExternalOptionalResponseConverters(t *testing.T) 
 	filledApiModelRequest, diags := conv.ComputeOneToOneNatSpecExternalTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.ComputeOneToOneNatSpecExternalRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.ComputeOneToOneNatSpecExternalRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -91,7 +91,7 @@ func TestUpdateComputeOneToOneNatSpecExternalRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.ComputeOneToOneNatSpecExternal
 	var stateTfModel tfmodel.ComputeOneToOneNatSpecExternal
 
-	expectedUpdateModel := &apimodel.UpdateComputeOneToOneNatSpecExternalRequest{}
+	expectedUpdateModel := &model.UpdateComputeOneToOneNatSpecExternalRequest{}
 
 	result, diags := conv.ComputeOneToOneNatSpecExternalTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

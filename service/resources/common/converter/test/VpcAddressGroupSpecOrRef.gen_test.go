@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
@@ -19,28 +19,28 @@ import (
 
 func TestVpcAddressGroupSpecOrRefAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.VpcAddressGroupSpecOrRef{}
+	emptyApiModel := commonmodel.VpcAddressGroupSpecOrRef{}
 	_, diags := commonconv.VpcAddressGroupSpecOrRefAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestVpcAddressGroupSpecOrRefAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.VpcAddressGroupSpecOrRefResponse{}
+	emptyApiModel := commonmodel.VpcAddressGroupSpecOrRefResponse{}
 	_, diags := commonconv.VpcAddressGroupSpecOrRefAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestVpcAddressGroupSpecOrRefAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.VpcAddressGroupSpecOrRefOptionalResponse{}
+	emptyApiModel := commonmodel.VpcAddressGroupSpecOrRefOptionalResponse{}
 	_, diags := commonconv.VpcAddressGroupSpecOrRefAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestVpcAddressGroupSpecOrRefConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.VpcAddressGroupSpecOrRef{}
+	emptyApiModel := commonmodel.VpcAddressGroupSpecOrRef{}
 
 	tfModel, diags := commonconv.VpcAddressGroupSpecOrRefAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
@@ -53,9 +53,9 @@ func TestVpcAddressGroupSpecOrRefConverters(t *testing.T) {
 
 func TestVpcAddressGroupSpecOrRefResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonapimodel.VpcAddressGroupSpecOrRefRequest{}
+	emptyApiModelRequest := commonmodel.VpcAddressGroupSpecOrRefRequest{}
 
-	emptyApiModelResponse, err := commonapimodel.VpcAddressGroupSpecOrRefRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonmodel.VpcAddressGroupSpecOrRefRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.VpcAddressGroupSpecOrRefAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -64,7 +64,7 @@ func TestVpcAddressGroupSpecOrRefResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := commonconv.VpcAddressGroupSpecOrRefTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := commonapimodel.VpcAddressGroupSpecOrRefRequestToResponse(filledApiModelRequest)
+	result, err := commonmodel.VpcAddressGroupSpecOrRefRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -72,9 +72,9 @@ func TestVpcAddressGroupSpecOrRefResponseConverters(t *testing.T) {
 
 func TestVpcAddressGroupSpecOrRefOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonapimodel.VpcAddressGroupSpecOrRefRequest{}
+	emptyApiModelRequest := commonmodel.VpcAddressGroupSpecOrRefRequest{}
 
-	emptyApiModelResponse, err := commonapimodel.VpcAddressGroupSpecOrRefRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonmodel.VpcAddressGroupSpecOrRefRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.VpcAddressGroupSpecOrRefAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -83,7 +83,7 @@ func TestVpcAddressGroupSpecOrRefOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := commonconv.VpcAddressGroupSpecOrRefTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := commonapimodel.VpcAddressGroupSpecOrRefRequestToOptionalResponse(filledApiModelRequest)
+	result, err := commonmodel.VpcAddressGroupSpecOrRefRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -97,12 +97,12 @@ func TestUpdateVpcAddressGroupSpecOrRefConverters(t *testing.T) {
 	stateTfModel.Ref = types.StringValue("")
 	stateTfModel.Spec = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.VpcAddressGroupSpec).GetSchema().Attributes))
 
-	expectedUpdateModel := &commonapimodel.UpdateVpcAddressGroupSpecOrRef{
+	expectedUpdateModel := &commonmodel.UpdateVpcAddressGroupSpecOrRef{
 		Ref: optional.OptionalNil[vpc.AddressGroupRef]{
 			Set:  true,
 			Null: true,
 		},
-		Spec: optional.OptionalNil[commonapimodel.UpdateVpcAddressGroupSpec]{
+		Spec: optional.OptionalNil[commonmodel.UpdateVpcAddressGroupSpec]{
 			Set:  true,
 			Null: true,
 		},
@@ -122,12 +122,12 @@ func TestUpdateVpcAddressGroupSpecOrRefRequestConverters(t *testing.T) {
 	stateTfModel.Ref = types.StringValue("")
 	stateTfModel.Spec = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.VpcAddressGroupSpec).GetSchema().Attributes))
 
-	expectedUpdateModel := &commonapimodel.UpdateVpcAddressGroupSpecOrRefRequest{
+	expectedUpdateModel := &commonmodel.UpdateVpcAddressGroupSpecOrRefRequest{
 		Ref: optional.OptionalNil[vpc.AddressGroupRef]{
 			Set:  true,
 			Null: true,
 		},
-		Spec: optional.OptionalNil[commonapimodel.UpdateVpcAddressGroupSpecRequest]{
+		Spec: optional.OptionalNil[commonmodel.UpdateVpcAddressGroupSpecRequest]{
 			Set:  true,
 			Null: true,
 		},

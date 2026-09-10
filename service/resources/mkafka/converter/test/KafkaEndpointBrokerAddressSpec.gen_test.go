@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
@@ -16,18 +16,18 @@ import (
 
 func TestKafkaEndpointBrokerAddressSpecAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaEndpointBrokerAddressSpecResponse{}
+	emptyApiModel := model.KafkaEndpointBrokerAddressSpecResponse{}
 	_, diags := conv.KafkaEndpointBrokerAddressSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestKafkaEndpointBrokerAddressSpecResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaEndpointBrokerAddressSpecRequest{
+	emptyApiModelRequest := model.KafkaEndpointBrokerAddressSpecRequest{
 		Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
 	}
 
-	emptyApiModelResponse, err := apimodel.KafkaEndpointBrokerAddressSpecRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.KafkaEndpointBrokerAddressSpecRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.KafkaEndpointBrokerAddressSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -36,7 +36,7 @@ func TestKafkaEndpointBrokerAddressSpecResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.KafkaEndpointBrokerAddressSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.KafkaEndpointBrokerAddressSpecRequestToResponse(filledApiModelRequest)
+	result, err := model.KafkaEndpointBrokerAddressSpecRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -48,7 +48,7 @@ func TestUpdateKafkaEndpointBrokerAddressSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.KafkaEndpointBrokerAddressSpec
 	var stateTfModel tfmodel.KafkaEndpointBrokerAddressSpec
 
-	expectedUpdateModel := &apimodel.UpdateKafkaEndpointBrokerAddressSpecRequest{}
+	expectedUpdateModel := &model.UpdateKafkaEndpointBrokerAddressSpecRequest{}
 
 	result, diags := conv.KafkaEndpointBrokerAddressSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

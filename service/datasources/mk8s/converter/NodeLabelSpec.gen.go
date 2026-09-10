@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/model"
 )
 
-func NodeLabelSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NodeLabelSpecOptionalResponse) (*tfmodel.NodeLabelSpec, tfdiag.Diagnostics) {
+func NodeLabelSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.NodeLabelSpecOptionalResponse) (*tfmodel.NodeLabelSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -27,7 +27,7 @@ func NodeLabelSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel
 	return &t, diags
 }
 
-func NodeLabelSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.NodeLabelSpecResponse) (*tfmodel.NodeLabelSpec, tfdiag.Diagnostics) {
+func NodeLabelSpecAPIResponseToTFModel(ctx context.Context, am *model.NodeLabelSpecResponse) (*tfmodel.NodeLabelSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -40,23 +40,4 @@ func NodeLabelSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.NodeLab
 	t.Value = types.StringValue(am.Value)
 
 	return &t, diags
-}
-
-func NodeLabelSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeLabelSpec) (*apimodel.NodeLabelSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.NodeLabelSpecRequest
-
-	if !plan.Key.IsNull() && !plan.Key.IsUnknown() {
-		am.Key = plan.Key.ValueString()
-	}
-
-	if !plan.Value.IsNull() && !plan.Value.IsUnknown() {
-		am.Value = plan.Value.ValueString()
-	}
-
-	return &am, diags
 }

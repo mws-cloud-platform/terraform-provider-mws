@@ -15,7 +15,7 @@ description: |-
 ```terraform
 resource "mws_gpt_deployment" "deployment" {
   deployment_name = var.deployment_name
-  model           = "glm-5.2"
+  model           = "glm-5.3"
   is_active       = true
 
   metadata = {
@@ -105,7 +105,7 @@ Read-Only:
 - `deprecation` (Attributes) (see [below for nested schema](#nestedatt--status--deprecation))
 - `developer` (String) Разработчик модели
 - `input_modalities` (Attributes) (see [below for nested schema](#nestedatt--status--input_modalities))
-- `modalities` (Attributes) (see [below for nested schema](#nestedatt--status--modalities))
+- `modalities` (Attributes, Deprecated) (see [below for nested schema](#nestedatt--status--modalities))
 - `output_modalities` (Attributes) (see [below for nested schema](#nestedatt--status--output_modalities))
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
 - `size` (Number) Размер модели в миллиардах параметров

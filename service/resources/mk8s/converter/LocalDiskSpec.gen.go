@@ -10,11 +10,11 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
-func LocalDiskSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.LocalDiskSpecOptionalResponse) (*tfmodel.LocalDiskSpec, tfdiag.Diagnostics) {
+func LocalDiskSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.LocalDiskSpecOptionalResponse) (*tfmodel.LocalDiskSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -35,13 +35,13 @@ func LocalDiskSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel
 	return &t, diags
 }
 
-func LocalDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.LocalDiskSpec) (*apimodel.LocalDiskSpecRequest, tfdiag.Diagnostics) {
+func LocalDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.LocalDiskSpec) (*model.LocalDiskSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.LocalDiskSpecRequest
+	var am model.LocalDiskSpecRequest
 
 	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
 		am.Name = plan.Name.ValueString()
@@ -63,7 +63,7 @@ func LocalDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.LocalDi
 	return &am, diags
 }
 
-func LocalDiskSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.LocalDiskSpec) (*apimodel.UpdateLocalDiskSpecRequest, tfdiag.Diagnostics) {
+func LocalDiskSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.LocalDiskSpec) (*model.UpdateLocalDiskSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -72,7 +72,7 @@ func LocalDiskSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tf
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateLocalDiskSpecRequest
+	var am model.UpdateLocalDiskSpecRequest
 
 	if !plan.Name.Equal(state.Name) {
 		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {

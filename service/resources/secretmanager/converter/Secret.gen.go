@@ -11,14 +11,14 @@ import (
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/resources/references/secretmanager"
-	apimodel "go.mws.cloud/go-sdk/service/secretmanager/model"
+	"go.mws.cloud/go-sdk/service/secretmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager/model"
 )
 
-func SecretAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.SecretOptionalResponse) (*tfmodel.Secret, tfdiag.Diagnostics) {
+func SecretAPIOptionalResponseToTFModel(ctx context.Context, am *model.SecretOptionalResponse) (*tfmodel.Secret, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -89,13 +89,13 @@ func SecretAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Secret
 	return &t, diags
 }
 
-func SecretTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Secret) (*apimodel.SecretRequest, tfdiag.Diagnostics) {
+func SecretTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Secret) (*model.SecretRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.SecretRequest
+	var am model.SecretRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
@@ -145,7 +145,7 @@ func SecretTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Secret) (*apim
 	return &am, diags
 }
 
-func SecretTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Secret) (*apimodel.UpdateSecretRequest, tfdiag.Diagnostics) {
+func SecretTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Secret) (*model.UpdateSecretRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -154,7 +154,7 @@ func SecretTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.S
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateSecretRequest
+	var am model.UpdateSecretRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -188,7 +188,7 @@ func SecretTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.S
 	if !plan.Active.Equal(state.Active) {
 		if !plan.Active.IsNull() && !plan.Active.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateSecretSpecRequest{})
+				am.Spec.SetTo(model.UpdateSecretSpecRequest{})
 			}
 			am.Spec.Value.Active.SetTo(plan.Active.ValueBool())
 		}
@@ -197,7 +197,7 @@ func SecretTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.S
 	if !plan.CurrentSecretVersion.Equal(state.CurrentSecretVersion) {
 		if !plan.CurrentSecretVersion.IsNull() && !plan.CurrentSecretVersion.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateSecretSpecRequest{})
+				am.Spec.SetTo(model.UpdateSecretSpecRequest{})
 			}
 			currentSecretVersionRef, err := secretmanager.ParseSecretVersionRef(ctx, plan.CurrentSecretVersion.ValueString())
 			if err != nil {
@@ -207,7 +207,7 @@ func SecretTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.S
 			am.Spec.Value.CurrentSecretVersion.SetTo(currentSecretVersionRef)
 		} else if plan.CurrentSecretVersion.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateSecretSpecRequest{})
+				am.Spec.SetTo(model.UpdateSecretSpecRequest{})
 			}
 			am.Spec.Value.CurrentSecretVersion.SetToNull()
 		}
@@ -216,7 +216,7 @@ func SecretTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.S
 	if !plan.Encryption.Equal(state.Encryption) {
 		if !plan.Encryption.IsNull() && !plan.Encryption.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateSecretSpecRequest{})
+				am.Spec.SetTo(model.UpdateSecretSpecRequest{})
 			}
 			encryptionPlan := tfmodel.EncryptionSpec{}
 			encryptionPlanDiag := plan.Encryption.As(ctx, &encryptionPlan, basetypes.ObjectAsOptions{})
@@ -242,7 +242,7 @@ func SecretTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.S
 			am.Spec.Value.Encryption.SetTo(*encryptionTmp)
 		} else if plan.Encryption.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateSecretSpecRequest{})
+				am.Spec.SetTo(model.UpdateSecretSpecRequest{})
 			}
 			am.Spec.Value.Encryption.SetToNull()
 		}

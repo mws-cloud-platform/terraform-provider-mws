@@ -7,36 +7,14 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
 func TestFirewallRuleSourceSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.FirewallRuleSourceSpecOptionalResponse{}
+	emptyApiModel := model.FirewallRuleSourceSpecOptionalResponse{}
 	_, diags := conv.FirewallRuleSourceSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestFirewallRuleSourceSpecOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.FirewallRuleSourceSpecRequest{
-		Cidrs: []cidraddress.CIDR4Address{},
-	}
-
-	emptyApiModelResponse, err := apimodel.FirewallRuleSourceSpecRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.FirewallRuleSourceSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.FirewallRuleSourceSpecTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.FirewallRuleSourceSpecRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

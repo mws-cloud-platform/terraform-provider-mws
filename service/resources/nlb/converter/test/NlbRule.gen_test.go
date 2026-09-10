@@ -10,8 +10,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/nlb/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/nlb/model"
@@ -19,19 +19,19 @@ import (
 
 func TestNlbRuleAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NlbRuleOptionalResponse{}
+	emptyApiModel := model.NlbRuleOptionalResponse{}
 	_, diags := conv.NlbRuleAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestNlbRuleOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.NlbRuleRequest{
+	emptyApiModelRequest := model.NlbRuleRequest{
 		ProtoPort:           "protoPort",
-		TargetAddressGroups: []commonapimodel.VpcAddressGroupSpecOrRefRequest{},
+		TargetAddressGroups: []commonmodel.VpcAddressGroupSpecOrRefRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.NlbRuleRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.NlbRuleRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.NlbRuleAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -40,7 +40,7 @@ func TestNlbRuleOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.NlbRuleTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.NlbRuleRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.NlbRuleRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -54,12 +54,12 @@ func TestUpdateNlbRuleRequestConverters(t *testing.T) {
 	stateTfModel.TargetPort = types.Int64Value(0)
 	stateTfModel.HealthCheck = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.NlbHealthCheck).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateNlbRuleRequest{
+	expectedUpdateModel := &model.UpdateNlbRuleRequest{
 		TargetPort: optional.OptionalNil[int32]{
 			Set:  true,
 			Null: true,
 		},
-		HealthCheck: optional.OptionalNil[apimodel.UpdateNlbHealthCheckRequest]{
+		HealthCheck: optional.OptionalNil[model.UpdateNlbHealthCheckRequest]{
 			Set:  true,
 			Null: true,
 		},

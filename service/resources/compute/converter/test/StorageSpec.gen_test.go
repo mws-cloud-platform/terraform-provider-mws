@@ -8,25 +8,25 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
 func TestStorageSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.StorageSpecOptionalResponse{}
+	emptyApiModel := model.StorageSpecOptionalResponse{}
 	_, diags := conv.StorageSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestStorageSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.StorageSpecRequest{
-		Disks: []apimodel.StorageDiskSpecOrRefWithAttachmentsRequest{},
+	emptyApiModelRequest := model.StorageSpecRequest{
+		Disks: []model.StorageDiskSpecOrRefWithAttachmentsRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.StorageSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.StorageSpecRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.StorageSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -35,7 +35,7 @@ func TestStorageSpecOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.StorageSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.StorageSpecRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.StorageSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -47,7 +47,7 @@ func TestUpdateStorageSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.StorageSpec
 	var stateTfModel tfmodel.StorageSpec
 
-	expectedUpdateModel := &apimodel.UpdateStorageSpecRequest{}
+	expectedUpdateModel := &model.UpdateStorageSpecRequest{}
 
 	result, diags := conv.StorageSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

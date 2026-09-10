@@ -14,7 +14,7 @@ type ResourceExternalAddressStatus struct {
 
 func (s *ResourceExternalAddressStatus) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Статус IP-адреса внешнего балансировщика.`,
+		MarkdownDescription: `Описывает статус внешнего адреса как дополнительный ресурс.`,
 		Attributes: map[string]schema.Attribute{
 			"ref": schema.StringAttribute{
 				MarkdownDescription: `Относительная ссылка на статический адрес`,

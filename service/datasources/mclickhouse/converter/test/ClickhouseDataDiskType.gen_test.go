@@ -8,26 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/converter"
 )
 
 func TestClickhouseDataDiskTypeAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClickhouseDataDiskType("")
+	emptyApiModel := model.ClickhouseDataDiskType("")
 	_, diags := conv.ClickhouseDataDiskTypeAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestClickhouseDataDiskTypeConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := apimodel.ClickhouseDataDiskType("")
-
-	tfModel, diags := conv.ClickhouseDataDiskTypeAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-
-	result, diags := conv.ClickhouseDataDiskTypeTFToAPIModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	require.Equal(t, emptyApiModel, *result)
 }

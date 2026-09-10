@@ -59,7 +59,7 @@ func (s *ClickhouseClusterResource) GetSchema() schema.Schema {
 			},
 			"config": schema.MapAttribute{
 				ElementType:         types.StringType,
-				MarkdownDescription: `Настройки Clickhouse`,
+				MarkdownDescription: `Настройки ClickHouse`,
 				Computed:            true,
 			},
 			"storage": schema.SingleNestedAttribute{

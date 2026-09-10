@@ -15,7 +15,7 @@ type NlbStatusHealthCheckProtocol struct {
 
 func (s *NlbStatusHealthCheckProtocol) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Конфигурация протокола проверки работоспособности.`,
+		MarkdownDescription: `Конфигурация проверки работоспособности виртуальных машин.`,
 		Attributes: map[string]schema.Attribute{
 			"http": schema.SingleNestedAttribute{
 				Attributes:          new(NlbStatusHealthCheckHttp).GetSchema().Attributes,

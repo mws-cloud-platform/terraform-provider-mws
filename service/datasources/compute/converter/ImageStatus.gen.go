@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func ImageStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.ImageStatusResponse) (*tfmodel.ImageStatus, tfdiag.Diagnostics) {
+func ImageStatusAPIResponseToTFModel(ctx context.Context, am *model.ImageStatusResponse) (*tfmodel.ImageStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -37,6 +37,33 @@ func ImageStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.ImageStat
 		return nil, diags
 	}
 	t.Ready = readyTfObject
+
+	if am.RegionalImageStatuses != nil {
+		regionalImageStatuses := make([]tfmodel.RegionalImageStatus, 0, len(am.RegionalImageStatuses))
+
+		for _, entity := range am.RegionalImageStatuses {
+			tmp, d := RegionalImageStatusAPIResponseToTFModel(ctx, &entity)
+			diags = append(diags, d...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			regionalImageStatuses = append(regionalImageStatuses, *tmp)
+		}
+
+		regionalImageStatusesList, d := types.ListValueFrom(ctx, types.ObjectType{
+			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.RegionalImageStatus).GetSchema().Attributes),
+		}, regionalImageStatuses)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		t.RegionalImageStatuses = regionalImageStatusesList
+	} else {
+		t.RegionalImageStatuses = types.ListNull(types.ObjectType{
+			AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.RegionalImageStatus).GetSchema().Attributes),
+		})
+	}
 
 	if am.StorageSize != nil {
 		t.StorageSize = types.StringValue(ptr.Value(am.StorageSize.RawValue()))
@@ -74,7 +101,7 @@ func ImageStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.ImageStat
 	}
 
 	if am.OsType != nil {
-		osTypeTmp, d := OsType2APIToTFModel(ctx, am.OsType)
+		osTypeTmp, d := OsTypeAPIToTFModel(ctx, am.OsType)
 		diags = append(diags, d...)
 		if diags.HasError() {
 			return nil, diags

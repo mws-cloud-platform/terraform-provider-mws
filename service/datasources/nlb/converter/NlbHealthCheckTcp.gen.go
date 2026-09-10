@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/nlb/model"
 )
 
-func NlbHealthCheckTcpAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NlbHealthCheckTcpOptionalResponse) (*tfmodel.NlbHealthCheckTcp, tfdiag.Diagnostics) {
+func NlbHealthCheckTcpAPIOptionalResponseToTFModel(ctx context.Context, am *model.NlbHealthCheckTcpOptionalResponse) (*tfmodel.NlbHealthCheckTcp, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -23,19 +23,4 @@ func NlbHealthCheckTcpAPIOptionalResponseToTFModel(ctx context.Context, am *apim
 	t.Port = types.Int64Value(int64(am.Port))
 
 	return &t, diags
-}
-
-func NlbHealthCheckTcpTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbHealthCheckTcp) (*apimodel.NlbHealthCheckTcpRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.NlbHealthCheckTcpRequest
-
-	if !plan.Port.IsNull() && !plan.Port.IsUnknown() {
-		am.Port = int(plan.Port.ValueInt64())
-	}
-
-	return &am, diags
 }

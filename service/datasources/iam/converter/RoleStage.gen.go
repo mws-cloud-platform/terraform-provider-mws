@@ -8,12 +8,12 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/iam/model"
+	"go.mws.cloud/go-sdk/service/iam/model"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/iam/model"
 )
 
-func RoleStageAPIResponseToTFModel(ctx context.Context, am *apimodel.RoleStageResponse) (*tfmodel.RoleStage, tfdiag.Diagnostics) {
+func RoleStageAPIResponseToTFModel(ctx context.Context, am *model.RoleStageResponse) (*tfmodel.RoleStage, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

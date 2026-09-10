@@ -8,26 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
 )
 
 func TestPostgresUserAccessControlPolicyAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.PostgresUserAccessControlPolicy("")
+	emptyApiModel := model.PostgresUserAccessControlPolicy("")
 	_, diags := conv.PostgresUserAccessControlPolicyAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestPostgresUserAccessControlPolicyConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := apimodel.PostgresUserAccessControlPolicy("")
-
-	tfModel, diags := conv.PostgresUserAccessControlPolicyAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-
-	result, diags := conv.PostgresUserAccessControlPolicyTFToAPIModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	require.Equal(t, emptyApiModel, *result)
 }

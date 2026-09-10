@@ -74,7 +74,7 @@ func (s *ClickhouseCluster) GetSchema() schema.Schema {
 			},
 			"config": schema.MapAttribute{
 				ElementType:         types.StringType,
-				MarkdownDescription: `Настройки Clickhouse. Если не указаны, будут использованы настройки по умолчанию`,
+				MarkdownDescription: `Настройки ClickHouse. Если не указаны, будут использованы настройки по умолчанию`,
 				Computed:            true,
 			},
 			"storage": schema.SingleNestedAttribute{
@@ -84,7 +84,7 @@ func (s *ClickhouseCluster) GetSchema() schema.Schema {
 			},
 			"bootstrap_admin": schema.SingleNestedAttribute{
 				Attributes:          new(ClickhouseClusterBootstrapAdminSpec).GetSchema().Attributes,
-				MarkdownDescription: `Добавление пользователей при создании кластера Clickhouse`,
+				MarkdownDescription: `Добавление пользователей при создании кластера ClickHouse`,
 				Computed:            true,
 			},
 			"backup": schema.SingleNestedAttribute{

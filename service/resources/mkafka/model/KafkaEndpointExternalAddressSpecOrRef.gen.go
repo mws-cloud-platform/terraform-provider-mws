@@ -21,20 +21,10 @@ func (s *KafkaEndpointExternalAddressSpecOrRef) GetSchema() schema.Schema {
 				Optional:            true,
 			},
 			"spec": schema.SingleNestedAttribute{
-				Attributes:          new(KafkaEndpointExternalAddressSpecOrRefSpec).GetSchema().Attributes,
+				Attributes:          new(KafkaEndpointExternalAddressSpec).GetSchema().Attributes,
 				MarkdownDescription: `Спецификация нового внешнего адреса. Адрес будет выделен в ходе реконсиляции кластера`,
 				Optional:            true,
 			},
 		},
-	}
-}
-
-type KafkaEndpointExternalAddressSpecOrRefSpec struct {
-}
-
-func (s *KafkaEndpointExternalAddressSpecOrRefSpec) GetSchema() schema.Schema {
-	return schema.Schema{
-		MarkdownDescription: `Представление поля Spec анонимного типа структуры KafkaEndpointExternalAddressSpecOrRef`,
-		Attributes:          map[string]schema.Attribute{},
 	}
 }

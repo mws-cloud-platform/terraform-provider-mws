@@ -7,13 +7,12 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/model"
 )
 
-func ClusterPublicEndpointSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClusterPublicEndpointSpecOptionalResponse) (*tfmodel.ClusterPublicEndpointSpec, tfdiag.Diagnostics) {
+func ClusterPublicEndpointSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClusterPublicEndpointSpecOptionalResponse) (*tfmodel.ClusterPublicEndpointSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -28,19 +27,4 @@ func ClusterPublicEndpointSpecAPIOptionalResponseToTFModel(ctx context.Context, 
 	}
 
 	return &t, diags
-}
-
-func ClusterPublicEndpointSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterPublicEndpointSpec) (*apimodel.ClusterPublicEndpointSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ClusterPublicEndpointSpecRequest
-
-	if !plan.Version.IsNull() && !plan.Version.IsUnknown() {
-		am.Version = ptr.Get(apimodel.ClusterPublicEndpointSpecVersionRequest(plan.Version.ValueString()))
-	}
-
-	return &am, diags
 }

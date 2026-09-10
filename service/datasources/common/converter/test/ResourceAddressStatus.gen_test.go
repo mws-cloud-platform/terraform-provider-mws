@@ -7,90 +7,28 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"go.mws.cloud/go-sdk/pkg/apimodels/ipaddress"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
 func TestResourceAddressStatusAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceAddressStatus{}
+	emptyApiModel := commonmodel.ResourceAddressStatus{}
 	_, diags := commonconv.ResourceAddressStatusAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestResourceAddressStatusAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceAddressStatusResponse{}
+	emptyApiModel := commonmodel.ResourceAddressStatusResponse{}
 	_, diags := commonconv.ResourceAddressStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestResourceAddressStatusAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceAddressStatusOptionalResponse{}
+	emptyApiModel := commonmodel.ResourceAddressStatusOptionalResponse{}
 	_, diags := commonconv.ResourceAddressStatusAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestResourceAddressStatusConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceAddressStatus{
-		Ref:       vpc.NewMustAddressRef("projectID", "networkID", "addressID"),
-		IpAddress: ipaddress.MustParseIPAddressString("192.168.1.1"),
-	}
-
-	tfModel, diags := commonconv.ResourceAddressStatusAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-
-	result, diags := commonconv.ResourceAddressStatusTFToAPIModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	require.Equal(t, emptyApiModel, *result)
-}
-
-func TestResourceAddressStatusResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := commonapimodel.ResourceAddressStatusRequest{
-		Ref:       vpc.NewMustAddressRef("projectID", "networkID", "addressID"),
-		IpAddress: ipaddress.MustParseIPAddressString("192.168.1.1"),
-	}
-
-	emptyApiModelResponse, err := commonapimodel.ResourceAddressStatusRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := commonconv.ResourceAddressStatusAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := commonconv.ResourceAddressStatusTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := commonapimodel.ResourceAddressStatusRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
-func TestResourceAddressStatusOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := commonapimodel.ResourceAddressStatusRequest{
-		Ref:       vpc.NewMustAddressRef("projectID", "networkID", "addressID"),
-		IpAddress: ipaddress.MustParseIPAddressString("192.168.1.1"),
-	}
-
-	emptyApiModelResponse, err := commonapimodel.ResourceAddressStatusRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := commonconv.ResourceAddressStatusAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := commonconv.ResourceAddressStatusTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := commonapimodel.ResourceAddressStatusRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

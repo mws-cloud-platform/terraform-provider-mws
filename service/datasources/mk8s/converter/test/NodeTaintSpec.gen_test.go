@@ -8,66 +8,20 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/converter"
 )
 
 func TestNodeTaintSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NodeTaintSpecOptionalResponse{}
+	emptyApiModel := model.NodeTaintSpecOptionalResponse{}
 	_, diags := conv.NodeTaintSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestNodeTaintSpecOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.NodeTaintSpecRequest{
-		Key:    "key",
-		Value:  "value",
-		Effect: "",
-	}
-
-	emptyApiModelResponse, err := apimodel.NodeTaintSpecRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.NodeTaintSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.NodeTaintSpecTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.NodeTaintSpecRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
 func TestNodeTaintSpecAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NodeTaintSpecResponse{}
+	emptyApiModel := model.NodeTaintSpecResponse{}
 	_, diags := conv.NodeTaintSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestNodeTaintSpecResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.NodeTaintSpecRequest{
-		Key:    "key",
-		Value:  "value",
-		Effect: "",
-	}
-
-	emptyApiModelResponse, err := apimodel.NodeTaintSpecRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.NodeTaintSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.NodeTaintSpecTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.NodeTaintSpecRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

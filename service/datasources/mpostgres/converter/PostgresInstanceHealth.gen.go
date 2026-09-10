@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/model"
 )
 
-func PostgresInstanceHealthAPIToTFModel(ctx context.Context, am *apimodel.PostgresInstanceHealth) (tfmodel.PostgresInstanceHealth, tfdiag.Diagnostics) {
+func PostgresInstanceHealthAPIToTFModel(ctx context.Context, am *model.PostgresInstanceHealth) (tfmodel.PostgresInstanceHealth, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.PostgresInstanceHealth{}, nil
 	}
@@ -23,17 +23,4 @@ func PostgresInstanceHealthAPIToTFModel(ctx context.Context, am *apimodel.Postgr
 	t = tfmodel.PostgresInstanceHealth(types.StringValue(string(*am)))
 
 	return t, diags
-}
-
-func PostgresInstanceHealthTFToAPIModel(ctx context.Context, plan tfmodel.PostgresInstanceHealth) (*apimodel.PostgresInstanceHealth, tfdiag.Diagnostics) {
-	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresInstanceHealth
-
-	var tmp = types.String(plan)
-	if tmp.IsNull() {
-		return nil, diags
-	}
-	am = apimodel.PostgresInstanceHealth(tmp.ValueString())
-
-	return &am, diags
 }

@@ -64,6 +64,7 @@ variable "image_source_url" {
 Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
 - `os_type` (String) Тип операционной системы
 - `project` (String) Путь к проекту.
+- `regions` (List of String) Список регионов, в которых будет создана физическая копия образа
 - `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 
 ### Read-Only
@@ -150,6 +151,7 @@ Read-Only:
 Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
 - `os_type` (String) Тип операционной системы
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
+- `regional_image_statuses` (Attributes List) Список статусов готовности образов по каждому региону (see [below for nested schema](#nestedatt--status--regional_image_statuses))
 - `source_exists` (Boolean) Признак, указывающий, удален ли родительский ресурс-источник
 - `storage_size` (String) Размер образа
 
@@ -166,11 +168,31 @@ Read-Only:
 
 - `crypto_key_id` (String) Идентификатор пользовательского ключа
 - `key_activity` (String) Состояние ключа
+- `scheduled_destruction_time` (String) Время запланированного уничтожения пользовательского ключа
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `version` (Number) Версия пользовательского ключа
 
 
 <a id="nestedatt--status--ready"></a>
 ### Nested Schema for `status.ready`
+
+Read-Only:
+
+- `message` (String) Описание статуса
+- `state` (String) Состояние ресурса
+
+
+<a id="nestedatt--status--regional_image_statuses"></a>
+### Nested Schema for `status.regional_image_statuses`
+
+Read-Only:
+
+- `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--regional_image_statuses--ready))
+- `region_id` (String) Идентификатор региона
+
+<a id="nestedatt--status--regional_image_statuses--ready"></a>
+### Nested Schema for `status.regional_image_statuses.ready`
 
 Read-Only:
 

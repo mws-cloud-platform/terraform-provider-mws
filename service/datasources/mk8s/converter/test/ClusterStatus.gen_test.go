@@ -8,55 +8,55 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/converter"
 )
 
 func TestClusterStatusAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClusterStatusResponse{}
+	emptyApiModel := model.ClusterStatusResponse{}
 	_, diags := conv.ClusterStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClusterStatusClusterStatusAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClusterStatusClusterStatusResponse{}
+	emptyApiModel := model.ClusterStatusClusterStatusResponse{}
 	_, diags := conv.ClusterStatusClusterStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClusterStatusNetworkAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClusterStatusNetworkResponse{}
+	emptyApiModel := model.ClusterStatusNetworkResponse{}
 	_, diags := conv.ClusterStatusNetworkAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClusterStatusNetworkPrimaryEndpointAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClusterStatusNetworkPrimaryEndpointResponse{}
+	emptyApiModel := model.ClusterStatusNetworkPrimaryEndpointResponse{}
 	_, diags := conv.ClusterStatusNetworkPrimaryEndpointAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClusterStatusNetworkPublicEndpointAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClusterStatusNetworkPublicEndpointResponse{}
+	emptyApiModel := model.ClusterStatusNetworkPublicEndpointResponse{}
 	_, diags := conv.ClusterStatusNetworkPublicEndpointAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClusterStatusNetworkSubnetAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClusterStatusNetworkSubnetResponse{}
+	emptyApiModel := model.ClusterStatusNetworkSubnetResponse{}
 	_, diags := conv.ClusterStatusNetworkSubnetAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClusterStatusNetworkVpcNetworkAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClusterStatusNetworkVpcNetworkResponse{}
+	emptyApiModel := model.ClusterStatusNetworkVpcNetworkResponse{}
 	_, diags := conv.ClusterStatusNetworkVpcNetworkAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }

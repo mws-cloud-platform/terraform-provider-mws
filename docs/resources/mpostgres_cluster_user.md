@@ -136,8 +136,7 @@ variable "subnet_cidr" {
 - `password_version` (Number) Increase this field's value if you want to force updating the associated write-only field.
 - `project` (String) Путь к проекту.
 - `role` (String) Пользовательские роли (они же роли приложений):
-- "DB_OWNER_USER": Пользователь с правами владельца базы данных. Это не суперпользователь,
-  не имеет права создавать бд или роли, наследует разрешения db_owner.
+- "DB_OWNER_USER" (deprecated): Пользовательская роль, наследует разрешения групповой роли db_writer, db_reader.
 - "DB_WRITER_USER": Пользовательская роль, наследует разрешения групповой роли db_writer, db_reader.
 - "DB_READER_USER": Пользовательская роль, наследует разрешения групповой роли db_reader
 - `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))

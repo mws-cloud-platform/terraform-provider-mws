@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/model"
 )
 
-func PluginsStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.PluginsStatusResponse) (*tfmodel.PluginsStatus, tfdiag.Diagnostics) {
+func PluginsStatusAPIResponseToTFModel(ctx context.Context, am *model.PluginsStatusResponse) (*tfmodel.PluginsStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -43,7 +43,7 @@ func PluginsStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.Plugins
 	return &t, diags
 }
 
-func PluginsStatusCniAPIResponseToTFModel(ctx context.Context, am *apimodel.PluginsStatusCniResponse) (*tfmodel.PluginsStatusCni, tfdiag.Diagnostics) {
+func PluginsStatusCniAPIResponseToTFModel(ctx context.Context, am *model.PluginsStatusCniResponse) (*tfmodel.PluginsStatusCni, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

@@ -10,13 +10,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func StorageDiskSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.StorageDiskSpecOrRefOptionalResponse) (*tfmodel.StorageDiskSpecOrRef, tfdiag.Diagnostics) {
+func StorageDiskSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *model.StorageDiskSpecOrRefOptionalResponse) (*tfmodel.StorageDiskSpecOrRef, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -51,13 +51,13 @@ func StorageDiskSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *a
 	return &t, diags
 }
 
-func StorageDiskSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfmodel.StorageDiskSpecOrRef) (*apimodel.StorageDiskSpecOrRefRequest, tfdiag.Diagnostics) {
+func StorageDiskSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfmodel.StorageDiskSpecOrRef) (*model.StorageDiskSpecOrRefRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.StorageDiskSpecOrRefRequest
+	var am model.StorageDiskSpecOrRefRequest
 
 	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
 		refRef, err := compute.ParseDiskRef(ctx, plan.Ref.ValueString())
@@ -87,7 +87,7 @@ func StorageDiskSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfmodel.
 	return &am, diags
 }
 
-func StorageDiskSpecOrRefTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.StorageDiskSpecOrRef) (*apimodel.UpdateStorageDiskSpecOrRefRequest, tfdiag.Diagnostics) {
+func StorageDiskSpecOrRefTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.StorageDiskSpecOrRef) (*model.UpdateStorageDiskSpecOrRefRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -96,7 +96,7 @@ func StorageDiskSpecOrRefTFToAPIUpdateRequestModel(ctx context.Context, plan, st
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateStorageDiskSpecOrRefRequest
+	var am model.UpdateStorageDiskSpecOrRefRequest
 
 	if !plan.Ref.Equal(state.Ref) {
 		if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {

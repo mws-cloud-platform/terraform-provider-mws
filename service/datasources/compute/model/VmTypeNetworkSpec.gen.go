@@ -6,12 +6,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
 
-type VmTypeSpecNetwork struct {
+type VmTypeNetworkSpec struct {
 }
 
-func (s *VmTypeSpecNetwork) GetSchema() schema.Schema {
+func (s *VmTypeNetworkSpec) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Представление поля Network анонимного типа структуры VmTypeSpec`,
+		MarkdownDescription: `Спецификация сети, которая доступна для ВМ указанного типа.`,
 		Attributes:          map[string]schema.Attribute{},
 	}
 }

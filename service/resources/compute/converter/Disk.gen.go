@@ -11,7 +11,7 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
@@ -19,7 +19,7 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func DiskAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.DiskOptionalResponse) (*tfmodel.Disk, tfdiag.Diagnostics) {
+func DiskAPIOptionalResponseToTFModel(ctx context.Context, am *model.DiskOptionalResponse) (*tfmodel.Disk, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -150,13 +150,13 @@ func DiskAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.DiskOpti
 	return &t, diags
 }
 
-func DiskTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Disk) (*apimodel.DiskRequest, tfdiag.Diagnostics) {
+func DiskTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Disk) (*model.DiskRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.DiskRequest
+	var am model.DiskRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
@@ -258,7 +258,7 @@ func DiskTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Disk) (*apimodel
 	return &am, diags
 }
 
-func DiskTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Disk) (*apimodel.UpdateDiskRequest, tfdiag.Diagnostics) {
+func DiskTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Disk) (*model.UpdateDiskRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -267,7 +267,7 @@ func DiskTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Dis
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateDiskRequest
+	var am model.UpdateDiskRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -301,7 +301,7 @@ func DiskTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Dis
 	if !plan.Zone.Equal(state.Zone) {
 		if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateDiskSpecRequest{})
+				am.Spec.SetTo(model.UpdateDiskSpecRequest{})
 			}
 			am.Spec.Value.Zone.SetTo(plan.Zone.ValueString())
 		}
@@ -310,7 +310,7 @@ func DiskTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Dis
 	if !plan.Size.Equal(state.Size) {
 		if !plan.Size.IsNull() && !plan.Size.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateDiskSpecRequest{})
+				am.Spec.SetTo(model.UpdateDiskSpecRequest{})
 			}
 			tmpSize, err := bytesize.ParseString(plan.Size.ValueString())
 			if err != nil {
@@ -324,7 +324,7 @@ func DiskTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Dis
 	if !plan.Source.Equal(state.Source) {
 		if !plan.Source.IsNull() && !plan.Source.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateDiskSpecRequest{})
+				am.Spec.SetTo(model.UpdateDiskSpecRequest{})
 			}
 			sourcePlan := tfmodel.DiskSpecSource{}
 			sourcePlanDiag := plan.Source.As(ctx, &sourcePlan, basetypes.ObjectAsOptions{})
@@ -350,7 +350,7 @@ func DiskTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Dis
 			am.Spec.Value.Source.SetTo(*sourceTmp)
 		} else if plan.Source.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateDiskSpecRequest{})
+				am.Spec.SetTo(model.UpdateDiskSpecRequest{})
 			}
 			am.Spec.Value.Source.SetToNull()
 		}
@@ -359,7 +359,7 @@ func DiskTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Dis
 	if !plan.DiskType.Equal(state.DiskType) {
 		if !plan.DiskType.IsNull() && !plan.DiskType.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateDiskSpecRequest{})
+				am.Spec.SetTo(model.UpdateDiskSpecRequest{})
 			}
 			diskTypeRef, err := compute.ParseDiskTypeRef(ctx, plan.DiskType.ValueString())
 			if err != nil {
@@ -373,7 +373,7 @@ func DiskTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Dis
 	if !plan.Iops.Equal(state.Iops) {
 		if !plan.Iops.IsNull() && !plan.Iops.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateDiskSpecRequest{})
+				am.Spec.SetTo(model.UpdateDiskSpecRequest{})
 			}
 			iopsTmp, iopsDiag := IopsTFToAPIModel(ctx, plan.Iops)
 			diags = append(diags, iopsDiag...)
@@ -387,7 +387,7 @@ func DiskTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Dis
 	if !plan.BlockSize.Equal(state.BlockSize) {
 		if !plan.BlockSize.IsNull() && !plan.BlockSize.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateDiskSpecRequest{})
+				am.Spec.SetTo(model.UpdateDiskSpecRequest{})
 			}
 			tmpBlockSize, err := bytesize.ParseString(plan.BlockSize.ValueString())
 			if err != nil {
@@ -401,7 +401,7 @@ func DiskTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Dis
 	if !plan.OsType.Equal(state.OsType) {
 		if !plan.OsType.IsNull() && !plan.OsType.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateDiskSpecRequest{})
+				am.Spec.SetTo(model.UpdateDiskSpecRequest{})
 			}
 			osTypeTmp, osTypeDiag := OsTypeTFToAPIModel(ctx, plan.OsType)
 			diags = append(diags, osTypeDiag...)
@@ -415,7 +415,7 @@ func DiskTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Dis
 	if !plan.Encryption.Equal(state.Encryption) {
 		if !plan.Encryption.IsNull() && !plan.Encryption.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateDiskSpecRequest{})
+				am.Spec.SetTo(model.UpdateDiskSpecRequest{})
 			}
 			encryptionPlan := tfmodel.EncryptionSpec{}
 			encryptionPlanDiag := plan.Encryption.As(ctx, &encryptionPlan, basetypes.ObjectAsOptions{})
@@ -441,7 +441,7 @@ func DiskTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Dis
 			am.Spec.Value.Encryption.SetTo(*encryptionTmp)
 		} else if plan.Encryption.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateDiskSpecRequest{})
+				am.Spec.SetTo(model.UpdateDiskSpecRequest{})
 			}
 			am.Spec.Value.Encryption.SetToNull()
 		}

@@ -7,66 +7,21 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
 func TestRouteDestinationAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.RouteDestinationOptionalResponse{}
+	emptyApiModel := model.RouteDestinationOptionalResponse{}
 	_, diags := conv.RouteDestinationAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestRouteDestinationOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.RouteDestinationRequest{
-		Spec: apimodel.RouteDestinationSpecRequest{
-			Cidrs: []cidraddress.CIDRAddress{},
-		},
-	}
-
-	emptyApiModelResponse, err := apimodel.RouteDestinationRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.RouteDestinationAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.RouteDestinationTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.RouteDestinationRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
 func TestRouteDestinationSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.RouteDestinationSpecOptionalResponse{}
+	emptyApiModel := model.RouteDestinationSpecOptionalResponse{}
 	_, diags := conv.RouteDestinationSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestRouteDestinationSpecOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.RouteDestinationSpecRequest{
-		Cidrs: []cidraddress.CIDRAddress{},
-	}
-
-	emptyApiModelResponse, err := apimodel.RouteDestinationSpecRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.RouteDestinationSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.RouteDestinationSpecTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.RouteDestinationSpecRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

@@ -8,13 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
 )
 
 func TestStorageStatusAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.StorageStatusResponse{}
+	emptyApiModel := model.StorageStatusResponse{}
 	_, diags := conv.StorageStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }

@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/model"
 )
 
-func KafkaS3PropertiesAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.KafkaS3PropertiesOptionalResponse) (*tfmodel.KafkaS3Properties, tfdiag.Diagnostics) {
+func KafkaS3PropertiesAPIOptionalResponseToTFModel(ctx context.Context, am *model.KafkaS3PropertiesOptionalResponse) (*tfmodel.KafkaS3Properties, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -27,27 +27,4 @@ func KafkaS3PropertiesAPIOptionalResponseToTFModel(ctx context.Context, am *apim
 	t.Endpoint = types.StringValue(am.Endpoint)
 
 	return &t, diags
-}
-
-func KafkaS3PropertiesTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaS3Properties) (*apimodel.KafkaS3PropertiesRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaS3PropertiesRequest
-
-	if !plan.BucketName.IsNull() && !plan.BucketName.IsUnknown() {
-		am.BucketName = plan.BucketName.ValueString()
-	}
-
-	if !plan.AccessKeyId.IsNull() && !plan.AccessKeyId.IsUnknown() {
-		am.AccessKeyId = plan.AccessKeyId.ValueString()
-	}
-
-	if !plan.Endpoint.IsNull() && !plan.Endpoint.IsUnknown() {
-		am.Endpoint = plan.Endpoint.ValueString()
-	}
-
-	return &am, diags
 }

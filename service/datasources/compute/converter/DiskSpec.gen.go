@@ -9,12 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
-	"go.mws.cloud/go-sdk/service/resources/references/compute"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func DiskSpecSourceAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.DiskSpecSourceOptionalResponse) (*tfmodel.DiskSpecSource, tfdiag.Diagnostics) {
+func DiskSpecSourceAPIOptionalResponseToTFModel(ctx context.Context, am *model.DiskSpecSourceOptionalResponse) (*tfmodel.DiskSpecSource, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -41,42 +40,4 @@ func DiskSpecSourceAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	}
 
 	return &t, diags
-}
-
-func DiskSpecSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DiskSpecSource) (*apimodel.DiskSpecSourceRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.DiskSpecSourceRequest
-
-	if !plan.Image.IsNull() && !plan.Image.IsUnknown() {
-		imageRef, err := compute.ParseImageRef(ctx, plan.Image.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Image = &imageRef
-	}
-
-	if !plan.Snapshot.IsNull() && !plan.Snapshot.IsUnknown() {
-		snapshotRef, err := compute.ParseSnapshotRef(ctx, plan.Snapshot.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Snapshot = &snapshotRef
-	}
-
-	if !plan.DiskBackup.IsNull() && !plan.DiskBackup.IsUnknown() {
-		diskBackupRef, err := compute.ParseDiskBackupRef(ctx, plan.DiskBackup.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.DiskBackup = &diskBackupRef
-	}
-
-	return &am, diags
 }

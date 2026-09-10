@@ -8,27 +8,27 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
 func TestNodeTaintSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NodeTaintSpecOptionalResponse{}
+	emptyApiModel := model.NodeTaintSpecOptionalResponse{}
 	_, diags := conv.NodeTaintSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestNodeTaintSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.NodeTaintSpecRequest{
+	emptyApiModelRequest := model.NodeTaintSpecRequest{
 		Key:    "key",
 		Value:  "value",
 		Effect: "",
 	}
 
-	emptyApiModelResponse, err := apimodel.NodeTaintSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.NodeTaintSpecRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.NodeTaintSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -37,7 +37,7 @@ func TestNodeTaintSpecOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.NodeTaintSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.NodeTaintSpecRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.NodeTaintSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -45,20 +45,20 @@ func TestNodeTaintSpecOptionalResponseConverters(t *testing.T) {
 
 func TestNodeTaintSpecAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NodeTaintSpecResponse{}
+	emptyApiModel := model.NodeTaintSpecResponse{}
 	_, diags := conv.NodeTaintSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestNodeTaintSpecResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.NodeTaintSpecRequest{
+	emptyApiModelRequest := model.NodeTaintSpecRequest{
 		Key:    "key",
 		Value:  "value",
 		Effect: "",
 	}
 
-	emptyApiModelResponse, err := apimodel.NodeTaintSpecRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.NodeTaintSpecRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.NodeTaintSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -67,7 +67,7 @@ func TestNodeTaintSpecResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.NodeTaintSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.NodeTaintSpecRequestToResponse(filledApiModelRequest)
+	result, err := model.NodeTaintSpecRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -79,7 +79,7 @@ func TestUpdateNodeTaintSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.NodeTaintSpec
 	var stateTfModel tfmodel.NodeTaintSpec
 
-	expectedUpdateModel := &apimodel.UpdateNodeTaintSpecRequest{}
+	expectedUpdateModel := &model.UpdateNodeTaintSpecRequest{}
 
 	result, diags := conv.NodeTaintSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

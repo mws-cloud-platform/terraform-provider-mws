@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func ConnectorHealthAPIToTFModel(ctx context.Context, am *apimodel.ConnectorHealth) (tfmodel.ConnectorHealth, tfdiag.Diagnostics) {
+func ConnectorHealthAPIToTFModel(ctx context.Context, am *model.ConnectorHealth) (tfmodel.ConnectorHealth, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.ConnectorHealth{}, nil
 	}
@@ -25,15 +25,15 @@ func ConnectorHealthAPIToTFModel(ctx context.Context, am *apimodel.ConnectorHeal
 	return t, diags
 }
 
-func ConnectorHealthTFToAPIModel(ctx context.Context, plan tfmodel.ConnectorHealth) (*apimodel.ConnectorHealth, tfdiag.Diagnostics) {
+func ConnectorHealthTFToAPIModel(ctx context.Context, plan tfmodel.ConnectorHealth) (*model.ConnectorHealth, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
-	var am apimodel.ConnectorHealth
+	var am model.ConnectorHealth
 
 	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}
-	am = apimodel.ConnectorHealth(tmp.ValueString())
+	am = model.ConnectorHealth(tmp.ValueString())
 
 	return &am, diags
 }

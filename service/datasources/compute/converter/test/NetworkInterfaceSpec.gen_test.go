@@ -8,35 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
 func TestNetworkInterfaceSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NetworkInterfaceSpecOptionalResponse{}
+	emptyApiModel := model.NetworkInterfaceSpecOptionalResponse{}
 	_, diags := conv.NetworkInterfaceSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestNetworkInterfaceSpecOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.NetworkInterfaceSpecRequest{
-		Name:      "name",
-		Addresses: []apimodel.AddressSpecOrRefWithAttachmentsRequest{},
-	}
-
-	emptyApiModelResponse, err := apimodel.NetworkInterfaceSpecRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.NetworkInterfaceSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.NetworkInterfaceSpecTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.NetworkInterfaceSpecRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

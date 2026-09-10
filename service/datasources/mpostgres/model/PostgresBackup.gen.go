@@ -83,13 +83,3 @@ func (s *PostgresBackupMetadata) GetSchema() schema.Schema {
 		},
 	}
 }
-
-type PostgresBackupSpec struct {
-}
-
-func (s *PostgresBackupSpec) GetSchema() schema.Schema {
-	return schema.Schema{
-		MarkdownDescription: `Представление поля Spec анонимного типа структуры PostgresBackup`,
-		Attributes:          map[string]schema.Attribute{},
-	}
-}

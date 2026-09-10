@@ -8,13 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/nlb/converter"
 )
 
 func TestNlbStatusListenerInternalAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NlbStatusListenerInternalResponse{}
+	emptyApiModel := model.NlbStatusListenerInternalResponse{}
 	_, diags := conv.NlbStatusListenerInternalAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }

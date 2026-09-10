@@ -7,14 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/nlb/model"
 )
 
-func NlbListenerAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NlbListenerOptionalResponse) (*tfmodel.NlbListener, tfdiag.Diagnostics) {
+func NlbListenerAPIOptionalResponseToTFModel(ctx context.Context, am *model.NlbListenerOptionalResponse) (*tfmodel.NlbListener, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -59,47 +58,4 @@ func NlbListenerAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.N
 	}
 
 	return &t, diags
-}
-
-func NlbListenerTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbListener) (*apimodel.NlbListenerRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.NlbListenerRequest
-
-	if !plan.Internal.IsNull() && !plan.Internal.IsUnknown() {
-		internalPlan := tfmodel.NlbListenerInternal{}
-		internalPlanDiag := plan.Internal.As(ctx, &internalPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, internalPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		internalTmp, internalDiag := NlbListenerInternalTFToAPIRequestModel(ctx, &internalPlan)
-		diags = append(diags, internalDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Internal = internalTmp
-	}
-
-	if !plan.External.IsNull() && !plan.External.IsUnknown() {
-		externalPlan := tfmodel.NlbListenerExternal{}
-		externalPlanDiag := plan.External.As(ctx, &externalPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, externalPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		externalTmp, externalDiag := NlbListenerExternalTFToAPIRequestModel(ctx, &externalPlan)
-		diags = append(diags, externalDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.External = externalTmp
-	}
-
-	return &am, diags
 }

@@ -10,9 +10,10 @@ import (
 )
 
 type EncryptionStatus struct {
-	CryptoKeyId types.String `tfsdk:"crypto_key_id"`
-	Version     types.Int64  `tfsdk:"version"`
-	KeyActivity types.String `tfsdk:"key_activity"`
+	CryptoKeyId              types.String `tfsdk:"crypto_key_id"`
+	Version                  types.Int64  `tfsdk:"version"`
+	KeyActivity              types.String `tfsdk:"key_activity"`
+	ScheduledDestructionTime types.String `tfsdk:"scheduled_destruction_time"`
 }
 
 func (s *EncryptionStatus) GetSchema() schema.Schema {
@@ -32,10 +33,17 @@ func (s *EncryptionStatus) GetSchema() schema.Schema {
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"DISABLED",
+						"SCHEDULED_FOR_DESTRUCTION",
 						"DESTROYED",
 						"ACTIVE",
 					),
 				},
+				Computed: true,
+			},
+			"scheduled_destruction_time": schema.StringAttribute{
+				MarkdownDescription: `Время запланированного уничтожения пользовательского ключа
+
+Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
 				Computed: true,
 			},
 		},

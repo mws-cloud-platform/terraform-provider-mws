@@ -6,4 +6,4 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type OsType2 = types.String
+type RegionSpec = types.String

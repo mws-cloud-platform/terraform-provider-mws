@@ -7,16 +7,14 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/model"
 )
 
-func RouteDestinationAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.RouteDestinationOptionalResponse) (*tfmodel.RouteDestination, tfdiag.Diagnostics) {
+func RouteDestinationAPIOptionalResponseToTFModel(ctx context.Context, am *model.RouteDestinationOptionalResponse) (*tfmodel.RouteDestination, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -41,34 +39,7 @@ func RouteDestinationAPIOptionalResponseToTFModel(ctx context.Context, am *apimo
 	return &t, diags
 }
 
-func RouteDestinationTFToAPIRequestModel(ctx context.Context, plan *tfmodel.RouteDestination) (*apimodel.RouteDestinationRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.RouteDestinationRequest
-
-	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
-		specPlan := tfmodel.RouteDestinationSpec{}
-		specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, specPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		specTmp, specDiag := RouteDestinationSpecTFToAPIRequestModel(ctx, &specPlan)
-		diags = append(diags, specDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec = *specTmp
-	}
-
-	return &am, diags
-}
-
-func RouteDestinationSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.RouteDestinationSpecOptionalResponse) (*tfmodel.RouteDestinationSpec, tfdiag.Diagnostics) {
+func RouteDestinationSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.RouteDestinationSpecOptionalResponse) (*tfmodel.RouteDestinationSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -95,35 +66,4 @@ func RouteDestinationSpecAPIOptionalResponseToTFModel(ctx context.Context, am *a
 	}
 
 	return &t, diags
-}
-
-func RouteDestinationSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.RouteDestinationSpec) (*apimodel.RouteDestinationSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.RouteDestinationSpecRequest
-
-	if !plan.Cidrs.IsNull() && !plan.Cidrs.IsUnknown() {
-		cidrs := make([]types.String, 0)
-		dCidrs := plan.Cidrs.ElementsAs(ctx, &cidrs, false)
-		diags = append(diags, dCidrs...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Cidrs = make([]cidraddress.CIDRAddress, 0, len(cidrs))
-
-		for _, entity := range cidrs {
-			tmp, err := cidraddress.ParseCIDRAddressString(entity.ValueString())
-			if err != nil {
-				diags.AddError("CIDRAddress string parsing", err.Error())
-				return nil, diags
-			}
-			am.Cidrs = append(am.Cidrs, tmp)
-		}
-	}
-
-	return &am, diags
 }

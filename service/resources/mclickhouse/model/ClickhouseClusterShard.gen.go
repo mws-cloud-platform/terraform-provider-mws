@@ -21,7 +21,7 @@ func (s *ClickhouseClusterShard) GetSchema() schema.Schema {
 		MarkdownDescription: `Описание спецификации шарда кластера.`,
 		Attributes: map[string]schema.Attribute{
 			"name": schema.StringAttribute{
-				MarkdownDescription: `-> Имя шарда, которому будут принадлежать инстансы. В случае с несколькими шардами имя формируется как "name-{shardIndex}"`,
+				MarkdownDescription: `-> Имя шарда, которому будут принадлежать узлы. В случае с несколькими шардами имя формируется как "name-{shardIndex}"`,
 				Required:            true,
 			},
 			"count": schema.Int64Attribute{
@@ -30,7 +30,7 @@ func (s *ClickhouseClusterShard) GetSchema() schema.Schema {
 			},
 			"resources": schema.SingleNestedAttribute{
 				Attributes:          new(ClickhouseInstanceHWResources).GetSchema().Attributes,
-				MarkdownDescription: `Ресурсы одной ноды Clickhouse`,
+				MarkdownDescription: `Ресурсы одного узла ClickHouse`,
 				Required:            true,
 			},
 			"weight": schema.Int64Attribute{
@@ -41,7 +41,7 @@ func (s *ClickhouseClusterShard) GetSchema() schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(ClickhouseEndpoint).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Описание эдпойнтов шардов`,
+				MarkdownDescription: `Описание эндпоинтов шардов`,
 				Optional:            true,
 			},
 			"instances": schema.ListNestedAttribute{

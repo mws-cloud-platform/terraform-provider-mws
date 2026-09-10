@@ -9,9 +9,9 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
@@ -20,25 +20,25 @@ import (
 
 func TestEgressNatAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.EgressNatOptionalResponse{}
+	emptyApiModel := model.EgressNatOptionalResponse{}
 	_, diags := conv.EgressNatAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestEgressNatOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.EgressNatRequest{
-		Spec: apimodel.EgressNatSpecRequest{
-			Internal: apimodel.EgressNatSpecInternalRequest{
+	emptyApiModelRequest := model.EgressNatRequest{
+		Spec: model.EgressNatSpecRequest{
+			Internal: model.EgressNatSpecInternalRequest{
 				Subnets: []vpc.SubnetRef{},
 			},
-			External: apimodel.EgressNatSpecExternalRequest{
-				Addresses: []commonapimodel.ResourceExternalAddressSpecOrRefRequest{},
+			External: model.EgressNatSpecExternalRequest{
+				Addresses: []commonmodel.ResourceExternalAddressSpecOrRefRequest{},
 			},
 		},
 	}
 
-	emptyApiModelResponse, err := apimodel.EgressNatRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.EgressNatRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.EgressNatAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -47,7 +47,7 @@ func TestEgressNatOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.EgressNatTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.EgressNatRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.EgressNatRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -61,13 +61,13 @@ func TestUpdateEgressNatRequestConverters(t *testing.T) {
 	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
 	stateTfModel.PortAllocation = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.EgressNatSpecPortAllocation).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateEgressNatRequest{
-		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+	expectedUpdateModel := &model.UpdateEgressNatRequest{
+		Metadata: optional.OptionalNil[commonmodel.UpdateCommonTypedResourceMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},
-		Spec: optional.NewOptional(apimodel.UpdateEgressNatSpecRequest{
-			PortAllocation: optional.OptionalNil[apimodel.UpdateEgressNatSpecPortAllocationRequest]{
+		Spec: optional.NewOptional(model.UpdateEgressNatSpecRequest{
+			PortAllocation: optional.OptionalNil[model.UpdateEgressNatSpecPortAllocationRequest]{
 				Set:  true,
 				Null: true,
 			},

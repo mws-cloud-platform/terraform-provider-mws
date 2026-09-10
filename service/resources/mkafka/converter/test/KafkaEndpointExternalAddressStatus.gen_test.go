@@ -8,13 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 )
 
 func TestKafkaEndpointExternalAddressStatusAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaEndpointExternalAddressStatusResponse{}
+	emptyApiModel := model.KafkaEndpointExternalAddressStatusResponse{}
 	_, diags := conv.KafkaEndpointExternalAddressStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }

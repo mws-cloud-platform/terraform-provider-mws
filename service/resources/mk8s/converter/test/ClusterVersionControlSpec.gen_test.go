@@ -6,12 +6,11 @@ import (
 	"context"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
@@ -20,18 +19,18 @@ import (
 
 func TestClusterVersionControlSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClusterVersionControlSpecOptionalResponse{}
+	emptyApiModel := model.ClusterVersionControlSpecOptionalResponse{}
 	_, diags := conv.ClusterVersionControlSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClusterVersionControlSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.ClusterVersionControlSpecRequest{
+	emptyApiModelRequest := model.ClusterVersionControlSpecRequest{
 		ReleaseChannel: "releaseChannel",
 	}
 
-	emptyApiModelResponse, err := apimodel.ClusterVersionControlSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.ClusterVersionControlSpecRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.ClusterVersionControlSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -40,7 +39,7 @@ func TestClusterVersionControlSpecOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.ClusterVersionControlSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.ClusterVersionControlSpecRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.ClusterVersionControlSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -51,15 +50,10 @@ func TestUpdateClusterVersionControlSpecRequestConverters(t *testing.T) {
 
 	var nullPlanTfModel tfmodel.ClusterVersionControlSpec
 	var stateTfModel tfmodel.ClusterVersionControlSpec
-	stateTfModel.Version = types.StringValue("")
 	stateTfModel.MaintenanceWindow = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.MaintenanceWindow).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateClusterVersionControlSpecRequest{
-		Version: optional.OptionalNil[string]{
-			Set:  true,
-			Null: true,
-		},
-		MaintenanceWindow: optional.OptionalNil[commonapimodel.UpdateMaintenanceWindowRequest]{
+	expectedUpdateModel := &model.UpdateClusterVersionControlSpecRequest{
+		MaintenanceWindow: optional.OptionalNil[commonmodel.UpdateMaintenanceWindowRequest]{
 			Set:  true,
 			Null: true,
 		},

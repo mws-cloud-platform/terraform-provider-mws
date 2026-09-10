@@ -7,16 +7,14 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func OneToOneNatAddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.OneToOneNatAddressSpecOrRefOptionalResponse) (*tfmodel.OneToOneNatAddressSpecOrRef, tfdiag.Diagnostics) {
+func OneToOneNatAddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *model.OneToOneNatAddressSpecOrRefOptionalResponse) (*tfmodel.OneToOneNatAddressSpecOrRef, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -31,13 +29,13 @@ func OneToOneNatAddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context
 	}
 
 	if val, ok := am.Spec.Get(); ok {
-		specTmp, d := OneToOneNatAddressSpecOrRefSpecAPIOptionalResponseToTFModel(ctx, &val)
+		specTmp, d := OneToOneNatAddressSpecAPIOptionalResponseToTFModel(ctx, &val)
 		diags = append(diags, d...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		specTfObject, d := types.ObjectValueFrom(ctx,
-			tfconv.GetAttributesTypes(new(tfmodel.OneToOneNatAddressSpecOrRefSpec).GetSchema().Attributes),
+			tfconv.GetAttributesTypes(new(tfmodel.OneToOneNatAddressSpec).GetSchema().Attributes),
 			*specTmp)
 		diags = append(diags, d...)
 		if diags.HasError() {
@@ -45,66 +43,8 @@ func OneToOneNatAddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context
 		}
 		t.Spec = specTfObject
 	} else {
-		t.Spec = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.OneToOneNatAddressSpecOrRefSpec).GetSchema().Attributes))
+		t.Spec = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.OneToOneNatAddressSpec).GetSchema().Attributes))
 	}
 
 	return &t, diags
-}
-
-func OneToOneNatAddressSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OneToOneNatAddressSpecOrRef) (*apimodel.OneToOneNatAddressSpecOrRefRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.OneToOneNatAddressSpecOrRefRequest
-
-	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
-		refRef, err := vpc.ParseExternalAddressRef(ctx, plan.Ref.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Ref = &refRef
-	}
-
-	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
-		specPlan := tfmodel.OneToOneNatAddressSpecOrRefSpec{}
-		specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, specPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		specTmp, specDiag := OneToOneNatAddressSpecOrRefSpecTFToAPIRequestModel(ctx, &specPlan)
-		diags = append(diags, specDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec = specTmp
-	}
-
-	return &am, diags
-}
-
-func OneToOneNatAddressSpecOrRefSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.OneToOneNatAddressSpecOrRefSpecOptionalResponse) (*tfmodel.OneToOneNatAddressSpecOrRefSpec, tfdiag.Diagnostics) {
-	if am == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var t tfmodel.OneToOneNatAddressSpecOrRefSpec
-
-	return &t, diags
-}
-
-func OneToOneNatAddressSpecOrRefSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OneToOneNatAddressSpecOrRefSpec) (*apimodel.OneToOneNatAddressSpecOrRefSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.OneToOneNatAddressSpecOrRefSpecRequest
-
-	return &am, diags
 }

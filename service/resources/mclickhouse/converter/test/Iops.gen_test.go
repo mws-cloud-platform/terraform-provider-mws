@@ -8,20 +8,20 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
 )
 
 func TestIopsAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.Iops(0)
+	emptyApiModel := model.Iops(0)
 	_, diags := conv.IopsAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestIopsConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.Iops(0)
+	emptyApiModel := model.Iops(0)
 
 	tfModel, diags := conv.IopsAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())

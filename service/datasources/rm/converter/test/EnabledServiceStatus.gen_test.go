@@ -8,13 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/rm/model"
+	"go.mws.cloud/go-sdk/service/rm/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/rm/converter"
 )
 
 func TestEnabledServiceStatusAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.EnabledServiceStatusResponse{}
+	emptyApiModel := model.EnabledServiceStatusResponse{}
 	_, diags := conv.EnabledServiceStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }

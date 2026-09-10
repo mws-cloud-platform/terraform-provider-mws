@@ -8,26 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/converter"
 )
 
 func TestConnectorHealthAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ConnectorHealth("")
+	emptyApiModel := model.ConnectorHealth("")
 	_, diags := conv.ConnectorHealthAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestConnectorHealthConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := apimodel.ConnectorHealth("")
-
-	tfModel, diags := conv.ConnectorHealthAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-
-	result, diags := conv.ConnectorHealthTFToAPIModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	require.Equal(t, emptyApiModel, *result)
 }

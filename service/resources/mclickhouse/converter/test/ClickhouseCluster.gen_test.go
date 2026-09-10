@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
@@ -19,24 +19,24 @@ import (
 
 func TestClickhouseClusterAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClickhouseClusterOptionalResponse{}
+	emptyApiModel := model.ClickhouseClusterOptionalResponse{}
 	_, diags := conv.ClickhouseClusterAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClickhouseClusterOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.ClickhouseClusterRequest{
-		Spec: apimodel.ClickhouseClusterSpecRequest{
+	emptyApiModelRequest := model.ClickhouseClusterRequest{
+		Spec: model.ClickhouseClusterSpecRequest{
 			Version: "version",
-			Shards:  []apimodel.ClickhouseClusterShardRequest{},
-			BootstrapAdmin: apimodel.ClickhouseClusterBootstrapAdminSpecRequest{
+			Shards:  []model.ClickhouseClusterShardRequest{},
+			BootstrapAdmin: model.ClickhouseClusterBootstrapAdminSpecRequest{
 				Username: "username",
 			},
 		},
 	}
 
-	emptyApiModelResponse, err := apimodel.ClickhouseClusterRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.ClickhouseClusterRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.ClickhouseClusterAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -45,7 +45,7 @@ func TestClickhouseClusterOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.ClickhouseClusterTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.ClickhouseClusterRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.ClickhouseClusterRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -62,25 +62,25 @@ func TestUpdateClickhouseClusterRequestConverters(t *testing.T) {
 	stateTfModel.Backup = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.ClickhouseClusterBackup).GetSchema().Attributes))
 	stateTfModel.MaintenanceWindow = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.MaintenanceWindow).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateClickhouseClusterRequest{
-		Metadata: optional.OptionalNil[apimodel.UpdateClickhouseClusterMetadataRequest]{
+	expectedUpdateModel := &model.UpdateClickhouseClusterRequest{
+		Metadata: optional.OptionalNil[model.UpdateClickhouseClusterMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},
-		Spec: optional.NewOptional(apimodel.UpdateClickhouseClusterSpecRequest{
-			Coordinator: optional.OptionalNil[apimodel.UpdateClickhouseClusterCoordinatorRequest]{
+		Spec: optional.NewOptional(model.UpdateClickhouseClusterSpecRequest{
+			Coordinator: optional.OptionalNil[model.UpdateClickhouseClusterCoordinatorRequest]{
 				Set:  true,
 				Null: true,
 			},
-			Storage: optional.OptionalNil[apimodel.UpdateClickhouseStorageConfigurationRequest]{
+			Storage: optional.OptionalNil[model.UpdateClickhouseStorageConfigurationRequest]{
 				Set:  true,
 				Null: true,
 			},
-			Backup: optional.OptionalNil[apimodel.UpdateClickhouseClusterBackupRequest]{
+			Backup: optional.OptionalNil[model.UpdateClickhouseClusterBackupRequest]{
 				Set:  true,
 				Null: true,
 			},
-			MaintenanceWindow: optional.OptionalNil[commonapimodel.UpdateMaintenanceWindowRequest]{
+			MaintenanceWindow: optional.OptionalNil[commonmodel.UpdateMaintenanceWindowRequest]{
 				Set:  true,
 				Null: true,
 			},
@@ -95,18 +95,18 @@ func TestUpdateClickhouseClusterRequestConverters(t *testing.T) {
 
 func TestClickhouseClusterMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClickhouseClusterMetadataOptionalResponse{}
+	emptyApiModel := model.ClickhouseClusterMetadataOptionalResponse{}
 	_, diags := conv.ClickhouseClusterMetadataAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClickhouseClusterMetadataOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.ClickhouseClusterMetadataRequest{
-		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
+	emptyApiModelRequest := model.ClickhouseClusterMetadataRequest{
+		TypedResourceMetadataRequest: commonmodel.TypedResourceMetadataRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.ClickhouseClusterMetadataRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.ClickhouseClusterMetadataRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.ClickhouseClusterMetadataAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -115,7 +115,7 @@ func TestClickhouseClusterMetadataOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.ClickhouseClusterMetadataTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.ClickhouseClusterMetadataRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.ClickhouseClusterMetadataRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -127,7 +127,7 @@ func TestUpdateClickhouseClusterMetadataRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.ClickhouseClusterMetadata
 	var stateTfModel tfmodel.ClickhouseClusterMetadata
 
-	expectedUpdateModel := &apimodel.UpdateClickhouseClusterMetadataRequest{}
+	expectedUpdateModel := &model.UpdateClickhouseClusterMetadataRequest{}
 
 	result, diags := conv.ClickhouseClusterMetadataTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

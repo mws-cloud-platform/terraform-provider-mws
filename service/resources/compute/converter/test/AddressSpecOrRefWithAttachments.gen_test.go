@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
@@ -17,18 +17,18 @@ import (
 
 func TestAddressSpecOrRefWithAttachmentsAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.AddressSpecOrRefWithAttachmentsOptionalResponse{}
+	emptyApiModel := model.AddressSpecOrRefWithAttachmentsOptionalResponse{}
 	_, diags := conv.AddressSpecOrRefWithAttachmentsAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestAddressSpecOrRefWithAttachmentsOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.AddressSpecOrRefWithAttachmentsRequest{
-		Address: apimodel.AddressSpecOrRefRequest{},
+	emptyApiModelRequest := model.AddressSpecOrRefWithAttachmentsRequest{
+		Address: model.AddressSpecOrRefRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.AddressSpecOrRefWithAttachmentsRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.AddressSpecOrRefWithAttachmentsRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.AddressSpecOrRefWithAttachmentsAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -37,7 +37,7 @@ func TestAddressSpecOrRefWithAttachmentsOptionalResponseConverters(t *testing.T)
 	filledApiModelRequest, diags := conv.AddressSpecOrRefWithAttachmentsTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.AddressSpecOrRefWithAttachmentsRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.AddressSpecOrRefWithAttachmentsRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -50,8 +50,8 @@ func TestUpdateAddressSpecOrRefWithAttachmentsRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.AddressSpecOrRefWithAttachments
 	stateTfModel.OneToOneNat = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.ComputeOneToOneNatSpec).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateAddressSpecOrRefWithAttachmentsRequest{
-		OneToOneNat: optional.OptionalNil[apimodel.UpdateComputeOneToOneNatSpecRequest]{
+	expectedUpdateModel := &model.UpdateAddressSpecOrRefWithAttachmentsRequest{
+		OneToOneNat: optional.OptionalNil[model.UpdateComputeOneToOneNatSpecRequest]{
 			Set:  true,
 			Null: true,
 		},

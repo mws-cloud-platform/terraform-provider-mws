@@ -8,14 +8,14 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func VirtualMachineOneToOneNatStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.VirtualMachineOneToOneNatStatusResponse) (*tfmodel.VirtualMachineOneToOneNatStatus, tfdiag.Diagnostics) {
+func VirtualMachineOneToOneNatStatusAPIResponseToTFModel(ctx context.Context, am *model.VirtualMachineOneToOneNatStatusResponse) (*tfmodel.VirtualMachineOneToOneNatStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

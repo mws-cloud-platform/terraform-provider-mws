@@ -8,14 +8,14 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/nlb/model"
 )
 
-func NlbStatusListenerInternalAPIResponseToTFModel(ctx context.Context, am *apimodel.NlbStatusListenerInternalResponse) (*tfmodel.NlbStatusListenerInternal, tfdiag.Diagnostics) {
+func NlbStatusListenerInternalAPIResponseToTFModel(ctx context.Context, am *model.NlbStatusListenerInternalResponse) (*tfmodel.NlbStatusListenerInternal, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

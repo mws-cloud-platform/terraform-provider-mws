@@ -41,8 +41,7 @@ data "mws_mpostgres_cluster_user" "mpostgres_cluster_user_name" {
 - `kind` (String)
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
 - `role` (String) Пользовательские роли (они же роли приложений):
-- "DB_OWNER_USER": Пользователь с правами владельца базы данных. Это не суперпользователь,
-  не имеет права создавать бд или роли, наследует разрешения db_owner.
+- "DB_OWNER_USER" (deprecated): Пользовательская роль, наследует разрешения групповой роли db_writer, db_reader.
 - "DB_WRITER_USER": Пользовательская роль, наследует разрешения групповой роли db_writer, db_reader.
 - "DB_READER_USER": Пользовательская роль, наследует разрешения групповой роли db_reader
 - `status` (Attributes) (see [below for nested schema](#nestedatt--status))

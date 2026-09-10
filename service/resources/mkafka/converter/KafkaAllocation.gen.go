@@ -8,12 +8,12 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	"go.mws.cloud/go-sdk/service/resources/references/rm"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func KafkaAllocationAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaAllocationResponse) (*tfmodel.KafkaAllocation, tfdiag.Diagnostics) {
+func KafkaAllocationAPIResponseToTFModel(ctx context.Context, am *model.KafkaAllocationResponse) (*tfmodel.KafkaAllocation, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -28,13 +28,13 @@ func KafkaAllocationAPIResponseToTFModel(ctx context.Context, am *apimodel.Kafka
 	return &t, diags
 }
 
-func KafkaAllocationTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaAllocation) (*apimodel.KafkaAllocationRequest, tfdiag.Diagnostics) {
+func KafkaAllocationTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaAllocation) (*model.KafkaAllocationRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaAllocationRequest
+	var am model.KafkaAllocationRequest
 
 	if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
 		zoneRef, err := rm.ParseZoneRef(ctx, plan.Zone.ValueString())
@@ -52,7 +52,7 @@ func KafkaAllocationTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Kafka
 	return &am, diags
 }
 
-func KafkaAllocationTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaAllocation) (*apimodel.UpdateKafkaAllocationRequest, tfdiag.Diagnostics) {
+func KafkaAllocationTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaAllocation) (*model.UpdateKafkaAllocationRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -61,7 +61,7 @@ func KafkaAllocationTFToAPIUpdateRequestModel(ctx context.Context, plan, state *
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateKafkaAllocationRequest
+	var am model.UpdateKafkaAllocationRequest
 
 	if !plan.Zone.Equal(state.Zone) {
 		if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {

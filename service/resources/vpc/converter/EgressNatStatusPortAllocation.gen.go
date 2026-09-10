@@ -9,11 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func EgressNatStatusPortAllocationAPIResponseToTFModel(ctx context.Context, am *apimodel.EgressNatStatusPortAllocationResponse) (*tfmodel.EgressNatStatusPortAllocation, tfdiag.Diagnostics) {
+func EgressNatStatusPortAllocationAPIResponseToTFModel(ctx context.Context, am *model.EgressNatStatusPortAllocationResponse) (*tfmodel.EgressNatStatusPortAllocation, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

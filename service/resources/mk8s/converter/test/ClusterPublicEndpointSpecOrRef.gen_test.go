@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
@@ -19,16 +19,16 @@ import (
 
 func TestClusterPublicEndpointSpecOrRefAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClusterPublicEndpointSpecOrRefOptionalResponse{}
+	emptyApiModel := model.ClusterPublicEndpointSpecOrRefOptionalResponse{}
 	_, diags := conv.ClusterPublicEndpointSpecOrRefAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClusterPublicEndpointSpecOrRefOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.ClusterPublicEndpointSpecOrRefRequest{}
+	emptyApiModelRequest := model.ClusterPublicEndpointSpecOrRefRequest{}
 
-	emptyApiModelResponse, err := apimodel.ClusterPublicEndpointSpecOrRefRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.ClusterPublicEndpointSpecOrRefRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.ClusterPublicEndpointSpecOrRefAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -37,7 +37,7 @@ func TestClusterPublicEndpointSpecOrRefOptionalResponseConverters(t *testing.T) 
 	filledApiModelRequest, diags := conv.ClusterPublicEndpointSpecOrRefTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.ClusterPublicEndpointSpecOrRefRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.ClusterPublicEndpointSpecOrRefRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -51,12 +51,12 @@ func TestUpdateClusterPublicEndpointSpecOrRefRequestConverters(t *testing.T) {
 	stateTfModel.Ref = types.StringValue("")
 	stateTfModel.Spec = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.ClusterPublicEndpointSpec).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateClusterPublicEndpointSpecOrRefRequest{
+	expectedUpdateModel := &model.UpdateClusterPublicEndpointSpecOrRefRequest{
 		Ref: optional.OptionalNil[vpc.ExternalAddressRef]{
 			Set:  true,
 			Null: true,
 		},
-		Spec: optional.OptionalNil[apimodel.UpdateClusterPublicEndpointSpecRequest]{
+		Spec: optional.OptionalNil[model.UpdateClusterPublicEndpointSpecRequest]{
 			Set:  true,
 			Null: true,
 		},

@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
@@ -18,18 +18,18 @@ import (
 
 func TestKafkaConnectorAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaConnectorOptionalResponse{}
+	emptyApiModel := model.KafkaConnectorOptionalResponse{}
 	_, diags := conv.KafkaConnectorAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestKafkaConnectorOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaConnectorRequest{
-		Spec: apimodel.KafkaConnectorSpecRequest{},
+	emptyApiModelRequest := model.KafkaConnectorRequest{
+		Spec: model.KafkaConnectorSpecRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.KafkaConnectorRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.KafkaConnectorRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.KafkaConnectorAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -38,7 +38,7 @@ func TestKafkaConnectorOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.KafkaConnectorTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.KafkaConnectorRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.KafkaConnectorRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -52,13 +52,13 @@ func TestUpdateKafkaConnectorRequestConverters(t *testing.T) {
 	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.KafkaConnectorMetadata).GetSchema().Attributes))
 	stateTfModel.S3SinkConnector = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.KafkaS3SinkConnector).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateKafkaConnectorRequest{
-		Metadata: optional.OptionalNil[apimodel.UpdateKafkaConnectorMetadataRequest]{
+	expectedUpdateModel := &model.UpdateKafkaConnectorRequest{
+		Metadata: optional.OptionalNil[model.UpdateKafkaConnectorMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},
-		Spec: optional.NewOptional(apimodel.UpdateKafkaConnectorSpecRequest{
-			S3SinkConnector: optional.OptionalNil[apimodel.UpdateKafkaS3SinkConnectorRequest]{
+		Spec: optional.NewOptional(model.UpdateKafkaConnectorSpecRequest{
+			S3SinkConnector: optional.OptionalNil[model.UpdateKafkaS3SinkConnectorRequest]{
 				Set:  true,
 				Null: true,
 			},
@@ -73,18 +73,18 @@ func TestUpdateKafkaConnectorRequestConverters(t *testing.T) {
 
 func TestKafkaConnectorMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaConnectorMetadataOptionalResponse{}
+	emptyApiModel := model.KafkaConnectorMetadataOptionalResponse{}
 	_, diags := conv.KafkaConnectorMetadataAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestKafkaConnectorMetadataOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaConnectorMetadataRequest{
-		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
+	emptyApiModelRequest := model.KafkaConnectorMetadataRequest{
+		TypedResourceMetadataRequest: commonmodel.TypedResourceMetadataRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.KafkaConnectorMetadataRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.KafkaConnectorMetadataRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.KafkaConnectorMetadataAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -93,7 +93,7 @@ func TestKafkaConnectorMetadataOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.KafkaConnectorMetadataTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.KafkaConnectorMetadataRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.KafkaConnectorMetadataRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -105,7 +105,7 @@ func TestUpdateKafkaConnectorMetadataRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.KafkaConnectorMetadata
 	var stateTfModel tfmodel.KafkaConnectorMetadata
 
-	expectedUpdateModel := &apimodel.UpdateKafkaConnectorMetadataRequest{}
+	expectedUpdateModel := &model.UpdateKafkaConnectorMetadataRequest{}
 
 	result, diags := conv.KafkaConnectorMetadataTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

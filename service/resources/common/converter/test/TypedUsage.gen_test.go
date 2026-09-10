@@ -9,35 +9,35 @@ import (
 	"github.com/stretchr/testify/require"
 
 	resmodels "go.mws.cloud/go-sdk/pkg/resources/models"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
 func TestTypedUsageAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.TypedUsage{}
+	emptyApiModel := commonmodel.TypedUsage{}
 	_, diags := commonconv.TypedUsageAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestTypedUsageAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.TypedUsageResponse{}
+	emptyApiModel := commonmodel.TypedUsageResponse{}
 	_, diags := commonconv.TypedUsageAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestTypedUsageAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.TypedUsageOptionalResponse{}
+	emptyApiModel := commonmodel.TypedUsageOptionalResponse{}
 	_, diags := commonconv.TypedUsageAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestTypedUsageConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.TypedUsage{
+	emptyApiModel := commonmodel.TypedUsage{
 		UsageType: "usageType",
 		Name:      "name",
 		Resource:  resmodels.NewMustAnyResourceID("ID"),
@@ -54,13 +54,13 @@ func TestTypedUsageConverters(t *testing.T) {
 
 func TestTypedUsageResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonapimodel.TypedUsageRequest{
+	emptyApiModelRequest := commonmodel.TypedUsageRequest{
 		UsageType: "usageType",
 		Name:      "name",
 		Resource:  resmodels.NewMustAnyResourceID("ID"),
 	}
 
-	emptyApiModelResponse, err := commonapimodel.TypedUsageRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonmodel.TypedUsageRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.TypedUsageAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -69,7 +69,7 @@ func TestTypedUsageResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := commonconv.TypedUsageTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := commonapimodel.TypedUsageRequestToResponse(filledApiModelRequest)
+	result, err := commonmodel.TypedUsageRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -77,13 +77,13 @@ func TestTypedUsageResponseConverters(t *testing.T) {
 
 func TestTypedUsageOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonapimodel.TypedUsageRequest{
+	emptyApiModelRequest := commonmodel.TypedUsageRequest{
 		UsageType: "usageType",
 		Name:      "name",
 		Resource:  resmodels.NewMustAnyResourceID("ID"),
 	}
 
-	emptyApiModelResponse, err := commonapimodel.TypedUsageRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonmodel.TypedUsageRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.TypedUsageAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -92,7 +92,7 @@ func TestTypedUsageOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := commonconv.TypedUsageTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := commonapimodel.TypedUsageRequestToOptionalResponse(filledApiModelRequest)
+	result, err := commonmodel.TypedUsageRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -104,7 +104,7 @@ func TestUpdateTypedUsageConverters(t *testing.T) {
 	var nullPlanTfModel tfcommon.TypedUsage
 	var stateTfModel tfcommon.TypedUsage
 
-	expectedUpdateModel := &commonapimodel.UpdateTypedUsage{}
+	expectedUpdateModel := &commonmodel.UpdateTypedUsage{}
 
 	result, diags := commonconv.TypedUsageTFToAPIUpdateModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())
@@ -118,7 +118,7 @@ func TestUpdateTypedUsageRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfcommon.TypedUsage
 	var stateTfModel tfcommon.TypedUsage
 
-	expectedUpdateModel := &commonapimodel.UpdateTypedUsageRequest{}
+	expectedUpdateModel := &commonmodel.UpdateTypedUsageRequest{}
 
 	result, diags := commonconv.TypedUsageTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

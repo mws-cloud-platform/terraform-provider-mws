@@ -8,25 +8,25 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
 func TestPostgresExternalAccessSpecAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.PostgresExternalAccessSpecResponse{}
+	emptyApiModel := model.PostgresExternalAccessSpecResponse{}
 	_, diags := conv.PostgresExternalAccessSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestPostgresExternalAccessSpecResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.PostgresExternalAccessSpecRequest{
+	emptyApiModelRequest := model.PostgresExternalAccessSpecRequest{
 		Allowed: false,
 	}
 
-	emptyApiModelResponse, err := apimodel.PostgresExternalAccessSpecRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.PostgresExternalAccessSpecRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.PostgresExternalAccessSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -35,7 +35,7 @@ func TestPostgresExternalAccessSpecResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.PostgresExternalAccessSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.PostgresExternalAccessSpecRequestToResponse(filledApiModelRequest)
+	result, err := model.PostgresExternalAccessSpecRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -47,7 +47,7 @@ func TestUpdatePostgresExternalAccessSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.PostgresExternalAccessSpec
 	var stateTfModel tfmodel.PostgresExternalAccessSpec
 
-	expectedUpdateModel := &apimodel.UpdatePostgresExternalAccessSpecRequest{}
+	expectedUpdateModel := &model.UpdatePostgresExternalAccessSpecRequest{}
 
 	result, diags := conv.PostgresExternalAccessSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

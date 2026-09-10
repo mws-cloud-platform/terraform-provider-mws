@@ -10,11 +10,11 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/duration"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func HardwareSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.HardwareSpecOptionalResponse) (*tfmodel.HardwareSpec, tfdiag.Diagnostics) {
+func HardwareSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.HardwareSpecOptionalResponse) (*tfmodel.HardwareSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -37,16 +37,16 @@ func HardwareSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.
 	return &t, diags
 }
 
-func HardwareSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.HardwareSpec) (*apimodel.HardwareSpecRequest, tfdiag.Diagnostics) {
+func HardwareSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.HardwareSpec) (*model.HardwareSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.HardwareSpecRequest
+	var am model.HardwareSpecRequest
 
 	if !plan.Power.IsNull() && !plan.Power.IsUnknown() {
-		am.Power = ptr.Get(apimodel.HardwareSpecPowerRequest(plan.Power.ValueString()))
+		am.Power = ptr.Get(model.HardwareSpecPowerRequest(plan.Power.ValueString()))
 	}
 
 	if !plan.GracefulShutdownTimeout.IsNull() && !plan.GracefulShutdownTimeout.IsUnknown() {
@@ -61,7 +61,7 @@ func HardwareSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Hardware
 	return &am, diags
 }
 
-func HardwareSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.HardwareSpec) (*apimodel.UpdateHardwareSpecRequest, tfdiag.Diagnostics) {
+func HardwareSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.HardwareSpec) (*model.UpdateHardwareSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -70,11 +70,11 @@ func HardwareSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfm
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateHardwareSpecRequest
+	var am model.UpdateHardwareSpecRequest
 
 	if !plan.Power.Equal(state.Power) {
 		if !plan.Power.IsNull() && !plan.Power.IsUnknown() {
-			am.Power.SetTo(apimodel.HardwareSpecPowerRequest(plan.Power.ValueString()))
+			am.Power.SetTo(model.HardwareSpecPowerRequest(plan.Power.ValueString()))
 		}
 	}
 

@@ -261,8 +261,8 @@ Required:
 Значение базовой единицы измерения (в байтах) должно оставаться целым.
 Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
 - `type` (String) Тип используемого диска:
-* "NETWORK_STANDARD_SSD" — сетевой SSD;
-* "LOCAL" — локальный диск
+* "NETWORK_STANDARD_SSD" — сетевой SSD
+* "LOCAL" — локальный SSD
 
 Optional:
 
@@ -382,7 +382,7 @@ Read-Only:
   * "ALIVE"    - Полностью работоспособен;
   * "DEGRADED" - Деградирует (некоторые, но не все, экземпляры неработоспособны);
   * "FAILED"   - Неработоспособен;
-  * "UNKNOWN"  - Не удается определить состояние (на этапе создания)
+  * "UNKNOWN"  - Не удаётся определить состояние (на этапе создания)
 - `instance_template` (Attributes) (see [below for nested schema](#nestedatt--status--instance_template))
 - `instances` (Attributes List) (see [below for nested schema](#nestedatt--status--instances))
 - `maintenance_window` (Attributes) (see [below for nested schema](#nestedatt--status--maintenance_window))

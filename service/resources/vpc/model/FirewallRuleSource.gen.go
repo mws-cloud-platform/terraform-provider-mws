@@ -13,7 +13,7 @@ type FirewallRuleSource struct {
 
 func (s *FirewallRuleSource) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Критерий применимости правила, описывает источник отправления пакета.`,
+		MarkdownDescription: `Спецификация источника траффика, к которому будет применено Firewall правило.`,
 		Attributes: map[string]schema.Attribute{
 			"spec": schema.SingleNestedAttribute{
 				Attributes:          new(FirewallRuleSourceSpec).GetSchema().Attributes,

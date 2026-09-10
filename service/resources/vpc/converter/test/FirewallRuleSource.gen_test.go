@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
@@ -17,16 +17,16 @@ import (
 
 func TestFirewallRuleSourceAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.FirewallRuleSourceOptionalResponse{}
+	emptyApiModel := model.FirewallRuleSourceOptionalResponse{}
 	_, diags := conv.FirewallRuleSourceAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestFirewallRuleSourceOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.FirewallRuleSourceRequest{}
+	emptyApiModelRequest := model.FirewallRuleSourceRequest{}
 
-	emptyApiModelResponse, err := apimodel.FirewallRuleSourceRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.FirewallRuleSourceRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.FirewallRuleSourceAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -35,7 +35,7 @@ func TestFirewallRuleSourceOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.FirewallRuleSourceTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.FirewallRuleSourceRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.FirewallRuleSourceRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -48,8 +48,8 @@ func TestUpdateFirewallRuleSourceRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.FirewallRuleSource
 	stateTfModel.Spec = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.FirewallRuleSourceSpec).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateFirewallRuleSourceRequest{
-		Spec: optional.OptionalNil[apimodel.UpdateFirewallRuleSourceSpecRequest]{
+	expectedUpdateModel := &model.UpdateFirewallRuleSourceRequest{
+		Spec: optional.OptionalNil[model.UpdateFirewallRuleSourceSpecRequest]{
 			Set:  true,
 			Null: true,
 		},

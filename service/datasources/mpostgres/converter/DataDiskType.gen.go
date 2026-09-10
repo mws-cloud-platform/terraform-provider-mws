@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/model"
 )
 
-func DataDiskTypeAPIToTFModel(ctx context.Context, am *apimodel.DataDiskType) (tfmodel.DataDiskType, tfdiag.Diagnostics) {
+func DataDiskTypeAPIToTFModel(ctx context.Context, am *model.DataDiskType) (tfmodel.DataDiskType, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.DataDiskType{}, nil
 	}
@@ -23,17 +23,4 @@ func DataDiskTypeAPIToTFModel(ctx context.Context, am *apimodel.DataDiskType) (t
 	t = tfmodel.DataDiskType(types.StringValue(string(*am)))
 
 	return t, diags
-}
-
-func DataDiskTypeTFToAPIModel(ctx context.Context, plan tfmodel.DataDiskType) (*apimodel.DataDiskType, tfdiag.Diagnostics) {
-	var diags tfdiag.Diagnostics
-	var am apimodel.DataDiskType
-
-	var tmp = types.String(plan)
-	if tmp.IsNull() {
-		return nil, diags
-	}
-	am = apimodel.DataDiskType(tmp.ValueString())
-
-	return &am, diags
 }

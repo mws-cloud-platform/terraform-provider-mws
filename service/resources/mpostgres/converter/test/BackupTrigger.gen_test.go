@@ -8,20 +8,20 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
 )
 
 func TestBackupTriggerAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.BackupTrigger("")
+	emptyApiModel := model.BackupTrigger("")
 	_, diags := conv.BackupTriggerAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestBackupTriggerConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.BackupTrigger("")
+	emptyApiModel := model.BackupTrigger("")
 
 	tfModel, diags := conv.BackupTriggerAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())

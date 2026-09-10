@@ -8,36 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
-	"go.mws.cloud/go-sdk/service/resources/references/rm"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/converter"
 )
 
 func TestKafkaAllocationAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaAllocationResponse{}
+	emptyApiModel := model.KafkaAllocationResponse{}
 	_, diags := conv.KafkaAllocationAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestKafkaAllocationResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaAllocationRequest{
-		Zone:  rm.NewMustZoneRef("zoneID"),
-		Count: 0,
-	}
-
-	emptyApiModelResponse, err := apimodel.KafkaAllocationRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.KafkaAllocationAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.KafkaAllocationTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.KafkaAllocationRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

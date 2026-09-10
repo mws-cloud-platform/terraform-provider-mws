@@ -11,15 +11,15 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/iam/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/iam/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/iam/model"
 )
 
-func ServiceAccountAPIResponseToTFModel(ctx context.Context, am *apimodel.ServiceAccountResponse) (*tfmodel.ServiceAccount, tfdiag.Diagnostics) {
+func ServiceAccountAPIResponseToTFModel(ctx context.Context, am *model.ServiceAccountResponse) (*tfmodel.ServiceAccount, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -72,13 +72,13 @@ func ServiceAccountAPIResponseToTFModel(ctx context.Context, am *apimodel.Servic
 	return &t, diags
 }
 
-func ServiceAccountTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ServiceAccount) (*apimodel.ServiceAccountRequest, tfdiag.Diagnostics) {
+func ServiceAccountTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ServiceAccount) (*model.ServiceAccountRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ServiceAccountRequest
+	var am model.ServiceAccountRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfmodel.ServiceAccountMetadata{}
@@ -99,7 +99,7 @@ func ServiceAccountTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Servic
 	return &am, diags
 }
 
-func ServiceAccountTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ServiceAccount) (*apimodel.UpdateServiceAccountRequest, tfdiag.Diagnostics) {
+func ServiceAccountTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ServiceAccount) (*model.UpdateServiceAccountRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -108,7 +108,7 @@ func ServiceAccountTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateServiceAccountRequest
+	var am model.UpdateServiceAccountRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -142,7 +142,7 @@ func ServiceAccountTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 	return &am, diags
 }
 
-func ServiceAccountMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.ServiceAccountMetadataResponse) (*tfmodel.ServiceAccountMetadata, tfdiag.Diagnostics) {
+func ServiceAccountMetadataAPIResponseToTFModel(ctx context.Context, am *model.ServiceAccountMetadataResponse) (*tfmodel.ServiceAccountMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -222,13 +222,13 @@ func ServiceAccountMetadataAPIResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func ServiceAccountMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ServiceAccountMetadata) (*apimodel.ServiceAccountMetadataRequest, tfdiag.Diagnostics) {
+func ServiceAccountMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ServiceAccountMetadata) (*model.ServiceAccountMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ServiceAccountMetadataRequest
+	var am model.ServiceAccountMetadataRequest
 
 	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
 		am.DisplayName = plan.DisplayName.ValueStringPointer()
@@ -242,7 +242,7 @@ func ServiceAccountMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmode
 			return nil, diags
 		}
 
-		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
+		am.Usages = make([]commonmodel.TypedUsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
@@ -265,7 +265,7 @@ func ServiceAccountMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmode
 	return &am, diags
 }
 
-func ServiceAccountMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ServiceAccountMetadata) (*apimodel.UpdateServiceAccountMetadataRequest, tfdiag.Diagnostics) {
+func ServiceAccountMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ServiceAccountMetadata) (*model.UpdateServiceAccountMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -274,7 +274,7 @@ func ServiceAccountMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, 
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateServiceAccountMetadataRequest
+	var am model.UpdateServiceAccountMetadataRequest
 
 	if !plan.DisplayName.Equal(state.DisplayName) {
 		if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
@@ -291,7 +291,7 @@ func ServiceAccountMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, 
 				return nil, diags
 			}
 
-			usagesTmp := make([]commonapimodel.UpdateTypedUsageRequest, 0, len(usages))
+			usagesTmp := make([]commonmodel.UpdateTypedUsageRequest, 0, len(usages))
 
 			for _, entity := range usages {
 				stateEntity := tfcommon.TypedUsage{}
@@ -317,42 +317,6 @@ func ServiceAccountMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, 
 			am.Name.SetTo(plan.Name.ValueString())
 		}
 	}
-
-	return &am, diags
-}
-
-func ServiceAccountSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.ServiceAccountSpecResponse) (*tfmodel.ServiceAccountSpec, tfdiag.Diagnostics) {
-	if am == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var t tfmodel.ServiceAccountSpec
-
-	return &t, diags
-}
-
-func ServiceAccountSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ServiceAccountSpec) (*apimodel.ServiceAccountSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ServiceAccountSpecRequest
-
-	return &am, diags
-}
-
-func ServiceAccountSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ServiceAccountSpec) (*apimodel.UpdateServiceAccountSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-	if state == nil {
-		state = &tfmodel.ServiceAccountSpec{}
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateServiceAccountSpecRequest
 
 	return &am, diags
 }

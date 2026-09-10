@@ -7,14 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/nlb/model"
 )
 
-func NlbHealthCheckProtocolAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NlbHealthCheckProtocolOptionalResponse) (*tfmodel.NlbHealthCheckProtocol, tfdiag.Diagnostics) {
+func NlbHealthCheckProtocolAPIOptionalResponseToTFModel(ctx context.Context, am *model.NlbHealthCheckProtocolOptionalResponse) (*tfmodel.NlbHealthCheckProtocol, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -77,63 +76,4 @@ func NlbHealthCheckProtocolAPIOptionalResponseToTFModel(ctx context.Context, am 
 	}
 
 	return &t, diags
-}
-
-func NlbHealthCheckProtocolTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbHealthCheckProtocol) (*apimodel.NlbHealthCheckProtocolRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.NlbHealthCheckProtocolRequest
-
-	if !plan.Http.IsNull() && !plan.Http.IsUnknown() {
-		httpPlan := tfmodel.NlbHealthCheckHttp{}
-		httpPlanDiag := plan.Http.As(ctx, &httpPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, httpPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		httpTmp, httpDiag := NlbHealthCheckHttpTFToAPIRequestModel(ctx, &httpPlan)
-		diags = append(diags, httpDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Http = httpTmp
-	}
-
-	if !plan.Https.IsNull() && !plan.Https.IsUnknown() {
-		httpsPlan := tfmodel.NlbHealthCheckHttps{}
-		httpsPlanDiag := plan.Https.As(ctx, &httpsPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, httpsPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		httpsTmp, httpsDiag := NlbHealthCheckHttpsTFToAPIRequestModel(ctx, &httpsPlan)
-		diags = append(diags, httpsDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Https = httpsTmp
-	}
-
-	if !plan.Tcp.IsNull() && !plan.Tcp.IsUnknown() {
-		tcpPlan := tfmodel.NlbHealthCheckTcp{}
-		tcpPlanDiag := plan.Tcp.As(ctx, &tcpPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, tcpPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		tcpTmp, tcpDiag := NlbHealthCheckTcpTFToAPIRequestModel(ctx, &tcpPlan)
-		diags = append(diags, tcpDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Tcp = tcpTmp
-	}
-
-	return &am, diags
 }

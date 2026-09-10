@@ -8,35 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/nlb/converter"
 )
 
 func TestNlbListenerInternalAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NlbListenerInternalOptionalResponse{}
+	emptyApiModel := model.NlbListenerInternalOptionalResponse{}
 	_, diags := conv.NlbListenerInternalAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestNlbListenerInternalOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.NlbListenerInternalRequest{
-		Address: commonapimodel.ResourceAddressSpecOrRefRequest{},
-	}
-
-	emptyApiModelResponse, err := apimodel.NlbListenerInternalRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.NlbListenerInternalAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.NlbListenerInternalTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.NlbListenerInternalRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

@@ -8,26 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
 func TestRoleStageCodeAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.RoleStageCode("")
+	emptyApiModel := commonmodel.RoleStageCode("")
 	_, diags := commonconv.RoleStageCodeAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestRoleStageCodeConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonapimodel.RoleStageCode("")
-
-	tfModel, diags := commonconv.RoleStageCodeAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-
-	result, diags := commonconv.RoleStageCodeTFToAPIModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	require.Equal(t, emptyApiModel, *result)
 }

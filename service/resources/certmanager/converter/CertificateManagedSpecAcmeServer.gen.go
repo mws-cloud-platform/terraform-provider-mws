@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/model"
 )
 
-func CertificateManagedSpecAcmeServerAPIToTFModel(ctx context.Context, am *apimodel.CertificateManagedSpecAcmeServer) (tfmodel.CertificateManagedSpecAcmeServer, tfdiag.Diagnostics) {
+func CertificateManagedSpecAcmeServerAPIToTFModel(ctx context.Context, am *model.CertificateManagedSpecAcmeServer) (tfmodel.CertificateManagedSpecAcmeServer, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.CertificateManagedSpecAcmeServer{}, nil
 	}
@@ -25,15 +25,15 @@ func CertificateManagedSpecAcmeServerAPIToTFModel(ctx context.Context, am *apimo
 	return t, diags
 }
 
-func CertificateManagedSpecAcmeServerTFToAPIModel(ctx context.Context, plan tfmodel.CertificateManagedSpecAcmeServer) (*apimodel.CertificateManagedSpecAcmeServer, tfdiag.Diagnostics) {
+func CertificateManagedSpecAcmeServerTFToAPIModel(ctx context.Context, plan tfmodel.CertificateManagedSpecAcmeServer) (*model.CertificateManagedSpecAcmeServer, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
-	var am apimodel.CertificateManagedSpecAcmeServer
+	var am model.CertificateManagedSpecAcmeServer
 
 	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}
-	am = apimodel.CertificateManagedSpecAcmeServer(tmp.ValueString())
+	am = model.CertificateManagedSpecAcmeServer(tmp.ValueString())
 
 	return &am, diags
 }

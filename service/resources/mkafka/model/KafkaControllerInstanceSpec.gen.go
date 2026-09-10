@@ -16,7 +16,7 @@ type KafkaControllerInstanceSpec struct {
 
 func (s *KafkaControllerInstanceSpec) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Параметры виртуальной машины, где будет работать KRaft контроллер Кафки.`,
+		MarkdownDescription: `Параметры узлов контроллеров.`,
 		Attributes: map[string]schema.Attribute{
 			"combined_with_broker": schema.BoolAttribute{
 				MarkdownDescription: `Размещать контроллеры на тех же виртуальных машинах, что и брокеры`,

@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
-func ClusterAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClusterOptionalResponse) (*tfmodel.Cluster, tfdiag.Diagnostics) {
+func ClusterAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClusterOptionalResponse) (*tfmodel.Cluster, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -147,13 +147,13 @@ func ClusterAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Clust
 	return &t, diags
 }
 
-func ClusterTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Cluster) (*apimodel.ClusterRequest, tfdiag.Diagnostics) {
+func ClusterTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Cluster) (*model.ClusterRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClusterRequest
+	var am model.ClusterRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
@@ -254,7 +254,7 @@ func ClusterTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Cluster) (*ap
 	return &am, diags
 }
 
-func ClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Cluster) (*apimodel.UpdateClusterRequest, tfdiag.Diagnostics) {
+func ClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Cluster) (*model.UpdateClusterRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -263,7 +263,7 @@ func ClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateClusterRequest
+	var am model.UpdateClusterRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -297,7 +297,7 @@ func ClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.
 	if !plan.Availability.Equal(state.Availability) {
 		if !plan.Availability.IsNull() && !plan.Availability.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateClusterSpecRequest{})
+				am.Spec.SetTo(model.UpdateClusterSpecRequest{})
 			}
 			availabilityPlan := tfmodel.ClusterAvailabilitySpec{}
 			availabilityPlanDiag := plan.Availability.As(ctx, &availabilityPlan, basetypes.ObjectAsOptions{})
@@ -327,7 +327,7 @@ func ClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.
 	if !plan.Network.Equal(state.Network) {
 		if !plan.Network.IsNull() && !plan.Network.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateClusterSpecRequest{})
+				am.Spec.SetTo(model.UpdateClusterSpecRequest{})
 			}
 			networkPlan := tfmodel.ClusterSpecNetwork{}
 			networkPlanDiag := plan.Network.As(ctx, &networkPlan, basetypes.ObjectAsOptions{})
@@ -357,7 +357,7 @@ func ClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.
 	if !plan.VersionControl.Equal(state.VersionControl) {
 		if !plan.VersionControl.IsNull() && !plan.VersionControl.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateClusterSpecRequest{})
+				am.Spec.SetTo(model.UpdateClusterSpecRequest{})
 			}
 			versionControlPlan := tfmodel.ClusterVersionControlSpec{}
 			versionControlPlanDiag := plan.VersionControl.As(ctx, &versionControlPlan, basetypes.ObjectAsOptions{})
@@ -387,7 +387,7 @@ func ClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.
 	if !plan.Plugins.Equal(state.Plugins) {
 		if !plan.Plugins.IsNull() && !plan.Plugins.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateClusterSpecRequest{})
+				am.Spec.SetTo(model.UpdateClusterSpecRequest{})
 			}
 			pluginsPlan := tfmodel.PluginsSpec{}
 			pluginsPlanDiag := plan.Plugins.As(ctx, &pluginsPlan, basetypes.ObjectAsOptions{})
@@ -413,7 +413,7 @@ func ClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.
 			am.Spec.Value.Plugins.SetTo(*pluginsTmp)
 		} else if plan.Plugins.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateClusterSpecRequest{})
+				am.Spec.SetTo(model.UpdateClusterSpecRequest{})
 			}
 			am.Spec.Value.Plugins.SetToNull()
 		}
@@ -422,7 +422,7 @@ func ClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.
 	if !plan.SecurityPosture.Equal(state.SecurityPosture) {
 		if !plan.SecurityPosture.IsNull() && !plan.SecurityPosture.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateClusterSpecRequest{})
+				am.Spec.SetTo(model.UpdateClusterSpecRequest{})
 			}
 			securityPosturePlan := tfmodel.SecurityPostureSpec{}
 			securityPosturePlanDiag := plan.SecurityPosture.As(ctx, &securityPosturePlan, basetypes.ObjectAsOptions{})
@@ -448,7 +448,7 @@ func ClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.
 			am.Spec.Value.SecurityPosture.SetTo(*securityPostureTmp)
 		} else if plan.SecurityPosture.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateClusterSpecRequest{})
+				am.Spec.SetTo(model.UpdateClusterSpecRequest{})
 			}
 			am.Spec.Value.SecurityPosture.SetToNull()
 		}

@@ -8,18 +8,16 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/model"
 )
 
-func KafkaConnectorAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.KafkaConnectorOptionalResponse) (*tfmodel.KafkaConnector, tfdiag.Diagnostics) {
+func KafkaConnectorAPIOptionalResponseToTFModel(ctx context.Context, am *model.KafkaConnectorOptionalResponse) (*tfmodel.KafkaConnector, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -96,54 +94,7 @@ func KafkaConnectorAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func KafkaConnectorTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaConnector) (*apimodel.KafkaConnectorRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaConnectorRequest
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfmodel.KafkaConnectorMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := KafkaConnectorMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.Active.IsNull() && !plan.Active.IsUnknown() {
-		am.Spec.Active = plan.Active.ValueBoolPointer()
-	}
-
-	if !plan.S3SinkConnector.IsNull() && !plan.S3SinkConnector.IsUnknown() {
-		s3SinkConnectorPlan := tfmodel.KafkaS3SinkConnector{}
-		s3SinkConnectorPlanDiag := plan.S3SinkConnector.As(ctx, &s3SinkConnectorPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, s3SinkConnectorPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		s3SinkConnectorTmp, s3SinkConnectorDiag := KafkaS3SinkConnectorTFToAPIRequestModel(ctx, &s3SinkConnectorPlan)
-		diags = append(diags, s3SinkConnectorDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.S3SinkConnector = s3SinkConnectorTmp
-	}
-
-	return &am, diags
-}
-
-func KafkaConnectorMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.KafkaConnectorMetadataOptionalResponse) (*tfmodel.KafkaConnectorMetadata, tfdiag.Diagnostics) {
+func KafkaConnectorMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *model.KafkaConnectorMetadataOptionalResponse) (*tfmodel.KafkaConnectorMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -215,43 +166,4 @@ func KafkaConnectorMetadataAPIOptionalResponseToTFModel(ctx context.Context, am 
 	}
 
 	return &t, diags
-}
-
-func KafkaConnectorMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaConnectorMetadata) (*apimodel.KafkaConnectorMetadataRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaConnectorMetadataRequest
-
-	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
-		am.DisplayName = plan.DisplayName.ValueStringPointer()
-	}
-
-	if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
-		usages := make([]tfcommon.TypedUsage, 0)
-		dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
-		diags = append(diags, dUsages...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
-
-		for _, entity := range usages {
-			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.Usages = append(am.Usages, *tmp)
-		}
-	}
-
-	if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
-		am.Description = plan.Description.ValueStringPointer()
-	}
-
-	return &am, diags
 }

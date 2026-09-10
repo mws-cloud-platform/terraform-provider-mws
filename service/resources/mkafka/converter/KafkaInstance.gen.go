@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func KafkaInstanceAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaInstanceResponse) (*tfmodel.KafkaInstance, tfdiag.Diagnostics) {
+func KafkaInstanceAPIResponseToTFModel(ctx context.Context, am *model.KafkaInstanceResponse) (*tfmodel.KafkaInstance, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -53,13 +53,13 @@ func KafkaInstanceAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaIn
 	return &t, diags
 }
 
-func KafkaInstanceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaInstance) (*apimodel.KafkaInstanceRequest, tfdiag.Diagnostics) {
+func KafkaInstanceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaInstance) (*model.KafkaInstanceRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaInstanceRequest
+	var am model.KafkaInstanceRequest
 
 	if !plan.Broker.IsNull() && !plan.Broker.IsUnknown() {
 		brokerPlan := tfmodel.KafkaInstanceSpec{}
@@ -96,7 +96,7 @@ func KafkaInstanceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaIn
 	return &am, diags
 }
 
-func KafkaInstanceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaInstance) (*apimodel.UpdateKafkaInstanceRequest, tfdiag.Diagnostics) {
+func KafkaInstanceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaInstance) (*model.UpdateKafkaInstanceRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -105,7 +105,7 @@ func KafkaInstanceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tf
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateKafkaInstanceRequest
+	var am model.UpdateKafkaInstanceRequest
 
 	if !plan.Broker.Equal(state.Broker) {
 		if !plan.Broker.IsNull() && !plan.Broker.IsUnknown() {

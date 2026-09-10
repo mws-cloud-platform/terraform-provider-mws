@@ -8,26 +8,26 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
 func TestEgressNatSpecExternalAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.EgressNatSpecExternalOptionalResponse{}
+	emptyApiModel := model.EgressNatSpecExternalOptionalResponse{}
 	_, diags := conv.EgressNatSpecExternalAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestEgressNatSpecExternalOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.EgressNatSpecExternalRequest{
-		Addresses: []commonapimodel.ResourceExternalAddressSpecOrRefRequest{},
+	emptyApiModelRequest := model.EgressNatSpecExternalRequest{
+		Addresses: []commonmodel.ResourceExternalAddressSpecOrRefRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.EgressNatSpecExternalRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.EgressNatSpecExternalRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.EgressNatSpecExternalAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -36,7 +36,7 @@ func TestEgressNatSpecExternalOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.EgressNatSpecExternalTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.EgressNatSpecExternalRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.EgressNatSpecExternalRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -48,7 +48,7 @@ func TestUpdateEgressNatSpecExternalRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.EgressNatSpecExternal
 	var stateTfModel tfmodel.EgressNatSpecExternal
 
-	expectedUpdateModel := &apimodel.UpdateEgressNatSpecExternalRequest{}
+	expectedUpdateModel := &model.UpdateEgressNatSpecExternalRequest{}
 
 	result, diags := conv.EgressNatSpecExternalTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

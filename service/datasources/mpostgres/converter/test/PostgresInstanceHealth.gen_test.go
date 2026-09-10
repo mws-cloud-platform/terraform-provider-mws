@@ -8,26 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
 )
 
 func TestPostgresInstanceHealthAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.PostgresInstanceHealth("")
+	emptyApiModel := model.PostgresInstanceHealth("")
 	_, diags := conv.PostgresInstanceHealthAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestPostgresInstanceHealthConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := apimodel.PostgresInstanceHealth("")
-
-	tfModel, diags := conv.PostgresInstanceHealthAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-
-	result, diags := conv.PostgresInstanceHealthTFToAPIModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	require.Equal(t, emptyApiModel, *result)
 }

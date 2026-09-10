@@ -7,16 +7,15 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/model"
 )
 
-func RouteAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.RouteOptionalResponse) (*tfmodel.Route, tfdiag.Diagnostics) {
+func RouteAPIOptionalResponseToTFModel(ctx context.Context, am *model.RouteOptionalResponse) (*tfmodel.Route, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -95,63 +94,4 @@ func RouteAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.RouteOp
 	t.NextHop = nextHopTfObject
 
 	return &t, diags
-}
-
-func RouteTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Route) (*apimodel.RouteRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.RouteRequest
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.Destination.IsNull() && !plan.Destination.IsUnknown() {
-		destinationPlan := tfmodel.RouteDestination{}
-		destinationPlanDiag := plan.Destination.As(ctx, &destinationPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, destinationPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		destinationTmp, destinationDiag := RouteDestinationTFToAPIRequestModel(ctx, &destinationPlan)
-		diags = append(diags, destinationDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Destination = *destinationTmp
-	}
-
-	if !plan.NextHop.IsNull() && !plan.NextHop.IsUnknown() {
-		nextHopPlan := tfmodel.RouteNextHop{}
-		nextHopPlanDiag := plan.NextHop.As(ctx, &nextHopPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, nextHopPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		nextHopTmp, nextHopDiag := RouteNextHopTFToAPIRequestModel(ctx, &nextHopPlan)
-		diags = append(diags, nextHopDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.NextHop = *nextHopTmp
-	}
-
-	return &am, diags
 }

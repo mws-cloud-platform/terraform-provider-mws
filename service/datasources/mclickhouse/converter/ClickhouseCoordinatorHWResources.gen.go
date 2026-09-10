@@ -7,15 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
-	"go.mws.cloud/go-sdk/service/resources/references/mclickhouse"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/model"
 )
 
-func ClickhouseCoordinatorHWResourcesAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseCoordinatorHWResourcesOptionalResponse) (*tfmodel.ClickhouseCoordinatorHWResources, tfdiag.Diagnostics) {
+func ClickhouseCoordinatorHWResourcesAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseCoordinatorHWResourcesOptionalResponse) (*tfmodel.ClickhouseCoordinatorHWResources, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -42,7 +40,7 @@ func ClickhouseCoordinatorHWResourcesAPIOptionalResponseToTFModel(ctx context.Co
 	return &t, diags
 }
 
-func ClickhouseCoordinatorHWResourcesAPIResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseCoordinatorHWResourcesResponse) (*tfmodel.ClickhouseCoordinatorHWResources, tfdiag.Diagnostics) {
+func ClickhouseCoordinatorHWResourcesAPIResponseToTFModel(ctx context.Context, am *model.ClickhouseCoordinatorHWResourcesResponse) (*tfmodel.ClickhouseCoordinatorHWResources, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -67,40 +65,4 @@ func ClickhouseCoordinatorHWResourcesAPIResponseToTFModel(ctx context.Context, a
 	t.Disk = diskTfObject
 
 	return &t, diags
-}
-
-func ClickhouseCoordinatorHWResourcesTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseCoordinatorHWResources) (*apimodel.ClickhouseCoordinatorHWResourcesRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseCoordinatorHWResourcesRequest
-
-	if !plan.VmType.IsNull() && !plan.VmType.IsUnknown() {
-		vmTypeRef, err := mclickhouse.ParseClickhouseVmTypeRef(ctx, plan.VmType.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.VmType = vmTypeRef
-	}
-
-	if !plan.Disk.IsNull() && !plan.Disk.IsUnknown() {
-		diskPlan := tfmodel.ClickhouseInstanceDiskSpec{}
-		diskPlanDiag := plan.Disk.As(ctx, &diskPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, diskPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		diskTmp, diskDiag := ClickhouseInstanceDiskSpecTFToAPIRequestModel(ctx, &diskPlan)
-		diags = append(diags, diskDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Disk = *diskTmp
-	}
-
-	return &am, diags
 }

@@ -7,38 +7,14 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
 func TestSubnetAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.SubnetOptionalResponse{}
+	emptyApiModel := model.SubnetOptionalResponse{}
 	_, diags := conv.SubnetAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestSubnetOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.SubnetRequest{
-		Spec: apimodel.SubnetSpecRequest{
-			Cidr: cidraddress.MustParseCIDR4AddressString("192.168.1.0/24"),
-		},
-	}
-
-	emptyApiModelResponse, err := apimodel.SubnetRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.SubnetAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.SubnetTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.SubnetRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

@@ -11,12 +11,12 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
-func ClusterSpecNetworkAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClusterSpecNetworkOptionalResponse) (*tfmodel.ClusterSpecNetwork, tfdiag.Diagnostics) {
+func ClusterSpecNetworkAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClusterSpecNetworkOptionalResponse) (*tfmodel.ClusterSpecNetwork, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -63,13 +63,13 @@ func ClusterSpecNetworkAPIOptionalResponseToTFModel(ctx context.Context, am *api
 	return &t, diags
 }
 
-func ClusterSpecNetworkTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterSpecNetwork) (*apimodel.ClusterSpecNetworkRequest, tfdiag.Diagnostics) {
+func ClusterSpecNetworkTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterSpecNetwork) (*model.ClusterSpecNetworkRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClusterSpecNetworkRequest
+	var am model.ClusterSpecNetworkRequest
 
 	if !plan.PrimaryEndpoint.IsNull() && !plan.PrimaryEndpoint.IsUnknown() {
 		primaryEndpointPlan := tfmodel.ClusterPrimaryEndpointSpecOrRef{}
@@ -124,7 +124,7 @@ func ClusterSpecNetworkTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Cl
 	return &am, diags
 }
 
-func ClusterSpecNetworkTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClusterSpecNetwork) (*apimodel.UpdateClusterSpecNetworkRequest, tfdiag.Diagnostics) {
+func ClusterSpecNetworkTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClusterSpecNetwork) (*model.UpdateClusterSpecNetworkRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -133,7 +133,7 @@ func ClusterSpecNetworkTFToAPIUpdateRequestModel(ctx context.Context, plan, stat
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateClusterSpecNetworkRequest
+	var am model.UpdateClusterSpecNetworkRequest
 
 	if !plan.PrimaryEndpoint.Equal(state.PrimaryEndpoint) {
 		if !plan.PrimaryEndpoint.IsNull() && !plan.PrimaryEndpoint.IsUnknown() {

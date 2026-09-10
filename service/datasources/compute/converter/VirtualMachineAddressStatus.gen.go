@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func VirtualMachineAddressStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.VirtualMachineAddressStatusResponse) (*tfmodel.VirtualMachineAddressStatus, tfdiag.Diagnostics) {
+func VirtualMachineAddressStatusAPIResponseToTFModel(ctx context.Context, am *model.VirtualMachineAddressStatusResponse) (*tfmodel.VirtualMachineAddressStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

@@ -8,9 +8,9 @@ import (
 
 	"go.mws.cloud/go-sdk/mws"
 	commonerrors "go.mws.cloud/go-sdk/mws/errors"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/mk8s/client"
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	resourcesdk "go.mws.cloud/go-sdk/service/mk8s/sdk"
 	mk8sref "go.mws.cloud/go-sdk/service/resources/references/mk8s"
 	"go.mws.cloud/terraform-provider-mws/internal/acctest"
@@ -34,7 +34,7 @@ func ClusterTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleResourceT
 				return fmt.Errorf("invalid resource state")
 			}
 			state := r.Status.Ready.State
-			if string(state) != string(commonapimodel.ResourceStatusState_OK) {
+			if string(state) != string(commonmodel.ResourceStatusState_OK) {
 				return fmt.Errorf("invalid resource state: %s", state)
 			}
 			return nil
@@ -52,7 +52,7 @@ func ClusterTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleResourceT
 	}, nil
 }
 
-func GetCluster(ctx context.Context, sdk *resourcesdk.Mk8sCluster, id string) (*apimodel.ClusterOptionalResponse, error) {
+func GetCluster(ctx context.Context, sdk *resourcesdk.Mk8sCluster, id string) (*model.ClusterOptionalResponse, error) {
 	ref, err := mk8sref.ParseClusterRef(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("parse reference: %w", err)

@@ -13,7 +13,7 @@ type PostgresNetworkAddressSpec struct {
 
 func (s *PostgresNetworkAddressSpec) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Описание подсети пользователя, используемой для подключения к узлам.`,
+		MarkdownDescription: `Идентификатор ресурса subnet пользователя, в который будет трансляция адресов из service-vpc.`,
 		Attributes: map[string]schema.Attribute{
 			"subnet": schema.StringAttribute{
 				Required: true,

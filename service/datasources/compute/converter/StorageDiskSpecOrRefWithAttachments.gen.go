@@ -7,14 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func StorageDiskSpecOrRefWithAttachmentsAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.StorageDiskSpecOrRefWithAttachmentsOptionalResponse) (*tfmodel.StorageDiskSpecOrRefWithAttachments, tfdiag.Diagnostics) {
+func StorageDiskSpecOrRefWithAttachmentsAPIOptionalResponseToTFModel(ctx context.Context, am *model.StorageDiskSpecOrRefWithAttachmentsOptionalResponse) (*tfmodel.StorageDiskSpecOrRefWithAttachments, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -51,43 +50,4 @@ func StorageDiskSpecOrRefWithAttachmentsAPIOptionalResponseToTFModel(ctx context
 	t.Disk = diskTfObject
 
 	return &t, diags
-}
-
-func StorageDiskSpecOrRefWithAttachmentsTFToAPIRequestModel(ctx context.Context, plan *tfmodel.StorageDiskSpecOrRefWithAttachments) (*apimodel.StorageDiskSpecOrRefWithAttachmentsRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.StorageDiskSpecOrRefWithAttachmentsRequest
-
-	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
-		am.Name = plan.Name.ValueString()
-	}
-
-	if !plan.Boot.IsNull() && !plan.Boot.IsUnknown() {
-		am.Boot = plan.Boot.ValueBoolPointer()
-	}
-
-	if !plan.DeviceName.IsNull() && !plan.DeviceName.IsUnknown() {
-		am.DeviceName = plan.DeviceName.ValueStringPointer()
-	}
-
-	if !plan.Disk.IsNull() && !plan.Disk.IsUnknown() {
-		diskPlan := tfmodel.StorageDiskSpecOrRef{}
-		diskPlanDiag := plan.Disk.As(ctx, &diskPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, diskPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		diskTmp, diskDiag := StorageDiskSpecOrRefTFToAPIRequestModel(ctx, &diskPlan)
-		diags = append(diags, diskDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Disk = *diskTmp
-	}
-
-	return &am, diags
 }

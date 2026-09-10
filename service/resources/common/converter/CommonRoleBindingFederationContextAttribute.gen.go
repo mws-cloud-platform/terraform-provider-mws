@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
-func CommonRoleBindingFederationContextAttributeAPIToTFModel(ctx context.Context, am *commonapimodel.CommonRoleBindingFederationContextAttribute) (*tfcommon.CommonRoleBindingFederationContextAttribute, tfdiag.Diagnostics) {
+func CommonRoleBindingFederationContextAttributeAPIToTFModel(ctx context.Context, am *commonmodel.CommonRoleBindingFederationContextAttribute) (*tfcommon.CommonRoleBindingFederationContextAttribute, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -27,7 +27,7 @@ func CommonRoleBindingFederationContextAttributeAPIToTFModel(ctx context.Context
 	return &t, diags
 }
 
-func CommonRoleBindingFederationContextAttributeAPIResponseToTFModel(ctx context.Context, am *commonapimodel.CommonRoleBindingFederationContextAttributeResponse) (*tfcommon.CommonRoleBindingFederationContextAttribute, tfdiag.Diagnostics) {
+func CommonRoleBindingFederationContextAttributeAPIResponseToTFModel(ctx context.Context, am *commonmodel.CommonRoleBindingFederationContextAttributeResponse) (*tfcommon.CommonRoleBindingFederationContextAttribute, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -42,7 +42,7 @@ func CommonRoleBindingFederationContextAttributeAPIResponseToTFModel(ctx context
 	return &t, diags
 }
 
-func CommonRoleBindingFederationContextAttributeAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.CommonRoleBindingFederationContextAttributeOptionalResponse) (*tfcommon.CommonRoleBindingFederationContextAttribute, tfdiag.Diagnostics) {
+func CommonRoleBindingFederationContextAttributeAPIOptionalResponseToTFModel(ctx context.Context, am *commonmodel.CommonRoleBindingFederationContextAttributeOptionalResponse) (*tfcommon.CommonRoleBindingFederationContextAttribute, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -57,13 +57,13 @@ func CommonRoleBindingFederationContextAttributeAPIOptionalResponseToTFModel(ctx
 	return &t, diags
 }
 
-func CommonRoleBindingFederationContextAttributeTFToAPIModel(ctx context.Context, plan *tfcommon.CommonRoleBindingFederationContextAttribute) (*commonapimodel.CommonRoleBindingFederationContextAttribute, tfdiag.Diagnostics) {
+func CommonRoleBindingFederationContextAttributeTFToAPIModel(ctx context.Context, plan *tfcommon.CommonRoleBindingFederationContextAttribute) (*commonmodel.CommonRoleBindingFederationContextAttribute, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.CommonRoleBindingFederationContextAttribute
+	var am commonmodel.CommonRoleBindingFederationContextAttribute
 
 	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
 		am.Name = plan.Name.ValueString()
@@ -76,13 +76,13 @@ func CommonRoleBindingFederationContextAttributeTFToAPIModel(ctx context.Context
 	return &am, diags
 }
 
-func CommonRoleBindingFederationContextAttributeTFToAPIRequestModel(ctx context.Context, plan *tfcommon.CommonRoleBindingFederationContextAttribute) (*commonapimodel.CommonRoleBindingFederationContextAttributeRequest, tfdiag.Diagnostics) {
+func CommonRoleBindingFederationContextAttributeTFToAPIRequestModel(ctx context.Context, plan *tfcommon.CommonRoleBindingFederationContextAttribute) (*commonmodel.CommonRoleBindingFederationContextAttributeRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.CommonRoleBindingFederationContextAttributeRequest
+	var am commonmodel.CommonRoleBindingFederationContextAttributeRequest
 
 	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
 		am.Name = plan.Name.ValueString()
@@ -95,7 +95,7 @@ func CommonRoleBindingFederationContextAttributeTFToAPIRequestModel(ctx context.
 	return &am, diags
 }
 
-func CommonRoleBindingFederationContextAttributeTFToAPIUpdateModel(ctx context.Context, plan, state *tfcommon.CommonRoleBindingFederationContextAttribute) (*commonapimodel.UpdateCommonRoleBindingFederationContextAttribute, tfdiag.Diagnostics) {
+func CommonRoleBindingFederationContextAttributeTFToAPIUpdateModel(ctx context.Context, plan, state *tfcommon.CommonRoleBindingFederationContextAttribute) (*commonmodel.UpdateCommonRoleBindingFederationContextAttribute, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -104,7 +104,7 @@ func CommonRoleBindingFederationContextAttributeTFToAPIUpdateModel(ctx context.C
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.UpdateCommonRoleBindingFederationContextAttribute
+	var am commonmodel.UpdateCommonRoleBindingFederationContextAttribute
 
 	if !plan.Name.Equal(state.Name) {
 		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
@@ -121,7 +121,7 @@ func CommonRoleBindingFederationContextAttributeTFToAPIUpdateModel(ctx context.C
 	return &am, diags
 }
 
-func CommonRoleBindingFederationContextAttributeTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfcommon.CommonRoleBindingFederationContextAttribute) (*commonapimodel.UpdateCommonRoleBindingFederationContextAttributeRequest, tfdiag.Diagnostics) {
+func CommonRoleBindingFederationContextAttributeTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfcommon.CommonRoleBindingFederationContextAttribute) (*commonmodel.UpdateCommonRoleBindingFederationContextAttributeRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -130,7 +130,7 @@ func CommonRoleBindingFederationContextAttributeTFToAPIUpdateRequestModel(ctx co
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.UpdateCommonRoleBindingFederationContextAttributeRequest
+	var am commonmodel.UpdateCommonRoleBindingFederationContextAttributeRequest
 
 	if !plan.Name.Equal(state.Name) {
 		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {

@@ -10,8 +10,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/kms/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/kms/model"
 	"go.mws.cloud/go-sdk/service/resources/references/iam"
 	"go.mws.cloud/go-sdk/service/resources/references/support"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -20,7 +20,7 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/kms/model"
 )
 
-func CryptoKeyRoleBindingAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.CryptoKeyRoleBindingOptionalResponse) (*tfmodel.CryptoKeyRoleBinding, tfdiag.Diagnostics) {
+func CryptoKeyRoleBindingAPIOptionalResponseToTFModel(ctx context.Context, am *model.CryptoKeyRoleBindingOptionalResponse) (*tfmodel.CryptoKeyRoleBinding, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -91,13 +91,13 @@ func CryptoKeyRoleBindingAPIOptionalResponseToTFModel(ctx context.Context, am *a
 	return &t, diags
 }
 
-func CryptoKeyRoleBindingTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CryptoKeyRoleBinding) (*apimodel.CryptoKeyRoleBindingRequest, tfdiag.Diagnostics) {
+func CryptoKeyRoleBindingTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CryptoKeyRoleBinding) (*model.CryptoKeyRoleBindingRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.CryptoKeyRoleBindingRequest
+	var am model.CryptoKeyRoleBindingRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
@@ -152,7 +152,7 @@ func CryptoKeyRoleBindingTFToAPIRequestModel(ctx context.Context, plan *tfmodel.
 	return &am, diags
 }
 
-func CryptoKeyRoleBindingTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.CryptoKeyRoleBinding) (*apimodel.UpdateCryptoKeyRoleBindingRequest, tfdiag.Diagnostics) {
+func CryptoKeyRoleBindingTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.CryptoKeyRoleBinding) (*model.UpdateCryptoKeyRoleBindingRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -161,7 +161,7 @@ func CryptoKeyRoleBindingTFToAPIUpdateRequestModel(ctx context.Context, plan, st
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateCryptoKeyRoleBindingRequest
+	var am model.UpdateCryptoKeyRoleBindingRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -195,7 +195,7 @@ func CryptoKeyRoleBindingTFToAPIUpdateRequestModel(ctx context.Context, plan, st
 	if !plan.Subject.Equal(state.Subject) {
 		if !plan.Subject.IsNull() && !plan.Subject.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(commonapimodel.UpdateCommonRoleBindingSpecRequest{})
+				am.Spec.SetTo(commonmodel.UpdateCommonRoleBindingSpecRequest{})
 			}
 			subjectPlan := tfcommon.CommonRoleBindingSpecSubject{}
 			subjectPlanDiag := plan.Subject.As(ctx, &subjectPlan, basetypes.ObjectAsOptions{})
@@ -225,7 +225,7 @@ func CryptoKeyRoleBindingTFToAPIUpdateRequestModel(ctx context.Context, plan, st
 	if !plan.Role.Equal(state.Role) {
 		if !plan.Role.IsNull() && !plan.Role.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(commonapimodel.UpdateCommonRoleBindingSpecRequest{})
+				am.Spec.SetTo(commonmodel.UpdateCommonRoleBindingSpecRequest{})
 			}
 			roleRef, err := iam.ParseRoleRef(ctx, plan.Role.ValueString())
 			if err != nil {
@@ -239,7 +239,7 @@ func CryptoKeyRoleBindingTFToAPIUpdateRequestModel(ctx context.Context, plan, st
 	if !plan.SupportRequestId.Equal(state.SupportRequestId) {
 		if !plan.SupportRequestId.IsNull() && !plan.SupportRequestId.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(commonapimodel.UpdateCommonRoleBindingSpecRequest{})
+				am.Spec.SetTo(commonmodel.UpdateCommonRoleBindingSpecRequest{})
 			}
 			supportRequestIdRef, err := support.ParseRequestIDRef(ctx, plan.SupportRequestId.ValueString())
 			if err != nil {

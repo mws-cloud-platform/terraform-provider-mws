@@ -10,14 +10,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/rm/model"
+	"go.mws.cloud/go-sdk/service/rm/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/rm/model"
 )
 
-func ZoneAPIResponseToTFModel(ctx context.Context, am *apimodel.ZoneResponse) (*tfmodel.Zone, tfdiag.Diagnostics) {
+func ZoneAPIResponseToTFModel(ctx context.Context, am *model.ZoneResponse) (*tfmodel.Zone, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -72,7 +72,7 @@ func ZoneAPIResponseToTFModel(ctx context.Context, am *apimodel.ZoneResponse) (*
 	return &t, diags
 }
 
-func ZoneMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.ZoneMetadataResponse) (*tfmodel.ZoneMetadata, tfdiag.Diagnostics) {
+func ZoneMetadataAPIResponseToTFModel(ctx context.Context, am *model.ZoneMetadataResponse) (*tfmodel.ZoneMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

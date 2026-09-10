@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
-func NodeLabelSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NodeLabelSpecOptionalResponse) (*tfmodel.NodeLabelSpec, tfdiag.Diagnostics) {
+func NodeLabelSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.NodeLabelSpecOptionalResponse) (*tfmodel.NodeLabelSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -27,7 +27,7 @@ func NodeLabelSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel
 	return &t, diags
 }
 
-func NodeLabelSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.NodeLabelSpecResponse) (*tfmodel.NodeLabelSpec, tfdiag.Diagnostics) {
+func NodeLabelSpecAPIResponseToTFModel(ctx context.Context, am *model.NodeLabelSpecResponse) (*tfmodel.NodeLabelSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -42,13 +42,13 @@ func NodeLabelSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.NodeLab
 	return &t, diags
 }
 
-func NodeLabelSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeLabelSpec) (*apimodel.NodeLabelSpecRequest, tfdiag.Diagnostics) {
+func NodeLabelSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeLabelSpec) (*model.NodeLabelSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.NodeLabelSpecRequest
+	var am model.NodeLabelSpecRequest
 
 	if !plan.Key.IsNull() && !plan.Key.IsUnknown() {
 		am.Key = plan.Key.ValueString()
@@ -61,7 +61,7 @@ func NodeLabelSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeLab
 	return &am, diags
 }
 
-func NodeLabelSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NodeLabelSpec) (*apimodel.UpdateNodeLabelSpecRequest, tfdiag.Diagnostics) {
+func NodeLabelSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NodeLabelSpec) (*model.UpdateNodeLabelSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -70,7 +70,7 @@ func NodeLabelSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tf
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateNodeLabelSpecRequest
+	var am model.UpdateNodeLabelSpecRequest
 
 	if !plan.Key.Equal(state.Key) {
 		if !plan.Key.IsNull() && !plan.Key.IsUnknown() {

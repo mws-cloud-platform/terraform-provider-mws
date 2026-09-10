@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	"go.mws.cloud/go-sdk/service/resources/references/rm"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
@@ -16,18 +16,18 @@ import (
 
 func TestClickhouseClusterCoordinatorInstanceAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClickhouseClusterCoordinatorInstanceOptionalResponse{}
+	emptyApiModel := model.ClickhouseClusterCoordinatorInstanceOptionalResponse{}
 	_, diags := conv.ClickhouseClusterCoordinatorInstanceAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClickhouseClusterCoordinatorInstanceOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.ClickhouseClusterCoordinatorInstanceRequest{
+	emptyApiModelRequest := model.ClickhouseClusterCoordinatorInstanceRequest{
 		Zone: rm.NewMustZoneRef("zoneID"),
 	}
 
-	emptyApiModelResponse, err := apimodel.ClickhouseClusterCoordinatorInstanceRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.ClickhouseClusterCoordinatorInstanceRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.ClickhouseClusterCoordinatorInstanceAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -36,7 +36,7 @@ func TestClickhouseClusterCoordinatorInstanceOptionalResponseConverters(t *testi
 	filledApiModelRequest, diags := conv.ClickhouseClusterCoordinatorInstanceTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.ClickhouseClusterCoordinatorInstanceRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.ClickhouseClusterCoordinatorInstanceRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -48,7 +48,7 @@ func TestUpdateClickhouseClusterCoordinatorInstanceRequestConverters(t *testing.
 	var nullPlanTfModel tfmodel.ClickhouseClusterCoordinatorInstance
 	var stateTfModel tfmodel.ClickhouseClusterCoordinatorInstance
 
-	expectedUpdateModel := &apimodel.UpdateClickhouseClusterCoordinatorInstanceRequest{}
+	expectedUpdateModel := &model.UpdateClickhouseClusterCoordinatorInstanceRequest{}
 
 	result, diags := conv.ClickhouseClusterCoordinatorInstanceTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

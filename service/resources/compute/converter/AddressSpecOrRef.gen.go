@@ -10,13 +10,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func AddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.AddressSpecOrRefOptionalResponse) (*tfmodel.AddressSpecOrRef, tfdiag.Diagnostics) {
+func AddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *model.AddressSpecOrRefOptionalResponse) (*tfmodel.AddressSpecOrRef, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -51,13 +51,13 @@ func AddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *apimo
 	return &t, diags
 }
 
-func AddressSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfmodel.AddressSpecOrRef) (*apimodel.AddressSpecOrRefRequest, tfdiag.Diagnostics) {
+func AddressSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfmodel.AddressSpecOrRef) (*model.AddressSpecOrRefRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.AddressSpecOrRefRequest
+	var am model.AddressSpecOrRefRequest
 
 	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
 		refRef, err := vpc.ParseAddressRef(ctx, plan.Ref.ValueString())
@@ -87,7 +87,7 @@ func AddressSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Addr
 	return &am, diags
 }
 
-func AddressSpecOrRefTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.AddressSpecOrRef) (*apimodel.UpdateAddressSpecOrRefRequest, tfdiag.Diagnostics) {
+func AddressSpecOrRefTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.AddressSpecOrRef) (*model.UpdateAddressSpecOrRefRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -96,7 +96,7 @@ func AddressSpecOrRefTFToAPIUpdateRequestModel(ctx context.Context, plan, state 
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateAddressSpecOrRefRequest
+	var am model.UpdateAddressSpecOrRefRequest
 
 	if !plan.Ref.Equal(state.Ref) {
 		if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {

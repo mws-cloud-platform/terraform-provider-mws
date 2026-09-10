@@ -8,18 +8,14 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	resmodels "go.mws.cloud/go-sdk/pkg/resources/models"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	"go.mws.cloud/go-sdk/service/resources/references/iam"
-	"go.mws.cloud/go-sdk/service/resources/references/support"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 )
 
-func CommonRoleBindingAPIToTFModel(ctx context.Context, am *commonapimodel.CommonRoleBinding) (*tfcommon.CommonRoleBinding, tfdiag.Diagnostics) {
+func CommonRoleBindingAPIToTFModel(ctx context.Context, am *commonmodel.CommonRoleBinding) (*tfcommon.CommonRoleBinding, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -94,7 +90,7 @@ func CommonRoleBindingAPIToTFModel(ctx context.Context, am *commonapimodel.Commo
 	return &t, diags
 }
 
-func CommonRoleBindingAPIResponseToTFModel(ctx context.Context, am *commonapimodel.CommonRoleBindingResponse) (*tfcommon.CommonRoleBinding, tfdiag.Diagnostics) {
+func CommonRoleBindingAPIResponseToTFModel(ctx context.Context, am *commonmodel.CommonRoleBindingResponse) (*tfcommon.CommonRoleBinding, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -169,7 +165,7 @@ func CommonRoleBindingAPIResponseToTFModel(ctx context.Context, am *commonapimod
 	return &t, diags
 }
 
-func CommonRoleBindingAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.CommonRoleBindingOptionalResponse) (*tfcommon.CommonRoleBinding, tfdiag.Diagnostics) {
+func CommonRoleBindingAPIOptionalResponseToTFModel(ctx context.Context, am *commonmodel.CommonRoleBindingOptionalResponse) (*tfcommon.CommonRoleBinding, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -244,149 +240,7 @@ func CommonRoleBindingAPIOptionalResponseToTFModel(ctx context.Context, am *comm
 	return &t, diags
 }
 
-func CommonRoleBindingTFToAPIModel(ctx context.Context, plan *tfcommon.CommonRoleBinding) (*commonapimodel.CommonRoleBinding, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am commonapimodel.CommonRoleBinding
-
-	if !plan.Kind.IsNull() && !plan.Kind.IsUnknown() {
-		am.Kind = plan.Kind.ValueStringPointer()
-	}
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfcommon.CommonRoleBindingMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := CommonRoleBindingMetadataTFToAPIModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.Status.IsNull() && !plan.Status.IsUnknown() {
-		statusPlan := tfcommon.CommonRoleBindingStatus{}
-		statusPlanDiag := plan.Status.As(ctx, &statusPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, statusPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		statusTmp, statusDiag := CommonRoleBindingStatusTFToAPIModel(ctx, &statusPlan)
-		diags = append(diags, statusDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Status = statusTmp
-	}
-
-	if !plan.Subject.IsNull() && !plan.Subject.IsUnknown() {
-		subjectPlan := tfcommon.CommonRoleBindingSpecSubject{}
-		subjectPlanDiag := plan.Subject.As(ctx, &subjectPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, subjectPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		subjectTmp, subjectDiag := CommonRoleBindingSpecSubjectTFToAPIModel(ctx, &subjectPlan)
-		diags = append(diags, subjectDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Subject = *subjectTmp
-	}
-
-	if !plan.Role.IsNull() && !plan.Role.IsUnknown() {
-		roleRef, err := iam.ParseRoleRef(ctx, plan.Role.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Spec.Role = roleRef
-	}
-
-	if !plan.SupportRequestId.IsNull() && !plan.SupportRequestId.IsUnknown() {
-		supportRequestIdRef, err := support.ParseRequestIDRef(ctx, plan.SupportRequestId.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Spec.SupportRequestId = &supportRequestIdRef
-	}
-
-	return &am, diags
-}
-
-func CommonRoleBindingTFToAPIRequestModel(ctx context.Context, plan *tfcommon.CommonRoleBinding) (*commonapimodel.CommonRoleBindingRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am commonapimodel.CommonRoleBindingRequest
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfcommon.CommonRoleBindingMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := CommonRoleBindingMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.Subject.IsNull() && !plan.Subject.IsUnknown() {
-		subjectPlan := tfcommon.CommonRoleBindingSpecSubject{}
-		subjectPlanDiag := plan.Subject.As(ctx, &subjectPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, subjectPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		subjectTmp, subjectDiag := CommonRoleBindingSpecSubjectTFToAPIRequestModel(ctx, &subjectPlan)
-		diags = append(diags, subjectDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Subject = *subjectTmp
-	}
-
-	if !plan.Role.IsNull() && !plan.Role.IsUnknown() {
-		roleRef, err := iam.ParseRoleRef(ctx, plan.Role.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Spec.Role = roleRef
-	}
-
-	if !plan.SupportRequestId.IsNull() && !plan.SupportRequestId.IsUnknown() {
-		supportRequestIdRef, err := support.ParseRequestIDRef(ctx, plan.SupportRequestId.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Spec.SupportRequestId = &supportRequestIdRef
-	}
-
-	return &am, diags
-}
-
-func CommonRoleBindingMetadataAPIToTFModel(ctx context.Context, am *commonapimodel.CommonRoleBindingMetadata) (*tfcommon.CommonRoleBindingMetadata, tfdiag.Diagnostics) {
+func CommonRoleBindingMetadataAPIToTFModel(ctx context.Context, am *commonmodel.CommonRoleBindingMetadata) (*tfcommon.CommonRoleBindingMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -460,7 +314,7 @@ func CommonRoleBindingMetadataAPIToTFModel(ctx context.Context, am *commonapimod
 	return &t, diags
 }
 
-func CommonRoleBindingMetadataAPIResponseToTFModel(ctx context.Context, am *commonapimodel.CommonRoleBindingMetadataResponse) (*tfcommon.CommonRoleBindingMetadata, tfdiag.Diagnostics) {
+func CommonRoleBindingMetadataAPIResponseToTFModel(ctx context.Context, am *commonmodel.CommonRoleBindingMetadataResponse) (*tfcommon.CommonRoleBindingMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -534,7 +388,7 @@ func CommonRoleBindingMetadataAPIResponseToTFModel(ctx context.Context, am *comm
 	return &t, diags
 }
 
-func CommonRoleBindingMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.CommonRoleBindingMetadataOptionalResponse) (*tfcommon.CommonRoleBindingMetadata, tfdiag.Diagnostics) {
+func CommonRoleBindingMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *commonmodel.CommonRoleBindingMetadataOptionalResponse) (*tfcommon.CommonRoleBindingMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -606,118 +460,4 @@ func CommonRoleBindingMetadataAPIOptionalResponseToTFModel(ctx context.Context, 
 	}
 
 	return &t, diags
-}
-
-func CommonRoleBindingMetadataTFToAPIModel(ctx context.Context, plan *tfcommon.CommonRoleBindingMetadata) (*commonapimodel.CommonRoleBindingMetadata, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am commonapimodel.CommonRoleBindingMetadata
-
-	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
-		am.DisplayName = plan.DisplayName.ValueStringPointer()
-	}
-
-	if !plan.CreateTime.IsNull() && !plan.CreateTime.IsUnknown() {
-		tmpCreateTime, err := time.Parse(time.RFC3339, plan.CreateTime.ValueString())
-		if err != nil {
-			diags.AddError("time string parsing", err.Error())
-			return nil, diags
-		}
-		am.CreateTime = &tmpCreateTime
-	}
-
-	if !plan.DeleteTime.IsNull() && !plan.DeleteTime.IsUnknown() {
-		tmpDeleteTime, err := time.Parse(time.RFC3339, plan.DeleteTime.ValueString())
-		if err != nil {
-			diags.AddError("time string parsing", err.Error())
-			return nil, diags
-		}
-		am.DeleteTime = &tmpDeleteTime
-	}
-
-	if !plan.PurgeTime.IsNull() && !plan.PurgeTime.IsUnknown() {
-		tmpPurgeTime, err := time.Parse(time.RFC3339, plan.PurgeTime.ValueString())
-		if err != nil {
-			diags.AddError("time string parsing", err.Error())
-			return nil, diags
-		}
-		am.PurgeTime = &tmpPurgeTime
-	}
-
-	if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
-		usages := make([]tfcommon.TypedUsage, 0)
-		dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
-		diags = append(diags, dUsages...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Usages = make([]commonapimodel.TypedUsage, 0, len(usages))
-
-		for _, entity := range usages {
-			tmp, d := TypedUsageTFToAPIModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.Usages = append(am.Usages, *tmp)
-		}
-	}
-
-	if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
-		am.Description = plan.Description.ValueStringPointer()
-	}
-
-	if !plan.Id.IsNull() && !plan.Id.IsUnknown() {
-		idID, err := resmodels.ParseAnyResourceID(plan.Id.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Id = &idID
-	}
-
-	return &am, diags
-}
-
-func CommonRoleBindingMetadataTFToAPIRequestModel(ctx context.Context, plan *tfcommon.CommonRoleBindingMetadata) (*commonapimodel.CommonRoleBindingMetadataRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am commonapimodel.CommonRoleBindingMetadataRequest
-
-	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
-		am.DisplayName = plan.DisplayName.ValueStringPointer()
-	}
-
-	if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
-		usages := make([]tfcommon.TypedUsage, 0)
-		dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
-		diags = append(diags, dUsages...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
-
-		for _, entity := range usages {
-			tmp, d := TypedUsageTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.Usages = append(am.Usages, *tmp)
-		}
-	}
-
-	if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
-		am.Description = plan.Description.ValueStringPointer()
-	}
-
-	return &am, diags
 }

@@ -10,14 +10,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/rm/model"
+	"go.mws.cloud/go-sdk/service/rm/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/rm/model"
 )
 
-func RegionAPIResponseToTFModel(ctx context.Context, am *apimodel.RegionResponse) (*tfmodel.Region, tfdiag.Diagnostics) {
+func RegionAPIResponseToTFModel(ctx context.Context, am *model.RegionResponse) (*tfmodel.Region, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -49,7 +49,12 @@ func RegionAPIResponseToTFModel(ctx context.Context, am *apimodel.RegionResponse
 		t.Metadata = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.RegionMetadata).GetSchema().Attributes))
 	}
 
-	t.Spec = types.StringValue(string(am.Spec))
+	specTmp, d := RegionSpecAPIToTFModel(ctx, am.Spec)
+	diags = append(diags, d...)
+	if diags.HasError() {
+		return nil, diags
+	}
+	t.Spec = specTmp
 
 	if am.Status != nil {
 		statusTmp, d := commonconv.ResourceStatusAPIResponseToTFModel(ctx, am.Status)
@@ -72,7 +77,7 @@ func RegionAPIResponseToTFModel(ctx context.Context, am *apimodel.RegionResponse
 	return &t, diags
 }
 
-func RegionMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.RegionMetadataResponse) (*tfmodel.RegionMetadata, tfdiag.Diagnostics) {
+func RegionMetadataAPIResponseToTFModel(ctx context.Context, am *model.RegionMetadataResponse) (*tfmodel.RegionMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

@@ -4,17 +4,16 @@ package converter
 
 import (
 	"context"
-	"time"
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/kms/model"
+	"go.mws.cloud/go-sdk/service/kms/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/kms/model"
 )
 
-func CryptoKeySpecDestructionPolicyAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.CryptoKeySpecDestructionPolicyOptionalResponse) (*tfmodel.CryptoKeySpecDestructionPolicy, tfdiag.Diagnostics) {
+func CryptoKeySpecDestructionPolicyAPIOptionalResponseToTFModel(ctx context.Context, am *model.CryptoKeySpecDestructionPolicyOptionalResponse) (*tfmodel.CryptoKeySpecDestructionPolicy, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -28,22 +27,16 @@ func CryptoKeySpecDestructionPolicyAPIOptionalResponseToTFModel(ctx context.Cont
 		t.DefaultDestructionIntervalDays = types.Int64Null()
 	}
 
-	if am.ScheduledDestructionTime != nil {
-		t.ScheduledDestructionTime = types.StringPointerValue(ptr.Get(am.ScheduledDestructionTime.Format(time.RFC3339)))
-	} else {
-		t.ScheduledDestructionTime = types.StringNull()
-	}
-
 	return &t, diags
 }
 
-func CryptoKeySpecDestructionPolicyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CryptoKeySpecDestructionPolicy) (*apimodel.CryptoKeySpecDestructionPolicyRequest, tfdiag.Diagnostics) {
+func CryptoKeySpecDestructionPolicyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CryptoKeySpecDestructionPolicy) (*model.CryptoKeySpecDestructionPolicyRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.CryptoKeySpecDestructionPolicyRequest
+	var am model.CryptoKeySpecDestructionPolicyRequest
 
 	if !plan.DefaultDestructionIntervalDays.IsNull() && !plan.DefaultDestructionIntervalDays.IsUnknown() {
 		am.DefaultDestructionIntervalDays = ptr.Get(int32(plan.DefaultDestructionIntervalDays.ValueInt64()))
@@ -52,7 +45,7 @@ func CryptoKeySpecDestructionPolicyTFToAPIRequestModel(ctx context.Context, plan
 	return &am, diags
 }
 
-func CryptoKeySpecDestructionPolicyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.CryptoKeySpecDestructionPolicy) (*apimodel.UpdateCryptoKeySpecDestructionPolicyRequest, tfdiag.Diagnostics) {
+func CryptoKeySpecDestructionPolicyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.CryptoKeySpecDestructionPolicy) (*model.UpdateCryptoKeySpecDestructionPolicyRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -61,7 +54,7 @@ func CryptoKeySpecDestructionPolicyTFToAPIUpdateRequestModel(ctx context.Context
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateCryptoKeySpecDestructionPolicyRequest
+	var am model.UpdateCryptoKeySpecDestructionPolicyRequest
 
 	if !plan.DefaultDestructionIntervalDays.Equal(state.DefaultDestructionIntervalDays) {
 		if !plan.DefaultDestructionIntervalDays.IsNull() && !plan.DefaultDestructionIntervalDays.IsUnknown() {
@@ -72,7 +65,7 @@ func CryptoKeySpecDestructionPolicyTFToAPIUpdateRequestModel(ctx context.Context
 	return &am, diags
 }
 
-func CryptoKeySpecRotationPolicyAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.CryptoKeySpecRotationPolicyOptionalResponse) (*tfmodel.CryptoKeySpecRotationPolicy, tfdiag.Diagnostics) {
+func CryptoKeySpecRotationPolicyAPIOptionalResponseToTFModel(ctx context.Context, am *model.CryptoKeySpecRotationPolicyOptionalResponse) (*tfmodel.CryptoKeySpecRotationPolicy, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -95,13 +88,13 @@ func CryptoKeySpecRotationPolicyAPIOptionalResponseToTFModel(ctx context.Context
 	return &t, diags
 }
 
-func CryptoKeySpecRotationPolicyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CryptoKeySpecRotationPolicy) (*apimodel.CryptoKeySpecRotationPolicyRequest, tfdiag.Diagnostics) {
+func CryptoKeySpecRotationPolicyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CryptoKeySpecRotationPolicy) (*model.CryptoKeySpecRotationPolicyRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.CryptoKeySpecRotationPolicyRequest
+	var am model.CryptoKeySpecRotationPolicyRequest
 
 	if !plan.Enabled.IsNull() && !plan.Enabled.IsUnknown() {
 		am.Enabled = plan.Enabled.ValueBoolPointer()
@@ -114,7 +107,7 @@ func CryptoKeySpecRotationPolicyTFToAPIRequestModel(ctx context.Context, plan *t
 	return &am, diags
 }
 
-func CryptoKeySpecRotationPolicyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.CryptoKeySpecRotationPolicy) (*apimodel.UpdateCryptoKeySpecRotationPolicyRequest, tfdiag.Diagnostics) {
+func CryptoKeySpecRotationPolicyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.CryptoKeySpecRotationPolicy) (*model.UpdateCryptoKeySpecRotationPolicyRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -123,7 +116,7 @@ func CryptoKeySpecRotationPolicyTFToAPIUpdateRequestModel(ctx context.Context, p
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateCryptoKeySpecRotationPolicyRequest
+	var am model.UpdateCryptoKeySpecRotationPolicyRequest
 
 	if !plan.Enabled.Equal(state.Enabled) {
 		if !plan.Enabled.IsNull() && !plan.Enabled.IsUnknown() {
@@ -140,7 +133,7 @@ func CryptoKeySpecRotationPolicyTFToAPIUpdateRequestModel(ctx context.Context, p
 	return &am, diags
 }
 
-func CryptoKeySpecUsagePolicyAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.CryptoKeySpecUsagePolicyOptionalResponse) (*tfmodel.CryptoKeySpecUsagePolicy, tfdiag.Diagnostics) {
+func CryptoKeySpecUsagePolicyAPIOptionalResponseToTFModel(ctx context.Context, am *model.CryptoKeySpecUsagePolicyOptionalResponse) (*tfmodel.CryptoKeySpecUsagePolicy, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -157,13 +150,13 @@ func CryptoKeySpecUsagePolicyAPIOptionalResponseToTFModel(ctx context.Context, a
 	return &t, diags
 }
 
-func CryptoKeySpecUsagePolicyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CryptoKeySpecUsagePolicy) (*apimodel.CryptoKeySpecUsagePolicyRequest, tfdiag.Diagnostics) {
+func CryptoKeySpecUsagePolicyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CryptoKeySpecUsagePolicy) (*model.CryptoKeySpecUsagePolicyRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.CryptoKeySpecUsagePolicyRequest
+	var am model.CryptoKeySpecUsagePolicyRequest
 
 	if !plan.Enabled.IsNull() && !plan.Enabled.IsUnknown() {
 		am.Enabled = plan.Enabled.ValueBoolPointer()
@@ -172,7 +165,7 @@ func CryptoKeySpecUsagePolicyTFToAPIRequestModel(ctx context.Context, plan *tfmo
 	return &am, diags
 }
 
-func CryptoKeySpecUsagePolicyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.CryptoKeySpecUsagePolicy) (*apimodel.UpdateCryptoKeySpecUsagePolicyRequest, tfdiag.Diagnostics) {
+func CryptoKeySpecUsagePolicyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.CryptoKeySpecUsagePolicy) (*model.UpdateCryptoKeySpecUsagePolicyRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -181,7 +174,7 @@ func CryptoKeySpecUsagePolicyTFToAPIUpdateRequestModel(ctx context.Context, plan
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateCryptoKeySpecUsagePolicyRequest
+	var am model.UpdateCryptoKeySpecUsagePolicyRequest
 
 	if !plan.Enabled.Equal(state.Enabled) {
 		if !plan.Enabled.IsNull() && !plan.Enabled.IsUnknown() {

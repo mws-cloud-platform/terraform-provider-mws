@@ -13,7 +13,7 @@ type SnapshotSource struct {
 
 func (s *SnapshotSource) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Источник для создания снимка (На текущий момент поддерживается только диск, но в будущем будут и другие источники)`,
+		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"disk": schema.SingleNestedAttribute{
 				Attributes:          new(SnapshotSourceDisk).GetSchema().Attributes,

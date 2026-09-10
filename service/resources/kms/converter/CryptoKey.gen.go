@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/kms/model"
+	"go.mws.cloud/go-sdk/service/kms/model"
 	"go.mws.cloud/go-sdk/service/resources/references/kms"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
@@ -18,7 +18,7 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/kms/model"
 )
 
-func CryptoKeyAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.CryptoKeyOptionalResponse) (*tfmodel.CryptoKey, tfdiag.Diagnostics) {
+func CryptoKeyAPIOptionalResponseToTFModel(ctx context.Context, am *model.CryptoKeyOptionalResponse) (*tfmodel.CryptoKey, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -130,13 +130,13 @@ func CryptoKeyAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Cry
 	return &t, diags
 }
 
-func CryptoKeyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CryptoKey) (*apimodel.CryptoKeyRequest, tfdiag.Diagnostics) {
+func CryptoKeyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CryptoKey) (*model.CryptoKeyRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.CryptoKeyRequest
+	var am model.CryptoKeyRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
@@ -223,7 +223,7 @@ func CryptoKeyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CryptoKey) 
 	return &am, diags
 }
 
-func CryptoKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.CryptoKey) (*apimodel.UpdateCryptoKeyRequest, tfdiag.Diagnostics) {
+func CryptoKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.CryptoKey) (*model.UpdateCryptoKeyRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -232,7 +232,7 @@ func CryptoKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateCryptoKeyRequest
+	var am model.UpdateCryptoKeyRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -266,7 +266,7 @@ func CryptoKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	if !plan.DefaultAlgorithm.Equal(state.DefaultAlgorithm) {
 		if !plan.DefaultAlgorithm.IsNull() && !plan.DefaultAlgorithm.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateCryptoKeySpecRequest{})
+				am.Spec.SetTo(model.UpdateCryptoKeySpecRequest{})
 			}
 			defaultAlgorithmTmp, defaultAlgorithmDiag := CryptoKeyAlgorithmTFToAPIModel(ctx, plan.DefaultAlgorithm)
 			diags = append(diags, defaultAlgorithmDiag...)
@@ -280,7 +280,7 @@ func CryptoKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	if !plan.DestructionPolicy.Equal(state.DestructionPolicy) {
 		if !plan.DestructionPolicy.IsNull() && !plan.DestructionPolicy.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateCryptoKeySpecRequest{})
+				am.Spec.SetTo(model.UpdateCryptoKeySpecRequest{})
 			}
 			destructionPolicyPlan := tfmodel.CryptoKeySpecDestructionPolicy{}
 			destructionPolicyPlanDiag := plan.DestructionPolicy.As(ctx, &destructionPolicyPlan, basetypes.ObjectAsOptions{})
@@ -306,7 +306,7 @@ func CryptoKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 			am.Spec.Value.DestructionPolicy.SetTo(*destructionPolicyTmp)
 		} else if plan.DestructionPolicy.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateCryptoKeySpecRequest{})
+				am.Spec.SetTo(model.UpdateCryptoKeySpecRequest{})
 			}
 			am.Spec.Value.DestructionPolicy.SetToNull()
 		}
@@ -315,7 +315,7 @@ func CryptoKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	if !plan.UsagePolicy.Equal(state.UsagePolicy) {
 		if !plan.UsagePolicy.IsNull() && !plan.UsagePolicy.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateCryptoKeySpecRequest{})
+				am.Spec.SetTo(model.UpdateCryptoKeySpecRequest{})
 			}
 			usagePolicyPlan := tfmodel.CryptoKeySpecUsagePolicy{}
 			usagePolicyPlanDiag := plan.UsagePolicy.As(ctx, &usagePolicyPlan, basetypes.ObjectAsOptions{})
@@ -341,7 +341,7 @@ func CryptoKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 			am.Spec.Value.UsagePolicy.SetTo(*usagePolicyTmp)
 		} else if plan.UsagePolicy.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateCryptoKeySpecRequest{})
+				am.Spec.SetTo(model.UpdateCryptoKeySpecRequest{})
 			}
 			am.Spec.Value.UsagePolicy.SetToNull()
 		}
@@ -350,7 +350,7 @@ func CryptoKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	if !plan.RotationPolicy.Equal(state.RotationPolicy) {
 		if !plan.RotationPolicy.IsNull() && !plan.RotationPolicy.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateCryptoKeySpecRequest{})
+				am.Spec.SetTo(model.UpdateCryptoKeySpecRequest{})
 			}
 			rotationPolicyPlan := tfmodel.CryptoKeySpecRotationPolicy{}
 			rotationPolicyPlanDiag := plan.RotationPolicy.As(ctx, &rotationPolicyPlan, basetypes.ObjectAsOptions{})
@@ -376,7 +376,7 @@ func CryptoKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 			am.Spec.Value.RotationPolicy.SetTo(*rotationPolicyTmp)
 		} else if plan.RotationPolicy.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateCryptoKeySpecRequest{})
+				am.Spec.SetTo(model.UpdateCryptoKeySpecRequest{})
 			}
 			am.Spec.Value.RotationPolicy.SetToNull()
 		}
@@ -385,7 +385,7 @@ func CryptoKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	if !plan.PrimaryKeyVersionRef.Equal(state.PrimaryKeyVersionRef) {
 		if !plan.PrimaryKeyVersionRef.IsNull() && !plan.PrimaryKeyVersionRef.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateCryptoKeySpecRequest{})
+				am.Spec.SetTo(model.UpdateCryptoKeySpecRequest{})
 			}
 			primaryKeyVersionRefRef, err := kms.ParseCryptoKeyVersionRef(ctx, plan.PrimaryKeyVersionRef.ValueString())
 			if err != nil {
@@ -395,7 +395,7 @@ func CryptoKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 			am.Spec.Value.PrimaryKeyVersionRef.SetTo(primaryKeyVersionRefRef)
 		} else if plan.PrimaryKeyVersionRef.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateCryptoKeySpecRequest{})
+				am.Spec.SetTo(model.UpdateCryptoKeySpecRequest{})
 			}
 			am.Spec.Value.PrimaryKeyVersionRef.SetToNull()
 		}

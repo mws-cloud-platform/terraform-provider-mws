@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func VmTypeCpuSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.VmTypeCpuSpecOptionalResponse) (*tfmodel.VmTypeCpuSpec, tfdiag.Diagnostics) {
+func VmTypeCpuSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.VmTypeCpuSpecOptionalResponse) (*tfmodel.VmTypeCpuSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

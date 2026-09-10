@@ -7,14 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/certmanager/model"
 )
 
-func CertificateManagedSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.CertificateManagedSpecOptionalResponse) (*tfmodel.CertificateManagedSpec, tfdiag.Diagnostics) {
+func CertificateManagedSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.CertificateManagedSpecOptionalResponse) (*tfmodel.CertificateManagedSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -62,10 +61,10 @@ func CertificateManagedSpecAPIOptionalResponseToTFModel(ctx context.Context, am 
 		t.Issuer = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.CertificateManagedSpecIssuer).GetSchema().Attributes))
 	}
 
-	if am.Domains != nil {
-		domains := make([]types.String, 0, len(am.Domains))
+	if val, ok := am.Domains.Get(); ok {
+		domains := make([]types.String, 0, len(val))
 
-		for _, entity := range am.Domains {
+		for _, entity := range val {
 			domains = append(domains, types.StringValue(entity))
 		}
 
@@ -81,64 +80,4 @@ func CertificateManagedSpecAPIOptionalResponseToTFModel(ctx context.Context, am 
 	}
 
 	return &t, diags
-}
-
-func CertificateManagedSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CertificateManagedSpec) (*apimodel.CertificateManagedSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.CertificateManagedSpecRequest
-
-	if !plan.PreferredChallengeType.IsNull() && !plan.PreferredChallengeType.IsUnknown() {
-		preferredChallengeTypeTmp, preferredChallengeTypeDiag := CertificateChallengeTypeTFToAPIModel(ctx, plan.PreferredChallengeType)
-		diags = append(diags, preferredChallengeTypeDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.PreferredChallengeType = preferredChallengeTypeTmp
-	}
-
-	if !plan.Provider.IsNull() && !plan.Provider.IsUnknown() {
-		providerTmp, providerDiag := CertificateProviderTFToAPIModel(ctx, plan.Provider)
-		diags = append(diags, providerDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Provider = providerTmp
-	}
-
-	if !plan.Issuer.IsNull() && !plan.Issuer.IsUnknown() {
-		issuerPlan := tfmodel.CertificateManagedSpecIssuer{}
-		issuerPlanDiag := plan.Issuer.As(ctx, &issuerPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, issuerPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		issuerTmp, issuerDiag := CertificateManagedSpecIssuerTFToAPIRequestModel(ctx, &issuerPlan)
-		diags = append(diags, issuerDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Issuer = issuerTmp
-	}
-
-	if !plan.Domains.IsNull() && !plan.Domains.IsUnknown() {
-		domains := make([]types.String, 0)
-		dDomains := plan.Domains.ElementsAs(ctx, &domains, false)
-		diags = append(diags, dDomains...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Domains = make([]string, 0, len(domains))
-
-		for _, entity := range domains {
-			am.Domains = append(am.Domains, entity.ValueString())
-		}
-	}
-
-	return &am, diags
 }

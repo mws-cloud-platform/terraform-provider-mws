@@ -8,20 +8,20 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/converter"
 )
 
 func TestClickhouseBackupStatusAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClickhouseBackupStatusResponse{}
+	emptyApiModel := model.ClickhouseBackupStatusResponse{}
 	_, diags := conv.ClickhouseBackupStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClickhouseBackupStatusBackupAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClickhouseBackupStatusBackupResponse{}
+	emptyApiModel := model.ClickhouseBackupStatusBackupResponse{}
 	_, diags := conv.ClickhouseBackupStatusBackupAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }

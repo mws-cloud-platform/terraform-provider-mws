@@ -11,8 +11,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	"go.mws.cloud/go-sdk/service/resources/references/iam"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
@@ -24,32 +24,32 @@ import (
 
 func TestNodeGroupAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NodeGroupOptionalResponse{}
+	emptyApiModel := model.NodeGroupOptionalResponse{}
 	_, diags := conv.NodeGroupAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestNodeGroupOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.NodeGroupRequest{
-		Spec: apimodel.NodeGroupSpecRequest{
+	emptyApiModelRequest := model.NodeGroupRequest{
+		Spec: model.NodeGroupSpecRequest{
 			Zone: "zone",
-			Subnet: apimodel.NodeGroupSpecSubnetRequest{
+			Subnet: model.NodeGroupSpecSubnetRequest{
 				Ref: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
 			},
-			VmType: apimodel.NodeGroupSpecVmTypeRequest{
+			VmType: model.NodeGroupSpecVmTypeRequest{
 				Ref: compute.NewMustVmTypeRef("vmTypeID"),
 			},
-			Scale:           apimodel.NodeGroupSpecScaleRequest{},
-			VersionControl:  apimodel.NodeGroupVersionControlSpecRequest{},
-			RolloutStrategy: apimodel.NodeGroupSpecRolloutStrategyRequest{},
-			ServiceAccount: apimodel.NodeGroupSpecServiceAccountRequest{
+			Scale:           model.NodeGroupSpecScaleRequest{},
+			VersionControl:  model.NodeGroupVersionControlSpecRequest{},
+			RolloutStrategy: model.NodeGroupSpecRolloutStrategyRequest{},
+			ServiceAccount: model.NodeGroupSpecServiceAccountRequest{
 				Ref: iam.NewMustServiceAccountRef("projectID", "serviceAccountID"),
 			},
 		},
 	}
 
-	emptyApiModelResponse, err := apimodel.NodeGroupRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.NodeGroupRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.NodeGroupAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -58,7 +58,7 @@ func TestNodeGroupOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.NodeGroupTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.NodeGroupRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.NodeGroupRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -80,21 +80,21 @@ func TestUpdateNodeGroupRequestConverters(t *testing.T) {
 		AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.NodeTaintSpec).GetSchema().Attributes),
 	}, []tfattr.Value{})
 
-	expectedUpdateModel := &apimodel.UpdateNodeGroupRequest{
-		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+	expectedUpdateModel := &model.UpdateNodeGroupRequest{
+		Metadata: optional.OptionalNil[commonmodel.UpdateCommonTypedResourceMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},
-		Spec: optional.NewOptional(apimodel.UpdateNodeGroupSpecRequest{
-			LocalDisks: optional.OptionalNil[[]apimodel.UpdateLocalDiskSpecRequest]{
+		Spec: optional.NewOptional(model.UpdateNodeGroupSpecRequest{
+			LocalDisks: optional.OptionalNil[[]model.UpdateLocalDiskSpecRequest]{
 				Set:  true,
 				Null: true,
 			},
-			Labels: optional.OptionalNil[[]apimodel.UpdateNodeLabelSpecRequest]{
+			Labels: optional.OptionalNil[[]model.UpdateNodeLabelSpecRequest]{
 				Set:  true,
 				Null: true,
 			},
-			Taints: optional.OptionalNil[[]apimodel.UpdateNodeTaintSpecRequest]{
+			Taints: optional.OptionalNil[[]model.UpdateNodeTaintSpecRequest]{
 				Set:  true,
 				Null: true,
 			},

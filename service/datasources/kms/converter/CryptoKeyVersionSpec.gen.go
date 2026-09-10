@@ -4,45 +4,15 @@ package converter
 
 import (
 	"context"
-	"time"
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/kms/model"
+	"go.mws.cloud/go-sdk/service/kms/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/kms/model"
 )
 
-func CryptoKeyVersionSpecDestructionPolicyAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.CryptoKeyVersionSpecDestructionPolicyOptionalResponse) (*tfmodel.CryptoKeyVersionSpecDestructionPolicy, tfdiag.Diagnostics) {
-	if am == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var t tfmodel.CryptoKeyVersionSpecDestructionPolicy
-
-	if am.ScheduledDestructionTime != nil {
-		t.ScheduledDestructionTime = types.StringPointerValue(ptr.Get(am.ScheduledDestructionTime.Format(time.RFC3339)))
-	} else {
-		t.ScheduledDestructionTime = types.StringNull()
-	}
-
-	return &t, diags
-}
-
-func CryptoKeyVersionSpecDestructionPolicyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CryptoKeyVersionSpecDestructionPolicy) (*apimodel.CryptoKeyVersionSpecDestructionPolicyRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.CryptoKeyVersionSpecDestructionPolicyRequest
-
-	return &am, diags
-}
-
-func CryptoKeyVersionSpecUsagePolicyAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.CryptoKeyVersionSpecUsagePolicyOptionalResponse) (*tfmodel.CryptoKeyVersionSpecUsagePolicy, tfdiag.Diagnostics) {
+func CryptoKeyVersionSpecUsagePolicyAPIOptionalResponseToTFModel(ctx context.Context, am *model.CryptoKeyVersionSpecUsagePolicyOptionalResponse) (*tfmodel.CryptoKeyVersionSpecUsagePolicy, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -57,19 +27,4 @@ func CryptoKeyVersionSpecUsagePolicyAPIOptionalResponseToTFModel(ctx context.Con
 	}
 
 	return &t, diags
-}
-
-func CryptoKeyVersionSpecUsagePolicyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CryptoKeyVersionSpecUsagePolicy) (*apimodel.CryptoKeyVersionSpecUsagePolicyRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.CryptoKeyVersionSpecUsagePolicyRequest
-
-	if !plan.Enabled.IsNull() && !plan.Enabled.IsUnknown() {
-		am.Enabled = plan.Enabled.ValueBoolPointer()
-	}
-
-	return &am, diags
 }

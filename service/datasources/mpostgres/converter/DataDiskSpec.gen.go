@@ -7,14 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/model"
 )
 
-func DataDiskSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.DataDiskSpecResponse) (*tfmodel.DataDiskSpec, tfdiag.Diagnostics) {
+func DataDiskSpecAPIResponseToTFModel(ctx context.Context, am *model.DataDiskSpecResponse) (*tfmodel.DataDiskSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -43,42 +42,4 @@ func DataDiskSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.DataDisk
 	}
 
 	return &t, diags
-}
-
-func DataDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DataDiskSpec) (*apimodel.DataDiskSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.DataDiskSpecRequest
-
-	if !plan.Size.IsNull() && !plan.Size.IsUnknown() {
-		tmpSize, err := bytesize.ParseString(plan.Size.ValueString())
-		if err != nil {
-			diags.AddError("ByteSize string parsing", err.Error())
-			return nil, diags
-		}
-		am.Size = tmpSize
-	}
-
-	if !plan.Type.IsNull() && !plan.Type.IsUnknown() {
-		typeTmp, typeDiag := DataDiskTypeTFToAPIModel(ctx, plan.Type)
-		diags = append(diags, typeDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Type = *typeTmp
-	}
-
-	if !plan.Iops.IsNull() && !plan.Iops.IsUnknown() {
-		iopsTmp, iopsDiag := IopsTFToAPIModel(ctx, plan.Iops)
-		diags = append(diags, iopsDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Iops = iopsTmp
-	}
-
-	return &am, diags
 }

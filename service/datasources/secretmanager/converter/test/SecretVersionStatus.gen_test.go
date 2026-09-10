@@ -8,13 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/secretmanager/model"
+	"go.mws.cloud/go-sdk/service/secretmanager/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/secretmanager/converter"
 )
 
 func TestSecretVersionStatusAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.SecretVersionStatusResponse{}
+	emptyApiModel := model.SecretVersionStatusResponse{}
 	_, diags := conv.SecretVersionStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }

@@ -8,18 +8,16 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/model"
 )
 
-func PostgresClusterAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresClusterResponse) (*tfmodel.PostgresCluster, tfdiag.Diagnostics) {
+func PostgresClusterAPIResponseToTFModel(ctx context.Context, am *model.PostgresClusterResponse) (*tfmodel.PostgresCluster, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -204,149 +202,7 @@ func PostgresClusterAPIResponseToTFModel(ctx context.Context, am *apimodel.Postg
 	return &t, diags
 }
 
-func PostgresClusterTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresCluster) (*apimodel.PostgresClusterRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresClusterRequest
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfmodel.PostgresClusterMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := PostgresClusterMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.Version.IsNull() && !plan.Version.IsUnknown() {
-		am.Spec.Version = plan.Version.ValueString()
-	}
-
-	if !plan.Active.IsNull() && !plan.Active.IsUnknown() {
-		am.Spec.Active = plan.Active.ValueBool()
-	}
-
-	if !plan.Endpoints.IsNull() && !plan.Endpoints.IsUnknown() {
-		endpoints := make([]tfmodel.PostgresEndpoint, 0)
-		dEndpoints := plan.Endpoints.ElementsAs(ctx, &endpoints, false)
-		diags = append(diags, dEndpoints...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Spec.Endpoints = make([]apimodel.PostgresEndpointRequest, 0, len(endpoints))
-
-		for _, entity := range endpoints {
-			tmp, d := PostgresEndpointTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.Spec.Endpoints = append(am.Spec.Endpoints, *tmp)
-		}
-	}
-
-	if !plan.InstanceTemplate.IsNull() && !plan.InstanceTemplate.IsUnknown() {
-		instanceTemplatePlan := tfmodel.PostgresInstanceTemplate{}
-		instanceTemplatePlanDiag := plan.InstanceTemplate.As(ctx, &instanceTemplatePlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, instanceTemplatePlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		instanceTemplateTmp, instanceTemplateDiag := PostgresInstanceTemplateTFToAPIRequestModel(ctx, &instanceTemplatePlan)
-		diags = append(diags, instanceTemplateDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.InstanceTemplate = *instanceTemplateTmp
-	}
-
-	if !plan.Instances.IsNull() && !plan.Instances.IsUnknown() {
-		instances := make([]tfmodel.PostgresInstance, 0)
-		dInstances := plan.Instances.ElementsAs(ctx, &instances, false)
-		diags = append(diags, dInstances...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Spec.Instances = make([]apimodel.PostgresInstanceRequest, 0, len(instances))
-
-		for _, entity := range instances {
-			tmp, d := PostgresInstanceTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.Spec.Instances = append(am.Spec.Instances, *tmp)
-		}
-	}
-
-	if !plan.Backup.IsNull() && !plan.Backup.IsUnknown() {
-		backupPlan := tfmodel.PostgresClusterBackup{}
-		backupPlanDiag := plan.Backup.As(ctx, &backupPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, backupPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		backupTmp, backupDiag := PostgresClusterBackupTFToAPIRequestModel(ctx, &backupPlan)
-		diags = append(diags, backupDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Backup = backupTmp
-	}
-
-	if !plan.MaintenanceWindow.IsNull() && !plan.MaintenanceWindow.IsUnknown() {
-		maintenanceWindowPlan := tfcommon.MaintenanceWindow{}
-		maintenanceWindowPlanDiag := plan.MaintenanceWindow.As(ctx, &maintenanceWindowPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, maintenanceWindowPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		maintenanceWindowTmp, maintenanceWindowDiag := commonconv.MaintenanceWindowTFToAPIRequestModel(ctx, &maintenanceWindowPlan)
-		diags = append(diags, maintenanceWindowDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.MaintenanceWindow = maintenanceWindowTmp
-	}
-
-	if !plan.PostgresParameters.IsNull() && !plan.PostgresParameters.IsUnknown() {
-		postgresParameters := make(map[string]types.String)
-		dPostgresParameters := plan.PostgresParameters.ElementsAs(ctx, &postgresParameters, false)
-		diags = append(diags, dPostgresParameters...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Spec.PostgresParameters = make(map[string]string, len(postgresParameters))
-
-		for k, entity := range postgresParameters {
-			am.Spec.PostgresParameters[k] = entity.ValueString()
-		}
-	}
-
-	if !plan.LoggingEnabled.IsNull() && !plan.LoggingEnabled.IsUnknown() {
-		am.Spec.LoggingEnabled = plan.LoggingEnabled.ValueBoolPointer()
-	}
-
-	return &am, diags
-}
-
-func PostgresClusterMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresClusterMetadataResponse) (*tfmodel.PostgresClusterMetadata, tfdiag.Diagnostics) {
+func PostgresClusterMetadataAPIResponseToTFModel(ctx context.Context, am *model.PostgresClusterMetadataResponse) (*tfmodel.PostgresClusterMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -418,43 +274,4 @@ func PostgresClusterMetadataAPIResponseToTFModel(ctx context.Context, am *apimod
 	}
 
 	return &t, diags
-}
-
-func PostgresClusterMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresClusterMetadata) (*apimodel.PostgresClusterMetadataRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresClusterMetadataRequest
-
-	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
-		am.DisplayName = plan.DisplayName.ValueStringPointer()
-	}
-
-	if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
-		usages := make([]tfcommon.TypedUsage, 0)
-		dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
-		diags = append(diags, dUsages...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
-
-		for _, entity := range usages {
-			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.Usages = append(am.Usages, *tmp)
-		}
-	}
-
-	if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
-		am.Description = plan.Description.ValueStringPointer()
-	}
-
-	return &am, diags
 }

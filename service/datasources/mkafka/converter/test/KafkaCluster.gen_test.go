@@ -7,78 +7,21 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
-	"go.mws.cloud/go-sdk/service/resources/references/compute"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/converter"
 )
 
 func TestKafkaClusterAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaClusterResponse{}
+	emptyApiModel := model.KafkaClusterResponse{}
 	_, diags := conv.KafkaClusterAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestKafkaClusterResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaClusterRequest{
-		Spec: apimodel.KafkaClusterSpecRequest{
-			Version:   "version",
-			Endpoints: []apimodel.KafkaEndpointRequest{},
-			Instances: apimodel.KafkaInstanceRequest{
-				Broker: apimodel.KafkaInstanceSpecRequest{
-					VmType: compute.NewMustVmTypeRef("vmTypeID"),
-					Disk: apimodel.KafkaDataDiskSpecRequest{
-						Size: bytesize.MustParseString("0 B"),
-					},
-				},
-				Controller: apimodel.KafkaControllerInstanceSpecRequest{},
-			},
-		},
-	}
-
-	emptyApiModelResponse, err := apimodel.KafkaClusterRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.KafkaClusterAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.KafkaClusterTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.KafkaClusterRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
 func TestKafkaClusterMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaClusterMetadataResponse{}
+	emptyApiModel := model.KafkaClusterMetadataResponse{}
 	_, diags := conv.KafkaClusterMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestKafkaClusterMetadataResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaClusterMetadataRequest{
-		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
-	}
-
-	emptyApiModelResponse, err := apimodel.KafkaClusterMetadataRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.KafkaClusterMetadataAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.KafkaClusterMetadataTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.KafkaClusterMetadataRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

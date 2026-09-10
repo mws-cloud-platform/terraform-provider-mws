@@ -8,13 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/converter"
 )
 
 func TestCertificateStatusDetailsAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.CertificateStatusDetailsResponse{}
+	emptyApiModel := model.CertificateStatusDetailsResponse{}
 	_, diags := conv.CertificateStatusDetailsAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }

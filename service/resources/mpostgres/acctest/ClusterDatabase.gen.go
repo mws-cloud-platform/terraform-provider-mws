@@ -8,9 +8,9 @@ import (
 
 	"go.mws.cloud/go-sdk/mws"
 	commonerrors "go.mws.cloud/go-sdk/mws/errors"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/mpostgres/client"
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	resourcesdk "go.mws.cloud/go-sdk/service/mpostgres/sdk"
 	mpostgresref "go.mws.cloud/go-sdk/service/resources/references/mpostgres"
 	"go.mws.cloud/terraform-provider-mws/internal/acctest"
@@ -34,7 +34,7 @@ func ClusterDatabaseTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleR
 				return fmt.Errorf("invalid resource state")
 			}
 			state := r.Status.Ready.State
-			if string(state) != string(commonapimodel.ResourceStatusState_OK) {
+			if string(state) != string(commonmodel.ResourceStatusState_OK) {
 				return fmt.Errorf("invalid resource state: %s", state)
 			}
 			return nil
@@ -52,7 +52,7 @@ func ClusterDatabaseTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleR
 	}, nil
 }
 
-func GetClusterDatabase(ctx context.Context, sdk *resourcesdk.PostgresClusterDatabase, id string) (*apimodel.PostgresClusterDatabaseResponse, error) {
+func GetClusterDatabase(ctx context.Context, sdk *resourcesdk.PostgresClusterDatabase, id string) (*model.PostgresClusterDatabaseResponse, error) {
 	ref, err := mpostgresref.ParsePostgresClusterDatabaseRef(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("parse reference: %w", err)

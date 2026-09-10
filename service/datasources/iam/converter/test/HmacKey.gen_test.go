@@ -8,63 +8,20 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/iam/model"
+	"go.mws.cloud/go-sdk/service/iam/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/iam/converter"
 )
 
 func TestHmacKeyAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.HmacKeyResponse{}
+	emptyApiModel := model.HmacKeyResponse{}
 	_, diags := conv.HmacKeyAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestHmacKeyResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.HmacKeyRequest{
-		Spec: apimodel.HmacKeySpecRequest{},
-	}
-
-	emptyApiModelResponse, err := apimodel.HmacKeyRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.HmacKeyAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.HmacKeyTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.HmacKeyRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
 func TestHmacKeyMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.HmacKeyMetadataResponse{}
+	emptyApiModel := model.HmacKeyMetadataResponse{}
 	_, diags := conv.HmacKeyMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestHmacKeyMetadataResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.HmacKeyMetadataRequest{
-		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
-	}
-
-	emptyApiModelResponse, err := apimodel.HmacKeyMetadataRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.HmacKeyMetadataAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.HmacKeyMetadataTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.HmacKeyMetadataRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

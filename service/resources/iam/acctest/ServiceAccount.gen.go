@@ -8,9 +8,9 @@ import (
 
 	"go.mws.cloud/go-sdk/mws"
 	commonerrors "go.mws.cloud/go-sdk/mws/errors"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/iam/client"
-	apimodel "go.mws.cloud/go-sdk/service/iam/model"
+	"go.mws.cloud/go-sdk/service/iam/model"
 	resourcesdk "go.mws.cloud/go-sdk/service/iam/sdk"
 	iamref "go.mws.cloud/go-sdk/service/resources/references/iam"
 	"go.mws.cloud/terraform-provider-mws/internal/acctest"
@@ -34,7 +34,7 @@ func ServiceAccountTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleRe
 				return fmt.Errorf("invalid resource state")
 			}
 			state := r.Status.Ready.State
-			if string(state) != string(commonapimodel.ResourceStatusState_OK) {
+			if string(state) != string(commonmodel.ResourceStatusState_OK) {
 				return fmt.Errorf("invalid resource state: %s", state)
 			}
 			return nil
@@ -52,7 +52,7 @@ func ServiceAccountTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleRe
 	}, nil
 }
 
-func GetServiceAccount(ctx context.Context, sdk *resourcesdk.ServiceAccount, id string) (*apimodel.ServiceAccountResponse, error) {
+func GetServiceAccount(ctx context.Context, sdk *resourcesdk.ServiceAccount, id string) (*model.ServiceAccountResponse, error) {
 	ref, err := iamref.ParseServiceAccountRef(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("parse reference: %w", err)

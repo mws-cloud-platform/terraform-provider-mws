@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
@@ -17,16 +17,16 @@ import (
 
 func TestStorageDiskSpecOrRefAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.StorageDiskSpecOrRefOptionalResponse{}
+	emptyApiModel := model.StorageDiskSpecOrRefOptionalResponse{}
 	_, diags := conv.StorageDiskSpecOrRefAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestStorageDiskSpecOrRefOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.StorageDiskSpecOrRefRequest{}
+	emptyApiModelRequest := model.StorageDiskSpecOrRefRequest{}
 
-	emptyApiModelResponse, err := apimodel.StorageDiskSpecOrRefRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.StorageDiskSpecOrRefRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.StorageDiskSpecOrRefAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -35,7 +35,7 @@ func TestStorageDiskSpecOrRefOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.StorageDiskSpecOrRefTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.StorageDiskSpecOrRefRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.StorageDiskSpecOrRefRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -48,8 +48,8 @@ func TestUpdateStorageDiskSpecOrRefRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.StorageDiskSpecOrRef
 	stateTfModel.Spec = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.StorageDiskSpec).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateStorageDiskSpecOrRefRequest{
-		Spec: optional.OptionalNil[apimodel.UpdateStorageDiskSpecRequest]{
+	expectedUpdateModel := &model.UpdateStorageDiskSpecOrRefRequest{
+		Spec: optional.OptionalNil[model.UpdateStorageDiskSpecRequest]{
 			Set:  true,
 			Null: true,
 		},

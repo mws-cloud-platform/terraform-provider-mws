@@ -10,11 +10,11 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/ipaddress"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func SubnetDhcpOptionsAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.SubnetDhcpOptionsOptionalResponse) (*tfmodel.SubnetDhcpOptions, tfdiag.Diagnostics) {
+func SubnetDhcpOptionsAPIOptionalResponseToTFModel(ctx context.Context, am *model.SubnetDhcpOptionsOptionalResponse) (*tfmodel.SubnetDhcpOptions, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -67,7 +67,7 @@ func SubnetDhcpOptionsAPIOptionalResponseToTFModel(ctx context.Context, am *apim
 	return &t, diags
 }
 
-func SubnetDhcpOptionsAPIResponseToTFModel(ctx context.Context, am *apimodel.SubnetDhcpOptionsResponse) (*tfmodel.SubnetDhcpOptions, tfdiag.Diagnostics) {
+func SubnetDhcpOptionsAPIResponseToTFModel(ctx context.Context, am *model.SubnetDhcpOptionsResponse) (*tfmodel.SubnetDhcpOptions, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -120,13 +120,13 @@ func SubnetDhcpOptionsAPIResponseToTFModel(ctx context.Context, am *apimodel.Sub
 	return &t, diags
 }
 
-func SubnetDhcpOptionsTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SubnetDhcpOptions) (*apimodel.SubnetDhcpOptionsRequest, tfdiag.Diagnostics) {
+func SubnetDhcpOptionsTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SubnetDhcpOptions) (*model.SubnetDhcpOptionsRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.SubnetDhcpOptionsRequest
+	var am model.SubnetDhcpOptionsRequest
 
 	if !plan.DomainName.IsNull() && !plan.DomainName.IsUnknown() {
 		am.DomainName = plan.DomainName.ValueStringPointer()
@@ -175,7 +175,7 @@ func SubnetDhcpOptionsTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Sub
 	return &am, diags
 }
 
-func SubnetDhcpOptionsTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.SubnetDhcpOptions) (*apimodel.UpdateSubnetDhcpOptionsRequest, tfdiag.Diagnostics) {
+func SubnetDhcpOptionsTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.SubnetDhcpOptions) (*model.UpdateSubnetDhcpOptionsRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -184,7 +184,7 @@ func SubnetDhcpOptionsTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateSubnetDhcpOptionsRequest
+	var am model.UpdateSubnetDhcpOptionsRequest
 
 	if !plan.DomainName.Equal(state.DomainName) {
 		if !plan.DomainName.IsNull() && !plan.DomainName.IsUnknown() {

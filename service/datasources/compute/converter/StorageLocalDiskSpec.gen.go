@@ -7,14 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func StorageLocalDiskSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.StorageLocalDiskSpecOptionalResponse) (*tfmodel.StorageLocalDiskSpec, tfdiag.Diagnostics) {
+func StorageLocalDiskSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.StorageLocalDiskSpecOptionalResponse) (*tfmodel.StorageLocalDiskSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -33,32 +32,4 @@ func StorageLocalDiskSpecAPIOptionalResponseToTFModel(ctx context.Context, am *a
 	t.Size = types.StringValue(ptr.Value(am.Size.RawValue()))
 
 	return &t, diags
-}
-
-func StorageLocalDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.StorageLocalDiskSpec) (*apimodel.StorageLocalDiskSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.StorageLocalDiskSpecRequest
-
-	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
-		am.Name = plan.Name.ValueString()
-	}
-
-	if !plan.DeviceName.IsNull() && !plan.DeviceName.IsUnknown() {
-		am.DeviceName = plan.DeviceName.ValueStringPointer()
-	}
-
-	if !plan.Size.IsNull() && !plan.Size.IsUnknown() {
-		tmpSize, err := bytesize.ParseString(plan.Size.ValueString())
-		if err != nil {
-			diags.AddError("ByteSize string parsing", err.Error())
-			return nil, diags
-		}
-		am.Size = tmpSize
-	}
-
-	return &am, diags
 }

@@ -10,14 +10,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func ClickhouseBackupStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseBackupStatusResponse) (*tfmodel.ClickhouseBackupStatus, tfdiag.Diagnostics) {
+func ClickhouseBackupStatusAPIResponseToTFModel(ctx context.Context, am *model.ClickhouseBackupStatusResponse) (*tfmodel.ClickhouseBackupStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -60,7 +60,7 @@ func ClickhouseBackupStatusAPIResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func ClickhouseBackupStatusBackupAPIResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseBackupStatusBackupResponse) (*tfmodel.ClickhouseBackupStatusBackup, tfdiag.Diagnostics) {
+func ClickhouseBackupStatusBackupAPIResponseToTFModel(ctx context.Context, am *model.ClickhouseBackupStatusBackupResponse) (*tfmodel.ClickhouseBackupStatusBackup, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

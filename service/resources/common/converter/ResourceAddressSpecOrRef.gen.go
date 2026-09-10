@@ -10,13 +10,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
-func ResourceAddressSpecOrRefAPIToTFModel(ctx context.Context, am *commonapimodel.ResourceAddressSpecOrRef) (*tfcommon.ResourceAddressSpecOrRef, tfdiag.Diagnostics) {
+func ResourceAddressSpecOrRefAPIToTFModel(ctx context.Context, am *commonmodel.ResourceAddressSpecOrRef) (*tfcommon.ResourceAddressSpecOrRef, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -51,7 +51,7 @@ func ResourceAddressSpecOrRefAPIToTFModel(ctx context.Context, am *commonapimode
 	return &t, diags
 }
 
-func ResourceAddressSpecOrRefAPIResponseToTFModel(ctx context.Context, am *commonapimodel.ResourceAddressSpecOrRefResponse) (*tfcommon.ResourceAddressSpecOrRef, tfdiag.Diagnostics) {
+func ResourceAddressSpecOrRefAPIResponseToTFModel(ctx context.Context, am *commonmodel.ResourceAddressSpecOrRefResponse) (*tfcommon.ResourceAddressSpecOrRef, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -86,7 +86,7 @@ func ResourceAddressSpecOrRefAPIResponseToTFModel(ctx context.Context, am *commo
 	return &t, diags
 }
 
-func ResourceAddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.ResourceAddressSpecOrRefOptionalResponse) (*tfcommon.ResourceAddressSpecOrRef, tfdiag.Diagnostics) {
+func ResourceAddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *commonmodel.ResourceAddressSpecOrRefOptionalResponse) (*tfcommon.ResourceAddressSpecOrRef, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -121,13 +121,13 @@ func ResourceAddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, a
 	return &t, diags
 }
 
-func ResourceAddressSpecOrRefTFToAPIModel(ctx context.Context, plan *tfcommon.ResourceAddressSpecOrRef) (*commonapimodel.ResourceAddressSpecOrRef, tfdiag.Diagnostics) {
+func ResourceAddressSpecOrRefTFToAPIModel(ctx context.Context, plan *tfcommon.ResourceAddressSpecOrRef) (*commonmodel.ResourceAddressSpecOrRef, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.ResourceAddressSpecOrRef
+	var am commonmodel.ResourceAddressSpecOrRef
 
 	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
 		refRef, err := vpc.ParseAddressRef(ctx, plan.Ref.ValueString())
@@ -157,13 +157,13 @@ func ResourceAddressSpecOrRefTFToAPIModel(ctx context.Context, plan *tfcommon.Re
 	return &am, diags
 }
 
-func ResourceAddressSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfcommon.ResourceAddressSpecOrRef) (*commonapimodel.ResourceAddressSpecOrRefRequest, tfdiag.Diagnostics) {
+func ResourceAddressSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfcommon.ResourceAddressSpecOrRef) (*commonmodel.ResourceAddressSpecOrRefRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.ResourceAddressSpecOrRefRequest
+	var am commonmodel.ResourceAddressSpecOrRefRequest
 
 	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
 		refRef, err := vpc.ParseAddressRef(ctx, plan.Ref.ValueString())
@@ -193,7 +193,7 @@ func ResourceAddressSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfco
 	return &am, diags
 }
 
-func ResourceAddressSpecOrRefTFToAPIUpdateModel(ctx context.Context, plan, state *tfcommon.ResourceAddressSpecOrRef) (*commonapimodel.UpdateResourceAddressSpecOrRef, tfdiag.Diagnostics) {
+func ResourceAddressSpecOrRefTFToAPIUpdateModel(ctx context.Context, plan, state *tfcommon.ResourceAddressSpecOrRef) (*commonmodel.UpdateResourceAddressSpecOrRef, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -202,7 +202,7 @@ func ResourceAddressSpecOrRefTFToAPIUpdateModel(ctx context.Context, plan, state
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.UpdateResourceAddressSpecOrRef
+	var am commonmodel.UpdateResourceAddressSpecOrRef
 
 	if !plan.Ref.Equal(state.Ref) {
 		if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
@@ -249,7 +249,7 @@ func ResourceAddressSpecOrRefTFToAPIUpdateModel(ctx context.Context, plan, state
 	return &am, diags
 }
 
-func ResourceAddressSpecOrRefTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfcommon.ResourceAddressSpecOrRef) (*commonapimodel.UpdateResourceAddressSpecOrRefRequest, tfdiag.Diagnostics) {
+func ResourceAddressSpecOrRefTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfcommon.ResourceAddressSpecOrRef) (*commonmodel.UpdateResourceAddressSpecOrRefRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -258,7 +258,7 @@ func ResourceAddressSpecOrRefTFToAPIUpdateRequestModel(ctx context.Context, plan
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.UpdateResourceAddressSpecOrRefRequest
+	var am commonmodel.UpdateResourceAddressSpecOrRefRequest
 
 	if !plan.Ref.Equal(state.Ref) {
 		if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {

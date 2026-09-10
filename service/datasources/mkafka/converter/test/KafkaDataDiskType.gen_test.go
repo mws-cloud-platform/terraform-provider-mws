@@ -8,26 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/converter"
 )
 
 func TestKafkaDataDiskTypeAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaDataDiskType("")
+	emptyApiModel := model.KafkaDataDiskType("")
 	_, diags := conv.KafkaDataDiskTypeAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestKafkaDataDiskTypeConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := apimodel.KafkaDataDiskType("")
-
-	tfModel, diags := conv.KafkaDataDiskTypeAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-
-	result, diags := conv.KafkaDataDiskTypeTFToAPIModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	require.Equal(t, emptyApiModel, *result)
 }

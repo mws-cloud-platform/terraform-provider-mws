@@ -66,7 +66,7 @@ Compute, на которых запускаются контейнеры с пр
 			},
 			"vm_type": schema.SingleNestedAttribute{
 				Attributes:          new(NodeGroupSpecVmType).GetSchema().Attributes,
-				MarkdownDescription: `Тип VM`,
+				MarkdownDescription: `Тип ВМ`,
 				Required:            true,
 			},
 			"image_storage_size": schema.StringAttribute{
@@ -98,7 +98,7 @@ Compute, на которых запускаются контейнеры с пр
 			},
 			"scale": schema.SingleNestedAttribute{
 				Attributes:          new(NodeGroupSpecScale).GetSchema().Attributes,
-				MarkdownDescription: `Необходимо заполнить одно из полей — "fixed" или "autoscaling"`,
+				MarkdownDescription: `Режим скалирования группы узлов. Необходимо заполнить одно из полей — "fixed" или "autoscaling"`,
 				Required:            true,
 			},
 			"labels": schema.ListNestedAttribute{

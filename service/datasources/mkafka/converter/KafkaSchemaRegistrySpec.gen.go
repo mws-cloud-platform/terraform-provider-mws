@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/model"
 )
 
-func KafkaSchemaRegistrySpecAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaSchemaRegistrySpecResponse) (*tfmodel.KafkaSchemaRegistrySpec, tfdiag.Diagnostics) {
+func KafkaSchemaRegistrySpecAPIResponseToTFModel(ctx context.Context, am *model.KafkaSchemaRegistrySpecResponse) (*tfmodel.KafkaSchemaRegistrySpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -27,19 +27,4 @@ func KafkaSchemaRegistrySpecAPIResponseToTFModel(ctx context.Context, am *apimod
 	}
 
 	return &t, diags
-}
-
-func KafkaSchemaRegistrySpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaSchemaRegistrySpec) (*apimodel.KafkaSchemaRegistrySpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaSchemaRegistrySpecRequest
-
-	if !plan.Enabled.IsNull() && !plan.Enabled.IsUnknown() {
-		am.Enabled = plan.Enabled.ValueBoolPointer()
-	}
-
-	return &am, diags
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
@@ -17,16 +17,16 @@ import (
 
 func TestAddressSpecOrRefAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.AddressSpecOrRefOptionalResponse{}
+	emptyApiModel := model.AddressSpecOrRefOptionalResponse{}
 	_, diags := conv.AddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestAddressSpecOrRefOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.AddressSpecOrRefRequest{}
+	emptyApiModelRequest := model.AddressSpecOrRefRequest{}
 
-	emptyApiModelResponse, err := apimodel.AddressSpecOrRefRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.AddressSpecOrRefRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.AddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -35,7 +35,7 @@ func TestAddressSpecOrRefOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.AddressSpecOrRefTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.AddressSpecOrRefRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.AddressSpecOrRefRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -48,8 +48,8 @@ func TestUpdateAddressSpecOrRefRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.AddressSpecOrRef
 	stateTfModel.Spec = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.AddressSpec).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateAddressSpecOrRefRequest{
-		Spec: optional.OptionalNil[apimodel.UpdateAddressSpecRequest]{
+	expectedUpdateModel := &model.UpdateAddressSpecOrRefRequest{
+		Spec: optional.OptionalNil[model.UpdateAddressSpecRequest]{
 			Set:  true,
 			Null: true,
 		},

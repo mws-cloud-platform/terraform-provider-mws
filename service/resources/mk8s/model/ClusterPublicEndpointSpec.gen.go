@@ -15,10 +15,12 @@ type ClusterPublicEndpointSpec struct {
 
 func (s *ClusterPublicEndpointSpec) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Ожидаем пустой объект в случае автоматического выделения внешнего ip-адреса`,
+		MarkdownDescription: `Конфигурация публичного эндпоинта кластера.
+При автоматическом выделении внешнего IP-адреса ожидается пустой объект
+`,
 		Attributes: map[string]schema.Attribute{
 			"version": schema.StringAttribute{
-				MarkdownDescription: `Версия IP протокола`,
+				MarkdownDescription: `Версия протокола IP`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"IPV4",

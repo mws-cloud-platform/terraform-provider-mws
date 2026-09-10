@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
+	locallistplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/listplanmodifier"
 	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
@@ -19,6 +20,7 @@ type Image struct {
 	Metadata    types.Object  `tfsdk:"metadata"`
 	Status      types.Object  `tfsdk:"status"`
 	Family      types.String  `tfsdk:"family"`
+	Regions     types.List    `tfsdk:"regions"`
 	Source      types.Object  `tfsdk:"source"`
 	Activity    ImageActivity `tfsdk:"activity"`
 	MinDiskSize types.String  `tfsdk:"min_disk_size"`
@@ -55,6 +57,14 @@ func (s *Image) GetSchema() schema.Schema {
 				Optional:            true,
 				PlanModifiers: []planmodifier.String{
 					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
+			},
+			"regions": schema.ListAttribute{
+				ElementType:         types.StringType,
+				MarkdownDescription: `Список регионов, в которых будет создана физическая копия образа`,
+				Optional:            true,
+				PlanModifiers: []planmodifier.List{
+					locallistplanmodifier.RequiresReplaceIfRemoved(),
 				},
 			},
 			"source": schema.SingleNestedAttribute{

@@ -7,38 +7,14 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"go.mws.cloud/go-sdk/pkg/apimodels/units/duration"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
 func TestAddressDnsSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.AddressDnsSpecOptionalResponse{}
+	emptyApiModel := model.AddressDnsSpecOptionalResponse{}
 	_, diags := conv.AddressDnsSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestAddressDnsSpecOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.AddressDnsSpecRequest{
-		Name: "name",
-		Ttl:  duration.MustParseString("PT0S"),
-		Ptr:  false,
-	}
-
-	emptyApiModelResponse, err := apimodel.AddressDnsSpecRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.AddressDnsSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.AddressDnsSpecTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.AddressDnsSpecRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

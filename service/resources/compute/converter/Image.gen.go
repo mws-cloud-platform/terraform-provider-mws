@@ -11,14 +11,15 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/resources/references/rm"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func ImageAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ImageOptionalResponse) (*tfmodel.Image, tfdiag.Diagnostics) {
+func ImageAPIOptionalResponseToTFModel(ctx context.Context, am *model.ImageOptionalResponse) (*tfmodel.Image, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -72,6 +73,24 @@ func ImageAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ImageOp
 		t.Family = types.StringValue(val)
 	} else {
 		t.Family = types.StringNull()
+	}
+
+	if val, ok := am.Spec.Regions.Get(); ok {
+		regions := make([]types.String, 0, len(val))
+
+		for _, entity := range val {
+			regions = append(regions, types.StringValue(entity.Path()))
+		}
+
+		regionsList, d := types.ListValueFrom(ctx, types.StringType, regions)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		t.Regions = regionsList
+	} else {
+		t.Regions = types.ListNull(types.StringType)
 	}
 
 	sourceTmp, d := ImageSpecSourceAPIOptionalResponseToTFModel(ctx, &am.Spec.Source)
@@ -137,13 +156,13 @@ func ImageAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ImageOp
 	return &t, diags
 }
 
-func ImageTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Image) (*apimodel.ImageRequest, tfdiag.Diagnostics) {
+func ImageTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Image) (*model.ImageRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ImageRequest
+	var am model.ImageRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
@@ -163,6 +182,26 @@ func ImageTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Image) (*apimod
 
 	if !plan.Family.IsNull() && !plan.Family.IsUnknown() {
 		am.Spec.Family = plan.Family.ValueStringPointer()
+	}
+
+	if !plan.Regions.IsNull() && !plan.Regions.IsUnknown() {
+		regions := make([]types.String, 0)
+		dRegions := plan.Regions.ElementsAs(ctx, &regions, false)
+		diags = append(diags, dRegions...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		am.Spec.Regions = make([]rm.RegionRef, 0, len(regions))
+
+		for _, entity := range regions {
+			ref, err := rm.ParseRegionRef(ctx, entity.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.Spec.Regions = append(am.Spec.Regions, ref)
+		}
 	}
 
 	if !plan.Source.IsNull() && !plan.Source.IsUnknown() {
@@ -227,7 +266,7 @@ func ImageTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Image) (*apimod
 	return &am, diags
 }
 
-func ImageTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Image) (*apimodel.UpdateImageRequest, tfdiag.Diagnostics) {
+func ImageTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Image) (*model.UpdateImageRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -236,7 +275,7 @@ func ImageTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Im
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateImageRequest
+	var am model.UpdateImageRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -270,16 +309,42 @@ func ImageTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Im
 	if !plan.Family.Equal(state.Family) {
 		if !plan.Family.IsNull() && !plan.Family.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateImageSpecRequest{})
+				am.Spec.SetTo(model.UpdateImageSpecRequest{})
 			}
 			am.Spec.Value.Family.SetTo(plan.Family.ValueString())
+		}
+	}
+
+	if !plan.Regions.Equal(state.Regions) {
+		if !plan.Regions.IsNull() && !plan.Regions.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(model.UpdateImageSpecRequest{})
+			}
+			regions := make([]types.String, 0)
+			dRegions := plan.Regions.ElementsAs(ctx, &regions, false)
+			diags = append(diags, dRegions...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			regionsTmp := make([]rm.RegionRef, 0, len(regions))
+
+			for _, entity := range regions {
+				ref, err := rm.ParseRegionRef(ctx, entity.ValueString())
+				if err != nil {
+					diags.AddError("reference parsing", err.Error())
+					return nil, diags
+				}
+				regionsTmp = append(regionsTmp, ref)
+			}
+			am.Spec.Value.Regions.SetTo(regionsTmp)
 		}
 	}
 
 	if !plan.Source.Equal(state.Source) {
 		if !plan.Source.IsNull() && !plan.Source.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateImageSpecRequest{})
+				am.Spec.SetTo(model.UpdateImageSpecRequest{})
 			}
 			sourcePlan := tfmodel.ImageSpecSource{}
 			sourcePlanDiag := plan.Source.As(ctx, &sourcePlan, basetypes.ObjectAsOptions{})
@@ -309,7 +374,7 @@ func ImageTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Im
 	if !plan.Activity.Equal(state.Activity) {
 		if !plan.Activity.IsNull() && !plan.Activity.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateImageSpecRequest{})
+				am.Spec.SetTo(model.UpdateImageSpecRequest{})
 			}
 			activityTmp, activityDiag := ImageActivityTFToAPIModel(ctx, plan.Activity)
 			diags = append(diags, activityDiag...)
@@ -323,7 +388,7 @@ func ImageTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Im
 	if !plan.MinDiskSize.Equal(state.MinDiskSize) {
 		if !plan.MinDiskSize.IsNull() && !plan.MinDiskSize.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateImageSpecRequest{})
+				am.Spec.SetTo(model.UpdateImageSpecRequest{})
 			}
 			tmpMinDiskSize, err := bytesize.ParseString(plan.MinDiskSize.ValueString())
 			if err != nil {
@@ -337,7 +402,7 @@ func ImageTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Im
 	if !plan.OsType.Equal(state.OsType) {
 		if !plan.OsType.IsNull() && !plan.OsType.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateImageSpecRequest{})
+				am.Spec.SetTo(model.UpdateImageSpecRequest{})
 			}
 			osTypeTmp, osTypeDiag := OsTypeTFToAPIModel(ctx, plan.OsType)
 			diags = append(diags, osTypeDiag...)
@@ -351,7 +416,7 @@ func ImageTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Im
 	if !plan.Encryption.Equal(state.Encryption) {
 		if !plan.Encryption.IsNull() && !plan.Encryption.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateImageSpecRequest{})
+				am.Spec.SetTo(model.UpdateImageSpecRequest{})
 			}
 			encryptionPlan := tfmodel.EncryptionSpec{}
 			encryptionPlanDiag := plan.Encryption.As(ctx, &encryptionPlan, basetypes.ObjectAsOptions{})
@@ -377,7 +442,7 @@ func ImageTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Im
 			am.Spec.Value.Encryption.SetTo(*encryptionTmp)
 		} else if plan.Encryption.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateImageSpecRequest{})
+				am.Spec.SetTo(model.UpdateImageSpecRequest{})
 			}
 			am.Spec.Value.Encryption.SetToNull()
 		}

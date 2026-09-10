@@ -9,11 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"go.mws.cloud/go-sdk/pkg/apimodels/sensitive"
-	apimodel "go.mws.cloud/go-sdk/service/secretmanager/model"
+	"go.mws.cloud/go-sdk/service/secretmanager/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager/model"
 )
 
-func SecretVersionDataSpecAPIToTFModel(ctx context.Context, am apimodel.SecretVersionDataSpec) (tfmodel.SecretVersionDataSpec, tfdiag.Diagnostics) {
+func SecretVersionDataSpecAPIToTFModel(ctx context.Context, am model.SecretVersionDataSpec) (tfmodel.SecretVersionDataSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.SecretVersionDataSpec{}, nil
 	}
@@ -38,9 +38,9 @@ func SecretVersionDataSpecAPIToTFModel(ctx context.Context, am apimodel.SecretVe
 	return t, diags
 }
 
-func SecretVersionDataSpecTFToAPIModel(ctx context.Context, plan tfmodel.SecretVersionDataSpec) (apimodel.SecretVersionDataSpec, tfdiag.Diagnostics) {
+func SecretVersionDataSpecTFToAPIModel(ctx context.Context, plan tfmodel.SecretVersionDataSpec) (model.SecretVersionDataSpec, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
-	var am apimodel.SecretVersionDataSpec
+	var am model.SecretVersionDataSpec
 
 	if plan.IsNull() {
 		return nil, diags
@@ -62,9 +62,9 @@ func SecretVersionDataSpecTFToAPIModel(ctx context.Context, plan tfmodel.SecretV
 	return am, diags
 }
 
-func SecretVersionDataSpecTFToAPIUpdateModel(ctx context.Context, plan tfmodel.SecretVersionDataSpec) (apimodel.UpdateSecretVersionDataSpec, tfdiag.Diagnostics) {
+func SecretVersionDataSpecTFToAPIUpdateModel(ctx context.Context, plan tfmodel.SecretVersionDataSpec) (model.UpdateSecretVersionDataSpec, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateSecretVersionDataSpec
+	var am model.UpdateSecretVersionDataSpec
 
 	if plan.IsNull() {
 		return nil, diags

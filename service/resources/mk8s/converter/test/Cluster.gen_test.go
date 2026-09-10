@@ -10,8 +10,8 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
@@ -20,28 +20,28 @@ import (
 
 func TestClusterAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClusterOptionalResponse{}
+	emptyApiModel := model.ClusterOptionalResponse{}
 	_, diags := conv.ClusterAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClusterOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.ClusterRequest{
-		Spec: apimodel.ClusterSpecRequest{
-			Availability: apimodel.ClusterAvailabilitySpecRequest{},
-			Network: apimodel.ClusterSpecNetworkRequest{
-				PrimaryEndpoint: apimodel.ClusterPrimaryEndpointSpecOrRefRequest{},
+	emptyApiModelRequest := model.ClusterRequest{
+		Spec: model.ClusterSpecRequest{
+			Availability: model.ClusterAvailabilitySpecRequest{},
+			Network: model.ClusterSpecNetworkRequest{
+				PrimaryEndpoint: model.ClusterPrimaryEndpointSpecOrRefRequest{},
 				PodsCidr:        cidraddress.MustParseCIDR4AddressString("192.168.1.0/24"),
 				ServicesCidr:    cidraddress.MustParseCIDR4AddressString("192.168.1.0/24"),
 			},
-			VersionControl: apimodel.ClusterVersionControlSpecRequest{
+			VersionControl: model.ClusterVersionControlSpecRequest{
 				ReleaseChannel: "releaseChannel",
 			},
 		},
 	}
 
-	emptyApiModelResponse, err := apimodel.ClusterRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.ClusterRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.ClusterAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -50,7 +50,7 @@ func TestClusterOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.ClusterTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.ClusterRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.ClusterRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -65,17 +65,17 @@ func TestUpdateClusterRequestConverters(t *testing.T) {
 	stateTfModel.Plugins = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.PluginsSpec).GetSchema().Attributes))
 	stateTfModel.SecurityPosture = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.SecurityPostureSpec).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateClusterRequest{
-		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+	expectedUpdateModel := &model.UpdateClusterRequest{
+		Metadata: optional.OptionalNil[commonmodel.UpdateCommonTypedResourceMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},
-		Spec: optional.NewOptional(apimodel.UpdateClusterSpecRequest{
-			Plugins: optional.OptionalNil[apimodel.UpdatePluginsSpecRequest]{
+		Spec: optional.NewOptional(model.UpdateClusterSpecRequest{
+			Plugins: optional.OptionalNil[model.UpdatePluginsSpecRequest]{
 				Set:  true,
 				Null: true,
 			},
-			SecurityPosture: optional.OptionalNil[apimodel.UpdateSecurityPostureSpecRequest]{
+			SecurityPosture: optional.OptionalNil[model.UpdateSecurityPostureSpecRequest]{
 				Set:  true,
 				Null: true,
 			},

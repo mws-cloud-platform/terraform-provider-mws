@@ -11,7 +11,7 @@ import (
 
 type NetworkStatus struct {
 	tfcommon.ResourceStatus
-
+	RegionalStatus
 	Mtu            types.Int64 `tfsdk:"mtu"`
 	InternetAccess types.Bool  `tfsdk:"internet_access"`
 }

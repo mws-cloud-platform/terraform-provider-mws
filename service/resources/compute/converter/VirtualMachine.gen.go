@@ -11,8 +11,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	"go.mws.cloud/go-sdk/service/resources/references/iam"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -21,7 +21,7 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func VirtualMachineAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.VirtualMachineOptionalResponse) (*tfmodel.VirtualMachine, tfdiag.Diagnostics) {
+func VirtualMachineAPIOptionalResponseToTFModel(ctx context.Context, am *model.VirtualMachineOptionalResponse) (*tfmodel.VirtualMachine, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -148,13 +148,13 @@ func VirtualMachineAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func VirtualMachineTFToAPIRequestModel(ctx context.Context, plan *tfmodel.VirtualMachine) (*apimodel.VirtualMachineRequest, tfdiag.Diagnostics) {
+func VirtualMachineTFToAPIRequestModel(ctx context.Context, plan *tfmodel.VirtualMachine) (*model.VirtualMachineRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.VirtualMachineRequest
+	var am model.VirtualMachineRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfmodel.VirtualMachineMetadata{}
@@ -261,7 +261,7 @@ func VirtualMachineTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Virtua
 	return &am, diags
 }
 
-func VirtualMachineTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.VirtualMachine) (*apimodel.UpdateVirtualMachineRequest, tfdiag.Diagnostics) {
+func VirtualMachineTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.VirtualMachine) (*model.UpdateVirtualMachineRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -270,7 +270,7 @@ func VirtualMachineTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateVirtualMachineRequest
+	var am model.UpdateVirtualMachineRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -304,7 +304,7 @@ func VirtualMachineTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 	if !plan.Zone.Equal(state.Zone) {
 		if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateVirtualMachineSpecRequest{})
+				am.Spec.SetTo(model.UpdateVirtualMachineSpecRequest{})
 			}
 			am.Spec.Value.Zone.SetTo(plan.Zone.ValueString())
 		}
@@ -313,7 +313,7 @@ func VirtualMachineTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 	if !plan.VmType.Equal(state.VmType) {
 		if !plan.VmType.IsNull() && !plan.VmType.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateVirtualMachineSpecRequest{})
+				am.Spec.SetTo(model.UpdateVirtualMachineSpecRequest{})
 			}
 			vmTypeRef, err := compute.ParseVmTypeRef(ctx, plan.VmType.ValueString())
 			if err != nil {
@@ -327,7 +327,7 @@ func VirtualMachineTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 	if !plan.Hardware.Equal(state.Hardware) {
 		if !plan.Hardware.IsNull() && !plan.Hardware.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateVirtualMachineSpecRequest{})
+				am.Spec.SetTo(model.UpdateVirtualMachineSpecRequest{})
 			}
 			hardwarePlan := tfmodel.HardwareSpec{}
 			hardwarePlanDiag := plan.Hardware.As(ctx, &hardwarePlan, basetypes.ObjectAsOptions{})
@@ -353,7 +353,7 @@ func VirtualMachineTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 			am.Spec.Value.Hardware.SetTo(*hardwareTmp)
 		} else if plan.Hardware.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateVirtualMachineSpecRequest{})
+				am.Spec.SetTo(model.UpdateVirtualMachineSpecRequest{})
 			}
 			am.Spec.Value.Hardware.SetToNull()
 		}
@@ -362,7 +362,7 @@ func VirtualMachineTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 	if !plan.Os.Equal(state.Os) {
 		if !plan.Os.IsNull() && !plan.Os.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateVirtualMachineSpecRequest{})
+				am.Spec.SetTo(model.UpdateVirtualMachineSpecRequest{})
 			}
 			osPlan := tfmodel.OsSpec{}
 			osPlanDiag := plan.Os.As(ctx, &osPlan, basetypes.ObjectAsOptions{})
@@ -388,7 +388,7 @@ func VirtualMachineTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 			am.Spec.Value.Os.SetTo(*osTmp)
 		} else if plan.Os.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateVirtualMachineSpecRequest{})
+				am.Spec.SetTo(model.UpdateVirtualMachineSpecRequest{})
 			}
 			am.Spec.Value.Os.SetToNull()
 		}
@@ -397,7 +397,7 @@ func VirtualMachineTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 	if !plan.Storage.Equal(state.Storage) {
 		if !plan.Storage.IsNull() && !plan.Storage.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateVirtualMachineSpecRequest{})
+				am.Spec.SetTo(model.UpdateVirtualMachineSpecRequest{})
 			}
 			storagePlan := tfmodel.StorageSpec{}
 			storagePlanDiag := plan.Storage.As(ctx, &storagePlan, basetypes.ObjectAsOptions{})
@@ -427,7 +427,7 @@ func VirtualMachineTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 	if !plan.Network.Equal(state.Network) {
 		if !plan.Network.IsNull() && !plan.Network.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateVirtualMachineSpecRequest{})
+				am.Spec.SetTo(model.UpdateVirtualMachineSpecRequest{})
 			}
 			networkPlan := tfmodel.NetworkSpec{}
 			networkPlanDiag := plan.Network.As(ctx, &networkPlan, basetypes.ObjectAsOptions{})
@@ -457,7 +457,7 @@ func VirtualMachineTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 	if !plan.ServiceAccount.Equal(state.ServiceAccount) {
 		if !plan.ServiceAccount.IsNull() && !plan.ServiceAccount.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateVirtualMachineSpecRequest{})
+				am.Spec.SetTo(model.UpdateVirtualMachineSpecRequest{})
 			}
 			serviceAccountRef, err := iam.ParseServiceAccountRef(ctx, plan.ServiceAccount.ValueString())
 			if err != nil {
@@ -467,7 +467,7 @@ func VirtualMachineTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 			am.Spec.Value.ServiceAccount.SetTo(serviceAccountRef)
 		} else if plan.ServiceAccount.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateVirtualMachineSpecRequest{})
+				am.Spec.SetTo(model.UpdateVirtualMachineSpecRequest{})
 			}
 			am.Spec.Value.ServiceAccount.SetToNull()
 		}
@@ -476,7 +476,7 @@ func VirtualMachineTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 	return &am, diags
 }
 
-func VirtualMachineMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.VirtualMachineMetadataOptionalResponse) (*tfmodel.VirtualMachineMetadata, tfdiag.Diagnostics) {
+func VirtualMachineMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *model.VirtualMachineMetadataOptionalResponse) (*tfmodel.VirtualMachineMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -546,13 +546,13 @@ func VirtualMachineMetadataAPIOptionalResponseToTFModel(ctx context.Context, am 
 	return &t, diags
 }
 
-func VirtualMachineMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.VirtualMachineMetadata) (*apimodel.VirtualMachineMetadataRequest, tfdiag.Diagnostics) {
+func VirtualMachineMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.VirtualMachineMetadata) (*model.VirtualMachineMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.VirtualMachineMetadataRequest
+	var am model.VirtualMachineMetadataRequest
 
 	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
 		am.DisplayName = plan.DisplayName.ValueStringPointer()
@@ -566,7 +566,7 @@ func VirtualMachineMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmode
 			return nil, diags
 		}
 
-		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
+		am.Usages = make([]commonmodel.TypedUsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
@@ -585,7 +585,7 @@ func VirtualMachineMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmode
 	return &am, diags
 }
 
-func VirtualMachineMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.VirtualMachineMetadata) (*apimodel.UpdateVirtualMachineMetadataRequest, tfdiag.Diagnostics) {
+func VirtualMachineMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.VirtualMachineMetadata) (*model.UpdateVirtualMachineMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -594,7 +594,7 @@ func VirtualMachineMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, 
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateVirtualMachineMetadataRequest
+	var am model.UpdateVirtualMachineMetadataRequest
 
 	if !plan.DisplayName.Equal(state.DisplayName) {
 		if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
@@ -611,7 +611,7 @@ func VirtualMachineMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, 
 				return nil, diags
 			}
 
-			usagesTmp := make([]commonapimodel.UpdateTypedUsageRequest, 0, len(usages))
+			usagesTmp := make([]commonmodel.UpdateTypedUsageRequest, 0, len(usages))
 
 			for _, entity := range usages {
 				stateEntity := tfcommon.TypedUsage{}

@@ -8,26 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
 func TestPossiblyZeroIopsAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.PossiblyZeroIops(0)
+	emptyApiModel := model.PossiblyZeroIops(0)
 	_, diags := conv.PossiblyZeroIopsAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestPossiblyZeroIopsConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := apimodel.PossiblyZeroIops(0)
-
-	tfModel, diags := conv.PossiblyZeroIopsAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-
-	result, diags := conv.PossiblyZeroIopsTFToAPIModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	require.Equal(t, emptyApiModel, *result)
 }

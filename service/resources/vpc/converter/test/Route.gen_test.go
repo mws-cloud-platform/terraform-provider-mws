@@ -10,8 +10,8 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
@@ -20,25 +20,25 @@ import (
 
 func TestRouteAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.RouteOptionalResponse{}
+	emptyApiModel := model.RouteOptionalResponse{}
 	_, diags := conv.RouteAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestRouteOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.RouteRequest{
-		Spec: apimodel.RouteSpecRequest{
-			Destination: apimodel.RouteDestinationRequest{
-				Spec: apimodel.RouteDestinationSpecRequest{
+	emptyApiModelRequest := model.RouteRequest{
+		Spec: model.RouteSpecRequest{
+			Destination: model.RouteDestinationRequest{
+				Spec: model.RouteDestinationSpecRequest{
 					Cidrs: []cidraddress.CIDRAddress{},
 				},
 			},
-			NextHop: apimodel.RouteNextHopRequest{},
+			NextHop: model.RouteNextHopRequest{},
 		},
 	}
 
-	emptyApiModelResponse, err := apimodel.RouteRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.RouteRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.RouteAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -47,7 +47,7 @@ func TestRouteOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.RouteTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.RouteRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.RouteRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -60,8 +60,8 @@ func TestUpdateRouteRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.Route
 	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateRouteRequest{
-		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+	expectedUpdateModel := &model.UpdateRouteRequest{
+		Metadata: optional.OptionalNil[commonmodel.UpdateCommonTypedResourceMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},

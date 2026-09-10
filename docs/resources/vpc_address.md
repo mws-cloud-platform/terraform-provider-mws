@@ -147,7 +147,7 @@ Optional:
 
 Read-Only:
 
-- `ip_address` (String) Присвоенный адрес. Совпадает с запрошенным ipAddress из спецификации, если последний указан при создании адреса
+- `ip_address` (String) Присвоенный адрес. Совпадает с запрошенным IP-адресом из спецификации, если последний указан при создании адреса
 
 IPv4- или IPv6-адрес
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))

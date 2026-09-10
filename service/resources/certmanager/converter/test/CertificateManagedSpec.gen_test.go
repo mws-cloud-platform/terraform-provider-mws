@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/model"
@@ -17,18 +17,16 @@ import (
 
 func TestCertificateManagedSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.CertificateManagedSpecOptionalResponse{}
+	emptyApiModel := model.CertificateManagedSpecOptionalResponse{}
 	_, diags := conv.CertificateManagedSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestCertificateManagedSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.CertificateManagedSpecRequest{
-		Domains: []string{},
-	}
+	emptyApiModelRequest := model.CertificateManagedSpecRequest{}
 
-	emptyApiModelResponse, err := apimodel.CertificateManagedSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.CertificateManagedSpecRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.CertificateManagedSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -37,7 +35,7 @@ func TestCertificateManagedSpecOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.CertificateManagedSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.CertificateManagedSpecRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.CertificateManagedSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -50,8 +48,8 @@ func TestUpdateCertificateManagedSpecRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.CertificateManagedSpec
 	stateTfModel.Issuer = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.CertificateManagedSpecIssuer).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateCertificateManagedSpecRequest{
-		Issuer: optional.OptionalNil[apimodel.UpdateCertificateManagedSpecIssuerRequest]{
+	expectedUpdateModel := &model.UpdateCertificateManagedSpecRequest{
+		Issuer: optional.OptionalNil[model.UpdateCertificateManagedSpecIssuerRequest]{
 			Set:  true,
 			Null: true,
 		},

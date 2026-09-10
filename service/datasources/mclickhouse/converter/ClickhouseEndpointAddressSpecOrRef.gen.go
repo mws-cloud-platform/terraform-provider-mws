@@ -7,16 +7,14 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/model"
 )
 
-func ClickhouseEndpointAddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseEndpointAddressSpecOrRefOptionalResponse) (*tfmodel.ClickhouseEndpointAddressSpecOrRef, tfdiag.Diagnostics) {
+func ClickhouseEndpointAddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseEndpointAddressSpecOrRefOptionalResponse) (*tfmodel.ClickhouseEndpointAddressSpecOrRef, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -49,40 +47,4 @@ func ClickhouseEndpointAddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.
 	}
 
 	return &t, diags
-}
-
-func ClickhouseEndpointAddressSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseEndpointAddressSpecOrRef) (*apimodel.ClickhouseEndpointAddressSpecOrRefRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseEndpointAddressSpecOrRefRequest
-
-	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
-		refRef, err := vpc.ParseAddressRef(ctx, plan.Ref.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Ref = &refRef
-	}
-
-	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
-		specPlan := tfmodel.ClickhouseEndpointAddressSpec{}
-		specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, specPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		specTmp, specDiag := ClickhouseEndpointAddressSpecTFToAPIRequestModel(ctx, &specPlan)
-		diags = append(diags, specDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec = specTmp
-	}
-
-	return &am, diags
 }

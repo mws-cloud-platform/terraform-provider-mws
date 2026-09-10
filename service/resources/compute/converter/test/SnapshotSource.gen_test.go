@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
@@ -18,16 +18,16 @@ import (
 
 func TestSnapshotSourceAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.SnapshotSourceOptionalResponse{}
+	emptyApiModel := model.SnapshotSourceOptionalResponse{}
 	_, diags := conv.SnapshotSourceAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestSnapshotSourceOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.SnapshotSourceRequest{}
+	emptyApiModelRequest := model.SnapshotSourceRequest{}
 
-	emptyApiModelResponse, err := apimodel.SnapshotSourceRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.SnapshotSourceRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.SnapshotSourceAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -36,7 +36,7 @@ func TestSnapshotSourceOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.SnapshotSourceTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.SnapshotSourceRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.SnapshotSourceRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -49,8 +49,8 @@ func TestUpdateSnapshotSourceRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.SnapshotSource
 	stateTfModel.Disk = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.SnapshotSourceDisk).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateSnapshotSourceRequest{
-		Disk: optional.OptionalNil[apimodel.UpdateSnapshotSourceDiskRequest]{
+	expectedUpdateModel := &model.UpdateSnapshotSourceRequest{
+		Disk: optional.OptionalNil[model.UpdateSnapshotSourceDiskRequest]{
 			Set:  true,
 			Null: true,
 		},
@@ -64,18 +64,18 @@ func TestUpdateSnapshotSourceRequestConverters(t *testing.T) {
 
 func TestSnapshotSourceDiskAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.SnapshotSourceDiskOptionalResponse{}
+	emptyApiModel := model.SnapshotSourceDiskOptionalResponse{}
 	_, diags := conv.SnapshotSourceDiskAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestSnapshotSourceDiskOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.SnapshotSourceDiskRequest{
+	emptyApiModelRequest := model.SnapshotSourceDiskRequest{
 		Id: compute.NewMustDiskRef("projectID", "diskID"),
 	}
 
-	emptyApiModelResponse, err := apimodel.SnapshotSourceDiskRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.SnapshotSourceDiskRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.SnapshotSourceDiskAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -84,7 +84,7 @@ func TestSnapshotSourceDiskOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.SnapshotSourceDiskTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.SnapshotSourceDiskRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.SnapshotSourceDiskRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -96,7 +96,7 @@ func TestUpdateSnapshotSourceDiskRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.SnapshotSourceDisk
 	var stateTfModel tfmodel.SnapshotSourceDisk
 
-	expectedUpdateModel := &apimodel.UpdateSnapshotSourceDiskRequest{}
+	expectedUpdateModel := &model.UpdateSnapshotSourceDiskRequest{}
 
 	result, diags := conv.SnapshotSourceDiskTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

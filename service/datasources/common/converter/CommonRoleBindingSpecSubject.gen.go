@@ -7,16 +7,14 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	"go.mws.cloud/go-sdk/service/resources/references/iam"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 )
 
-func CommonRoleBindingSpecSubjectAPIToTFModel(ctx context.Context, am *commonapimodel.CommonRoleBindingSpecSubject) (*tfcommon.CommonRoleBindingSpecSubject, tfdiag.Diagnostics) {
+func CommonRoleBindingSpecSubjectAPIToTFModel(ctx context.Context, am *commonmodel.CommonRoleBindingSpecSubject) (*tfcommon.CommonRoleBindingSpecSubject, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -75,7 +73,7 @@ func CommonRoleBindingSpecSubjectAPIToTFModel(ctx context.Context, am *commonapi
 	return &t, diags
 }
 
-func CommonRoleBindingSpecSubjectAPIResponseToTFModel(ctx context.Context, am *commonapimodel.CommonRoleBindingSpecSubjectResponse) (*tfcommon.CommonRoleBindingSpecSubject, tfdiag.Diagnostics) {
+func CommonRoleBindingSpecSubjectAPIResponseToTFModel(ctx context.Context, am *commonmodel.CommonRoleBindingSpecSubjectResponse) (*tfcommon.CommonRoleBindingSpecSubject, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -134,7 +132,7 @@ func CommonRoleBindingSpecSubjectAPIResponseToTFModel(ctx context.Context, am *c
 	return &t, diags
 }
 
-func CommonRoleBindingSpecSubjectAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.CommonRoleBindingSpecSubjectOptionalResponse) (*tfcommon.CommonRoleBindingSpecSubject, tfdiag.Diagnostics) {
+func CommonRoleBindingSpecSubjectAPIOptionalResponseToTFModel(ctx context.Context, am *commonmodel.CommonRoleBindingSpecSubjectOptionalResponse) (*tfcommon.CommonRoleBindingSpecSubject, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -191,148 +189,4 @@ func CommonRoleBindingSpecSubjectAPIOptionalResponseToTFModel(ctx context.Contex
 	}
 
 	return &t, diags
-}
-
-func CommonRoleBindingSpecSubjectTFToAPIModel(ctx context.Context, plan *tfcommon.CommonRoleBindingSpecSubject) (*commonapimodel.CommonRoleBindingSpecSubject, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am commonapimodel.CommonRoleBindingSpecSubject
-
-	if !plan.User.IsNull() && !plan.User.IsUnknown() {
-		userRef, err := iam.ParseUserRef(ctx, plan.User.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.User = &userRef
-	}
-
-	if !plan.ServiceAccount.IsNull() && !plan.ServiceAccount.IsUnknown() {
-		serviceAccountRef, err := iam.ParseServiceAccountRef(ctx, plan.ServiceAccount.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.ServiceAccount = &serviceAccountRef
-	}
-
-	if !plan.ServiceAgent.IsNull() && !plan.ServiceAgent.IsUnknown() {
-		serviceAgentRef, err := iam.ParseServiceAgentRef(ctx, plan.ServiceAgent.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.ServiceAgent = &serviceAgentRef
-	}
-
-	if !plan.UserFederation.IsNull() && !plan.UserFederation.IsUnknown() {
-		userFederationPlan := tfcommon.CommonRoleBindingFederation{}
-		userFederationPlanDiag := plan.UserFederation.As(ctx, &userFederationPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, userFederationPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		userFederationTmp, userFederationDiag := CommonRoleBindingFederationTFToAPIModel(ctx, &userFederationPlan)
-		diags = append(diags, userFederationDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.UserFederation = userFederationTmp
-	}
-
-	if !plan.UserGroup.IsNull() && !plan.UserGroup.IsUnknown() {
-		userGroupRef, err := iam.ParseUserGroupRef(ctx, plan.UserGroup.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.UserGroup = &userGroupRef
-	}
-
-	if !plan.Employee.IsNull() && !plan.Employee.IsUnknown() {
-		employeeRef, err := iam.ParseEmployeeRef(ctx, plan.Employee.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Employee = &employeeRef
-	}
-
-	return &am, diags
-}
-
-func CommonRoleBindingSpecSubjectTFToAPIRequestModel(ctx context.Context, plan *tfcommon.CommonRoleBindingSpecSubject) (*commonapimodel.CommonRoleBindingSpecSubjectRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am commonapimodel.CommonRoleBindingSpecSubjectRequest
-
-	if !plan.User.IsNull() && !plan.User.IsUnknown() {
-		userRef, err := iam.ParseUserRef(ctx, plan.User.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.User = &userRef
-	}
-
-	if !plan.ServiceAccount.IsNull() && !plan.ServiceAccount.IsUnknown() {
-		serviceAccountRef, err := iam.ParseServiceAccountRef(ctx, plan.ServiceAccount.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.ServiceAccount = &serviceAccountRef
-	}
-
-	if !plan.ServiceAgent.IsNull() && !plan.ServiceAgent.IsUnknown() {
-		serviceAgentRef, err := iam.ParseServiceAgentRef(ctx, plan.ServiceAgent.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.ServiceAgent = &serviceAgentRef
-	}
-
-	if !plan.UserFederation.IsNull() && !plan.UserFederation.IsUnknown() {
-		userFederationPlan := tfcommon.CommonRoleBindingFederation{}
-		userFederationPlanDiag := plan.UserFederation.As(ctx, &userFederationPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, userFederationPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		userFederationTmp, userFederationDiag := CommonRoleBindingFederationTFToAPIRequestModel(ctx, &userFederationPlan)
-		diags = append(diags, userFederationDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.UserFederation = userFederationTmp
-	}
-
-	if !plan.UserGroup.IsNull() && !plan.UserGroup.IsUnknown() {
-		userGroupRef, err := iam.ParseUserGroupRef(ctx, plan.UserGroup.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.UserGroup = &userGroupRef
-	}
-
-	if !plan.Employee.IsNull() && !plan.Employee.IsUnknown() {
-		employeeRef, err := iam.ParseEmployeeRef(ctx, plan.Employee.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Employee = &employeeRef
-	}
-
-	return &am, diags
 }

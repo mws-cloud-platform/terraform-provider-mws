@@ -9,11 +9,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/model"
 )
 
-func CertificateStatusDetailsAPIResponseToTFModel(ctx context.Context, am *apimodel.CertificateStatusDetailsResponse) (*tfmodel.CertificateStatusDetails, tfdiag.Diagnostics) {
+func CertificateStatusDetailsAPIResponseToTFModel(ctx context.Context, am *model.CertificateStatusDetailsResponse) (*tfmodel.CertificateStatusDetails, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

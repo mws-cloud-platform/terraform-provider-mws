@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func ClickhouseCoordinatorTypeAPIToTFModel(ctx context.Context, am *apimodel.ClickhouseCoordinatorType) (tfmodel.ClickhouseCoordinatorType, tfdiag.Diagnostics) {
+func ClickhouseCoordinatorTypeAPIToTFModel(ctx context.Context, am *model.ClickhouseCoordinatorType) (tfmodel.ClickhouseCoordinatorType, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.ClickhouseCoordinatorType{}, nil
 	}
@@ -25,15 +25,15 @@ func ClickhouseCoordinatorTypeAPIToTFModel(ctx context.Context, am *apimodel.Cli
 	return t, diags
 }
 
-func ClickhouseCoordinatorTypeTFToAPIModel(ctx context.Context, plan tfmodel.ClickhouseCoordinatorType) (*apimodel.ClickhouseCoordinatorType, tfdiag.Diagnostics) {
+func ClickhouseCoordinatorTypeTFToAPIModel(ctx context.Context, plan tfmodel.ClickhouseCoordinatorType) (*model.ClickhouseCoordinatorType, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseCoordinatorType
+	var am model.ClickhouseCoordinatorType
 
 	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}
-	am = apimodel.ClickhouseCoordinatorType(tmp.ValueString())
+	am = model.ClickhouseCoordinatorType(tmp.ValueString())
 
 	return &am, diags
 }

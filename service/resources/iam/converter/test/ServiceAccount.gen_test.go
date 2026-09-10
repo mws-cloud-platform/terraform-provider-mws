@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/iam/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/iam/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/iam/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/iam/model"
@@ -18,18 +18,18 @@ import (
 
 func TestServiceAccountAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ServiceAccountResponse{}
+	emptyApiModel := model.ServiceAccountResponse{}
 	_, diags := conv.ServiceAccountAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestServiceAccountResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.ServiceAccountRequest{
-		Spec: apimodel.ServiceAccountSpecRequest{},
+	emptyApiModelRequest := model.ServiceAccountRequest{
+		Spec: model.ServiceAccountSpecRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.ServiceAccountRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.ServiceAccountRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.ServiceAccountAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -38,7 +38,7 @@ func TestServiceAccountResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.ServiceAccountTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.ServiceAccountRequestToResponse(filledApiModelRequest)
+	result, err := model.ServiceAccountRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -51,8 +51,8 @@ func TestUpdateServiceAccountRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.ServiceAccount
 	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.ServiceAccountMetadata).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateServiceAccountRequest{
-		Metadata: optional.OptionalNil[apimodel.UpdateServiceAccountMetadataRequest]{
+	expectedUpdateModel := &model.UpdateServiceAccountRequest{
+		Metadata: optional.OptionalNil[model.UpdateServiceAccountMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},
@@ -66,18 +66,18 @@ func TestUpdateServiceAccountRequestConverters(t *testing.T) {
 
 func TestServiceAccountMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ServiceAccountMetadataResponse{}
+	emptyApiModel := model.ServiceAccountMetadataResponse{}
 	_, diags := conv.ServiceAccountMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestServiceAccountMetadataResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.ServiceAccountMetadataRequest{
-		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
+	emptyApiModelRequest := model.ServiceAccountMetadataRequest{
+		TypedResourceMetadataRequest: commonmodel.TypedResourceMetadataRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.ServiceAccountMetadataRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.ServiceAccountMetadataRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.ServiceAccountMetadataAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -86,7 +86,7 @@ func TestServiceAccountMetadataResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.ServiceAccountMetadataTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.ServiceAccountMetadataRequestToResponse(filledApiModelRequest)
+	result, err := model.ServiceAccountMetadataRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -98,49 +98,9 @@ func TestUpdateServiceAccountMetadataRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.ServiceAccountMetadata
 	var stateTfModel tfmodel.ServiceAccountMetadata
 
-	expectedUpdateModel := &apimodel.UpdateServiceAccountMetadataRequest{}
+	expectedUpdateModel := &model.UpdateServiceAccountMetadataRequest{}
 
 	result, diags := conv.ServiceAccountMetadataTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
-	require.False(t, diags.HasError())
-
-	require.Equal(t, expectedUpdateModel, result)
-}
-
-func TestServiceAccountSpecAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := apimodel.ServiceAccountSpecResponse{}
-	_, diags := conv.ServiceAccountSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
-func TestServiceAccountSpecResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.ServiceAccountSpecRequest{}
-
-	emptyApiModelResponse, err := apimodel.ServiceAccountSpecRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.ServiceAccountSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.ServiceAccountSpecTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.ServiceAccountSpecRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
-func TestUpdateServiceAccountSpecRequestConverters(t *testing.T) {
-	t.Parallel()
-
-	var nullPlanTfModel tfmodel.ServiceAccountSpec
-	var stateTfModel tfmodel.ServiceAccountSpec
-
-	expectedUpdateModel := &apimodel.UpdateServiceAccountSpecRequest{}
-
-	result, diags := conv.ServiceAccountSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())
 
 	require.Equal(t, expectedUpdateModel, result)

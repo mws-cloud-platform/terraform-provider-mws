@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func VmTypeLocalDisksSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.VmTypeLocalDisksSpecOptionalResponse) (*tfmodel.VmTypeLocalDisksSpec, tfdiag.Diagnostics) {
+func VmTypeLocalDisksSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.VmTypeLocalDisksSpecOptionalResponse) (*tfmodel.VmTypeLocalDisksSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

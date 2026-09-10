@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
@@ -17,16 +17,16 @@ import (
 
 func TestPluginsSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.PluginsSpecOptionalResponse{}
+	emptyApiModel := model.PluginsSpecOptionalResponse{}
 	_, diags := conv.PluginsSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestPluginsSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.PluginsSpecRequest{}
+	emptyApiModelRequest := model.PluginsSpecRequest{}
 
-	emptyApiModelResponse, err := apimodel.PluginsSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.PluginsSpecRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.PluginsSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -35,7 +35,7 @@ func TestPluginsSpecOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.PluginsSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.PluginsSpecRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.PluginsSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -48,8 +48,8 @@ func TestUpdatePluginsSpecRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.PluginsSpec
 	stateTfModel.Cni = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.PluginsSpecCni).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdatePluginsSpecRequest{
-		Cni: optional.OptionalNil[apimodel.UpdatePluginsSpecCniRequest]{
+	expectedUpdateModel := &model.UpdatePluginsSpecRequest{
+		Cni: optional.OptionalNil[model.UpdatePluginsSpecCniRequest]{
 			Set:  true,
 			Null: true,
 		},
@@ -63,16 +63,16 @@ func TestUpdatePluginsSpecRequestConverters(t *testing.T) {
 
 func TestPluginsSpecCniAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.PluginsSpecCniOptionalResponse{}
+	emptyApiModel := model.PluginsSpecCniOptionalResponse{}
 	_, diags := conv.PluginsSpecCniAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestPluginsSpecCniOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.PluginsSpecCniRequest{}
+	emptyApiModelRequest := model.PluginsSpecCniRequest{}
 
-	emptyApiModelResponse, err := apimodel.PluginsSpecCniRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.PluginsSpecCniRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.PluginsSpecCniAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -81,7 +81,7 @@ func TestPluginsSpecCniOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.PluginsSpecCniTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.PluginsSpecCniRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.PluginsSpecCniRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -93,7 +93,7 @@ func TestUpdatePluginsSpecCniRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.PluginsSpecCni
 	var stateTfModel tfmodel.PluginsSpecCni
 
-	expectedUpdateModel := &apimodel.UpdatePluginsSpecCniRequest{}
+	expectedUpdateModel := &model.UpdatePluginsSpecCniRequest{}
 
 	result, diags := conv.PluginsSpecCniTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

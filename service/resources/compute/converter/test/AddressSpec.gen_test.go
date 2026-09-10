@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
@@ -16,18 +16,18 @@ import (
 
 func TestAddressSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.AddressSpecOptionalResponse{}
+	emptyApiModel := model.AddressSpecOptionalResponse{}
 	_, diags := conv.AddressSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestAddressSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.AddressSpecRequest{
+	emptyApiModelRequest := model.AddressSpecRequest{
 		Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
 	}
 
-	emptyApiModelResponse, err := apimodel.AddressSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.AddressSpecRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.AddressSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -36,7 +36,7 @@ func TestAddressSpecOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.AddressSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.AddressSpecRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.AddressSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -48,7 +48,7 @@ func TestUpdateAddressSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.AddressSpec
 	var stateTfModel tfmodel.AddressSpec
 
-	expectedUpdateModel := &apimodel.UpdateAddressSpecRequest{}
+	expectedUpdateModel := &model.UpdateAddressSpecRequest{}
 
 	result, diags := conv.AddressSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

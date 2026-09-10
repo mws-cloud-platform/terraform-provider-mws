@@ -13,7 +13,7 @@ type DiskBackupSource struct {
 
 func (s *DiskBackupSource) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Источник для создания резервной копии диска (На текущий момент поддерживается только диск, но в будущем будут и другие источники)`,
+		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"disk": schema.SingleNestedAttribute{
 				Attributes:          new(DiskBackupSourceDisk).GetSchema().Attributes,

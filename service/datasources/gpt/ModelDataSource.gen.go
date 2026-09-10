@@ -40,7 +40,6 @@ func (m *ModelDataSource) Metadata(ctx context.Context, req datasource.MetadataR
 func (m *ModelDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "ModelDataSource.Schema")
 	resp.Schema = new(tfmodel.Model).GetSchema()
-	resp.Schema.DeprecationMessage = `Отказываемся из-за разделения на input и output модальности`
 	resp.Schema.Attributes["model_name"] = schema.StringAttribute{
 		MarkdownDescription: `Параметр пути для имени модели, уникальный в рамках проекта.`,
 		Required:            true,

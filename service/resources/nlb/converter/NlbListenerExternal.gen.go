@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/nlb/model"
 )
 
-func NlbListenerExternalAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NlbListenerExternalOptionalResponse) (*tfmodel.NlbListenerExternal, tfdiag.Diagnostics) {
+func NlbListenerExternalAPIOptionalResponseToTFModel(ctx context.Context, am *model.NlbListenerExternalOptionalResponse) (*tfmodel.NlbListenerExternal, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -41,13 +41,13 @@ func NlbListenerExternalAPIOptionalResponseToTFModel(ctx context.Context, am *ap
 	return &t, diags
 }
 
-func NlbListenerExternalTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbListenerExternal) (*apimodel.NlbListenerExternalRequest, tfdiag.Diagnostics) {
+func NlbListenerExternalTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbListenerExternal) (*model.NlbListenerExternalRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.NlbListenerExternalRequest
+	var am model.NlbListenerExternalRequest
 
 	if !plan.Address.IsNull() && !plan.Address.IsUnknown() {
 		addressPlan := tfcommon.ResourceExternalAddressSpecOrRef{}
@@ -68,7 +68,7 @@ func NlbListenerExternalTFToAPIRequestModel(ctx context.Context, plan *tfmodel.N
 	return &am, diags
 }
 
-func NlbListenerExternalTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NlbListenerExternal) (*apimodel.UpdateNlbListenerExternalRequest, tfdiag.Diagnostics) {
+func NlbListenerExternalTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NlbListenerExternal) (*model.UpdateNlbListenerExternalRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -77,7 +77,7 @@ func NlbListenerExternalTFToAPIUpdateRequestModel(ctx context.Context, plan, sta
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateNlbListenerExternalRequest
+	var am model.UpdateNlbListenerExternalRequest
 
 	if !plan.Address.Equal(state.Address) {
 		if !plan.Address.IsNull() && !plan.Address.IsUnknown() {

@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func KafkaBalancerSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaBalancerSpecResponse) (*tfmodel.KafkaBalancerSpec, tfdiag.Diagnostics) {
+func KafkaBalancerSpecAPIResponseToTFModel(ctx context.Context, am *model.KafkaBalancerSpecResponse) (*tfmodel.KafkaBalancerSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -35,13 +35,13 @@ func KafkaBalancerSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.Kaf
 	return &t, diags
 }
 
-func KafkaBalancerSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaBalancerSpec) (*apimodel.KafkaBalancerSpecRequest, tfdiag.Diagnostics) {
+func KafkaBalancerSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaBalancerSpec) (*model.KafkaBalancerSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaBalancerSpecRequest
+	var am model.KafkaBalancerSpecRequest
 
 	if !plan.Enabled.IsNull() && !plan.Enabled.IsUnknown() {
 		am.Enabled = plan.Enabled.ValueBoolPointer()
@@ -54,7 +54,7 @@ func KafkaBalancerSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Kaf
 	return &am, diags
 }
 
-func KafkaBalancerSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaBalancerSpec) (*apimodel.UpdateKafkaBalancerSpecRequest, tfdiag.Diagnostics) {
+func KafkaBalancerSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaBalancerSpec) (*model.UpdateKafkaBalancerSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -63,7 +63,7 @@ func KafkaBalancerSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateKafkaBalancerSpecRequest
+	var am model.UpdateKafkaBalancerSpecRequest
 
 	if !plan.Enabled.Equal(state.Enabled) {
 		if !plan.Enabled.IsNull() && !plan.Enabled.IsUnknown() {

@@ -13,13 +13,14 @@ import (
 
 type ImageStatus struct {
 	tfcommon.ResourceStatus
-	StorageSize        types.String  `tfsdk:"storage_size"`
-	SourceExists       types.Bool    `tfsdk:"source_exists"`
-	Activity           ImageActivity `tfsdk:"activity"`
-	MinDiskSize        types.String  `tfsdk:"min_disk_size"`
-	InitialSourceImage types.String  `tfsdk:"initial_source_image"`
-	OsType             OsType2       `tfsdk:"os_type"`
-	Encryption         types.Object  `tfsdk:"encryption"`
+	RegionalImageStatuses types.List    `tfsdk:"regional_image_statuses"`
+	StorageSize           types.String  `tfsdk:"storage_size"`
+	SourceExists          types.Bool    `tfsdk:"source_exists"`
+	Activity              ImageActivity `tfsdk:"activity"`
+	MinDiskSize           types.String  `tfsdk:"min_disk_size"`
+	InitialSourceImage    types.String  `tfsdk:"initial_source_image"`
+	OsType                OsType        `tfsdk:"os_type"`
+	Encryption            types.Object  `tfsdk:"encryption"`
 }
 
 func (s *ImageStatus) GetSchema() schema.Schema {
@@ -29,6 +30,13 @@ func (s *ImageStatus) GetSchema() schema.Schema {
 			"ready": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.ResourceStatusReady).GetSchema().Attributes,
 				MarkdownDescription: `Информация о статусе реконсиляции`,
+				Computed:            true,
+			},
+			"regional_image_statuses": schema.ListNestedAttribute{
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: new(RegionalImageStatus).GetSchema().Attributes,
+				},
+				MarkdownDescription: `Список статусов готовности образов по каждому региону`,
 				Computed:            true,
 			},
 			"storage_size": schema.StringAttribute{

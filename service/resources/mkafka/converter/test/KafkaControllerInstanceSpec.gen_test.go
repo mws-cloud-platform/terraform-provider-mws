@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
@@ -17,16 +17,16 @@ import (
 
 func TestKafkaControllerInstanceSpecAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaControllerInstanceSpecResponse{}
+	emptyApiModel := model.KafkaControllerInstanceSpecResponse{}
 	_, diags := conv.KafkaControllerInstanceSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestKafkaControllerInstanceSpecResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaControllerInstanceSpecRequest{}
+	emptyApiModelRequest := model.KafkaControllerInstanceSpecRequest{}
 
-	emptyApiModelResponse, err := apimodel.KafkaControllerInstanceSpecRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.KafkaControllerInstanceSpecRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.KafkaControllerInstanceSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -35,7 +35,7 @@ func TestKafkaControllerInstanceSpecResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.KafkaControllerInstanceSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.KafkaControllerInstanceSpecRequestToResponse(filledApiModelRequest)
+	result, err := model.KafkaControllerInstanceSpecRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -48,8 +48,8 @@ func TestUpdateKafkaControllerInstanceSpecRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.KafkaControllerInstanceSpec
 	stateTfModel.Disk = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.KafkaDataDiskSpec).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateKafkaControllerInstanceSpecRequest{
-		Disk: optional.OptionalNil[apimodel.UpdateKafkaDataDiskSpecRequest]{
+	expectedUpdateModel := &model.UpdateKafkaControllerInstanceSpecRequest{
+		Disk: optional.OptionalNil[model.UpdateKafkaDataDiskSpecRequest]{
 			Set:  true,
 			Null: true,
 		},

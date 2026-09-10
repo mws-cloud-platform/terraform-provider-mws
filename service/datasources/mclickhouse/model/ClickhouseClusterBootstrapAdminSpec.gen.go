@@ -13,7 +13,7 @@ type ClickhouseClusterBootstrapAdminSpec struct {
 
 func (s *ClickhouseClusterBootstrapAdminSpec) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Добавление пользователей при создании кластера Clickhouse.`,
+		MarkdownDescription: `Добавление пользователей при создании кластера ClickHouse.`,
 		Attributes: map[string]schema.Attribute{
 			"username": schema.StringAttribute{
 				MarkdownDescription: `Имя учетной записи администратора`,

@@ -11,15 +11,15 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/iam/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/iam/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/iam/model"
 )
 
-func ApiKeyAPIResponseToTFModel(ctx context.Context, am *apimodel.ApiKeyResponse) (*tfmodel.ApiKey, tfdiag.Diagnostics) {
+func ApiKeyAPIResponseToTFModel(ctx context.Context, am *model.ApiKeyResponse) (*tfmodel.ApiKey, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -84,13 +84,13 @@ func ApiKeyAPIResponseToTFModel(ctx context.Context, am *apimodel.ApiKeyResponse
 	return &t, diags
 }
 
-func ApiKeyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ApiKey) (*apimodel.ApiKeyRequest, tfdiag.Diagnostics) {
+func ApiKeyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ApiKey) (*model.ApiKeyRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ApiKeyRequest
+	var am model.ApiKeyRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfmodel.ApiKeyMetadata{}
@@ -124,7 +124,7 @@ func ApiKeyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ApiKey) (*apim
 	return &am, diags
 }
 
-func ApiKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ApiKey) (*apimodel.UpdateApiKeyRequest, tfdiag.Diagnostics) {
+func ApiKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ApiKey) (*model.UpdateApiKeyRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -133,7 +133,7 @@ func ApiKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.A
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateApiKeyRequest
+	var am model.UpdateApiKeyRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -167,7 +167,7 @@ func ApiKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.A
 	if !plan.ExpireTime.Equal(state.ExpireTime) {
 		if !plan.ExpireTime.IsNull() && !plan.ExpireTime.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateApiKeySpecRequest{})
+				am.Spec.SetTo(model.UpdateApiKeySpecRequest{})
 			}
 			tmpExpireTime, err := time.Parse(time.RFC3339, plan.ExpireTime.ValueString())
 			if err != nil {
@@ -181,7 +181,7 @@ func ApiKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.A
 	if !plan.Active.Equal(state.Active) {
 		if !plan.Active.IsNull() && !plan.Active.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateApiKeySpecRequest{})
+				am.Spec.SetTo(model.UpdateApiKeySpecRequest{})
 			}
 			am.Spec.Value.Active.SetTo(plan.Active.ValueBool())
 		}
@@ -190,7 +190,7 @@ func ApiKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.A
 	return &am, diags
 }
 
-func ApiKeyMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.ApiKeyMetadataResponse) (*tfmodel.ApiKeyMetadata, tfdiag.Diagnostics) {
+func ApiKeyMetadataAPIResponseToTFModel(ctx context.Context, am *model.ApiKeyMetadataResponse) (*tfmodel.ApiKeyMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -264,13 +264,13 @@ func ApiKeyMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.ApiKey
 	return &t, diags
 }
 
-func ApiKeyMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ApiKeyMetadata) (*apimodel.ApiKeyMetadataRequest, tfdiag.Diagnostics) {
+func ApiKeyMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ApiKeyMetadata) (*model.ApiKeyMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ApiKeyMetadataRequest
+	var am model.ApiKeyMetadataRequest
 
 	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
 		am.DisplayName = plan.DisplayName.ValueStringPointer()
@@ -284,7 +284,7 @@ func ApiKeyMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ApiKey
 			return nil, diags
 		}
 
-		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
+		am.Usages = make([]commonmodel.TypedUsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
@@ -303,7 +303,7 @@ func ApiKeyMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ApiKey
 	return &am, diags
 }
 
-func ApiKeyMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ApiKeyMetadata) (*apimodel.UpdateApiKeyMetadataRequest, tfdiag.Diagnostics) {
+func ApiKeyMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ApiKeyMetadata) (*model.UpdateApiKeyMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -312,7 +312,7 @@ func ApiKeyMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateApiKeyMetadataRequest
+	var am model.UpdateApiKeyMetadataRequest
 
 	if !plan.DisplayName.Equal(state.DisplayName) {
 		if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
@@ -329,7 +329,7 @@ func ApiKeyMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 				return nil, diags
 			}
 
-			usagesTmp := make([]commonapimodel.UpdateTypedUsageRequest, 0, len(usages))
+			usagesTmp := make([]commonmodel.UpdateTypedUsageRequest, 0, len(usages))
 
 			for _, entity := range usages {
 				stateEntity := tfcommon.TypedUsage{}

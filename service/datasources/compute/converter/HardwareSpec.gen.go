@@ -7,14 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/go-sdk/pkg/apimodels/units/duration"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func HardwareSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.HardwareSpecOptionalResponse) (*tfmodel.HardwareSpec, tfdiag.Diagnostics) {
+func HardwareSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.HardwareSpecOptionalResponse) (*tfmodel.HardwareSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -35,28 +34,4 @@ func HardwareSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.
 	}
 
 	return &t, diags
-}
-
-func HardwareSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.HardwareSpec) (*apimodel.HardwareSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.HardwareSpecRequest
-
-	if !plan.Power.IsNull() && !plan.Power.IsUnknown() {
-		am.Power = ptr.Get(apimodel.HardwareSpecPowerRequest(plan.Power.ValueString()))
-	}
-
-	if !plan.GracefulShutdownTimeout.IsNull() && !plan.GracefulShutdownTimeout.IsUnknown() {
-		tmpGracefulShutdownTimeout, err := duration.ParseString(plan.GracefulShutdownTimeout.ValueString())
-		if err != nil {
-			diags.AddError("Duration string parsing", err.Error())
-			return nil, diags
-		}
-		am.GracefulShutdownTimeout = &tmpGracefulShutdownTimeout
-	}
-
-	return &am, diags
 }

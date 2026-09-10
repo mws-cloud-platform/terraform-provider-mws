@@ -41,7 +41,7 @@ func (m *ClusterDataSource) Schema(ctx context.Context, req datasource.SchemaReq
 	tflog.Info(ctx, "ClusterDataSource.Schema")
 	resp.Schema = new(tfmodel.Cluster).GetSchema()
 	resp.Schema.Attributes["cluster_name"] = schema.StringAttribute{
-		MarkdownDescription: `Имя Cluster`,
+		MarkdownDescription: `Имя кластера`,
 		Required:            true,
 	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{

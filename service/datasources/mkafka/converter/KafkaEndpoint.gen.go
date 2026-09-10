@@ -7,15 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/model"
 )
 
-func KafkaEndpointAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaEndpointResponse) (*tfmodel.KafkaEndpoint, tfdiag.Diagnostics) {
+func KafkaEndpointAPIResponseToTFModel(ctx context.Context, am *model.KafkaEndpointResponse) (*tfmodel.KafkaEndpoint, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -73,64 +71,4 @@ func KafkaEndpointAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaEn
 	}
 
 	return &t, diags
-}
-
-func KafkaEndpointTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaEndpoint) (*apimodel.KafkaEndpointRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaEndpointRequest
-
-	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
-		am.Name = plan.Name.ValueString()
-	}
-
-	if !plan.Network.IsNull() && !plan.Network.IsUnknown() {
-		networkRef, err := vpc.ParseNetworkRef(ctx, plan.Network.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Network = networkRef
-	}
-
-	if !plan.BrokerAddresses.IsNull() && !plan.BrokerAddresses.IsUnknown() {
-		brokerAddresses := make([]tfmodel.KafkaEndpointBrokerAddress, 0)
-		dBrokerAddresses := plan.BrokerAddresses.ElementsAs(ctx, &brokerAddresses, false)
-		diags = append(diags, dBrokerAddresses...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.BrokerAddresses = make([]apimodel.KafkaEndpointBrokerAddressRequest, 0, len(brokerAddresses))
-
-		for _, entity := range brokerAddresses {
-			tmp, d := KafkaEndpointBrokerAddressTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.BrokerAddresses = append(am.BrokerAddresses, *tmp)
-		}
-	}
-
-	if !plan.ExternalAccess.IsNull() && !plan.ExternalAccess.IsUnknown() {
-		externalAccessPlan := tfmodel.KafkaEndpointExternalAccesses{}
-		externalAccessPlanDiag := plan.ExternalAccess.As(ctx, &externalAccessPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, externalAccessPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		externalAccessTmp, externalAccessDiag := KafkaEndpointExternalAccessesTFToAPIRequestModel(ctx, &externalAccessPlan)
-		diags = append(diags, externalAccessDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.ExternalAccess = externalAccessTmp
-	}
-
-	return &am, diags
 }

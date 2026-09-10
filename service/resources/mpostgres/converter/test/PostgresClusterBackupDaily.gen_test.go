@@ -8,23 +8,23 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
 func TestPostgresClusterBackupDailyAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.PostgresClusterBackupDailyResponse{}
+	emptyApiModel := model.PostgresClusterBackupDailyResponse{}
 	_, diags := conv.PostgresClusterBackupDailyAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestPostgresClusterBackupDailyResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.PostgresClusterBackupDailyRequest{}
+	emptyApiModelRequest := model.PostgresClusterBackupDailyRequest{}
 
-	emptyApiModelResponse, err := apimodel.PostgresClusterBackupDailyRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.PostgresClusterBackupDailyRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.PostgresClusterBackupDailyAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -33,7 +33,7 @@ func TestPostgresClusterBackupDailyResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.PostgresClusterBackupDailyTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.PostgresClusterBackupDailyRequestToResponse(filledApiModelRequest)
+	result, err := model.PostgresClusterBackupDailyRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -45,7 +45,7 @@ func TestUpdatePostgresClusterBackupDailyRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.PostgresClusterBackupDaily
 	var stateTfModel tfmodel.PostgresClusterBackupDaily
 
-	expectedUpdateModel := &apimodel.UpdatePostgresClusterBackupDailyRequest{}
+	expectedUpdateModel := &model.UpdatePostgresClusterBackupDailyRequest{}
 
 	result, diags := conv.PostgresClusterBackupDailyTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

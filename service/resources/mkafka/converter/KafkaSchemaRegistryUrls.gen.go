@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func KafkaSchemaRegistryUrlsAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaSchemaRegistryUrlsResponse) (*tfmodel.KafkaSchemaRegistryUrls, tfdiag.Diagnostics) {
+func KafkaSchemaRegistryUrlsAPIResponseToTFModel(ctx context.Context, am *model.KafkaSchemaRegistryUrlsResponse) (*tfmodel.KafkaSchemaRegistryUrls, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

@@ -15,7 +15,7 @@ type NlbStatusListenerExternal struct {
 
 func (s *NlbStatusListenerExternal) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Статус IP-адреса внешнего балансировщика.`,
+		MarkdownDescription: `Описывает статус адреса внешнего балансировщика.`,
 		Attributes: map[string]schema.Attribute{
 			"address": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.ResourceExternalAddressStatus).GetSchema().Attributes,

@@ -7,16 +7,15 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func DiskBackupAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.DiskBackupOptionalResponse) (*tfmodel.DiskBackup, tfdiag.Diagnostics) {
+func DiskBackupAPIOptionalResponseToTFModel(ctx context.Context, am *model.DiskBackupOptionalResponse) (*tfmodel.DiskBackup, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -92,56 +91,4 @@ func DiskBackupAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Di
 	}
 
 	return &t, diags
-}
-
-func DiskBackupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DiskBackup) (*apimodel.DiskBackupRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.DiskBackupRequest
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.Source.IsNull() && !plan.Source.IsUnknown() {
-		sourcePlan := tfmodel.DiskBackupSource{}
-		sourcePlanDiag := plan.Source.As(ctx, &sourcePlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, sourcePlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		sourceTmp, sourceDiag := DiskBackupSourceTFToAPIRequestModel(ctx, &sourcePlan)
-		diags = append(diags, sourceDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Source = *sourceTmp
-	}
-
-	if !plan.OsType.IsNull() && !plan.OsType.IsUnknown() {
-		osTypeTmp, osTypeDiag := OsTypeTFToAPIModel(ctx, plan.OsType)
-		diags = append(diags, osTypeDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.OsType = osTypeTmp
-	}
-
-	return &am, diags
 }

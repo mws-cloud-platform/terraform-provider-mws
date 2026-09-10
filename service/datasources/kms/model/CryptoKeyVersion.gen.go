@@ -10,11 +10,10 @@ import (
 )
 
 type CryptoKeyVersion struct {
-	Kind              types.String `tfsdk:"kind"`
-	Metadata          types.Object `tfsdk:"metadata"`
-	Status            types.Object `tfsdk:"status"`
-	UsagePolicy       types.Object `tfsdk:"usage_policy"`
-	DestructionPolicy types.Object `tfsdk:"destruction_policy"`
+	Kind        types.String `tfsdk:"kind"`
+	Metadata    types.Object `tfsdk:"metadata"`
+	Status      types.Object `tfsdk:"status"`
+	UsagePolicy types.Object `tfsdk:"usage_policy"`
 }
 
 func (s *CryptoKeyVersion) GetSchema() schema.Schema {
@@ -36,11 +35,6 @@ func (s *CryptoKeyVersion) GetSchema() schema.Schema {
 			"usage_policy": schema.SingleNestedAttribute{
 				Attributes:          new(CryptoKeyVersionSpecUsagePolicy).GetSchema().Attributes,
 				MarkdownDescription: `Политика использования версии ключа. Определяет, разрешены ли криптографические операции с этой версией`,
-				Computed:            true,
-			},
-			"destruction_policy": schema.SingleNestedAttribute{
-				Attributes:          new(CryptoKeyVersionSpecDestructionPolicy).GetSchema().Attributes,
-				MarkdownDescription: `Политика уничтожения версии ключа. Определяет параметры и расписание`,
 				Computed:            true,
 			},
 		},

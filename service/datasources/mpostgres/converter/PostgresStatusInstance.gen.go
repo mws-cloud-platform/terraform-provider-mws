@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/model"
 )
 
-func PostgresStatusInstanceAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresStatusInstanceResponse) (*tfmodel.PostgresStatusInstance, tfdiag.Diagnostics) {
+func PostgresStatusInstanceAPIResponseToTFModel(ctx context.Context, am *model.PostgresStatusInstanceResponse) (*tfmodel.PostgresStatusInstance, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

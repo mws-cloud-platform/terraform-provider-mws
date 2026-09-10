@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/model"
 )
 
-func OneToOneNatStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.OneToOneNatStatusResponse) (*tfmodel.OneToOneNatStatus, tfdiag.Diagnostics) {
+func OneToOneNatStatusAPIResponseToTFModel(ctx context.Context, am *model.OneToOneNatStatusResponse) (*tfmodel.OneToOneNatStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

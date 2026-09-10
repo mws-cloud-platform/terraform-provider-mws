@@ -8,26 +8,26 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/nlb/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/nlb/model"
 )
 
 func TestNlbHealthCheckHttpsAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NlbHealthCheckHttpsOptionalResponse{}
+	emptyApiModel := model.NlbHealthCheckHttpsOptionalResponse{}
 	_, diags := conv.NlbHealthCheckHttpsAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestNlbHealthCheckHttpsOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.NlbHealthCheckHttpsRequest{
+	emptyApiModelRequest := model.NlbHealthCheckHttpsRequest{
 		Port: 0,
 		Path: "path",
 	}
 
-	emptyApiModelResponse, err := apimodel.NlbHealthCheckHttpsRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.NlbHealthCheckHttpsRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.NlbHealthCheckHttpsAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -36,7 +36,7 @@ func TestNlbHealthCheckHttpsOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.NlbHealthCheckHttpsTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.NlbHealthCheckHttpsRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.NlbHealthCheckHttpsRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -48,7 +48,7 @@ func TestUpdateNlbHealthCheckHttpsRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.NlbHealthCheckHttps
 	var stateTfModel tfmodel.NlbHealthCheckHttps
 
-	expectedUpdateModel := &apimodel.UpdateNlbHealthCheckHttpsRequest{}
+	expectedUpdateModel := &model.UpdateNlbHealthCheckHttpsRequest{}
 
 	result, diags := conv.NlbHealthCheckHttpsTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

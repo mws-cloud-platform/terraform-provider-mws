@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
@@ -17,16 +17,16 @@ import (
 
 func TestKafkaEndpointBrokerAddressAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaEndpointBrokerAddressResponse{}
+	emptyApiModel := model.KafkaEndpointBrokerAddressResponse{}
 	_, diags := conv.KafkaEndpointBrokerAddressAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestKafkaEndpointBrokerAddressResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaEndpointBrokerAddressRequest{}
+	emptyApiModelRequest := model.KafkaEndpointBrokerAddressRequest{}
 
-	emptyApiModelResponse, err := apimodel.KafkaEndpointBrokerAddressRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.KafkaEndpointBrokerAddressRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.KafkaEndpointBrokerAddressAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -35,7 +35,7 @@ func TestKafkaEndpointBrokerAddressResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.KafkaEndpointBrokerAddressTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.KafkaEndpointBrokerAddressRequestToResponse(filledApiModelRequest)
+	result, err := model.KafkaEndpointBrokerAddressRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -48,8 +48,8 @@ func TestUpdateKafkaEndpointBrokerAddressRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.KafkaEndpointBrokerAddress
 	stateTfModel.Spec = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.KafkaEndpointBrokerAddressSpec).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateKafkaEndpointBrokerAddressRequest{
-		Spec: optional.OptionalNil[apimodel.UpdateKafkaEndpointBrokerAddressSpecRequest]{
+	expectedUpdateModel := &model.UpdateKafkaEndpointBrokerAddressRequest{
+		Spec: optional.OptionalNil[model.UpdateKafkaEndpointBrokerAddressSpecRequest]{
 			Set:  true,
 			Null: true,
 		},

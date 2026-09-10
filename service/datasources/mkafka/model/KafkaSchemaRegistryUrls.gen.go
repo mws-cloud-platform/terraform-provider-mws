@@ -13,7 +13,7 @@ type KafkaSchemaRegistryUrls struct {
 
 func (s *KafkaSchemaRegistryUrls) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Внешние HTTPS-адреса Schema Registry.`,
+		MarkdownDescription: `Адреса эндпоинтов Schema Registry.`,
 		Attributes: map[string]schema.Attribute{
 			"urls": schema.ListAttribute{
 				ElementType:         types.StringType,

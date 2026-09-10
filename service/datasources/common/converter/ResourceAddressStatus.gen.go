@@ -7,15 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/go-sdk/pkg/apimodels/ipaddress"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 )
 
-func ResourceAddressStatusAPIToTFModel(ctx context.Context, am *commonapimodel.ResourceAddressStatus) (*tfcommon.ResourceAddressStatus, tfdiag.Diagnostics) {
+func ResourceAddressStatusAPIToTFModel(ctx context.Context, am *commonmodel.ResourceAddressStatus) (*tfcommon.ResourceAddressStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -30,7 +28,7 @@ func ResourceAddressStatusAPIToTFModel(ctx context.Context, am *commonapimodel.R
 	return &t, diags
 }
 
-func ResourceAddressStatusAPIResponseToTFModel(ctx context.Context, am *commonapimodel.ResourceAddressStatusResponse) (*tfcommon.ResourceAddressStatus, tfdiag.Diagnostics) {
+func ResourceAddressStatusAPIResponseToTFModel(ctx context.Context, am *commonmodel.ResourceAddressStatusResponse) (*tfcommon.ResourceAddressStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -45,7 +43,7 @@ func ResourceAddressStatusAPIResponseToTFModel(ctx context.Context, am *commonap
 	return &t, diags
 }
 
-func ResourceAddressStatusAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.ResourceAddressStatusOptionalResponse) (*tfcommon.ResourceAddressStatus, tfdiag.Diagnostics) {
+func ResourceAddressStatusAPIOptionalResponseToTFModel(ctx context.Context, am *commonmodel.ResourceAddressStatusOptionalResponse) (*tfcommon.ResourceAddressStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -58,62 +56,4 @@ func ResourceAddressStatusAPIOptionalResponseToTFModel(ctx context.Context, am *
 	t.IpAddress = types.StringValue(ptr.Value(am.IpAddress.RawValue()))
 
 	return &t, diags
-}
-
-func ResourceAddressStatusTFToAPIModel(ctx context.Context, plan *tfcommon.ResourceAddressStatus) (*commonapimodel.ResourceAddressStatus, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am commonapimodel.ResourceAddressStatus
-
-	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
-		refRef, err := vpc.ParseAddressRef(ctx, plan.Ref.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Ref = refRef
-	}
-
-	if !plan.IpAddress.IsNull() && !plan.IpAddress.IsUnknown() {
-		tmpIpAddress, err := ipaddress.ParseIPAddressString(plan.IpAddress.ValueString())
-		if err != nil {
-			diags.AddError("IPAddress string parsing", err.Error())
-			return nil, diags
-		}
-		am.IpAddress = tmpIpAddress
-	}
-
-	return &am, diags
-}
-
-func ResourceAddressStatusTFToAPIRequestModel(ctx context.Context, plan *tfcommon.ResourceAddressStatus) (*commonapimodel.ResourceAddressStatusRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am commonapimodel.ResourceAddressStatusRequest
-
-	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
-		refRef, err := vpc.ParseAddressRef(ctx, plan.Ref.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Ref = refRef
-	}
-
-	if !plan.IpAddress.IsNull() && !plan.IpAddress.IsUnknown() {
-		tmpIpAddress, err := ipaddress.ParseIPAddressString(plan.IpAddress.ValueString())
-		if err != nil {
-			diags.AddError("IPAddress string parsing", err.Error())
-			return nil, diags
-		}
-		am.IpAddress = tmpIpAddress
-	}
-
-	return &am, diags
 }

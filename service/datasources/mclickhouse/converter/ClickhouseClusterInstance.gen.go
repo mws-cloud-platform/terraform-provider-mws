@@ -7,15 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
-	"go.mws.cloud/go-sdk/service/resources/references/rm"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/model"
 )
 
-func ClickhouseClusterInstanceAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseClusterInstanceOptionalResponse) (*tfmodel.ClickhouseClusterInstance, tfdiag.Diagnostics) {
+func ClickhouseClusterInstanceAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseClusterInstanceOptionalResponse) (*tfmodel.ClickhouseClusterInstance, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -61,52 +59,4 @@ func ClickhouseClusterInstanceAPIOptionalResponseToTFModel(ctx context.Context, 
 	}
 
 	return &t, diags
-}
-
-func ClickhouseClusterInstanceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterInstance) (*apimodel.ClickhouseClusterInstanceRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseClusterInstanceRequest
-
-	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
-		am.Name = plan.Name.ValueString()
-	}
-
-	if !plan.Count.IsNull() && !plan.Count.IsUnknown() {
-		am.Count = ptr.Get(int(plan.Count.ValueInt64()))
-	}
-
-	if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
-		zoneRef, err := rm.ParseZoneRef(ctx, plan.Zone.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Zone = zoneRef
-	}
-
-	if !plan.Endpoints.IsNull() && !plan.Endpoints.IsUnknown() {
-		endpoints := make([]tfmodel.ClickhouseEndpoint, 0)
-		dEndpoints := plan.Endpoints.ElementsAs(ctx, &endpoints, false)
-		diags = append(diags, dEndpoints...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Endpoints = make([]apimodel.ClickhouseEndpointRequest, 0, len(endpoints))
-
-		for _, entity := range endpoints {
-			tmp, d := ClickhouseEndpointTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.Endpoints = append(am.Endpoints, *tmp)
-		}
-	}
-
-	return &am, diags
 }

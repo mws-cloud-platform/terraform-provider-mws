@@ -9,13 +9,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	"go.mws.cloud/go-sdk/service/resources/references/mclickhouse"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func ClickhouseInstanceHWResourcesAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseInstanceHWResourcesOptionalResponse) (*tfmodel.ClickhouseInstanceHWResources, tfdiag.Diagnostics) {
+func ClickhouseInstanceHWResourcesAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseInstanceHWResourcesOptionalResponse) (*tfmodel.ClickhouseInstanceHWResources, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -42,7 +42,7 @@ func ClickhouseInstanceHWResourcesAPIOptionalResponseToTFModel(ctx context.Conte
 	return &t, diags
 }
 
-func ClickhouseInstanceHWResourcesAPIResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseInstanceHWResourcesResponse) (*tfmodel.ClickhouseInstanceHWResources, tfdiag.Diagnostics) {
+func ClickhouseInstanceHWResourcesAPIResponseToTFModel(ctx context.Context, am *model.ClickhouseInstanceHWResourcesResponse) (*tfmodel.ClickhouseInstanceHWResources, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -69,13 +69,13 @@ func ClickhouseInstanceHWResourcesAPIResponseToTFModel(ctx context.Context, am *
 	return &t, diags
 }
 
-func ClickhouseInstanceHWResourcesTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseInstanceHWResources) (*apimodel.ClickhouseInstanceHWResourcesRequest, tfdiag.Diagnostics) {
+func ClickhouseInstanceHWResourcesTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseInstanceHWResources) (*model.ClickhouseInstanceHWResourcesRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseInstanceHWResourcesRequest
+	var am model.ClickhouseInstanceHWResourcesRequest
 
 	if !plan.VmType.IsNull() && !plan.VmType.IsUnknown() {
 		vmTypeRef, err := mclickhouse.ParseClickhouseVmTypeRef(ctx, plan.VmType.ValueString())
@@ -105,7 +105,7 @@ func ClickhouseInstanceHWResourcesTFToAPIRequestModel(ctx context.Context, plan 
 	return &am, diags
 }
 
-func ClickhouseInstanceHWResourcesTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseInstanceHWResources) (*apimodel.UpdateClickhouseInstanceHWResourcesRequest, tfdiag.Diagnostics) {
+func ClickhouseInstanceHWResourcesTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseInstanceHWResources) (*model.UpdateClickhouseInstanceHWResourcesRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -114,7 +114,7 @@ func ClickhouseInstanceHWResourcesTFToAPIUpdateRequestModel(ctx context.Context,
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateClickhouseInstanceHWResourcesRequest
+	var am model.UpdateClickhouseInstanceHWResourcesRequest
 
 	if !plan.VmType.Equal(state.VmType) {
 		if !plan.VmType.IsNull() && !plan.VmType.IsUnknown() {

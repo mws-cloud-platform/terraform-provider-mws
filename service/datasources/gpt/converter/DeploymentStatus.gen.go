@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/gpt/model"
+	"go.mws.cloud/go-sdk/service/gpt/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/gpt/model"
 )
 
-func DeploymentStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.DeploymentStatusResponse) (*tfmodel.DeploymentStatus, tfdiag.Diagnostics) {
+func DeploymentStatusAPIResponseToTFModel(ctx context.Context, am *model.DeploymentStatusResponse) (*tfmodel.DeploymentStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

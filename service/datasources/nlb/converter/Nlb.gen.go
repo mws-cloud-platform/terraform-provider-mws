@@ -7,16 +7,15 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/nlb/model"
 )
 
-func NlbAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NlbOptionalResponse) (*tfmodel.Nlb, tfdiag.Diagnostics) {
+func NlbAPIOptionalResponseToTFModel(ctx context.Context, am *model.NlbOptionalResponse) (*tfmodel.Nlb, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -108,67 +107,4 @@ func NlbAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NlbOption
 	}
 
 	return &t, diags
-}
-
-func NlbTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Nlb) (*apimodel.NlbRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.NlbRequest
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.Listener.IsNull() && !plan.Listener.IsUnknown() {
-		listenerPlan := tfmodel.NlbListener{}
-		listenerPlanDiag := plan.Listener.As(ctx, &listenerPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, listenerPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		listenerTmp, listenerDiag := NlbListenerTFToAPIRequestModel(ctx, &listenerPlan)
-		diags = append(diags, listenerDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Listener = *listenerTmp
-	}
-
-	if !plan.Rules.IsNull() && !plan.Rules.IsUnknown() {
-		rules := make([]tfmodel.NlbRule, 0)
-		dRules := plan.Rules.ElementsAs(ctx, &rules, false)
-		diags = append(diags, dRules...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Spec.Rules = make([]apimodel.NlbRuleRequest, 0, len(rules))
-
-		for _, entity := range rules {
-			tmp, d := NlbRuleTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.Spec.Rules = append(am.Spec.Rules, *tmp)
-		}
-	}
-
-	return &am, diags
 }

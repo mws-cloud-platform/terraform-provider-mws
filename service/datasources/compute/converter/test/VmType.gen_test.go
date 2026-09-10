@@ -8,20 +8,20 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
 func TestVmTypeAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.VmTypeOptionalResponse{}
+	emptyApiModel := model.VmTypeOptionalResponse{}
 	_, diags := conv.VmTypeAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestVmTypeMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.VmTypeMetadataOptionalResponse{}
+	emptyApiModel := model.VmTypeMetadataOptionalResponse{}
 	_, diags := conv.VmTypeMetadataAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }

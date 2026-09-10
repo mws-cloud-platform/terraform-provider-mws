@@ -4,16 +4,17 @@ package converter
 
 import (
 	"context"
+	"time"
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func EncryptionStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.EncryptionStatusResponse) (*tfmodel.EncryptionStatus, tfdiag.Diagnostics) {
+func EncryptionStatusAPIResponseToTFModel(ctx context.Context, am *model.EncryptionStatusResponse) (*tfmodel.EncryptionStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -37,6 +38,12 @@ func EncryptionStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.Encr
 		t.KeyActivity = types.StringPointerValue(ptr.Get(string(*am.KeyActivity)))
 	} else {
 		t.KeyActivity = types.StringNull()
+	}
+
+	if am.ScheduledDestructionTime != nil {
+		t.ScheduledDestructionTime = types.StringPointerValue(ptr.Get(am.ScheduledDestructionTime.Format(time.RFC3339)))
+	} else {
+		t.ScheduledDestructionTime = types.StringNull()
 	}
 
 	return &t, diags

@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/model"
 )
 
-func KafkaConnectorOutputFieldsAPIToTFModel(ctx context.Context, am *apimodel.KafkaConnectorOutputFields) (tfmodel.KafkaConnectorOutputFields, tfdiag.Diagnostics) {
+func KafkaConnectorOutputFieldsAPIToTFModel(ctx context.Context, am *model.KafkaConnectorOutputFields) (tfmodel.KafkaConnectorOutputFields, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.KafkaConnectorOutputFields{}, nil
 	}
@@ -23,17 +23,4 @@ func KafkaConnectorOutputFieldsAPIToTFModel(ctx context.Context, am *apimodel.Ka
 	t = tfmodel.KafkaConnectorOutputFields(types.StringValue(string(*am)))
 
 	return t, diags
-}
-
-func KafkaConnectorOutputFieldsTFToAPIModel(ctx context.Context, plan tfmodel.KafkaConnectorOutputFields) (*apimodel.KafkaConnectorOutputFields, tfdiag.Diagnostics) {
-	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaConnectorOutputFields
-
-	var tmp = types.String(plan)
-	if tmp.IsNull() {
-		return nil, diags
-	}
-	am = apimodel.KafkaConnectorOutputFields(tmp.ValueString())
-
-	return &am, diags
 }

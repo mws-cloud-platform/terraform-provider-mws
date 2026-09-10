@@ -10,25 +10,25 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/largenumber"
 	unitsrange "go.mws.cloud/go-sdk/pkg/apimodels/units/range"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
 func TestEgressNatSpecPortAllocationAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.EgressNatSpecPortAllocationOptionalResponse{}
+	emptyApiModel := model.EgressNatSpecPortAllocationOptionalResponse{}
 	_, diags := conv.EgressNatSpecPortAllocationAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestEgressNatSpecPortAllocationOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.EgressNatSpecPortAllocationRequest{
+	emptyApiModelRequest := model.EgressNatSpecPortAllocationRequest{
 		PortsPerClient: unitsrange.MustParseString[largenumber.LargeNumber]("1-3"),
 	}
 
-	emptyApiModelResponse, err := apimodel.EgressNatSpecPortAllocationRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.EgressNatSpecPortAllocationRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.EgressNatSpecPortAllocationAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -37,7 +37,7 @@ func TestEgressNatSpecPortAllocationOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.EgressNatSpecPortAllocationTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.EgressNatSpecPortAllocationRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.EgressNatSpecPortAllocationRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -49,7 +49,7 @@ func TestUpdateEgressNatSpecPortAllocationRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.EgressNatSpecPortAllocation
 	var stateTfModel tfmodel.EgressNatSpecPortAllocation
 
-	expectedUpdateModel := &apimodel.UpdateEgressNatSpecPortAllocationRequest{}
+	expectedUpdateModel := &model.UpdateEgressNatSpecPortAllocationRequest{}
 
 	result, diags := conv.EgressNatSpecPortAllocationTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

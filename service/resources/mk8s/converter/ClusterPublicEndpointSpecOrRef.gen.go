@@ -10,13 +10,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
-func ClusterPublicEndpointSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClusterPublicEndpointSpecOrRefOptionalResponse) (*tfmodel.ClusterPublicEndpointSpecOrRef, tfdiag.Diagnostics) {
+func ClusterPublicEndpointSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClusterPublicEndpointSpecOrRefOptionalResponse) (*tfmodel.ClusterPublicEndpointSpecOrRef, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -51,13 +51,13 @@ func ClusterPublicEndpointSpecOrRefAPIOptionalResponseToTFModel(ctx context.Cont
 	return &t, diags
 }
 
-func ClusterPublicEndpointSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterPublicEndpointSpecOrRef) (*apimodel.ClusterPublicEndpointSpecOrRefRequest, tfdiag.Diagnostics) {
+func ClusterPublicEndpointSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterPublicEndpointSpecOrRef) (*model.ClusterPublicEndpointSpecOrRefRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClusterPublicEndpointSpecOrRefRequest
+	var am model.ClusterPublicEndpointSpecOrRefRequest
 
 	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
 		refRef, err := vpc.ParseExternalAddressRef(ctx, plan.Ref.ValueString())
@@ -87,7 +87,7 @@ func ClusterPublicEndpointSpecOrRefTFToAPIRequestModel(ctx context.Context, plan
 	return &am, diags
 }
 
-func ClusterPublicEndpointSpecOrRefTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClusterPublicEndpointSpecOrRef) (*apimodel.UpdateClusterPublicEndpointSpecOrRefRequest, tfdiag.Diagnostics) {
+func ClusterPublicEndpointSpecOrRefTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClusterPublicEndpointSpecOrRef) (*model.UpdateClusterPublicEndpointSpecOrRefRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -96,7 +96,7 @@ func ClusterPublicEndpointSpecOrRefTFToAPIUpdateRequestModel(ctx context.Context
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateClusterPublicEndpointSpecOrRefRequest
+	var am model.UpdateClusterPublicEndpointSpecOrRefRequest
 
 	if !plan.Ref.Equal(state.Ref) {
 		if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {

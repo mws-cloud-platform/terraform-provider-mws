@@ -8,34 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/kms/model"
+	"go.mws.cloud/go-sdk/service/kms/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/kms/converter"
 )
 
 func TestCryptoKeyVersionAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.CryptoKeyVersionOptionalResponse{}
+	emptyApiModel := model.CryptoKeyVersionOptionalResponse{}
 	_, diags := conv.CryptoKeyVersionAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestCryptoKeyVersionOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.CryptoKeyVersionRequest{
-		Spec: apimodel.CryptoKeyVersionSpecRequest{},
-	}
-
-	emptyApiModelResponse, err := apimodel.CryptoKeyVersionRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.CryptoKeyVersionAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.CryptoKeyVersionTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.CryptoKeyVersionRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

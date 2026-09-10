@@ -8,87 +8,27 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
 func TestCommonRoleBindingFederationContextAttributeAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.CommonRoleBindingFederationContextAttribute{}
+	emptyApiModel := commonmodel.CommonRoleBindingFederationContextAttribute{}
 	_, diags := commonconv.CommonRoleBindingFederationContextAttributeAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestCommonRoleBindingFederationContextAttributeAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.CommonRoleBindingFederationContextAttributeResponse{}
+	emptyApiModel := commonmodel.CommonRoleBindingFederationContextAttributeResponse{}
 	_, diags := commonconv.CommonRoleBindingFederationContextAttributeAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestCommonRoleBindingFederationContextAttributeAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.CommonRoleBindingFederationContextAttributeOptionalResponse{}
+	emptyApiModel := commonmodel.CommonRoleBindingFederationContextAttributeOptionalResponse{}
 	_, diags := commonconv.CommonRoleBindingFederationContextAttributeAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestCommonRoleBindingFederationContextAttributeConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonapimodel.CommonRoleBindingFederationContextAttribute{
-		Name:  "name",
-		Value: "value",
-	}
-
-	tfModel, diags := commonconv.CommonRoleBindingFederationContextAttributeAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-
-	result, diags := commonconv.CommonRoleBindingFederationContextAttributeTFToAPIModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	require.Equal(t, emptyApiModel, *result)
-}
-
-func TestCommonRoleBindingFederationContextAttributeResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := commonapimodel.CommonRoleBindingFederationContextAttributeRequest{
-		Name:  "name",
-		Value: "value",
-	}
-
-	emptyApiModelResponse, err := commonapimodel.CommonRoleBindingFederationContextAttributeRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := commonconv.CommonRoleBindingFederationContextAttributeAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := commonconv.CommonRoleBindingFederationContextAttributeTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := commonapimodel.CommonRoleBindingFederationContextAttributeRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
-func TestCommonRoleBindingFederationContextAttributeOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := commonapimodel.CommonRoleBindingFederationContextAttributeRequest{
-		Name:  "name",
-		Value: "value",
-	}
-
-	emptyApiModelResponse, err := commonapimodel.CommonRoleBindingFederationContextAttributeRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := commonconv.CommonRoleBindingFederationContextAttributeAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := commonconv.CommonRoleBindingFederationContextAttributeTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := commonapimodel.CommonRoleBindingFederationContextAttributeRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

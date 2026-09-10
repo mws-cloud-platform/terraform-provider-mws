@@ -12,15 +12,15 @@ import (
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/pkg/apimodels/sensitive"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func KafkaUserAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaUserResponse) (*tfmodel.KafkaUser, tfdiag.Diagnostics) {
+func KafkaUserAPIResponseToTFModel(ctx context.Context, am *model.KafkaUserResponse) (*tfmodel.KafkaUser, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -104,13 +104,13 @@ func KafkaUserAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaUserRe
 	return &t, diags
 }
 
-func KafkaUserTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaUser) (*apimodel.KafkaUserRequest, tfdiag.Diagnostics) {
+func KafkaUserTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaUser) (*model.KafkaUserRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaUserRequest
+	var am model.KafkaUserRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfmodel.KafkaUserMetadata{}
@@ -140,7 +140,7 @@ func KafkaUserTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaUser) 
 			return nil, diags
 		}
 
-		am.Spec.Roles = make([]apimodel.KafkaClusterRoleRequest, 0, len(roles))
+		am.Spec.Roles = make([]model.KafkaClusterRoleRequest, 0, len(roles))
 
 		for _, entity := range roles {
 			tmp, d := KafkaClusterRoleTFToAPIRequestModel(ctx, &entity)
@@ -155,7 +155,7 @@ func KafkaUserTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaUser) 
 	return &am, diags
 }
 
-func KafkaUserTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaUser) (*apimodel.UpdateKafkaUserRequest, tfdiag.Diagnostics) {
+func KafkaUserTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaUser) (*model.UpdateKafkaUserRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -164,7 +164,7 @@ func KafkaUserTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateKafkaUserRequest
+	var am model.UpdateKafkaUserRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -198,7 +198,7 @@ func KafkaUserTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	if !plan.Password.Equal(state.Password) {
 		if !plan.Password.IsNull() && !plan.Password.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateKafkaUserSpecRequest{})
+				am.Spec.SetTo(model.UpdateKafkaUserSpecRequest{})
 			}
 			am.Spec.Value.Password.SetTo(sensitive.New(plan.Password.ValueString()))
 		}
@@ -207,7 +207,7 @@ func KafkaUserTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	if !plan.Roles.Equal(state.Roles) {
 		if !plan.Roles.IsNull() && !plan.Roles.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateKafkaUserSpecRequest{})
+				am.Spec.SetTo(model.UpdateKafkaUserSpecRequest{})
 			}
 			roles := make([]tfmodel.KafkaClusterRole, 0)
 			dRoles := plan.Roles.ElementsAs(ctx, &roles, false)
@@ -216,7 +216,7 @@ func KafkaUserTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 				return nil, diags
 			}
 
-			rolesTmp := make([]apimodel.UpdateKafkaClusterRoleRequest, 0, len(roles))
+			rolesTmp := make([]model.UpdateKafkaClusterRoleRequest, 0, len(roles))
 
 			for _, entity := range roles {
 				stateEntity := tfmodel.KafkaClusterRole{}
@@ -234,7 +234,7 @@ func KafkaUserTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	return &am, diags
 }
 
-func KafkaUserMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaUserMetadataResponse) (*tfmodel.KafkaUserMetadata, tfdiag.Diagnostics) {
+func KafkaUserMetadataAPIResponseToTFModel(ctx context.Context, am *model.KafkaUserMetadataResponse) (*tfmodel.KafkaUserMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -308,13 +308,13 @@ func KafkaUserMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.Kaf
 	return &t, diags
 }
 
-func KafkaUserMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaUserMetadata) (*apimodel.KafkaUserMetadataRequest, tfdiag.Diagnostics) {
+func KafkaUserMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaUserMetadata) (*model.KafkaUserMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaUserMetadataRequest
+	var am model.KafkaUserMetadataRequest
 
 	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
 		am.DisplayName = plan.DisplayName.ValueStringPointer()
@@ -328,7 +328,7 @@ func KafkaUserMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Kaf
 			return nil, diags
 		}
 
-		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
+		am.Usages = make([]commonmodel.TypedUsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
@@ -347,7 +347,7 @@ func KafkaUserMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Kaf
 	return &am, diags
 }
 
-func KafkaUserMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaUserMetadata) (*apimodel.UpdateKafkaUserMetadataRequest, tfdiag.Diagnostics) {
+func KafkaUserMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaUserMetadata) (*model.UpdateKafkaUserMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -356,7 +356,7 @@ func KafkaUserMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateKafkaUserMetadataRequest
+	var am model.UpdateKafkaUserMetadataRequest
 
 	if !plan.DisplayName.Equal(state.DisplayName) {
 		if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
@@ -373,7 +373,7 @@ func KafkaUserMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 				return nil, diags
 			}
 
-			usagesTmp := make([]commonapimodel.UpdateTypedUsageRequest, 0, len(usages))
+			usagesTmp := make([]commonmodel.UpdateTypedUsageRequest, 0, len(usages))
 
 			for _, entity := range usages {
 				stateEntity := tfcommon.TypedUsage{}

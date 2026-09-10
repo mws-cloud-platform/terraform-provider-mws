@@ -18,7 +18,7 @@ func (s *ClickhouseEndpoint) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"address": schema.SingleNestedAttribute{
 				Attributes:          new(ClickhouseEndpointAddressSpecOrRef).GetSchema().Attributes,
-				MarkdownDescription: `Описание адреса эндпоинта. Если указан "ref", будет использован существующий внутренний адрес VPC. Если указан "spec", будут созданы внутренние адреса в указанной подсети: для эндпоинта кластера или шарда — по одному адресу на эндпоинт, для эндпоинтов инстансов — по одному адресу на каждый эндпоинт каждого созданного инстанса`,
+				MarkdownDescription: `Описание адреса эндпоинта. Если указан "ref", будет использован существующий внутренний адрес VPC. Если указан "spec", будут созданы внутренние адреса в указанной подсети: для эндпоинта кластера или шарда — по одному адресу на эндпоинт, для эндпоинтов узлов — по одному адресу на каждый эндпоинт каждого созданного узла`,
 				Computed:            true,
 			},
 			"external_address": schema.SingleNestedAttribute{

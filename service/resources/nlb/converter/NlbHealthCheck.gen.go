@@ -11,12 +11,12 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/duration"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/nlb/model"
 )
 
-func NlbHealthCheckAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NlbHealthCheckOptionalResponse) (*tfmodel.NlbHealthCheck, tfdiag.Diagnostics) {
+func NlbHealthCheckAPIOptionalResponseToTFModel(ctx context.Context, am *model.NlbHealthCheckOptionalResponse) (*tfmodel.NlbHealthCheck, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -38,7 +38,11 @@ func NlbHealthCheckAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	}
 	t.Protocol = protocolTfObject
 
-	t.Interval = types.StringValue(ptr.Value(am.Interval.RawValue()))
+	if val, ok := am.Interval.Get(); ok {
+		t.Interval = types.StringValue(ptr.Value(val.RawValue()))
+	} else {
+		t.Interval = types.StringNull()
+	}
 
 	t.Timeout = types.StringValue(ptr.Value(am.Timeout.RawValue()))
 
@@ -57,13 +61,13 @@ func NlbHealthCheckAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func NlbHealthCheckTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbHealthCheck) (*apimodel.NlbHealthCheckRequest, tfdiag.Diagnostics) {
+func NlbHealthCheckTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbHealthCheck) (*model.NlbHealthCheckRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.NlbHealthCheckRequest
+	var am model.NlbHealthCheckRequest
 
 	if !plan.Protocol.IsNull() && !plan.Protocol.IsUnknown() {
 		protocolPlan := tfmodel.NlbHealthCheckProtocol{}
@@ -87,7 +91,7 @@ func NlbHealthCheckTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbHea
 			diags.AddError("Duration string parsing", err.Error())
 			return nil, diags
 		}
-		am.Interval = tmpInterval
+		am.Interval = &tmpInterval
 	}
 
 	if !plan.Timeout.IsNull() && !plan.Timeout.IsUnknown() {
@@ -110,7 +114,7 @@ func NlbHealthCheckTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbHea
 	return &am, diags
 }
 
-func NlbHealthCheckTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NlbHealthCheck) (*apimodel.UpdateNlbHealthCheckRequest, tfdiag.Diagnostics) {
+func NlbHealthCheckTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NlbHealthCheck) (*model.UpdateNlbHealthCheckRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -119,7 +123,7 @@ func NlbHealthCheckTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateNlbHealthCheckRequest
+	var am model.UpdateNlbHealthCheckRequest
 
 	if !plan.Protocol.Equal(state.Protocol) {
 		if !plan.Protocol.IsNull() && !plan.Protocol.IsUnknown() {

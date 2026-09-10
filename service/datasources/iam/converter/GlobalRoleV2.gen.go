@@ -8,14 +8,14 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/iam/model"
+	"go.mws.cloud/go-sdk/service/iam/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/iam/model"
 )
 
-func GlobalRoleV2APIResponseToTFModel(ctx context.Context, am *apimodel.GlobalRoleV2Response) (*tfmodel.GlobalRoleV2, tfdiag.Diagnostics) {
+func GlobalRoleV2APIResponseToTFModel(ctx context.Context, am *model.GlobalRoleV2Response) (*tfmodel.GlobalRoleV2, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

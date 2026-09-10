@@ -12,7 +12,7 @@ import (
 type Region struct {
 	Kind     types.String `tfsdk:"kind"`
 	Metadata types.Object `tfsdk:"metadata"`
-	Spec     types.String `tfsdk:"spec"`
+	Spec     RegionSpec   `tfsdk:"spec"`
 	Status   types.Object `tfsdk:"status"`
 }
 

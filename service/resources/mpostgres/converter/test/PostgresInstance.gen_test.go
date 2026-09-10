@@ -8,25 +8,25 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
 func TestPostgresInstanceAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.PostgresInstanceResponse{}
+	emptyApiModel := model.PostgresInstanceResponse{}
 	_, diags := conv.PostgresInstanceAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestPostgresInstanceResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.PostgresInstanceRequest{
+	emptyApiModelRequest := model.PostgresInstanceRequest{
 		Count: 0,
 	}
 
-	emptyApiModelResponse, err := apimodel.PostgresInstanceRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.PostgresInstanceRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.PostgresInstanceAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -35,7 +35,7 @@ func TestPostgresInstanceResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.PostgresInstanceTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.PostgresInstanceRequestToResponse(filledApiModelRequest)
+	result, err := model.PostgresInstanceRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -47,7 +47,7 @@ func TestUpdatePostgresInstanceRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.PostgresInstance
 	var stateTfModel tfmodel.PostgresInstance
 
-	expectedUpdateModel := &apimodel.UpdatePostgresInstanceRequest{}
+	expectedUpdateModel := &model.UpdatePostgresInstanceRequest{}
 
 	result, diags := conv.PostgresInstanceTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

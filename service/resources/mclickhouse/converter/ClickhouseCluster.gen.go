@@ -12,8 +12,8 @@ import (
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	jsonapimodels "go.mws.cloud/go-sdk/pkg/apimodels/json"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	"go.mws.cloud/go-sdk/service/resources/references/rm"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
@@ -21,7 +21,7 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func ClickhouseClusterAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseClusterOptionalResponse) (*tfmodel.ClickhouseCluster, tfdiag.Diagnostics) {
+func ClickhouseClusterAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseClusterOptionalResponse) (*tfmodel.ClickhouseCluster, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -246,13 +246,13 @@ func ClickhouseClusterAPIOptionalResponseToTFModel(ctx context.Context, am *apim
 	return &t, diags
 }
 
-func ClickhouseClusterTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseCluster) (*apimodel.ClickhouseClusterRequest, tfdiag.Diagnostics) {
+func ClickhouseClusterTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseCluster) (*model.ClickhouseClusterRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseClusterRequest
+	var am model.ClickhouseClusterRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfmodel.ClickhouseClusterMetadata{}
@@ -295,7 +295,7 @@ func ClickhouseClusterTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Cli
 			return nil, diags
 		}
 
-		am.Spec.Endpoints = make([]apimodel.ClickhouseEndpointRequest, 0, len(endpoints))
+		am.Spec.Endpoints = make([]model.ClickhouseEndpointRequest, 0, len(endpoints))
 
 		for _, entity := range endpoints {
 			tmp, d := ClickhouseEndpointTFToAPIRequestModel(ctx, &entity)
@@ -331,7 +331,7 @@ func ClickhouseClusterTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Cli
 			return nil, diags
 		}
 
-		am.Spec.Shards = make([]apimodel.ClickhouseClusterShardRequest, 0, len(shards))
+		am.Spec.Shards = make([]model.ClickhouseClusterShardRequest, 0, len(shards))
 
 		for _, entity := range shards {
 			tmp, d := ClickhouseClusterShardTFToAPIRequestModel(ctx, &entity)
@@ -425,7 +425,7 @@ func ClickhouseClusterTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Cli
 	return &am, diags
 }
 
-func ClickhouseClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseCluster) (*apimodel.UpdateClickhouseClusterRequest, tfdiag.Diagnostics) {
+func ClickhouseClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseCluster) (*model.UpdateClickhouseClusterRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -434,7 +434,7 @@ func ClickhouseClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateClickhouseClusterRequest
+	var am model.UpdateClickhouseClusterRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -468,7 +468,7 @@ func ClickhouseClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 	if !plan.Active.Equal(state.Active) {
 		if !plan.Active.IsNull() && !plan.Active.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateClickhouseClusterSpecRequest{})
+				am.Spec.SetTo(model.UpdateClickhouseClusterSpecRequest{})
 			}
 			am.Spec.Value.Active.SetTo(plan.Active.ValueBool())
 		}
@@ -477,7 +477,7 @@ func ClickhouseClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 	if !plan.Version.Equal(state.Version) {
 		if !plan.Version.IsNull() && !plan.Version.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateClickhouseClusterSpecRequest{})
+				am.Spec.SetTo(model.UpdateClickhouseClusterSpecRequest{})
 			}
 			am.Spec.Value.Version.SetTo(plan.Version.ValueString())
 		}
@@ -486,7 +486,7 @@ func ClickhouseClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 	if !plan.Region.Equal(state.Region) {
 		if !plan.Region.IsNull() && !plan.Region.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateClickhouseClusterSpecRequest{})
+				am.Spec.SetTo(model.UpdateClickhouseClusterSpecRequest{})
 			}
 			regionRef, err := rm.ParseRegionRef(ctx, plan.Region.ValueString())
 			if err != nil {
@@ -500,7 +500,7 @@ func ClickhouseClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 	if !plan.Endpoints.Equal(state.Endpoints) {
 		if !plan.Endpoints.IsNull() && !plan.Endpoints.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateClickhouseClusterSpecRequest{})
+				am.Spec.SetTo(model.UpdateClickhouseClusterSpecRequest{})
 			}
 			endpoints := make([]tfmodel.ClickhouseEndpoint, 0)
 			dEndpoints := plan.Endpoints.ElementsAs(ctx, &endpoints, false)
@@ -509,7 +509,7 @@ func ClickhouseClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 				return nil, diags
 			}
 
-			endpointsTmp := make([]apimodel.UpdateClickhouseEndpointRequest, 0, len(endpoints))
+			endpointsTmp := make([]model.UpdateClickhouseEndpointRequest, 0, len(endpoints))
 
 			for _, entity := range endpoints {
 				stateEntity := tfmodel.ClickhouseEndpoint{}
@@ -527,7 +527,7 @@ func ClickhouseClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 	if !plan.Coordinator.Equal(state.Coordinator) {
 		if !plan.Coordinator.IsNull() && !plan.Coordinator.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateClickhouseClusterSpecRequest{})
+				am.Spec.SetTo(model.UpdateClickhouseClusterSpecRequest{})
 			}
 			coordinatorPlan := tfmodel.ClickhouseClusterCoordinator{}
 			coordinatorPlanDiag := plan.Coordinator.As(ctx, &coordinatorPlan, basetypes.ObjectAsOptions{})
@@ -553,7 +553,7 @@ func ClickhouseClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 			am.Spec.Value.Coordinator.SetTo(*coordinatorTmp)
 		} else if plan.Coordinator.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateClickhouseClusterSpecRequest{})
+				am.Spec.SetTo(model.UpdateClickhouseClusterSpecRequest{})
 			}
 			am.Spec.Value.Coordinator.SetToNull()
 		}
@@ -562,7 +562,7 @@ func ClickhouseClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 	if !plan.Shards.Equal(state.Shards) {
 		if !plan.Shards.IsNull() && !plan.Shards.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateClickhouseClusterSpecRequest{})
+				am.Spec.SetTo(model.UpdateClickhouseClusterSpecRequest{})
 			}
 			shards := make([]tfmodel.ClickhouseClusterShard, 0)
 			dShards := plan.Shards.ElementsAs(ctx, &shards, false)
@@ -571,7 +571,7 @@ func ClickhouseClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 				return nil, diags
 			}
 
-			shardsTmp := make([]apimodel.UpdateClickhouseClusterShardRequest, 0, len(shards))
+			shardsTmp := make([]model.UpdateClickhouseClusterShardRequest, 0, len(shards))
 
 			for _, entity := range shards {
 				stateEntity := tfmodel.ClickhouseClusterShard{}
@@ -589,7 +589,7 @@ func ClickhouseClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 	if !plan.Config.Equal(state.Config) {
 		if !plan.Config.IsNull() && !plan.Config.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateClickhouseClusterSpecRequest{})
+				am.Spec.SetTo(model.UpdateClickhouseClusterSpecRequest{})
 			}
 			config := make(map[string]types.String)
 			dConfig := plan.Config.ElementsAs(ctx, &config, false)
@@ -610,7 +610,7 @@ func ClickhouseClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 	if !plan.Storage.Equal(state.Storage) {
 		if !plan.Storage.IsNull() && !plan.Storage.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateClickhouseClusterSpecRequest{})
+				am.Spec.SetTo(model.UpdateClickhouseClusterSpecRequest{})
 			}
 			storagePlan := tfmodel.ClickhouseStorageConfiguration{}
 			storagePlanDiag := plan.Storage.As(ctx, &storagePlan, basetypes.ObjectAsOptions{})
@@ -636,7 +636,7 @@ func ClickhouseClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 			am.Spec.Value.Storage.SetTo(*storageTmp)
 		} else if plan.Storage.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateClickhouseClusterSpecRequest{})
+				am.Spec.SetTo(model.UpdateClickhouseClusterSpecRequest{})
 			}
 			am.Spec.Value.Storage.SetToNull()
 		}
@@ -645,7 +645,7 @@ func ClickhouseClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 	if !plan.BootstrapAdmin.Equal(state.BootstrapAdmin) {
 		if !plan.BootstrapAdmin.IsNull() && !plan.BootstrapAdmin.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateClickhouseClusterSpecRequest{})
+				am.Spec.SetTo(model.UpdateClickhouseClusterSpecRequest{})
 			}
 			bootstrapAdminPlan := tfmodel.ClickhouseClusterBootstrapAdminSpec{}
 			bootstrapAdminPlanDiag := plan.BootstrapAdmin.As(ctx, &bootstrapAdminPlan, basetypes.ObjectAsOptions{})
@@ -675,7 +675,7 @@ func ClickhouseClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 	if !plan.Backup.Equal(state.Backup) {
 		if !plan.Backup.IsNull() && !plan.Backup.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateClickhouseClusterSpecRequest{})
+				am.Spec.SetTo(model.UpdateClickhouseClusterSpecRequest{})
 			}
 			backupPlan := tfmodel.ClickhouseClusterBackup{}
 			backupPlanDiag := plan.Backup.As(ctx, &backupPlan, basetypes.ObjectAsOptions{})
@@ -701,7 +701,7 @@ func ClickhouseClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 			am.Spec.Value.Backup.SetTo(*backupTmp)
 		} else if plan.Backup.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateClickhouseClusterSpecRequest{})
+				am.Spec.SetTo(model.UpdateClickhouseClusterSpecRequest{})
 			}
 			am.Spec.Value.Backup.SetToNull()
 		}
@@ -710,7 +710,7 @@ func ClickhouseClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 	if !plan.MaintenanceWindow.Equal(state.MaintenanceWindow) {
 		if !plan.MaintenanceWindow.IsNull() && !plan.MaintenanceWindow.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateClickhouseClusterSpecRequest{})
+				am.Spec.SetTo(model.UpdateClickhouseClusterSpecRequest{})
 			}
 			maintenanceWindowPlan := tfcommon.MaintenanceWindow{}
 			maintenanceWindowPlanDiag := plan.MaintenanceWindow.As(ctx, &maintenanceWindowPlan, basetypes.ObjectAsOptions{})
@@ -736,7 +736,7 @@ func ClickhouseClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 			am.Spec.Value.MaintenanceWindow.SetTo(*maintenanceWindowTmp)
 		} else if plan.MaintenanceWindow.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateClickhouseClusterSpecRequest{})
+				am.Spec.SetTo(model.UpdateClickhouseClusterSpecRequest{})
 			}
 			am.Spec.Value.MaintenanceWindow.SetToNull()
 		}
@@ -745,7 +745,7 @@ func ClickhouseClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 	return &am, diags
 }
 
-func ClickhouseClusterMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseClusterMetadataOptionalResponse) (*tfmodel.ClickhouseClusterMetadata, tfdiag.Diagnostics) {
+func ClickhouseClusterMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseClusterMetadataOptionalResponse) (*tfmodel.ClickhouseClusterMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -819,13 +819,13 @@ func ClickhouseClusterMetadataAPIOptionalResponseToTFModel(ctx context.Context, 
 	return &t, diags
 }
 
-func ClickhouseClusterMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterMetadata) (*apimodel.ClickhouseClusterMetadataRequest, tfdiag.Diagnostics) {
+func ClickhouseClusterMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterMetadata) (*model.ClickhouseClusterMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseClusterMetadataRequest
+	var am model.ClickhouseClusterMetadataRequest
 
 	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
 		am.DisplayName = plan.DisplayName.ValueStringPointer()
@@ -839,7 +839,7 @@ func ClickhouseClusterMetadataTFToAPIRequestModel(ctx context.Context, plan *tfm
 			return nil, diags
 		}
 
-		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
+		am.Usages = make([]commonmodel.TypedUsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
@@ -858,7 +858,7 @@ func ClickhouseClusterMetadataTFToAPIRequestModel(ctx context.Context, plan *tfm
 	return &am, diags
 }
 
-func ClickhouseClusterMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseClusterMetadata) (*apimodel.UpdateClickhouseClusterMetadataRequest, tfdiag.Diagnostics) {
+func ClickhouseClusterMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseClusterMetadata) (*model.UpdateClickhouseClusterMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -867,7 +867,7 @@ func ClickhouseClusterMetadataTFToAPIUpdateRequestModel(ctx context.Context, pla
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateClickhouseClusterMetadataRequest
+	var am model.UpdateClickhouseClusterMetadataRequest
 
 	if !plan.DisplayName.Equal(state.DisplayName) {
 		if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
@@ -884,7 +884,7 @@ func ClickhouseClusterMetadataTFToAPIUpdateRequestModel(ctx context.Context, pla
 				return nil, diags
 			}
 
-			usagesTmp := make([]commonapimodel.UpdateTypedUsageRequest, 0, len(usages))
+			usagesTmp := make([]commonmodel.UpdateTypedUsageRequest, 0, len(usages))
 
 			for _, entity := range usages {
 				stateEntity := tfcommon.TypedUsage{}

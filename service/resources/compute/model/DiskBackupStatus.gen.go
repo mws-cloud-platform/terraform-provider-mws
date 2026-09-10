@@ -18,13 +18,13 @@ type DiskBackupStatus struct {
 	SourceExists       types.Bool   `tfsdk:"source_exists"`
 	MinDiskSize        types.String `tfsdk:"min_disk_size"`
 	InitialSourceImage types.String `tfsdk:"initial_source_image"`
-	OsType             OsType2      `tfsdk:"os_type"`
+	OsType             OsType       `tfsdk:"os_type"`
 	Encryption         types.Object `tfsdk:"encryption"`
 }
 
 func (s *DiskBackupStatus) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Статус глобальной резервной копии диска`,
+		MarkdownDescription: `Статус резервной копии диска`,
 		Attributes: map[string]schema.Attribute{
 			"ready": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.ResourceStatusReady).GetSchema().Attributes,

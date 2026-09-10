@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/nlb/model"
 )
 
-func NlbStatusRuleAPIResponseToTFModel(ctx context.Context, am *apimodel.NlbStatusRuleResponse) (*tfmodel.NlbStatusRule, tfdiag.Diagnostics) {
+func NlbStatusRuleAPIResponseToTFModel(ctx context.Context, am *model.NlbStatusRuleResponse) (*tfmodel.NlbStatusRule, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

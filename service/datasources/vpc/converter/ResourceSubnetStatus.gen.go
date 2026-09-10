@@ -9,11 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/model"
 )
 
-func ResourceSubnetStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.ResourceSubnetStatusResponse) (*tfmodel.ResourceSubnetStatus, tfdiag.Diagnostics) {
+func ResourceSubnetStatusAPIResponseToTFModel(ctx context.Context, am *model.ResourceSubnetStatusResponse) (*tfmodel.ResourceSubnetStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

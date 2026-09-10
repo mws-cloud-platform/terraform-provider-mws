@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func EgressNatAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.EgressNatOptionalResponse) (*tfmodel.EgressNat, tfdiag.Diagnostics) {
+func EgressNatAPIOptionalResponseToTFModel(ctx context.Context, am *model.EgressNatOptionalResponse) (*tfmodel.EgressNat, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -115,13 +115,13 @@ func EgressNatAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Egr
 	return &t, diags
 }
 
-func EgressNatTFToAPIRequestModel(ctx context.Context, plan *tfmodel.EgressNat) (*apimodel.EgressNatRequest, tfdiag.Diagnostics) {
+func EgressNatTFToAPIRequestModel(ctx context.Context, plan *tfmodel.EgressNat) (*model.EgressNatRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.EgressNatRequest
+	var am model.EgressNatRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
@@ -190,7 +190,7 @@ func EgressNatTFToAPIRequestModel(ctx context.Context, plan *tfmodel.EgressNat) 
 	return &am, diags
 }
 
-func EgressNatTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.EgressNat) (*apimodel.UpdateEgressNatRequest, tfdiag.Diagnostics) {
+func EgressNatTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.EgressNat) (*model.UpdateEgressNatRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -199,7 +199,7 @@ func EgressNatTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateEgressNatRequest
+	var am model.UpdateEgressNatRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -233,7 +233,7 @@ func EgressNatTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	if !plan.Internal.Equal(state.Internal) {
 		if !plan.Internal.IsNull() && !plan.Internal.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateEgressNatSpecRequest{})
+				am.Spec.SetTo(model.UpdateEgressNatSpecRequest{})
 			}
 			internalPlan := tfmodel.EgressNatSpecInternal{}
 			internalPlanDiag := plan.Internal.As(ctx, &internalPlan, basetypes.ObjectAsOptions{})
@@ -263,7 +263,7 @@ func EgressNatTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	if !plan.External.Equal(state.External) {
 		if !plan.External.IsNull() && !plan.External.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateEgressNatSpecRequest{})
+				am.Spec.SetTo(model.UpdateEgressNatSpecRequest{})
 			}
 			externalPlan := tfmodel.EgressNatSpecExternal{}
 			externalPlanDiag := plan.External.As(ctx, &externalPlan, basetypes.ObjectAsOptions{})
@@ -293,7 +293,7 @@ func EgressNatTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	if !plan.PortAllocation.Equal(state.PortAllocation) {
 		if !plan.PortAllocation.IsNull() && !plan.PortAllocation.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateEgressNatSpecRequest{})
+				am.Spec.SetTo(model.UpdateEgressNatSpecRequest{})
 			}
 			portAllocationPlan := tfmodel.EgressNatSpecPortAllocation{}
 			portAllocationPlanDiag := plan.PortAllocation.As(ctx, &portAllocationPlan, basetypes.ObjectAsOptions{})
@@ -319,7 +319,7 @@ func EgressNatTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 			am.Spec.Value.PortAllocation.SetTo(*portAllocationTmp)
 		} else if plan.PortAllocation.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateEgressNatSpecRequest{})
+				am.Spec.SetTo(model.UpdateEgressNatSpecRequest{})
 			}
 			am.Spec.Value.PortAllocation.SetToNull()
 		}

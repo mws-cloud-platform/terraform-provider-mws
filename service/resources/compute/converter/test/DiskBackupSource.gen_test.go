@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
@@ -18,16 +18,16 @@ import (
 
 func TestDiskBackupSourceAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.DiskBackupSourceOptionalResponse{}
+	emptyApiModel := model.DiskBackupSourceOptionalResponse{}
 	_, diags := conv.DiskBackupSourceAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestDiskBackupSourceOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.DiskBackupSourceRequest{}
+	emptyApiModelRequest := model.DiskBackupSourceRequest{}
 
-	emptyApiModelResponse, err := apimodel.DiskBackupSourceRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.DiskBackupSourceRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.DiskBackupSourceAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -36,7 +36,7 @@ func TestDiskBackupSourceOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.DiskBackupSourceTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.DiskBackupSourceRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.DiskBackupSourceRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -49,8 +49,8 @@ func TestUpdateDiskBackupSourceRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.DiskBackupSource
 	stateTfModel.Disk = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.DiskBackupSourceDisk).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateDiskBackupSourceRequest{
-		Disk: optional.OptionalNil[apimodel.UpdateDiskBackupSourceDiskRequest]{
+	expectedUpdateModel := &model.UpdateDiskBackupSourceRequest{
+		Disk: optional.OptionalNil[model.UpdateDiskBackupSourceDiskRequest]{
 			Set:  true,
 			Null: true,
 		},
@@ -64,18 +64,18 @@ func TestUpdateDiskBackupSourceRequestConverters(t *testing.T) {
 
 func TestDiskBackupSourceDiskAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.DiskBackupSourceDiskOptionalResponse{}
+	emptyApiModel := model.DiskBackupSourceDiskOptionalResponse{}
 	_, diags := conv.DiskBackupSourceDiskAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestDiskBackupSourceDiskOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.DiskBackupSourceDiskRequest{
+	emptyApiModelRequest := model.DiskBackupSourceDiskRequest{
 		Id: compute.NewMustDiskRef("projectID", "diskID"),
 	}
 
-	emptyApiModelResponse, err := apimodel.DiskBackupSourceDiskRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.DiskBackupSourceDiskRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.DiskBackupSourceDiskAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -84,7 +84,7 @@ func TestDiskBackupSourceDiskOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.DiskBackupSourceDiskTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.DiskBackupSourceDiskRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.DiskBackupSourceDiskRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -96,7 +96,7 @@ func TestUpdateDiskBackupSourceDiskRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.DiskBackupSourceDisk
 	var stateTfModel tfmodel.DiskBackupSourceDisk
 
-	expectedUpdateModel := &apimodel.UpdateDiskBackupSourceDiskRequest{}
+	expectedUpdateModel := &model.UpdateDiskBackupSourceDiskRequest{}
 
 	result, diags := conv.DiskBackupSourceDiskTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

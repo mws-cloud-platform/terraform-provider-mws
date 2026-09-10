@@ -8,13 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
 )
 
 func TestPostgresClusterStatusInstanceTemplateDataDiskAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.PostgresClusterStatusInstanceTemplateDataDiskResponse{}
+	emptyApiModel := model.PostgresClusterStatusInstanceTemplateDataDiskResponse{}
 	_, diags := conv.PostgresClusterStatusInstanceTemplateDataDiskAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }

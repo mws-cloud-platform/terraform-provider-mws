@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
@@ -16,18 +16,18 @@ import (
 
 func TestPostgresNetworkAddressSpecAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.PostgresNetworkAddressSpecResponse{}
+	emptyApiModel := model.PostgresNetworkAddressSpecResponse{}
 	_, diags := conv.PostgresNetworkAddressSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestPostgresNetworkAddressSpecResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.PostgresNetworkAddressSpecRequest{
+	emptyApiModelRequest := model.PostgresNetworkAddressSpecRequest{
 		Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
 	}
 
-	emptyApiModelResponse, err := apimodel.PostgresNetworkAddressSpecRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.PostgresNetworkAddressSpecRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.PostgresNetworkAddressSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -36,7 +36,7 @@ func TestPostgresNetworkAddressSpecResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.PostgresNetworkAddressSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.PostgresNetworkAddressSpecRequestToResponse(filledApiModelRequest)
+	result, err := model.PostgresNetworkAddressSpecRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -48,7 +48,7 @@ func TestUpdatePostgresNetworkAddressSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.PostgresNetworkAddressSpec
 	var stateTfModel tfmodel.PostgresNetworkAddressSpec
 
-	expectedUpdateModel := &apimodel.UpdatePostgresNetworkAddressSpecRequest{}
+	expectedUpdateModel := &model.UpdatePostgresNetworkAddressSpecRequest{}
 
 	result, diags := conv.PostgresNetworkAddressSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

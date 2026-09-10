@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/nlb/model"
 )
 
-func NlbListenerInternalAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NlbListenerInternalOptionalResponse) (*tfmodel.NlbListenerInternal, tfdiag.Diagnostics) {
+func NlbListenerInternalAPIOptionalResponseToTFModel(ctx context.Context, am *model.NlbListenerInternalOptionalResponse) (*tfmodel.NlbListenerInternal, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -41,13 +41,13 @@ func NlbListenerInternalAPIOptionalResponseToTFModel(ctx context.Context, am *ap
 	return &t, diags
 }
 
-func NlbListenerInternalTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbListenerInternal) (*apimodel.NlbListenerInternalRequest, tfdiag.Diagnostics) {
+func NlbListenerInternalTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbListenerInternal) (*model.NlbListenerInternalRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.NlbListenerInternalRequest
+	var am model.NlbListenerInternalRequest
 
 	if !plan.Address.IsNull() && !plan.Address.IsUnknown() {
 		addressPlan := tfcommon.ResourceAddressSpecOrRef{}
@@ -68,7 +68,7 @@ func NlbListenerInternalTFToAPIRequestModel(ctx context.Context, plan *tfmodel.N
 	return &am, diags
 }
 
-func NlbListenerInternalTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NlbListenerInternal) (*apimodel.UpdateNlbListenerInternalRequest, tfdiag.Diagnostics) {
+func NlbListenerInternalTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NlbListenerInternal) (*model.UpdateNlbListenerInternalRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -77,7 +77,7 @@ func NlbListenerInternalTFToAPIUpdateRequestModel(ctx context.Context, plan, sta
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateNlbListenerInternalRequest
+	var am model.UpdateNlbListenerInternalRequest
 
 	if !plan.Address.Equal(state.Address) {
 		if !plan.Address.IsNull() && !plan.Address.IsUnknown() {

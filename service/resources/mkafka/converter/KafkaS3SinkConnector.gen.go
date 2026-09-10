@@ -10,12 +10,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func KafkaS3SinkConnectorAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.KafkaS3SinkConnectorOptionalResponse) (*tfmodel.KafkaS3SinkConnector, tfdiag.Diagnostics) {
+func KafkaS3SinkConnectorAPIOptionalResponseToTFModel(ctx context.Context, am *model.KafkaS3SinkConnectorOptionalResponse) (*tfmodel.KafkaS3SinkConnector, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -121,13 +121,13 @@ func KafkaS3SinkConnectorAPIOptionalResponseToTFModel(ctx context.Context, am *a
 	return &t, diags
 }
 
-func KafkaS3SinkConnectorTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaS3SinkConnector) (*apimodel.KafkaS3SinkConnectorRequest, tfdiag.Diagnostics) {
+func KafkaS3SinkConnectorTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaS3SinkConnector) (*model.KafkaS3SinkConnectorRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaS3SinkConnectorRequest
+	var am model.KafkaS3SinkConnectorRequest
 
 	if !plan.Topics.IsNull() && !plan.Topics.IsUnknown() {
 		am.Topics = plan.Topics.ValueStringPointer()
@@ -158,15 +158,15 @@ func KafkaS3SinkConnectorTFToAPIRequestModel(ctx context.Context, plan *tfmodel.
 	}
 
 	if !plan.InputFormat.IsNull() && !plan.InputFormat.IsUnknown() {
-		am.InputFormat = ptr.Get(apimodel.KafkaS3SinkConnectorInputFormatRequest(plan.InputFormat.ValueString()))
+		am.InputFormat = ptr.Get(model.KafkaS3SinkConnectorInputFormatRequest(plan.InputFormat.ValueString()))
 	}
 
 	if !plan.OutputFormat.IsNull() && !plan.OutputFormat.IsUnknown() {
-		am.OutputFormat = ptr.Get(apimodel.KafkaS3SinkConnectorOutputFormatRequest(plan.OutputFormat.ValueString()))
+		am.OutputFormat = ptr.Get(model.KafkaS3SinkConnectorOutputFormatRequest(plan.OutputFormat.ValueString()))
 	}
 
 	if !plan.FileCompressionType.IsNull() && !plan.FileCompressionType.IsUnknown() {
-		am.FileCompressionType = ptr.Get(apimodel.KafkaS3SinkConnectorFileCompressionTypeRequest(plan.FileCompressionType.ValueString()))
+		am.FileCompressionType = ptr.Get(model.KafkaS3SinkConnectorFileCompressionTypeRequest(plan.FileCompressionType.ValueString()))
 	}
 
 	if !plan.OutputFields.IsNull() && !plan.OutputFields.IsUnknown() {
@@ -177,7 +177,7 @@ func KafkaS3SinkConnectorTFToAPIRequestModel(ctx context.Context, plan *tfmodel.
 			return nil, diags
 		}
 
-		am.OutputFields = make([]apimodel.KafkaConnectorOutputFields, 0, len(outputFields))
+		am.OutputFields = make([]model.KafkaConnectorOutputFields, 0, len(outputFields))
 
 		for _, entity := range outputFields {
 			tmp, d := KafkaConnectorOutputFieldsTFToAPIModel(ctx, entity)
@@ -194,7 +194,7 @@ func KafkaS3SinkConnectorTFToAPIRequestModel(ctx context.Context, plan *tfmodel.
 	}
 
 	if !plan.ErrorHandling.IsNull() && !plan.ErrorHandling.IsUnknown() {
-		am.ErrorHandling = ptr.Get(apimodel.KafkaS3SinkConnectorErrorHandlingRequest(plan.ErrorHandling.ValueString()))
+		am.ErrorHandling = ptr.Get(model.KafkaS3SinkConnectorErrorHandlingRequest(plan.ErrorHandling.ValueString()))
 	}
 
 	if !plan.DlqTopic.IsNull() && !plan.DlqTopic.IsUnknown() {
@@ -204,7 +204,7 @@ func KafkaS3SinkConnectorTFToAPIRequestModel(ctx context.Context, plan *tfmodel.
 	return &am, diags
 }
 
-func KafkaS3SinkConnectorTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaS3SinkConnector) (*apimodel.UpdateKafkaS3SinkConnectorRequest, tfdiag.Diagnostics) {
+func KafkaS3SinkConnectorTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaS3SinkConnector) (*model.UpdateKafkaS3SinkConnectorRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -213,7 +213,7 @@ func KafkaS3SinkConnectorTFToAPIUpdateRequestModel(ctx context.Context, plan, st
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateKafkaS3SinkConnectorRequest
+	var am model.UpdateKafkaS3SinkConnectorRequest
 
 	if !plan.Topics.Equal(state.Topics) {
 		if !plan.Topics.IsNull() && !plan.Topics.IsUnknown() {
@@ -264,19 +264,19 @@ func KafkaS3SinkConnectorTFToAPIUpdateRequestModel(ctx context.Context, plan, st
 
 	if !plan.InputFormat.Equal(state.InputFormat) {
 		if !plan.InputFormat.IsNull() && !plan.InputFormat.IsUnknown() {
-			am.InputFormat.SetTo(apimodel.KafkaS3SinkConnectorInputFormatRequest(plan.InputFormat.ValueString()))
+			am.InputFormat.SetTo(model.KafkaS3SinkConnectorInputFormatRequest(plan.InputFormat.ValueString()))
 		}
 	}
 
 	if !plan.OutputFormat.Equal(state.OutputFormat) {
 		if !plan.OutputFormat.IsNull() && !plan.OutputFormat.IsUnknown() {
-			am.OutputFormat.SetTo(apimodel.KafkaS3SinkConnectorOutputFormatRequest(plan.OutputFormat.ValueString()))
+			am.OutputFormat.SetTo(model.KafkaS3SinkConnectorOutputFormatRequest(plan.OutputFormat.ValueString()))
 		}
 	}
 
 	if !plan.FileCompressionType.Equal(state.FileCompressionType) {
 		if !plan.FileCompressionType.IsNull() && !plan.FileCompressionType.IsUnknown() {
-			am.FileCompressionType.SetTo(apimodel.KafkaS3SinkConnectorFileCompressionTypeRequest(plan.FileCompressionType.ValueString()))
+			am.FileCompressionType.SetTo(model.KafkaS3SinkConnectorFileCompressionTypeRequest(plan.FileCompressionType.ValueString()))
 		}
 	}
 
@@ -289,7 +289,7 @@ func KafkaS3SinkConnectorTFToAPIUpdateRequestModel(ctx context.Context, plan, st
 				return nil, diags
 			}
 
-			outputFieldsTmp := make([]apimodel.KafkaConnectorOutputFields, 0, len(outputFields))
+			outputFieldsTmp := make([]model.KafkaConnectorOutputFields, 0, len(outputFields))
 
 			for _, entity := range outputFields {
 				tmp, d := KafkaConnectorOutputFieldsTFToAPIModel(ctx, entity)
@@ -311,7 +311,7 @@ func KafkaS3SinkConnectorTFToAPIUpdateRequestModel(ctx context.Context, plan, st
 
 	if !plan.ErrorHandling.Equal(state.ErrorHandling) {
 		if !plan.ErrorHandling.IsNull() && !plan.ErrorHandling.IsUnknown() {
-			am.ErrorHandling.SetTo(apimodel.KafkaS3SinkConnectorErrorHandlingRequest(plan.ErrorHandling.ValueString()))
+			am.ErrorHandling.SetTo(model.KafkaS3SinkConnectorErrorHandlingRequest(plan.ErrorHandling.ValueString()))
 		}
 	}
 

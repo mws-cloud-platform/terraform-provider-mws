@@ -91,13 +91,3 @@ func (s *ServiceAccountMetadata) GetSchema() schema.Schema {
 		},
 	}
 }
-
-type ServiceAccountSpec struct {
-}
-
-func (s *ServiceAccountSpec) GetSchema() schema.Schema {
-	return schema.Schema{
-		MarkdownDescription: `Представление поля Spec анонимного типа структуры ServiceAccount`,
-		Attributes:          map[string]schema.Attribute{},
-	}
-}

@@ -31,7 +31,7 @@ type NodeGroupStatus struct {
 
 func (s *NodeGroupStatus) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Описывает статусную модель групп узлов Kubernetes.`,
+		MarkdownDescription: `Описывает статусную модель групп узлов Kubernetes`,
 		Attributes: map[string]schema.Attribute{
 			"ready": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.ResourceStatusReady).GetSchema().Attributes,

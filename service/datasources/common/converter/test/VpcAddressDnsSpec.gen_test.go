@@ -7,92 +7,28 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"go.mws.cloud/go-sdk/pkg/apimodels/units/duration"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
 func TestVpcAddressDnsSpecAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.VpcAddressDnsSpec{}
+	emptyApiModel := commonmodel.VpcAddressDnsSpec{}
 	_, diags := commonconv.VpcAddressDnsSpecAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestVpcAddressDnsSpecAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.VpcAddressDnsSpecResponse{}
+	emptyApiModel := commonmodel.VpcAddressDnsSpecResponse{}
 	_, diags := commonconv.VpcAddressDnsSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestVpcAddressDnsSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.VpcAddressDnsSpecOptionalResponse{}
+	emptyApiModel := commonmodel.VpcAddressDnsSpecOptionalResponse{}
 	_, diags := commonconv.VpcAddressDnsSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestVpcAddressDnsSpecConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonapimodel.VpcAddressDnsSpec{
-		Name: "name",
-		Ttl:  duration.MustParseString("PT0S"),
-		Ptr:  false,
-	}
-
-	tfModel, diags := commonconv.VpcAddressDnsSpecAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-
-	result, diags := commonconv.VpcAddressDnsSpecTFToAPIModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	require.Equal(t, emptyApiModel, *result)
-}
-
-func TestVpcAddressDnsSpecResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := commonapimodel.VpcAddressDnsSpecRequest{
-		Name: "name",
-		Ttl:  duration.MustParseString("PT0S"),
-		Ptr:  false,
-	}
-
-	emptyApiModelResponse, err := commonapimodel.VpcAddressDnsSpecRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := commonconv.VpcAddressDnsSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := commonconv.VpcAddressDnsSpecTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := commonapimodel.VpcAddressDnsSpecRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
-func TestVpcAddressDnsSpecOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := commonapimodel.VpcAddressDnsSpecRequest{
-		Name: "name",
-		Ttl:  duration.MustParseString("PT0S"),
-		Ptr:  false,
-	}
-
-	emptyApiModelResponse, err := commonapimodel.VpcAddressDnsSpecRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := commonconv.VpcAddressDnsSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := commonconv.VpcAddressDnsSpecTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := commonapimodel.VpcAddressDnsSpecRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

@@ -10,11 +10,11 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func ClickhouseStorageConfigurationAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseStorageConfigurationOptionalResponse) (*tfmodel.ClickhouseStorageConfiguration, tfdiag.Diagnostics) {
+func ClickhouseStorageConfigurationAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseStorageConfigurationOptionalResponse) (*tfmodel.ClickhouseStorageConfiguration, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -55,7 +55,7 @@ func ClickhouseStorageConfigurationAPIOptionalResponseToTFModel(ctx context.Cont
 	return &t, diags
 }
 
-func ClickhouseStorageConfigurationAPIResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseStorageConfigurationResponse) (*tfmodel.ClickhouseStorageConfiguration, tfdiag.Diagnostics) {
+func ClickhouseStorageConfigurationAPIResponseToTFModel(ctx context.Context, am *model.ClickhouseStorageConfigurationResponse) (*tfmodel.ClickhouseStorageConfiguration, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -96,13 +96,13 @@ func ClickhouseStorageConfigurationAPIResponseToTFModel(ctx context.Context, am 
 	return &t, diags
 }
 
-func ClickhouseStorageConfigurationTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseStorageConfiguration) (*apimodel.ClickhouseStorageConfigurationRequest, tfdiag.Diagnostics) {
+func ClickhouseStorageConfigurationTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseStorageConfiguration) (*model.ClickhouseStorageConfigurationRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseStorageConfigurationRequest
+	var am model.ClickhouseStorageConfigurationRequest
 
 	if !plan.HybridStorageEnabled.IsNull() && !plan.HybridStorageEnabled.IsUnknown() {
 		am.HybridStorageEnabled = plan.HybridStorageEnabled.ValueBoolPointer()
@@ -137,7 +137,7 @@ func ClickhouseStorageConfigurationTFToAPIRequestModel(ctx context.Context, plan
 	return &am, diags
 }
 
-func ClickhouseStorageConfigurationTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseStorageConfiguration) (*apimodel.UpdateClickhouseStorageConfigurationRequest, tfdiag.Diagnostics) {
+func ClickhouseStorageConfigurationTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseStorageConfiguration) (*model.UpdateClickhouseStorageConfigurationRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -146,7 +146,7 @@ func ClickhouseStorageConfigurationTFToAPIUpdateRequestModel(ctx context.Context
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateClickhouseStorageConfigurationRequest
+	var am model.UpdateClickhouseStorageConfigurationRequest
 
 	if !plan.HybridStorageEnabled.Equal(state.HybridStorageEnabled) {
 		if !plan.HybridStorageEnabled.IsNull() && !plan.HybridStorageEnabled.IsUnknown() {

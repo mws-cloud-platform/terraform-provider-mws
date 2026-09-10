@@ -8,39 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
 func TestFirewallRuleAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.FirewallRuleOptionalResponse{}
+	emptyApiModel := model.FirewallRuleOptionalResponse{}
 	_, diags := conv.FirewallRuleAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestFirewallRuleOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.FirewallRuleRequest{
-		Spec: apimodel.FirewallRuleSpecRequest{
-			Direction:   "",
-			Action:      "",
-			Source:      apimodel.FirewallRuleSourceRequest{},
-			Destination: apimodel.FirewallRuleDestinationRequest{},
-		},
-	}
-
-	emptyApiModelResponse, err := apimodel.FirewallRuleRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.FirewallRuleAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.FirewallRuleTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.FirewallRuleRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

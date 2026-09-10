@@ -8,26 +8,26 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
 func TestOneToOneNatSpecInternalAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.OneToOneNatSpecInternalOptionalResponse{}
+	emptyApiModel := model.OneToOneNatSpecInternalOptionalResponse{}
 	_, diags := conv.OneToOneNatSpecInternalAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestOneToOneNatSpecInternalOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.OneToOneNatSpecInternalRequest{
-		Address: commonapimodel.ResourceAddressSpecOrRefRequest{},
+	emptyApiModelRequest := model.OneToOneNatSpecInternalRequest{
+		Address: commonmodel.ResourceAddressSpecOrRefRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.OneToOneNatSpecInternalRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.OneToOneNatSpecInternalRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.OneToOneNatSpecInternalAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -36,7 +36,7 @@ func TestOneToOneNatSpecInternalOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.OneToOneNatSpecInternalTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.OneToOneNatSpecInternalRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.OneToOneNatSpecInternalRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -48,7 +48,7 @@ func TestUpdateOneToOneNatSpecInternalRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.OneToOneNatSpecInternal
 	var stateTfModel tfmodel.OneToOneNatSpecInternal
 
-	expectedUpdateModel := &apimodel.UpdateOneToOneNatSpecInternalRequest{}
+	expectedUpdateModel := &model.UpdateOneToOneNatSpecInternalRequest{}
 
 	result, diags := conv.OneToOneNatSpecInternalTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

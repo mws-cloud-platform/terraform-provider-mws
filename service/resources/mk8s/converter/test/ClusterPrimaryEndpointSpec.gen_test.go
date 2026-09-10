@@ -11,7 +11,7 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/ipaddress"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
@@ -19,18 +19,18 @@ import (
 
 func TestClusterPrimaryEndpointSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClusterPrimaryEndpointSpecOptionalResponse{}
+	emptyApiModel := model.ClusterPrimaryEndpointSpecOptionalResponse{}
 	_, diags := conv.ClusterPrimaryEndpointSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClusterPrimaryEndpointSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.ClusterPrimaryEndpointSpecRequest{
+	emptyApiModelRequest := model.ClusterPrimaryEndpointSpecRequest{
 		Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
 	}
 
-	emptyApiModelResponse, err := apimodel.ClusterPrimaryEndpointSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.ClusterPrimaryEndpointSpecRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.ClusterPrimaryEndpointSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -39,7 +39,7 @@ func TestClusterPrimaryEndpointSpecOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.ClusterPrimaryEndpointSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.ClusterPrimaryEndpointSpecRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.ClusterPrimaryEndpointSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -52,7 +52,7 @@ func TestUpdateClusterPrimaryEndpointSpecRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.ClusterPrimaryEndpointSpec
 	stateTfModel.IpAddress = types.StringValue("")
 
-	expectedUpdateModel := &apimodel.UpdateClusterPrimaryEndpointSpecRequest{
+	expectedUpdateModel := &model.UpdateClusterPrimaryEndpointSpecRequest{
 		IpAddress: optional.OptionalNil[ipaddress.IP4Address]{
 			Set:  true,
 			Null: true,

@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/model"
 )
 
-func NodeGroupStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.NodeGroupStatusResponse) (*tfmodel.NodeGroupStatus, tfdiag.Diagnostics) {
+func NodeGroupStatusAPIResponseToTFModel(ctx context.Context, am *model.NodeGroupStatusResponse) (*tfmodel.NodeGroupStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -260,7 +260,7 @@ func NodeGroupStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.NodeG
 	return &t, diags
 }
 
-func NodeGroupStatusNodeGroupStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.NodeGroupStatusNodeGroupStatusResponse) (*tfmodel.NodeGroupStatusNodeGroupStatus, tfdiag.Diagnostics) {
+func NodeGroupStatusNodeGroupStatusAPIResponseToTFModel(ctx context.Context, am *model.NodeGroupStatusNodeGroupStatusResponse) (*tfmodel.NodeGroupStatusNodeGroupStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -283,7 +283,7 @@ func NodeGroupStatusNodeGroupStatusAPIResponseToTFModel(ctx context.Context, am 
 	return &t, diags
 }
 
-func NodeGroupStatusRolloutStrategyAPIResponseToTFModel(ctx context.Context, am *apimodel.NodeGroupStatusRolloutStrategyResponse) (*tfmodel.NodeGroupStatusRolloutStrategy, tfdiag.Diagnostics) {
+func NodeGroupStatusRolloutStrategyAPIResponseToTFModel(ctx context.Context, am *model.NodeGroupStatusRolloutStrategyResponse) (*tfmodel.NodeGroupStatusRolloutStrategy, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -298,7 +298,7 @@ func NodeGroupStatusRolloutStrategyAPIResponseToTFModel(ctx context.Context, am 
 	return &t, diags
 }
 
-func NodeGroupStatusScaleAPIResponseToTFModel(ctx context.Context, am *apimodel.NodeGroupStatusScaleResponse) (*tfmodel.NodeGroupStatusScale, tfdiag.Diagnostics) {
+func NodeGroupStatusScaleAPIResponseToTFModel(ctx context.Context, am *model.NodeGroupStatusScaleResponse) (*tfmodel.NodeGroupStatusScale, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -333,7 +333,7 @@ func NodeGroupStatusScaleAPIResponseToTFModel(ctx context.Context, am *apimodel.
 	return &t, diags
 }
 
-func NodeGroupStatusScaleAutoscalingAPIResponseToTFModel(ctx context.Context, am *apimodel.NodeGroupStatusScaleAutoscalingResponse) (*tfmodel.NodeGroupStatusScaleAutoscaling, tfdiag.Diagnostics) {
+func NodeGroupStatusScaleAutoscalingAPIResponseToTFModel(ctx context.Context, am *model.NodeGroupStatusScaleAutoscalingResponse) (*tfmodel.NodeGroupStatusScaleAutoscaling, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -348,7 +348,7 @@ func NodeGroupStatusScaleAutoscalingAPIResponseToTFModel(ctx context.Context, am
 	return &t, diags
 }
 
-func NodeGroupStatusServiceAccountAPIResponseToTFModel(ctx context.Context, am *apimodel.NodeGroupStatusServiceAccountResponse) (*tfmodel.NodeGroupStatusServiceAccount, tfdiag.Diagnostics) {
+func NodeGroupStatusServiceAccountAPIResponseToTFModel(ctx context.Context, am *model.NodeGroupStatusServiceAccountResponse) (*tfmodel.NodeGroupStatusServiceAccount, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -361,7 +361,7 @@ func NodeGroupStatusServiceAccountAPIResponseToTFModel(ctx context.Context, am *
 	return &t, diags
 }
 
-func NodeGroupStatusVmTypeAPIResponseToTFModel(ctx context.Context, am *apimodel.NodeGroupStatusVmTypeResponse) (*tfmodel.NodeGroupStatusVmType, tfdiag.Diagnostics) {
+func NodeGroupStatusVmTypeAPIResponseToTFModel(ctx context.Context, am *model.NodeGroupStatusVmTypeResponse) (*tfmodel.NodeGroupStatusVmType, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

@@ -8,35 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
-	"go.mws.cloud/go-sdk/service/resources/references/rm"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/converter"
 )
 
 func TestClickhouseClusterCoordinatorInstanceAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClickhouseClusterCoordinatorInstanceOptionalResponse{}
+	emptyApiModel := model.ClickhouseClusterCoordinatorInstanceOptionalResponse{}
 	_, diags := conv.ClickhouseClusterCoordinatorInstanceAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestClickhouseClusterCoordinatorInstanceOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.ClickhouseClusterCoordinatorInstanceRequest{
-		Zone: rm.NewMustZoneRef("zoneID"),
-	}
-
-	emptyApiModelResponse, err := apimodel.ClickhouseClusterCoordinatorInstanceRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.ClickhouseClusterCoordinatorInstanceAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.ClickhouseClusterCoordinatorInstanceTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.ClickhouseClusterCoordinatorInstanceRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

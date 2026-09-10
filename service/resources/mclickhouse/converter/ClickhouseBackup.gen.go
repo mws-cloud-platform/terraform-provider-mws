@@ -11,15 +11,15 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func ClickhouseBackupAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseBackupOptionalResponse) (*tfmodel.ClickhouseBackup, tfdiag.Diagnostics) {
+func ClickhouseBackupAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseBackupOptionalResponse) (*tfmodel.ClickhouseBackup, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -69,16 +69,20 @@ func ClickhouseBackupAPIOptionalResponseToTFModel(ctx context.Context, am *apimo
 		t.Status = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.ClickhouseBackupStatus).GetSchema().Attributes))
 	}
 
+	if am.Spec.IsSet() {
+	} else {
+	}
+
 	return &t, diags
 }
 
-func ClickhouseBackupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseBackup) (*apimodel.ClickhouseBackupRequest, tfdiag.Diagnostics) {
+func ClickhouseBackupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseBackup) (*model.ClickhouseBackupRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseBackupRequest
+	var am model.ClickhouseBackupRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfmodel.ClickhouseBackupMetadata{}
@@ -99,7 +103,7 @@ func ClickhouseBackupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Clic
 	return &am, diags
 }
 
-func ClickhouseBackupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseBackup) (*apimodel.UpdateClickhouseBackupRequest, tfdiag.Diagnostics) {
+func ClickhouseBackupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseBackup) (*model.UpdateClickhouseBackupRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -108,7 +112,7 @@ func ClickhouseBackupTFToAPIUpdateRequestModel(ctx context.Context, plan, state 
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateClickhouseBackupRequest
+	var am model.UpdateClickhouseBackupRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -142,7 +146,7 @@ func ClickhouseBackupTFToAPIUpdateRequestModel(ctx context.Context, plan, state 
 	return &am, diags
 }
 
-func ClickhouseBackupMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseBackupMetadataOptionalResponse) (*tfmodel.ClickhouseBackupMetadata, tfdiag.Diagnostics) {
+func ClickhouseBackupMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseBackupMetadataOptionalResponse) (*tfmodel.ClickhouseBackupMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -216,13 +220,13 @@ func ClickhouseBackupMetadataAPIOptionalResponseToTFModel(ctx context.Context, a
 	return &t, diags
 }
 
-func ClickhouseBackupMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseBackupMetadata) (*apimodel.ClickhouseBackupMetadataRequest, tfdiag.Diagnostics) {
+func ClickhouseBackupMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseBackupMetadata) (*model.ClickhouseBackupMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseBackupMetadataRequest
+	var am model.ClickhouseBackupMetadataRequest
 
 	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
 		am.DisplayName = plan.DisplayName.ValueStringPointer()
@@ -236,7 +240,7 @@ func ClickhouseBackupMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmo
 			return nil, diags
 		}
 
-		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
+		am.Usages = make([]commonmodel.TypedUsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
@@ -255,7 +259,7 @@ func ClickhouseBackupMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmo
 	return &am, diags
 }
 
-func ClickhouseBackupMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseBackupMetadata) (*apimodel.UpdateClickhouseBackupMetadataRequest, tfdiag.Diagnostics) {
+func ClickhouseBackupMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseBackupMetadata) (*model.UpdateClickhouseBackupMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -264,7 +268,7 @@ func ClickhouseBackupMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateClickhouseBackupMetadataRequest
+	var am model.UpdateClickhouseBackupMetadataRequest
 
 	if !plan.DisplayName.Equal(state.DisplayName) {
 		if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
@@ -281,7 +285,7 @@ func ClickhouseBackupMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan
 				return nil, diags
 			}
 
-			usagesTmp := make([]commonapimodel.UpdateTypedUsageRequest, 0, len(usages))
+			usagesTmp := make([]commonmodel.UpdateTypedUsageRequest, 0, len(usages))
 
 			for _, entity := range usages {
 				stateEntity := tfcommon.TypedUsage{}
@@ -301,42 +305,6 @@ func ClickhouseBackupMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan
 			am.Description.SetTo(plan.Description.ValueString())
 		}
 	}
-
-	return &am, diags
-}
-
-func ClickhouseBackupSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseBackupSpecOptionalResponse) (*tfmodel.ClickhouseBackupSpec, tfdiag.Diagnostics) {
-	if am == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var t tfmodel.ClickhouseBackupSpec
-
-	return &t, diags
-}
-
-func ClickhouseBackupSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseBackupSpec) (*apimodel.ClickhouseBackupSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseBackupSpecRequest
-
-	return &am, diags
-}
-
-func ClickhouseBackupSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseBackupSpec) (*apimodel.UpdateClickhouseBackupSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-	if state == nil {
-		state = &tfmodel.ClickhouseBackupSpec{}
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateClickhouseBackupSpecRequest
 
 	return &am, diags
 }

@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/model"
 )
 
-func KafkaEndpointStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaEndpointStatusResponse) (*tfmodel.KafkaEndpointStatus, tfdiag.Diagnostics) {
+func KafkaEndpointStatusAPIResponseToTFModel(ctx context.Context, am *model.KafkaEndpointStatusResponse) (*tfmodel.KafkaEndpointStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

@@ -7,17 +7,17 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func VmTypeSpecNetworkAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.VmTypeSpecNetworkOptionalResponse) (*tfmodel.VmTypeSpecNetwork, tfdiag.Diagnostics) {
+func VmTypeNetworkSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.VmTypeNetworkSpecOptionalResponse) (*tfmodel.VmTypeNetworkSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var t tfmodel.VmTypeSpecNetwork
+	var t tfmodel.VmTypeNetworkSpec
 
 	return &t, diags
 }

@@ -10,14 +10,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/kms/model"
+	"go.mws.cloud/go-sdk/service/kms/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/kms/model"
 )
 
-func CryptoKeyStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.CryptoKeyStatusResponse) (*tfmodel.CryptoKeyStatus, tfdiag.Diagnostics) {
+func CryptoKeyStatusAPIResponseToTFModel(ctx context.Context, am *model.CryptoKeyStatusResponse) (*tfmodel.CryptoKeyStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -78,7 +78,7 @@ func CryptoKeyStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.Crypt
 	return &t, diags
 }
 
-func CryptoKeyStatusDestructionAPIResponseToTFModel(ctx context.Context, am *apimodel.CryptoKeyStatusDestructionResponse) (*tfmodel.CryptoKeyStatusDestruction, tfdiag.Diagnostics) {
+func CryptoKeyStatusDestructionAPIResponseToTFModel(ctx context.Context, am *model.CryptoKeyStatusDestructionResponse) (*tfmodel.CryptoKeyStatusDestruction, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -113,7 +113,7 @@ func CryptoKeyStatusDestructionAPIResponseToTFModel(ctx context.Context, am *api
 	return &t, diags
 }
 
-func CryptoKeyStatusRotationAPIResponseToTFModel(ctx context.Context, am *apimodel.CryptoKeyStatusRotationResponse) (*tfmodel.CryptoKeyStatusRotation, tfdiag.Diagnostics) {
+func CryptoKeyStatusRotationAPIResponseToTFModel(ctx context.Context, am *model.CryptoKeyStatusRotationResponse) (*tfmodel.CryptoKeyStatusRotation, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

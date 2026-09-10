@@ -14,7 +14,7 @@ type KafkaEndpointExternalAccesses struct {
 
 func (s *KafkaEndpointExternalAccesses) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Настройка внешнего доступа к кластеру Kafka.`,
+		MarkdownDescription: `Настройка внешнего доступа к кластеру Apache Kafka.`,
 		Attributes: map[string]schema.Attribute{
 			"allowed": schema.BoolAttribute{
 				MarkdownDescription: `Назначить внешние адреса для кластера Kafka`,

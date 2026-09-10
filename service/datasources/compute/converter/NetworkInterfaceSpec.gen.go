@@ -8,12 +8,12 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func NetworkInterfaceSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NetworkInterfaceSpecOptionalResponse) (*tfmodel.NetworkInterfaceSpec, tfdiag.Diagnostics) {
+func NetworkInterfaceSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.NetworkInterfaceSpecOptionalResponse) (*tfmodel.NetworkInterfaceSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -63,47 +63,4 @@ func NetworkInterfaceSpecAPIOptionalResponseToTFModel(ctx context.Context, am *a
 	}
 
 	return &t, diags
-}
-
-func NetworkInterfaceSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NetworkInterfaceSpec) (*apimodel.NetworkInterfaceSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.NetworkInterfaceSpecRequest
-
-	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
-		am.Name = plan.Name.ValueString()
-	}
-
-	if !plan.Primary.IsNull() && !plan.Primary.IsUnknown() {
-		am.Primary = plan.Primary.ValueBoolPointer()
-	}
-
-	if !plan.IpForwardingEnabled.IsNull() && !plan.IpForwardingEnabled.IsUnknown() {
-		am.IpForwardingEnabled = plan.IpForwardingEnabled.ValueBoolPointer()
-	}
-
-	if !plan.Addresses.IsNull() && !plan.Addresses.IsUnknown() {
-		addresses := make([]tfmodel.AddressSpecOrRefWithAttachments, 0)
-		dAddresses := plan.Addresses.ElementsAs(ctx, &addresses, false)
-		diags = append(diags, dAddresses...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Addresses = make([]apimodel.AddressSpecOrRefWithAttachmentsRequest, 0, len(addresses))
-
-		for _, entity := range addresses {
-			tmp, d := AddressSpecOrRefWithAttachmentsTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.Addresses = append(am.Addresses, *tmp)
-		}
-	}
-
-	return &am, diags
 }

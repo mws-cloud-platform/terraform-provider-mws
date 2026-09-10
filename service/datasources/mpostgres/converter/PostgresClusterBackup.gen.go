@@ -7,15 +7,14 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/model"
 )
 
-func PostgresClusterBackupAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresClusterBackupResponse) (*tfmodel.PostgresClusterBackup, tfdiag.Diagnostics) {
+func PostgresClusterBackupAPIResponseToTFModel(ctx context.Context, am *model.PostgresClusterBackupResponse) (*tfmodel.PostgresClusterBackup, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -48,35 +47,4 @@ func PostgresClusterBackupAPIResponseToTFModel(ctx context.Context, am *apimodel
 	}
 
 	return &t, diags
-}
-
-func PostgresClusterBackupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresClusterBackup) (*apimodel.PostgresClusterBackupRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresClusterBackupRequest
-
-	if !plan.Daily.IsNull() && !plan.Daily.IsUnknown() {
-		dailyPlan := tfmodel.PostgresClusterBackupDaily{}
-		dailyPlanDiag := plan.Daily.As(ctx, &dailyPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, dailyPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		dailyTmp, dailyDiag := PostgresClusterBackupDailyTFToAPIRequestModel(ctx, &dailyPlan)
-		diags = append(diags, dailyDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Daily = dailyTmp
-	}
-
-	if !plan.RetainPeriodDays.IsNull() && !plan.RetainPeriodDays.IsUnknown() {
-		am.RetainPeriodDays = ptr.Get(int(plan.RetainPeriodDays.ValueInt64()))
-	}
-
-	return &am, diags
 }

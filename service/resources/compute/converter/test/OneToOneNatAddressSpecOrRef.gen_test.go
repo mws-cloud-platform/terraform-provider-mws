@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
@@ -17,16 +17,16 @@ import (
 
 func TestOneToOneNatAddressSpecOrRefAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.OneToOneNatAddressSpecOrRefOptionalResponse{}
+	emptyApiModel := model.OneToOneNatAddressSpecOrRefOptionalResponse{}
 	_, diags := conv.OneToOneNatAddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestOneToOneNatAddressSpecOrRefOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.OneToOneNatAddressSpecOrRefRequest{}
+	emptyApiModelRequest := model.OneToOneNatAddressSpecOrRefRequest{}
 
-	emptyApiModelResponse, err := apimodel.OneToOneNatAddressSpecOrRefRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.OneToOneNatAddressSpecOrRefRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.OneToOneNatAddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -35,7 +35,7 @@ func TestOneToOneNatAddressSpecOrRefOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.OneToOneNatAddressSpecOrRefTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.OneToOneNatAddressSpecOrRefRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.OneToOneNatAddressSpecOrRefRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -46,56 +46,16 @@ func TestUpdateOneToOneNatAddressSpecOrRefRequestConverters(t *testing.T) {
 
 	var nullPlanTfModel tfmodel.OneToOneNatAddressSpecOrRef
 	var stateTfModel tfmodel.OneToOneNatAddressSpecOrRef
-	stateTfModel.Spec = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.OneToOneNatAddressSpecOrRefSpec).GetSchema().Attributes))
+	stateTfModel.Spec = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.OneToOneNatAddressSpec).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateOneToOneNatAddressSpecOrRefRequest{
-		Spec: optional.OptionalNil[apimodel.UpdateOneToOneNatAddressSpecOrRefSpecRequest]{
+	expectedUpdateModel := &model.UpdateOneToOneNatAddressSpecOrRefRequest{
+		Spec: optional.OptionalNil[model.UpdateOneToOneNatAddressSpecRequest]{
 			Set:  true,
 			Null: true,
 		},
 	}
 
 	result, diags := conv.OneToOneNatAddressSpecOrRefTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
-	require.False(t, diags.HasError())
-
-	require.Equal(t, expectedUpdateModel, result)
-}
-
-func TestOneToOneNatAddressSpecOrRefSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := apimodel.OneToOneNatAddressSpecOrRefSpecOptionalResponse{}
-	_, diags := conv.OneToOneNatAddressSpecOrRefSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
-func TestOneToOneNatAddressSpecOrRefSpecOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.OneToOneNatAddressSpecOrRefSpecRequest{}
-
-	emptyApiModelResponse, err := apimodel.OneToOneNatAddressSpecOrRefSpecRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.OneToOneNatAddressSpecOrRefSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.OneToOneNatAddressSpecOrRefSpecTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.OneToOneNatAddressSpecOrRefSpecRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
-func TestUpdateOneToOneNatAddressSpecOrRefSpecRequestConverters(t *testing.T) {
-	t.Parallel()
-
-	var nullPlanTfModel tfmodel.OneToOneNatAddressSpecOrRefSpec
-	var stateTfModel tfmodel.OneToOneNatAddressSpecOrRefSpec
-
-	expectedUpdateModel := &apimodel.UpdateOneToOneNatAddressSpecOrRefSpecRequest{}
-
-	result, diags := conv.OneToOneNatAddressSpecOrRefSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())
 
 	require.Equal(t, expectedUpdateModel, result)

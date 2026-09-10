@@ -23,7 +23,7 @@ type ClusterStatus struct {
 
 func (s *ClusterStatus) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Описывает статусную модель k8s cluster.`,
+		MarkdownDescription: `Статусная модель кластера Kubernetes`,
 		Attributes: map[string]schema.Attribute{
 			"ready": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.ResourceStatusReady).GetSchema().Attributes,
@@ -31,7 +31,7 @@ func (s *ClusterStatus) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"cluster_ca_certificate": schema.StringAttribute{
-				MarkdownDescription: `Root сертификат кластера`,
+				MarkdownDescription: `Корневой сертификат кластера`,
 				Computed:            true,
 			},
 			"network": schema.SingleNestedAttribute{
@@ -69,7 +69,7 @@ func (s *ClusterStatusClusterStatus) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля ClusterStatus анонимного типа структуры ClusterStatus`,
 		Attributes: map[string]schema.Attribute{
 			"state": schema.StringAttribute{
-				MarkdownDescription: `Текущий статус cluster`,
+				MarkdownDescription: `Текущий статус кластера`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"INIT",
@@ -113,7 +113,7 @@ func (s *ClusterStatusNetwork) GetSchema() schema.Schema {
 			},
 			"primary_endpoint": schema.SingleNestedAttribute{
 				Attributes:          new(ClusterStatusNetworkPrimaryEndpoint).GetSchema().Attributes,
-				MarkdownDescription: `Внутренний ip-адрес`,
+				MarkdownDescription: `Внутренний IP-адрес`,
 				Computed:            true,
 			},
 			"primary_address": schema.StringAttribute{
@@ -122,7 +122,7 @@ func (s *ClusterStatusNetwork) GetSchema() schema.Schema {
 			},
 			"public_endpoint": schema.SingleNestedAttribute{
 				Attributes:          new(ClusterStatusNetworkPublicEndpoint).GetSchema().Attributes,
-				MarkdownDescription: `Внешний ip-адрес`,
+				MarkdownDescription: `Внешний IP-адрес`,
 				Computed:            true,
 			},
 			"public_address": schema.StringAttribute{

@@ -15,14 +15,14 @@ type RouteNextHop struct {
 
 func (s *RouteNextHop) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Переход`,
+		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"network_local": schema.StringAttribute{
 				MarkdownDescription: `Локальная сеть`,
 				Computed:            true,
 			},
 			"nat_gateway": schema.StringAttribute{
-				MarkdownDescription: `NAT шлюз`,
+				MarkdownDescription: `NAT-шлюз`,
 				Computed:            true,
 			},
 			"address": schema.SingleNestedAttribute{

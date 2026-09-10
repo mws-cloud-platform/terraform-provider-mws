@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	"go.mws.cloud/go-sdk/service/resources/references/rm"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
@@ -16,19 +16,19 @@ import (
 
 func TestKafkaAllocationAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaAllocationResponse{}
+	emptyApiModel := model.KafkaAllocationResponse{}
 	_, diags := conv.KafkaAllocationAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestKafkaAllocationResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaAllocationRequest{
+	emptyApiModelRequest := model.KafkaAllocationRequest{
 		Zone:  rm.NewMustZoneRef("zoneID"),
 		Count: 0,
 	}
 
-	emptyApiModelResponse, err := apimodel.KafkaAllocationRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.KafkaAllocationRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.KafkaAllocationAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -37,7 +37,7 @@ func TestKafkaAllocationResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.KafkaAllocationTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.KafkaAllocationRequestToResponse(filledApiModelRequest)
+	result, err := model.KafkaAllocationRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -49,7 +49,7 @@ func TestUpdateKafkaAllocationRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.KafkaAllocation
 	var stateTfModel tfmodel.KafkaAllocation
 
-	expectedUpdateModel := &apimodel.UpdateKafkaAllocationRequest{}
+	expectedUpdateModel := &model.UpdateKafkaAllocationRequest{}
 
 	result, diags := conv.KafkaAllocationTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

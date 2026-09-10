@@ -9,13 +9,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func DiskBackupSourceAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.DiskBackupSourceOptionalResponse) (*tfmodel.DiskBackupSource, tfdiag.Diagnostics) {
+func DiskBackupSourceAPIOptionalResponseToTFModel(ctx context.Context, am *model.DiskBackupSourceOptionalResponse) (*tfmodel.DiskBackupSource, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -44,13 +44,13 @@ func DiskBackupSourceAPIOptionalResponseToTFModel(ctx context.Context, am *apimo
 	return &t, diags
 }
 
-func DiskBackupSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DiskBackupSource) (*apimodel.DiskBackupSourceRequest, tfdiag.Diagnostics) {
+func DiskBackupSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DiskBackupSource) (*model.DiskBackupSourceRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.DiskBackupSourceRequest
+	var am model.DiskBackupSourceRequest
 
 	if !plan.Disk.IsNull() && !plan.Disk.IsUnknown() {
 		diskPlan := tfmodel.DiskBackupSourceDisk{}
@@ -71,7 +71,7 @@ func DiskBackupSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Disk
 	return &am, diags
 }
 
-func DiskBackupSourceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.DiskBackupSource) (*apimodel.UpdateDiskBackupSourceRequest, tfdiag.Diagnostics) {
+func DiskBackupSourceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.DiskBackupSource) (*model.UpdateDiskBackupSourceRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -80,7 +80,7 @@ func DiskBackupSourceTFToAPIUpdateRequestModel(ctx context.Context, plan, state 
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateDiskBackupSourceRequest
+	var am model.UpdateDiskBackupSourceRequest
 
 	if !plan.Disk.Equal(state.Disk) {
 		if !plan.Disk.IsNull() && !plan.Disk.IsUnknown() {
@@ -114,7 +114,7 @@ func DiskBackupSourceTFToAPIUpdateRequestModel(ctx context.Context, plan, state 
 	return &am, diags
 }
 
-func DiskBackupSourceDiskAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.DiskBackupSourceDiskOptionalResponse) (*tfmodel.DiskBackupSourceDisk, tfdiag.Diagnostics) {
+func DiskBackupSourceDiskAPIOptionalResponseToTFModel(ctx context.Context, am *model.DiskBackupSourceDiskOptionalResponse) (*tfmodel.DiskBackupSourceDisk, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -127,13 +127,13 @@ func DiskBackupSourceDiskAPIOptionalResponseToTFModel(ctx context.Context, am *a
 	return &t, diags
 }
 
-func DiskBackupSourceDiskTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DiskBackupSourceDisk) (*apimodel.DiskBackupSourceDiskRequest, tfdiag.Diagnostics) {
+func DiskBackupSourceDiskTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DiskBackupSourceDisk) (*model.DiskBackupSourceDiskRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.DiskBackupSourceDiskRequest
+	var am model.DiskBackupSourceDiskRequest
 
 	if !plan.Id.IsNull() && !plan.Id.IsUnknown() {
 		idRef, err := compute.ParseDiskRef(ctx, plan.Id.ValueString())
@@ -147,7 +147,7 @@ func DiskBackupSourceDiskTFToAPIRequestModel(ctx context.Context, plan *tfmodel.
 	return &am, diags
 }
 
-func DiskBackupSourceDiskTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.DiskBackupSourceDisk) (*apimodel.UpdateDiskBackupSourceDiskRequest, tfdiag.Diagnostics) {
+func DiskBackupSourceDiskTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.DiskBackupSourceDisk) (*model.UpdateDiskBackupSourceDiskRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -156,7 +156,7 @@ func DiskBackupSourceDiskTFToAPIUpdateRequestModel(ctx context.Context, plan, st
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateDiskBackupSourceDiskRequest
+	var am model.UpdateDiskBackupSourceDiskRequest
 
 	if !plan.Id.Equal(state.Id) {
 		if !plan.Id.IsNull() && !plan.Id.IsUnknown() {

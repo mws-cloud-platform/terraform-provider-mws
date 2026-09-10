@@ -8,37 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
 func TestAddressAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.AddressOptionalResponse{}
+	emptyApiModel := model.AddressOptionalResponse{}
 	_, diags := conv.AddressAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestAddressOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.AddressRequest{
-		Spec: apimodel.VpcAddressSpecRequest{
-			Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
-		},
-	}
-
-	emptyApiModelResponse, err := apimodel.AddressRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.AddressAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.AddressTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.AddressRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

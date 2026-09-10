@@ -8,65 +8,20 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/iam/model"
+	"go.mws.cloud/go-sdk/service/iam/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/iam/converter"
 )
 
 func TestAuthorizedKeyAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.AuthorizedKeyOptionalResponse{}
+	emptyApiModel := model.AuthorizedKeyOptionalResponse{}
 	_, diags := conv.AuthorizedKeyAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestAuthorizedKeyOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.AuthorizedKeyRequest{
-		Spec: apimodel.AuthorizedKeySpecRequest{
-			KeyAlgorithm: "keyAlgorithm",
-		},
-	}
-
-	emptyApiModelResponse, err := apimodel.AuthorizedKeyRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.AuthorizedKeyAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.AuthorizedKeyTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.AuthorizedKeyRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
 func TestAuthorizedKeyMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.AuthorizedKeyMetadataOptionalResponse{}
+	emptyApiModel := model.AuthorizedKeyMetadataOptionalResponse{}
 	_, diags := conv.AuthorizedKeyMetadataAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestAuthorizedKeyMetadataOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.AuthorizedKeyMetadataRequest{
-		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
-	}
-
-	emptyApiModelResponse, err := apimodel.AuthorizedKeyMetadataRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.AuthorizedKeyMetadataAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.AuthorizedKeyMetadataTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.AuthorizedKeyMetadataRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

@@ -7,90 +7,28 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"go.mws.cloud/go-sdk/pkg/apimodels/ipaddress"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
 func TestResourceExternalAddressStatusAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceExternalAddressStatus{}
+	emptyApiModel := commonmodel.ResourceExternalAddressStatus{}
 	_, diags := commonconv.ResourceExternalAddressStatusAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestResourceExternalAddressStatusAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceExternalAddressStatusResponse{}
+	emptyApiModel := commonmodel.ResourceExternalAddressStatusResponse{}
 	_, diags := commonconv.ResourceExternalAddressStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestResourceExternalAddressStatusAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceExternalAddressStatusOptionalResponse{}
+	emptyApiModel := commonmodel.ResourceExternalAddressStatusOptionalResponse{}
 	_, diags := commonconv.ResourceExternalAddressStatusAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestResourceExternalAddressStatusConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceExternalAddressStatus{
-		Ref:       vpc.NewMustExternalAddressRef("projectID", "externalAddressID"),
-		IpAddress: ipaddress.MustParseIPAddressString("192.168.1.1"),
-	}
-
-	tfModel, diags := commonconv.ResourceExternalAddressStatusAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-
-	result, diags := commonconv.ResourceExternalAddressStatusTFToAPIModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	require.Equal(t, emptyApiModel, *result)
-}
-
-func TestResourceExternalAddressStatusResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := commonapimodel.ResourceExternalAddressStatusRequest{
-		Ref:       vpc.NewMustExternalAddressRef("projectID", "externalAddressID"),
-		IpAddress: ipaddress.MustParseIPAddressString("192.168.1.1"),
-	}
-
-	emptyApiModelResponse, err := commonapimodel.ResourceExternalAddressStatusRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := commonconv.ResourceExternalAddressStatusAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := commonconv.ResourceExternalAddressStatusTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := commonapimodel.ResourceExternalAddressStatusRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
-func TestResourceExternalAddressStatusOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := commonapimodel.ResourceExternalAddressStatusRequest{
-		Ref:       vpc.NewMustExternalAddressRef("projectID", "externalAddressID"),
-		IpAddress: ipaddress.MustParseIPAddressString("192.168.1.1"),
-	}
-
-	emptyApiModelResponse, err := commonapimodel.ResourceExternalAddressStatusRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := commonconv.ResourceExternalAddressStatusAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := commonconv.ResourceExternalAddressStatusTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := commonapimodel.ResourceExternalAddressStatusRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

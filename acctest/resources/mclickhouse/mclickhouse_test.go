@@ -151,7 +151,7 @@ func (s *BaseClusterSuite) SetupSuite() {
 								},
 							},
 							ExternalAddress: &mclickhousemodel.ClickhouseEndpointExternalAddressSpecOrRefRequest{
-								Spec: &mclickhousemodel.ClickhouseEndpointExternalAddressSpecOrRefSpecRequest{},
+								Spec: &mclickhousemodel.ClickhouseEndpointExternalAddressSpecRequest{},
 							},
 						}},
 					}},

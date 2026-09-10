@@ -89,7 +89,7 @@ func (s *KafkaClusterStatus) GetSchema() schema.Schema {
 			},
 			"effective_kafka_config": schema.MapAttribute{
 				ElementType:         types.StringType,
-				MarkdownDescription: `Конфигурация параметров кластера после валидации и преобразования из пользователского ввода`,
+				MarkdownDescription: `Конфигурация параметров кластера после валидации и преобразования из пользовательского ввода`,
 				Computed:            true,
 			},
 			"instances": schema.SingleNestedAttribute{
@@ -105,7 +105,7 @@ func (s *KafkaClusterStatus) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"maintenance_window": schema.SingleNestedAttribute{
-				Attributes: new(tfcommon.MaintenanceWindow2).GetSchema().Attributes,
+				Attributes: new(tfcommon.MaintenanceWindow).GetSchema().Attributes,
 				Computed:   true,
 			},
 			"schema_registry": schema.SingleNestedAttribute{

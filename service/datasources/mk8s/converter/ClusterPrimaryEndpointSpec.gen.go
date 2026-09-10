@@ -7,15 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/go-sdk/pkg/apimodels/ipaddress"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/model"
 )
 
-func ClusterPrimaryEndpointSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClusterPrimaryEndpointSpecOptionalResponse) (*tfmodel.ClusterPrimaryEndpointSpec, tfdiag.Diagnostics) {
+func ClusterPrimaryEndpointSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClusterPrimaryEndpointSpecOptionalResponse) (*tfmodel.ClusterPrimaryEndpointSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -32,33 +30,4 @@ func ClusterPrimaryEndpointSpecAPIOptionalResponseToTFModel(ctx context.Context,
 	t.Subnet = types.StringValue(am.Subnet.Path())
 
 	return &t, diags
-}
-
-func ClusterPrimaryEndpointSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterPrimaryEndpointSpec) (*apimodel.ClusterPrimaryEndpointSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ClusterPrimaryEndpointSpecRequest
-
-	if !plan.IpAddress.IsNull() && !plan.IpAddress.IsUnknown() {
-		tmpIpAddress, err := ipaddress.ParseIP4AddressString(plan.IpAddress.ValueString())
-		if err != nil {
-			diags.AddError("IP4Address string parsing", err.Error())
-			return nil, diags
-		}
-		am.IpAddress = &tmpIpAddress
-	}
-
-	if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {
-		subnetRef, err := vpc.ParseSubnetRef(ctx, plan.Subnet.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Subnet = subnetRef
-	}
-
-	return &am, diags
 }

@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func ImageActivityAPIToTFModel(ctx context.Context, am *apimodel.ImageActivity) (tfmodel.ImageActivity, tfdiag.Diagnostics) {
+func ImageActivityAPIToTFModel(ctx context.Context, am *model.ImageActivity) (tfmodel.ImageActivity, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.ImageActivity{}, nil
 	}
@@ -23,17 +23,4 @@ func ImageActivityAPIToTFModel(ctx context.Context, am *apimodel.ImageActivity) 
 	t = tfmodel.ImageActivity(types.StringValue(string(*am)))
 
 	return t, diags
-}
-
-func ImageActivityTFToAPIModel(ctx context.Context, plan tfmodel.ImageActivity) (*apimodel.ImageActivity, tfdiag.Diagnostics) {
-	var diags tfdiag.Diagnostics
-	var am apimodel.ImageActivity
-
-	var tmp = types.String(plan)
-	if tmp.IsNull() {
-		return nil, diags
-	}
-	am = apimodel.ImageActivity(tmp.ValueString())
-
-	return &am, diags
 }

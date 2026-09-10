@@ -8,35 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
 )
 
 func TestPostgresNetworkAddressSpecAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.PostgresNetworkAddressSpecResponse{}
+	emptyApiModel := model.PostgresNetworkAddressSpecResponse{}
 	_, diags := conv.PostgresNetworkAddressSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestPostgresNetworkAddressSpecResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.PostgresNetworkAddressSpecRequest{
-		Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
-	}
-
-	emptyApiModelResponse, err := apimodel.PostgresNetworkAddressSpecRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.PostgresNetworkAddressSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.PostgresNetworkAddressSpecTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.PostgresNetworkAddressSpecRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

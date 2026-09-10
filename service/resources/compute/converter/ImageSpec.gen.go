@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func ImageSpecSourceAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ImageSpecSourceOptionalResponse) (*tfmodel.ImageSpecSource, tfdiag.Diagnostics) {
+func ImageSpecSourceAPIOptionalResponseToTFModel(ctx context.Context, am *model.ImageSpecSourceOptionalResponse) (*tfmodel.ImageSpecSource, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -43,13 +43,13 @@ func ImageSpecSourceAPIOptionalResponseToTFModel(ctx context.Context, am *apimod
 	return &t, diags
 }
 
-func ImageSpecSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ImageSpecSource) (*apimodel.ImageSpecSourceRequest, tfdiag.Diagnostics) {
+func ImageSpecSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ImageSpecSource) (*model.ImageSpecSourceRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ImageSpecSourceRequest
+	var am model.ImageSpecSourceRequest
 
 	if !plan.ExternalUrl.IsNull() && !plan.ExternalUrl.IsUnknown() {
 		am.ExternalUrl = plan.ExternalUrl.ValueStringPointer()
@@ -76,7 +76,7 @@ func ImageSpecSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Image
 	return &am, diags
 }
 
-func ImageSpecSourceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ImageSpecSource) (*apimodel.UpdateImageSpecSourceRequest, tfdiag.Diagnostics) {
+func ImageSpecSourceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ImageSpecSource) (*model.UpdateImageSpecSourceRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -85,7 +85,7 @@ func ImageSpecSourceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateImageSpecSourceRequest
+	var am model.UpdateImageSpecSourceRequest
 
 	if !plan.ExternalUrl.Equal(state.ExternalUrl) {
 		if !plan.ExternalUrl.IsNull() && !plan.ExternalUrl.IsUnknown() {

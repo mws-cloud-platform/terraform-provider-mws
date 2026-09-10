@@ -50,7 +50,7 @@ func (m *ClusterResource) Schema(ctx context.Context, req resource.SchemaRequest
 	tflog.Info(ctx, "ClusterResource.Schema")
 	resp.Schema = new(tfmodel.Cluster).GetSchema()
 	resp.Schema.Attributes["cluster_name"] = schema.StringAttribute{
-		MarkdownDescription: `Имя Cluster`,
+		MarkdownDescription: `Имя кластера`,
 		Required:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.RequiresReplaceIfConfigured(),

@@ -9,26 +9,26 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
 func TestDataDiskSpecAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.DataDiskSpecResponse{}
+	emptyApiModel := model.DataDiskSpecResponse{}
 	_, diags := conv.DataDiskSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestDataDiskSpecResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.DataDiskSpecRequest{
+	emptyApiModelRequest := model.DataDiskSpecRequest{
 		Size: bytesize.MustParseString("0 B"),
 		Type: "",
 	}
 
-	emptyApiModelResponse, err := apimodel.DataDiskSpecRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.DataDiskSpecRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.DataDiskSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -37,7 +37,7 @@ func TestDataDiskSpecResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.DataDiskSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.DataDiskSpecRequestToResponse(filledApiModelRequest)
+	result, err := model.DataDiskSpecRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -49,7 +49,7 @@ func TestUpdateDataDiskSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.DataDiskSpec
 	var stateTfModel tfmodel.DataDiskSpec
 
-	expectedUpdateModel := &apimodel.UpdateDataDiskSpecRequest{}
+	expectedUpdateModel := &model.UpdateDataDiskSpecRequest{}
 
 	result, diags := conv.DataDiskSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

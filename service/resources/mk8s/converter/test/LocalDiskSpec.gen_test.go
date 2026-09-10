@@ -11,26 +11,26 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
 func TestLocalDiskSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.LocalDiskSpecOptionalResponse{}
+	emptyApiModel := model.LocalDiskSpecOptionalResponse{}
 	_, diags := conv.LocalDiskSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestLocalDiskSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.LocalDiskSpecRequest{
+	emptyApiModelRequest := model.LocalDiskSpecRequest{
 		Name: "name",
 		Size: bytesize.MustParseString("0 B"),
 	}
 
-	emptyApiModelResponse, err := apimodel.LocalDiskSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.LocalDiskSpecRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.LocalDiskSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -39,7 +39,7 @@ func TestLocalDiskSpecOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.LocalDiskSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.LocalDiskSpecRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.LocalDiskSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -52,7 +52,7 @@ func TestUpdateLocalDiskSpecRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.LocalDiskSpec
 	stateTfModel.DeviceName = types.StringValue("")
 
-	expectedUpdateModel := &apimodel.UpdateLocalDiskSpecRequest{
+	expectedUpdateModel := &model.UpdateLocalDiskSpecRequest{
 		DeviceName: optional.OptionalNil[string]{
 			Set:  true,
 			Null: true,

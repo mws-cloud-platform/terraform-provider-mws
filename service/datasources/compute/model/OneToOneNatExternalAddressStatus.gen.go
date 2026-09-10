@@ -14,8 +14,7 @@ type OneToOneNatExternalAddressStatus struct {
 
 func (s *OneToOneNatExternalAddressStatus) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Статус внешнего (публичного) Адреса
-`,
+		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"ref": schema.StringAttribute{
 				MarkdownDescription: `Ref на публичный Адрес`,

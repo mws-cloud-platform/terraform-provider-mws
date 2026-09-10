@@ -8,12 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
-	"go.mws.cloud/go-sdk/service/resources/references/rm"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/model"
 )
 
-func KafkaAllocationAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaAllocationResponse) (*tfmodel.KafkaAllocation, tfdiag.Diagnostics) {
+func KafkaAllocationAPIResponseToTFModel(ctx context.Context, am *model.KafkaAllocationResponse) (*tfmodel.KafkaAllocation, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -26,28 +25,4 @@ func KafkaAllocationAPIResponseToTFModel(ctx context.Context, am *apimodel.Kafka
 	t.Count = types.Int64Value(int64(am.Count))
 
 	return &t, diags
-}
-
-func KafkaAllocationTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaAllocation) (*apimodel.KafkaAllocationRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaAllocationRequest
-
-	if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
-		zoneRef, err := rm.ParseZoneRef(ctx, plan.Zone.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Zone = zoneRef
-	}
-
-	if !plan.Count.IsNull() && !plan.Count.IsUnknown() {
-		am.Count = int32(plan.Count.ValueInt64())
-	}
-
-	return &am, diags
 }

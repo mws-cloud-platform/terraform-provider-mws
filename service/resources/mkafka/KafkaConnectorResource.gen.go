@@ -19,7 +19,7 @@ import (
 	"go.mws.cloud/go-sdk/mws/wait"
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
 	"go.mws.cloud/go-sdk/service/mkafka/client"
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	resourcesdk "go.mws.cloud/go-sdk/service/mkafka/sdk"
 	mkafkaref "go.mws.cloud/go-sdk/service/resources/references/mkafka"
 	"go.mws.cloud/terraform-provider-mws/internal/cmp"
@@ -148,7 +148,7 @@ func (m *KafkaConnectorResource) Create(ctx context.Context, req resource.Create
 		return
 	}
 
-	body, diags = func(ctx context.Context, planApiRequest *apimodel.KafkaConnectorRequest) (*apimodel.KafkaConnectorRequest, tfdiag.Diagnostics) {
+	body, diags = func(ctx context.Context, planApiRequest *model.KafkaConnectorRequest) (*model.KafkaConnectorRequest, tfdiag.Diagnostics) {
 
 		var configData tfmodel.KafkaConnectorModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
@@ -311,7 +311,7 @@ func (m *KafkaConnectorResource) Update(ctx context.Context, req resource.Update
 		return
 	}
 
-	body, diags = func(ctx context.Context, planApiRequest *apimodel.UpdateKafkaConnectorRequest) (*apimodel.UpdateKafkaConnectorRequest, tfdiag.Diagnostics) {
+	body, diags = func(ctx context.Context, planApiRequest *model.UpdateKafkaConnectorRequest) (*model.UpdateKafkaConnectorRequest, tfdiag.Diagnostics) {
 
 		var configData tfmodel.KafkaConnectorModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)

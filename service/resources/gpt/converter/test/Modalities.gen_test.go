@@ -8,13 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/gpt/model"
+	"go.mws.cloud/go-sdk/service/gpt/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/gpt/converter"
 )
 
 func TestModalitiesAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ModalitiesResponse{}
+	emptyApiModel := model.ModalitiesResponse{}
 	_, diags := conv.ModalitiesAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }

@@ -45,7 +45,7 @@ Plane (управляющего слоя) и групп рабочих узло�
 			},
 			"status": schema.SingleNestedAttribute{
 				Attributes:          new(ClusterStatus).GetSchema().Attributes,
-				MarkdownDescription: `Описывает статусную модель k8s cluster`,
+				MarkdownDescription: `Статусная модель кластера Kubernetes`,
 				Computed:            true,
 			},
 			"availability": schema.SingleNestedAttribute{

@@ -8,26 +8,26 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/nlb/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/nlb/model"
 )
 
 func TestNlbListenerExternalAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NlbListenerExternalOptionalResponse{}
+	emptyApiModel := model.NlbListenerExternalOptionalResponse{}
 	_, diags := conv.NlbListenerExternalAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestNlbListenerExternalOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.NlbListenerExternalRequest{
-		Address: commonapimodel.ResourceExternalAddressSpecOrRefRequest{},
+	emptyApiModelRequest := model.NlbListenerExternalRequest{
+		Address: commonmodel.ResourceExternalAddressSpecOrRefRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.NlbListenerExternalRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.NlbListenerExternalRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.NlbListenerExternalAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -36,7 +36,7 @@ func TestNlbListenerExternalOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.NlbListenerExternalTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.NlbListenerExternalRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.NlbListenerExternalRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -48,7 +48,7 @@ func TestUpdateNlbListenerExternalRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.NlbListenerExternal
 	var stateTfModel tfmodel.NlbListenerExternal
 
-	expectedUpdateModel := &apimodel.UpdateNlbListenerExternalRequest{}
+	expectedUpdateModel := &model.UpdateNlbListenerExternalRequest{}
 
 	result, diags := conv.NlbListenerExternalTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

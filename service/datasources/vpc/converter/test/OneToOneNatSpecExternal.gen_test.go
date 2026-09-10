@@ -8,35 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
 func TestOneToOneNatSpecExternalAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.OneToOneNatSpecExternalOptionalResponse{}
+	emptyApiModel := model.OneToOneNatSpecExternalOptionalResponse{}
 	_, diags := conv.OneToOneNatSpecExternalAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestOneToOneNatSpecExternalOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.OneToOneNatSpecExternalRequest{
-		Address: commonapimodel.ResourceExternalAddressSpecOrRefRequest{},
-	}
-
-	emptyApiModelResponse, err := apimodel.OneToOneNatSpecExternalRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.OneToOneNatSpecExternalAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.OneToOneNatSpecExternalTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.OneToOneNatSpecExternalRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

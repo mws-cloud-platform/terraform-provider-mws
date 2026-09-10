@@ -8,32 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
 )
 
 func TestPostgresUserAdditionalRoleAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.PostgresUserAdditionalRoleResponse{}
+	emptyApiModel := model.PostgresUserAdditionalRoleResponse{}
 	_, diags := conv.PostgresUserAdditionalRoleAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestPostgresUserAdditionalRoleResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.PostgresUserAdditionalRoleRequest{}
-
-	emptyApiModelResponse, err := apimodel.PostgresUserAdditionalRoleRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.PostgresUserAdditionalRoleAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.PostgresUserAdditionalRoleTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.PostgresUserAdditionalRoleRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

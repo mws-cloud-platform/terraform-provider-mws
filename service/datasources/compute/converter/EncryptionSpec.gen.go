@@ -9,12 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
-	"go.mws.cloud/go-sdk/service/resources/references/kms"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func EncryptionSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.EncryptionSpecOptionalResponse) (*tfmodel.EncryptionSpec, tfdiag.Diagnostics) {
+func EncryptionSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.EncryptionSpecOptionalResponse) (*tfmodel.EncryptionSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -29,24 +28,4 @@ func EncryptionSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	}
 
 	return &t, diags
-}
-
-func EncryptionSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.EncryptionSpec) (*apimodel.EncryptionSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.EncryptionSpecRequest
-
-	if !plan.CryptoKeyId.IsNull() && !plan.CryptoKeyId.IsUnknown() {
-		cryptoKeyIdRef, err := kms.ParseCryptoKeyRef(ctx, plan.CryptoKeyId.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.CryptoKeyId = &cryptoKeyIdRef
-	}
-
-	return &am, diags
 }

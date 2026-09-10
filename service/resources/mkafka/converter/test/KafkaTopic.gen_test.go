@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
@@ -18,18 +18,18 @@ import (
 
 func TestKafkaTopicAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaTopicResponse{}
+	emptyApiModel := model.KafkaTopicResponse{}
 	_, diags := conv.KafkaTopicAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestKafkaTopicResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaTopicRequest{
-		Spec: apimodel.KafkaTopicSpecRequest{},
+	emptyApiModelRequest := model.KafkaTopicRequest{
+		Spec: model.KafkaTopicSpecRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.KafkaTopicRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.KafkaTopicRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.KafkaTopicAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -38,7 +38,7 @@ func TestKafkaTopicResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.KafkaTopicTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.KafkaTopicRequestToResponse(filledApiModelRequest)
+	result, err := model.KafkaTopicRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -51,8 +51,8 @@ func TestUpdateKafkaTopicRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.KafkaTopic
 	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.KafkaTopicMetadata).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateKafkaTopicRequest{
-		Metadata: optional.OptionalNil[apimodel.UpdateKafkaTopicMetadataRequest]{
+	expectedUpdateModel := &model.UpdateKafkaTopicRequest{
+		Metadata: optional.OptionalNil[model.UpdateKafkaTopicMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},
@@ -66,18 +66,18 @@ func TestUpdateKafkaTopicRequestConverters(t *testing.T) {
 
 func TestKafkaTopicMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaTopicMetadataResponse{}
+	emptyApiModel := model.KafkaTopicMetadataResponse{}
 	_, diags := conv.KafkaTopicMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestKafkaTopicMetadataResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaTopicMetadataRequest{
-		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
+	emptyApiModelRequest := model.KafkaTopicMetadataRequest{
+		TypedResourceMetadataRequest: commonmodel.TypedResourceMetadataRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.KafkaTopicMetadataRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.KafkaTopicMetadataRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.KafkaTopicMetadataAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -86,7 +86,7 @@ func TestKafkaTopicMetadataResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.KafkaTopicMetadataTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.KafkaTopicMetadataRequestToResponse(filledApiModelRequest)
+	result, err := model.KafkaTopicMetadataRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -98,7 +98,7 @@ func TestUpdateKafkaTopicMetadataRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.KafkaTopicMetadata
 	var stateTfModel tfmodel.KafkaTopicMetadata
 
-	expectedUpdateModel := &apimodel.UpdateKafkaTopicMetadataRequest{}
+	expectedUpdateModel := &model.UpdateKafkaTopicMetadataRequest{}
 
 	result, diags := conv.KafkaTopicMetadataTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

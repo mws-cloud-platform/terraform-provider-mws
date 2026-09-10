@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func DiskBackupAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.DiskBackupOptionalResponse) (*tfmodel.DiskBackup, tfdiag.Diagnostics) {
+func DiskBackupAPIOptionalResponseToTFModel(ctx context.Context, am *model.DiskBackupOptionalResponse) (*tfmodel.DiskBackup, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -94,13 +94,13 @@ func DiskBackupAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Di
 	return &t, diags
 }
 
-func DiskBackupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DiskBackup) (*apimodel.DiskBackupRequest, tfdiag.Diagnostics) {
+func DiskBackupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DiskBackup) (*model.DiskBackupRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.DiskBackupRequest
+	var am model.DiskBackupRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
@@ -146,7 +146,7 @@ func DiskBackupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DiskBackup
 	return &am, diags
 }
 
-func DiskBackupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.DiskBackup) (*apimodel.UpdateDiskBackupRequest, tfdiag.Diagnostics) {
+func DiskBackupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.DiskBackup) (*model.UpdateDiskBackupRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -155,7 +155,7 @@ func DiskBackupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmod
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateDiskBackupRequest
+	var am model.UpdateDiskBackupRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -189,7 +189,7 @@ func DiskBackupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmod
 	if !plan.Source.Equal(state.Source) {
 		if !plan.Source.IsNull() && !plan.Source.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateDiskBackupSpecRequest{})
+				am.Spec.SetTo(model.UpdateDiskBackupSpecRequest{})
 			}
 			sourcePlan := tfmodel.DiskBackupSource{}
 			sourcePlanDiag := plan.Source.As(ctx, &sourcePlan, basetypes.ObjectAsOptions{})
@@ -219,7 +219,7 @@ func DiskBackupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmod
 	if !plan.OsType.Equal(state.OsType) {
 		if !plan.OsType.IsNull() && !plan.OsType.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateDiskBackupSpecRequest{})
+				am.Spec.SetTo(model.UpdateDiskBackupSpecRequest{})
 			}
 			osTypeTmp, osTypeDiag := OsTypeTFToAPIModel(ctx, plan.OsType)
 			diags = append(diags, osTypeDiag...)

@@ -7,16 +7,15 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/model"
 )
 
-func OneToOneNatAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.OneToOneNatOptionalResponse) (*tfmodel.OneToOneNat, tfdiag.Diagnostics) {
+func OneToOneNatAPIOptionalResponseToTFModel(ctx context.Context, am *model.OneToOneNatOptionalResponse) (*tfmodel.OneToOneNat, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -95,63 +94,4 @@ func OneToOneNatAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.O
 	t.External = externalTfObject
 
 	return &t, diags
-}
-
-func OneToOneNatTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OneToOneNat) (*apimodel.OneToOneNatRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.OneToOneNatRequest
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.Internal.IsNull() && !plan.Internal.IsUnknown() {
-		internalPlan := tfmodel.OneToOneNatSpecInternal{}
-		internalPlanDiag := plan.Internal.As(ctx, &internalPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, internalPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		internalTmp, internalDiag := OneToOneNatSpecInternalTFToAPIRequestModel(ctx, &internalPlan)
-		diags = append(diags, internalDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Internal = *internalTmp
-	}
-
-	if !plan.External.IsNull() && !plan.External.IsUnknown() {
-		externalPlan := tfmodel.OneToOneNatSpecExternal{}
-		externalPlanDiag := plan.External.As(ctx, &externalPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, externalPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		externalTmp, externalDiag := OneToOneNatSpecExternalTFToAPIRequestModel(ctx, &externalPlan)
-		diags = append(diags, externalDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.External = *externalTmp
-	}
-
-	return &am, diags
 }

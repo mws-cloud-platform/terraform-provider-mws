@@ -7,19 +7,16 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	"go.mws.cloud/go-sdk/service/resources/references/rm"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/model"
 )
 
-func SubnetAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.SubnetOptionalResponse) (*tfmodel.Subnet, tfdiag.Diagnostics) {
+func SubnetAPIOptionalResponseToTFModel(ctx context.Context, am *model.SubnetOptionalResponse) (*tfmodel.Subnet, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -96,65 +93,4 @@ func SubnetAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Subnet
 	}
 
 	return &t, diags
-}
-
-func SubnetTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Subnet) (*apimodel.SubnetRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.SubnetRequest
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.Region.IsNull() && !plan.Region.IsUnknown() {
-		regionRef, err := rm.ParseRegionRef(ctx, plan.Region.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Spec.Region = &regionRef
-	}
-
-	if !plan.Cidr.IsNull() && !plan.Cidr.IsUnknown() {
-		tmpCidr, err := cidraddress.ParseCIDR4AddressString(plan.Cidr.ValueString())
-		if err != nil {
-			diags.AddError("CIDR4Address string parsing", err.Error())
-			return nil, diags
-		}
-		am.Spec.Cidr = tmpCidr
-	}
-
-	if !plan.DhcpOptions.IsNull() && !plan.DhcpOptions.IsUnknown() {
-		dhcpOptionsPlan := tfmodel.SubnetDhcpOptions{}
-		dhcpOptionsPlanDiag := plan.DhcpOptions.As(ctx, &dhcpOptionsPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, dhcpOptionsPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		dhcpOptionsTmp, dhcpOptionsDiag := SubnetDhcpOptionsTFToAPIRequestModel(ctx, &dhcpOptionsPlan)
-		diags = append(diags, dhcpOptionsDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.DhcpOptions = dhcpOptionsTmp
-	}
-
-	return &am, diags
 }

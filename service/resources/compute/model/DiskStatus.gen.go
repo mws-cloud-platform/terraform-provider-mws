@@ -21,13 +21,13 @@ type DiskStatus struct {
 	BlockSize          types.String `tfsdk:"block_size"`
 	LinkedVms          types.List   `tfsdk:"linked_vms"`
 	InitialSourceImage types.String `tfsdk:"initial_source_image"`
-	OsType             OsType2      `tfsdk:"os_type"`
+	OsType             OsType       `tfsdk:"os_type"`
 	Encryption         types.Object `tfsdk:"encryption"`
 }
 
 func (s *DiskStatus) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Статус глобального диска`,
+		MarkdownDescription: `Статус диска`,
 		Attributes: map[string]schema.Attribute{
 			"ready": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.ResourceStatusReady).GetSchema().Attributes,

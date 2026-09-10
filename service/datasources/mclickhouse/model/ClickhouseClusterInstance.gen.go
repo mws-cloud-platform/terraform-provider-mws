@@ -16,14 +16,14 @@ type ClickhouseClusterInstance struct {
 
 func (s *ClickhouseClusterInstance) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Описание инстанса кластера.`,
+		MarkdownDescription: `Описание узла кластера.`,
 		Attributes: map[string]schema.Attribute{
 			"name": schema.StringAttribute{
-				MarkdownDescription: `-> Имя инстанса в шарде. В случае count>1, имя формируется как name{replicaIndex}, где replicaIndex имеет сквозную нумерацию в рамках имени инстанса`,
+				MarkdownDescription: `-> Имя узла или узлов в шарде. В случае count>1, имя формируется как name{replicaIndex}, где replicaIndex имеет сквозную нумерацию в рамках указанного имени`,
 				Computed:            true,
 			},
 			"count": schema.Int64Attribute{
-				MarkdownDescription: `Количество инстансов в зоне доступности`,
+				MarkdownDescription: `Количество узлов в зоне доступности`,
 				Computed:            true,
 			},
 			"zone": schema.StringAttribute{
@@ -34,7 +34,7 @@ func (s *ClickhouseClusterInstance) GetSchema() schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(ClickhouseEndpoint).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Описание эдпойнтов инстансов`,
+				MarkdownDescription: `Описание эндпоинтов узлов`,
 				Computed:            true,
 			},
 		},

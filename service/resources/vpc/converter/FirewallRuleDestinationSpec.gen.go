@@ -10,11 +10,11 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func FirewallRuleDestinationSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.FirewallRuleDestinationSpecOptionalResponse) (*tfmodel.FirewallRuleDestinationSpec, tfdiag.Diagnostics) {
+func FirewallRuleDestinationSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.FirewallRuleDestinationSpecOptionalResponse) (*tfmodel.FirewallRuleDestinationSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -43,13 +43,13 @@ func FirewallRuleDestinationSpecAPIOptionalResponseToTFModel(ctx context.Context
 	return &t, diags
 }
 
-func FirewallRuleDestinationSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.FirewallRuleDestinationSpec) (*apimodel.FirewallRuleDestinationSpecRequest, tfdiag.Diagnostics) {
+func FirewallRuleDestinationSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.FirewallRuleDestinationSpec) (*model.FirewallRuleDestinationSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.FirewallRuleDestinationSpecRequest
+	var am model.FirewallRuleDestinationSpecRequest
 
 	if !plan.Cidrs.IsNull() && !plan.Cidrs.IsUnknown() {
 		cidrs := make([]types.String, 0)
@@ -74,7 +74,7 @@ func FirewallRuleDestinationSpecTFToAPIRequestModel(ctx context.Context, plan *t
 	return &am, diags
 }
 
-func FirewallRuleDestinationSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.FirewallRuleDestinationSpec) (*apimodel.UpdateFirewallRuleDestinationSpecRequest, tfdiag.Diagnostics) {
+func FirewallRuleDestinationSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.FirewallRuleDestinationSpec) (*model.UpdateFirewallRuleDestinationSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -83,7 +83,7 @@ func FirewallRuleDestinationSpecTFToAPIUpdateRequestModel(ctx context.Context, p
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateFirewallRuleDestinationSpecRequest
+	var am model.UpdateFirewallRuleDestinationSpecRequest
 
 	if !plan.Cidrs.Equal(state.Cidrs) {
 		if !plan.Cidrs.IsNull() && !plan.Cidrs.IsUnknown() {

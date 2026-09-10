@@ -7,18 +7,16 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/kms/model"
-	"go.mws.cloud/go-sdk/service/resources/references/kms"
+	"go.mws.cloud/go-sdk/service/kms/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/kms/model"
 )
 
-func CryptoKeyAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.CryptoKeyOptionalResponse) (*tfmodel.CryptoKey, tfdiag.Diagnostics) {
+func CryptoKeyAPIOptionalResponseToTFModel(ctx context.Context, am *model.CryptoKeyOptionalResponse) (*tfmodel.CryptoKey, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -128,97 +126,4 @@ func CryptoKeyAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Cry
 	}
 
 	return &t, diags
-}
-
-func CryptoKeyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CryptoKey) (*apimodel.CryptoKeyRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.CryptoKeyRequest
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.DefaultAlgorithm.IsNull() && !plan.DefaultAlgorithm.IsUnknown() {
-		defaultAlgorithmTmp, defaultAlgorithmDiag := CryptoKeyAlgorithmTFToAPIModel(ctx, plan.DefaultAlgorithm)
-		diags = append(diags, defaultAlgorithmDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.DefaultAlgorithm = defaultAlgorithmTmp
-	}
-
-	if !plan.DestructionPolicy.IsNull() && !plan.DestructionPolicy.IsUnknown() {
-		destructionPolicyPlan := tfmodel.CryptoKeySpecDestructionPolicy{}
-		destructionPolicyPlanDiag := plan.DestructionPolicy.As(ctx, &destructionPolicyPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, destructionPolicyPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		destructionPolicyTmp, destructionPolicyDiag := CryptoKeySpecDestructionPolicyTFToAPIRequestModel(ctx, &destructionPolicyPlan)
-		diags = append(diags, destructionPolicyDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.DestructionPolicy = destructionPolicyTmp
-	}
-
-	if !plan.UsagePolicy.IsNull() && !plan.UsagePolicy.IsUnknown() {
-		usagePolicyPlan := tfmodel.CryptoKeySpecUsagePolicy{}
-		usagePolicyPlanDiag := plan.UsagePolicy.As(ctx, &usagePolicyPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, usagePolicyPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		usagePolicyTmp, usagePolicyDiag := CryptoKeySpecUsagePolicyTFToAPIRequestModel(ctx, &usagePolicyPlan)
-		diags = append(diags, usagePolicyDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.UsagePolicy = usagePolicyTmp
-	}
-
-	if !plan.RotationPolicy.IsNull() && !plan.RotationPolicy.IsUnknown() {
-		rotationPolicyPlan := tfmodel.CryptoKeySpecRotationPolicy{}
-		rotationPolicyPlanDiag := plan.RotationPolicy.As(ctx, &rotationPolicyPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, rotationPolicyPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		rotationPolicyTmp, rotationPolicyDiag := CryptoKeySpecRotationPolicyTFToAPIRequestModel(ctx, &rotationPolicyPlan)
-		diags = append(diags, rotationPolicyDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.RotationPolicy = rotationPolicyTmp
-	}
-
-	if !plan.PrimaryKeyVersionRef.IsNull() && !plan.PrimaryKeyVersionRef.IsUnknown() {
-		primaryKeyVersionRefRef, err := kms.ParseCryptoKeyVersionRef(ctx, plan.PrimaryKeyVersionRef.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Spec.PrimaryKeyVersionRef = &primaryKeyVersionRefRef
-	}
-
-	return &am, diags
 }

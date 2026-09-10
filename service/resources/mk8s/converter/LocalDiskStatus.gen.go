@@ -9,11 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
-func LocalDiskStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.LocalDiskStatusResponse) (*tfmodel.LocalDiskStatus, tfdiag.Diagnostics) {
+func LocalDiskStatusAPIResponseToTFModel(ctx context.Context, am *model.LocalDiskStatusResponse) (*tfmodel.LocalDiskStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

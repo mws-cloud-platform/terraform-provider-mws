@@ -9,11 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func TotalLocalDiskSizeLimitsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.TotalLocalDiskSizeLimitsSpecOptionalResponse) (*tfmodel.TotalLocalDiskSizeLimitsSpec, tfdiag.Diagnostics) {
+func TotalLocalDiskSizeLimitsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.TotalLocalDiskSizeLimitsSpecOptionalResponse) (*tfmodel.TotalLocalDiskSizeLimitsSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

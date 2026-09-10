@@ -16,6 +16,7 @@ type Image struct {
 	Metadata    types.Object  `tfsdk:"metadata"`
 	Status      types.Object  `tfsdk:"status"`
 	Family      types.String  `tfsdk:"family"`
+	Regions     types.List    `tfsdk:"regions"`
 	Source      types.Object  `tfsdk:"source"`
 	Activity    ImageActivity `tfsdk:"activity"`
 	MinDiskSize types.String  `tfsdk:"min_disk_size"`
@@ -43,6 +44,11 @@ func (s *Image) GetSchema() schema.Schema {
 			},
 			"family": schema.StringAttribute{
 				MarkdownDescription: `Семейство образа`,
+				Computed:            true,
+			},
+			"regions": schema.ListAttribute{
+				ElementType:         types.StringType,
+				MarkdownDescription: `Список регионов, в которых будет создана физическая копия образа`,
 				Computed:            true,
 			},
 			"source": schema.SingleNestedAttribute{

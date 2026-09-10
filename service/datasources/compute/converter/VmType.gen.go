@@ -10,14 +10,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func VmTypeAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.VmTypeOptionalResponse) (*tfmodel.VmType, tfdiag.Diagnostics) {
+func VmTypeAPIOptionalResponseToTFModel(ctx context.Context, am *model.VmTypeOptionalResponse) (*tfmodel.VmType, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -142,7 +142,7 @@ func VmTypeAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.VmType
 	return &t, diags
 }
 
-func VmTypeMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.VmTypeMetadataOptionalResponse) (*tfmodel.VmTypeMetadata, tfdiag.Diagnostics) {
+func VmTypeMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *model.VmTypeMetadataOptionalResponse) (*tfmodel.VmTypeMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

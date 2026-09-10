@@ -10,11 +10,11 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func DataDiskSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.DataDiskSpecResponse) (*tfmodel.DataDiskSpec, tfdiag.Diagnostics) {
+func DataDiskSpecAPIResponseToTFModel(ctx context.Context, am *model.DataDiskSpecResponse) (*tfmodel.DataDiskSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -45,13 +45,13 @@ func DataDiskSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.DataDisk
 	return &t, diags
 }
 
-func DataDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DataDiskSpec) (*apimodel.DataDiskSpecRequest, tfdiag.Diagnostics) {
+func DataDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DataDiskSpec) (*model.DataDiskSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.DataDiskSpecRequest
+	var am model.DataDiskSpecRequest
 
 	if !plan.Size.IsNull() && !plan.Size.IsUnknown() {
 		tmpSize, err := bytesize.ParseString(plan.Size.ValueString())
@@ -83,7 +83,7 @@ func DataDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DataDisk
 	return &am, diags
 }
 
-func DataDiskSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.DataDiskSpec) (*apimodel.UpdateDataDiskSpecRequest, tfdiag.Diagnostics) {
+func DataDiskSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.DataDiskSpec) (*model.UpdateDataDiskSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -92,7 +92,7 @@ func DataDiskSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfm
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateDataDiskSpecRequest
+	var am model.UpdateDataDiskSpecRequest
 
 	if !plan.Size.Equal(state.Size) {
 		if !plan.Size.IsNull() && !plan.Size.IsUnknown() {

@@ -132,7 +132,7 @@ Required:
 Optional:
 
 - `address` (Attributes) Адрес (see [below for nested schema](#nestedatt--next_hop--address))
-- `nat_gateway` (String) NAT шлюз
+- `nat_gateway` (String) NAT-шлюз
 
 Read-Only:
 
@@ -214,7 +214,7 @@ Read-Only:
 Read-Only:
 
 - `address` (Attributes) Адрес (see [below for nested schema](#nestedatt--status--next_hop--address))
-- `nat_gateway` (String) NAT шлюз
+- `nat_gateway` (String) NAT-шлюз
 - `network_local` (String) Локальная сеть
 
 <a id="nestedatt--status--next_hop--address"></a>

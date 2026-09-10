@@ -9,13 +9,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	"go.mws.cloud/go-sdk/service/resources/references/rm"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func ClickhouseClusterInstanceAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseClusterInstanceOptionalResponse) (*tfmodel.ClickhouseClusterInstance, tfdiag.Diagnostics) {
+func ClickhouseClusterInstanceAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseClusterInstanceOptionalResponse) (*tfmodel.ClickhouseClusterInstance, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -63,13 +63,13 @@ func ClickhouseClusterInstanceAPIOptionalResponseToTFModel(ctx context.Context, 
 	return &t, diags
 }
 
-func ClickhouseClusterInstanceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterInstance) (*apimodel.ClickhouseClusterInstanceRequest, tfdiag.Diagnostics) {
+func ClickhouseClusterInstanceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterInstance) (*model.ClickhouseClusterInstanceRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseClusterInstanceRequest
+	var am model.ClickhouseClusterInstanceRequest
 
 	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
 		am.Name = plan.Name.ValueString()
@@ -96,7 +96,7 @@ func ClickhouseClusterInstanceTFToAPIRequestModel(ctx context.Context, plan *tfm
 			return nil, diags
 		}
 
-		am.Endpoints = make([]apimodel.ClickhouseEndpointRequest, 0, len(endpoints))
+		am.Endpoints = make([]model.ClickhouseEndpointRequest, 0, len(endpoints))
 
 		for _, entity := range endpoints {
 			tmp, d := ClickhouseEndpointTFToAPIRequestModel(ctx, &entity)
@@ -111,7 +111,7 @@ func ClickhouseClusterInstanceTFToAPIRequestModel(ctx context.Context, plan *tfm
 	return &am, diags
 }
 
-func ClickhouseClusterInstanceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseClusterInstance) (*apimodel.UpdateClickhouseClusterInstanceRequest, tfdiag.Diagnostics) {
+func ClickhouseClusterInstanceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseClusterInstance) (*model.UpdateClickhouseClusterInstanceRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -120,7 +120,7 @@ func ClickhouseClusterInstanceTFToAPIUpdateRequestModel(ctx context.Context, pla
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateClickhouseClusterInstanceRequest
+	var am model.UpdateClickhouseClusterInstanceRequest
 
 	if !plan.Name.Equal(state.Name) {
 		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
@@ -154,7 +154,7 @@ func ClickhouseClusterInstanceTFToAPIUpdateRequestModel(ctx context.Context, pla
 				return nil, diags
 			}
 
-			endpointsTmp := make([]apimodel.UpdateClickhouseEndpointRequest, 0, len(endpoints))
+			endpointsTmp := make([]model.UpdateClickhouseEndpointRequest, 0, len(endpoints))
 
 			for _, entity := range endpoints {
 				stateEntity := tfmodel.ClickhouseEndpoint{}

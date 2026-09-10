@@ -8,9 +8,9 @@ import (
 
 	"go.mws.cloud/go-sdk/mws"
 	commonerrors "go.mws.cloud/go-sdk/mws/errors"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/compute/client"
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	resourcesdk "go.mws.cloud/go-sdk/service/compute/sdk"
 	computeref "go.mws.cloud/go-sdk/service/resources/references/compute"
 	"go.mws.cloud/terraform-provider-mws/internal/acctest"
@@ -34,7 +34,7 @@ func SnapshotTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleResource
 				return fmt.Errorf("invalid resource state")
 			}
 			state := r.Status.Ready.State
-			if string(state) != string(commonapimodel.ResourceStatusState_OK) {
+			if string(state) != string(commonmodel.ResourceStatusState_OK) {
 				return fmt.Errorf("invalid resource state: %s", state)
 			}
 			return nil
@@ -52,7 +52,7 @@ func SnapshotTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleResource
 	}, nil
 }
 
-func GetSnapshot(ctx context.Context, sdk *resourcesdk.Snapshot, id string) (*apimodel.SnapshotOptionalResponse, error) {
+func GetSnapshot(ctx context.Context, sdk *resourcesdk.Snapshot, id string) (*model.SnapshotOptionalResponse, error) {
 	ref, err := computeref.ParseSnapshotRef(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("parse reference: %w", err)

@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/secretmanager/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/secretmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager/converter"
@@ -19,18 +19,18 @@ import (
 
 func TestSecretVersionAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.SecretVersionOptionalResponse{}
+	emptyApiModel := model.SecretVersionOptionalResponse{}
 	_, diags := conv.SecretVersionAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestSecretVersionOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.SecretVersionRequest{
-		Spec: apimodel.SecretVersionSpecRequest{},
+	emptyApiModelRequest := model.SecretVersionRequest{
+		Spec: model.SecretVersionSpecRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.SecretVersionRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.SecretVersionRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.SecretVersionAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -39,7 +39,7 @@ func TestSecretVersionOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.SecretVersionTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.SecretVersionRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.SecretVersionRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -52,8 +52,8 @@ func TestUpdateSecretVersionRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.SecretVersion
 	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateSecretVersionRequest{
-		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+	expectedUpdateModel := &model.UpdateSecretVersionRequest{
+		Metadata: optional.OptionalNil[commonmodel.UpdateCommonTypedResourceMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},

@@ -14,7 +14,7 @@ type KafkaBalancerSpec struct {
 
 func (s *KafkaBalancerSpec) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Настройка балансировщика кластера.`,
+		MarkdownDescription: `Конфигурация балансировщика`,
 		Attributes: map[string]schema.Attribute{
 			"enabled": schema.BoolAttribute{
 				MarkdownDescription: `Состояние балансировщика — включен или выключен`,

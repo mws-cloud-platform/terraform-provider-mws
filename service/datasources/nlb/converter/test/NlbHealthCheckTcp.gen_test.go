@@ -8,34 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/nlb/converter"
 )
 
 func TestNlbHealthCheckTcpAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NlbHealthCheckTcpOptionalResponse{}
+	emptyApiModel := model.NlbHealthCheckTcpOptionalResponse{}
 	_, diags := conv.NlbHealthCheckTcpAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestNlbHealthCheckTcpOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.NlbHealthCheckTcpRequest{
-		Port: 0,
-	}
-
-	emptyApiModelResponse, err := apimodel.NlbHealthCheckTcpRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.NlbHealthCheckTcpAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.NlbHealthCheckTcpTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.NlbHealthCheckTcpRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

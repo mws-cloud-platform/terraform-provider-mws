@@ -1,0 +1,5 @@
+Error: unexpected status code: '418'
+Data: I'm a teapot
+
+RequestID: 123
+TraceID: xxx-xxx

@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func BackupTriggerAPIToTFModel(ctx context.Context, am *apimodel.BackupTrigger) (tfmodel.BackupTrigger, tfdiag.Diagnostics) {
+func BackupTriggerAPIToTFModel(ctx context.Context, am *model.BackupTrigger) (tfmodel.BackupTrigger, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.BackupTrigger{}, nil
 	}
@@ -25,15 +25,15 @@ func BackupTriggerAPIToTFModel(ctx context.Context, am *apimodel.BackupTrigger) 
 	return t, diags
 }
 
-func BackupTriggerTFToAPIModel(ctx context.Context, plan tfmodel.BackupTrigger) (*apimodel.BackupTrigger, tfdiag.Diagnostics) {
+func BackupTriggerTFToAPIModel(ctx context.Context, plan tfmodel.BackupTrigger) (*model.BackupTrigger, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
-	var am apimodel.BackupTrigger
+	var am model.BackupTrigger
 
 	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}
-	am = apimodel.BackupTrigger(tmp.ValueString())
+	am = model.BackupTrigger(tmp.ValueString())
 
 	return &am, diags
 }

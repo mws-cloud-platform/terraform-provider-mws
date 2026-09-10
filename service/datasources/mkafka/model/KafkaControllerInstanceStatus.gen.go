@@ -14,7 +14,7 @@ type KafkaControllerInstanceStatus struct {
 
 func (s *KafkaControllerInstanceStatus) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Параметры виртуальной машины, где работает контроллер.`,
+		MarkdownDescription: `Параметры узла-контроллера кластера Managed Kafka.`,
 		Attributes: map[string]schema.Attribute{
 			"combined_with_broker": schema.BoolAttribute{
 				MarkdownDescription: `Контроллеры размещаются на тех же виртуальных машинах, что и брокеры`,

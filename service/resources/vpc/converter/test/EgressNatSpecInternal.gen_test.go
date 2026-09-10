@@ -9,25 +9,25 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
 func TestEgressNatSpecInternalAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.EgressNatSpecInternalOptionalResponse{}
+	emptyApiModel := model.EgressNatSpecInternalOptionalResponse{}
 	_, diags := conv.EgressNatSpecInternalAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestEgressNatSpecInternalOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.EgressNatSpecInternalRequest{
+	emptyApiModelRequest := model.EgressNatSpecInternalRequest{
 		Subnets: []vpc.SubnetRef{},
 	}
 
-	emptyApiModelResponse, err := apimodel.EgressNatSpecInternalRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.EgressNatSpecInternalRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.EgressNatSpecInternalAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -36,7 +36,7 @@ func TestEgressNatSpecInternalOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.EgressNatSpecInternalTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.EgressNatSpecInternalRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.EgressNatSpecInternalRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -48,7 +48,7 @@ func TestUpdateEgressNatSpecInternalRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.EgressNatSpecInternal
 	var stateTfModel tfmodel.EgressNatSpecInternal
 
-	expectedUpdateModel := &apimodel.UpdateEgressNatSpecInternalRequest{}
+	expectedUpdateModel := &model.UpdateEgressNatSpecInternalRequest{}
 
 	result, diags := conv.EgressNatSpecInternalTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

@@ -7,14 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/model"
 )
 
-func ClickhouseStorageConfigurationAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseStorageConfigurationOptionalResponse) (*tfmodel.ClickhouseStorageConfiguration, tfdiag.Diagnostics) {
+func ClickhouseStorageConfigurationAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseStorageConfigurationOptionalResponse) (*tfmodel.ClickhouseStorageConfiguration, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -55,7 +54,7 @@ func ClickhouseStorageConfigurationAPIOptionalResponseToTFModel(ctx context.Cont
 	return &t, diags
 }
 
-func ClickhouseStorageConfigurationAPIResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseStorageConfigurationResponse) (*tfmodel.ClickhouseStorageConfiguration, tfdiag.Diagnostics) {
+func ClickhouseStorageConfigurationAPIResponseToTFModel(ctx context.Context, am *model.ClickhouseStorageConfigurationResponse) (*tfmodel.ClickhouseStorageConfiguration, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -94,45 +93,4 @@ func ClickhouseStorageConfigurationAPIResponseToTFModel(ctx context.Context, am 
 	}
 
 	return &t, diags
-}
-
-func ClickhouseStorageConfigurationTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseStorageConfiguration) (*apimodel.ClickhouseStorageConfigurationRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseStorageConfigurationRequest
-
-	if !plan.HybridStorageEnabled.IsNull() && !plan.HybridStorageEnabled.IsUnknown() {
-		am.HybridStorageEnabled = plan.HybridStorageEnabled.ValueBoolPointer()
-	}
-
-	if !plan.MoveFactor.IsNull() && !plan.MoveFactor.IsUnknown() {
-		am.MoveFactor = plan.MoveFactor.ValueFloat64Pointer()
-	}
-
-	if !plan.DataCachingEnabled.IsNull() && !plan.DataCachingEnabled.IsUnknown() {
-		am.DataCachingEnabled = plan.DataCachingEnabled.ValueBoolPointer()
-	}
-
-	if !plan.CacheMaxSize.IsNull() && !plan.CacheMaxSize.IsUnknown() {
-		tmpCacheMaxSize, err := bytesize.ParseString(plan.CacheMaxSize.ValueString())
-		if err != nil {
-			diags.AddError("ByteSize string parsing", err.Error())
-			return nil, diags
-		}
-		am.CacheMaxSize = &tmpCacheMaxSize
-	}
-
-	if !plan.MaxDataPartSizeSsd.IsNull() && !plan.MaxDataPartSizeSsd.IsUnknown() {
-		tmpMaxDataPartSizeSsd, err := bytesize.ParseString(plan.MaxDataPartSizeSsd.ValueString())
-		if err != nil {
-			diags.AddError("ByteSize string parsing", err.Error())
-			return nil, diags
-		}
-		am.MaxDataPartSizeSsd = &tmpMaxDataPartSizeSsd
-	}
-
-	return &am, diags
 }

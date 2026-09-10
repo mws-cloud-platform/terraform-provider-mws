@@ -8,12 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/model"
 )
 
-func ClickhouseEndpointAddressSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseEndpointAddressSpecOptionalResponse) (*tfmodel.ClickhouseEndpointAddressSpec, tfdiag.Diagnostics) {
+func ClickhouseEndpointAddressSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseEndpointAddressSpecOptionalResponse) (*tfmodel.ClickhouseEndpointAddressSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -24,24 +23,4 @@ func ClickhouseEndpointAddressSpecAPIOptionalResponseToTFModel(ctx context.Conte
 	t.Subnet = types.StringValue(am.Subnet.Path())
 
 	return &t, diags
-}
-
-func ClickhouseEndpointAddressSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseEndpointAddressSpec) (*apimodel.ClickhouseEndpointAddressSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseEndpointAddressSpecRequest
-
-	if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {
-		subnetRef, err := vpc.ParseSubnetRef(ctx, plan.Subnet.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Subnet = subnetRef
-	}
-
-	return &am, diags
 }

@@ -9,11 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"go.mws.cloud/go-sdk/service/resources/references/kms"
-	apimodel "go.mws.cloud/go-sdk/service/secretmanager/model"
+	"go.mws.cloud/go-sdk/service/secretmanager/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager/model"
 )
 
-func EncryptionSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.EncryptionSpecOptionalResponse) (*tfmodel.EncryptionSpec, tfdiag.Diagnostics) {
+func EncryptionSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.EncryptionSpecOptionalResponse) (*tfmodel.EncryptionSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -26,13 +26,13 @@ func EncryptionSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func EncryptionSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.EncryptionSpec) (*apimodel.EncryptionSpecRequest, tfdiag.Diagnostics) {
+func EncryptionSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.EncryptionSpec) (*model.EncryptionSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.EncryptionSpecRequest
+	var am model.EncryptionSpecRequest
 
 	if !plan.CryptoKeyId.IsNull() && !plan.CryptoKeyId.IsUnknown() {
 		cryptoKeyIdRef, err := kms.ParseCryptoKeyRef(ctx, plan.CryptoKeyId.ValueString())
@@ -46,7 +46,7 @@ func EncryptionSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Encryp
 	return &am, diags
 }
 
-func EncryptionSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.EncryptionSpec) (*apimodel.UpdateEncryptionSpecRequest, tfdiag.Diagnostics) {
+func EncryptionSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.EncryptionSpec) (*model.UpdateEncryptionSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -55,7 +55,7 @@ func EncryptionSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateEncryptionSpecRequest
+	var am model.UpdateEncryptionSpecRequest
 
 	if !plan.CryptoKeyId.Equal(state.CryptoKeyId) {
 		if !plan.CryptoKeyId.IsNull() && !plan.CryptoKeyId.IsUnknown() {

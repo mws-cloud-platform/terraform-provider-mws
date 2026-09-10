@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func ClickhouseDataDiskTypeAPIToTFModel(ctx context.Context, am *apimodel.ClickhouseDataDiskType) (tfmodel.ClickhouseDataDiskType, tfdiag.Diagnostics) {
+func ClickhouseDataDiskTypeAPIToTFModel(ctx context.Context, am *model.ClickhouseDataDiskType) (tfmodel.ClickhouseDataDiskType, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.ClickhouseDataDiskType{}, nil
 	}
@@ -25,15 +25,15 @@ func ClickhouseDataDiskTypeAPIToTFModel(ctx context.Context, am *apimodel.Clickh
 	return t, diags
 }
 
-func ClickhouseDataDiskTypeTFToAPIModel(ctx context.Context, plan tfmodel.ClickhouseDataDiskType) (*apimodel.ClickhouseDataDiskType, tfdiag.Diagnostics) {
+func ClickhouseDataDiskTypeTFToAPIModel(ctx context.Context, plan tfmodel.ClickhouseDataDiskType) (*model.ClickhouseDataDiskType, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseDataDiskType
+	var am model.ClickhouseDataDiskType
 
 	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}
-	am = apimodel.ClickhouseDataDiskType(tmp.ValueString())
+	am = model.ClickhouseDataDiskType(tmp.ValueString())
 
 	return &am, diags
 }

@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 )
 
-func DayOfWeekAPIToTFModel(ctx context.Context, am *commonapimodel.DayOfWeek) (tfcommon.DayOfWeek, tfdiag.Diagnostics) {
+func DayOfWeekAPIToTFModel(ctx context.Context, am *commonmodel.DayOfWeek) (tfcommon.DayOfWeek, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfcommon.DayOfWeek{}, nil
 	}
@@ -23,17 +23,4 @@ func DayOfWeekAPIToTFModel(ctx context.Context, am *commonapimodel.DayOfWeek) (t
 	t = tfcommon.DayOfWeek(types.StringValue(string(*am)))
 
 	return t, diags
-}
-
-func DayOfWeekTFToAPIModel(ctx context.Context, plan tfcommon.DayOfWeek) (*commonapimodel.DayOfWeek, tfdiag.Diagnostics) {
-	var diags tfdiag.Diagnostics
-	var am commonapimodel.DayOfWeek
-
-	var tmp = types.String(plan)
-	if tmp.IsNull() {
-		return nil, diags
-	}
-	am = commonapimodel.DayOfWeek(tmp.ValueString())
-
-	return &am, diags
 }

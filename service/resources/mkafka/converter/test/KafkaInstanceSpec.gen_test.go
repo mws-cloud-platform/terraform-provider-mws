@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
@@ -17,21 +17,21 @@ import (
 
 func TestKafkaInstanceSpecAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaInstanceSpecResponse{}
+	emptyApiModel := model.KafkaInstanceSpecResponse{}
 	_, diags := conv.KafkaInstanceSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestKafkaInstanceSpecResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaInstanceSpecRequest{
+	emptyApiModelRequest := model.KafkaInstanceSpecRequest{
 		VmType: compute.NewMustVmTypeRef("vmTypeID"),
-		Disk: apimodel.KafkaDataDiskSpecRequest{
+		Disk: model.KafkaDataDiskSpecRequest{
 			Size: bytesize.MustParseString("0 B"),
 		},
 	}
 
-	emptyApiModelResponse, err := apimodel.KafkaInstanceSpecRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.KafkaInstanceSpecRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.KafkaInstanceSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -40,7 +40,7 @@ func TestKafkaInstanceSpecResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.KafkaInstanceSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.KafkaInstanceSpecRequestToResponse(filledApiModelRequest)
+	result, err := model.KafkaInstanceSpecRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -52,7 +52,7 @@ func TestUpdateKafkaInstanceSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.KafkaInstanceSpec
 	var stateTfModel tfmodel.KafkaInstanceSpec
 
-	expectedUpdateModel := &apimodel.UpdateKafkaInstanceSpecRequest{}
+	expectedUpdateModel := &model.UpdateKafkaInstanceSpecRequest{}
 
 	result, diags := conv.KafkaInstanceSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

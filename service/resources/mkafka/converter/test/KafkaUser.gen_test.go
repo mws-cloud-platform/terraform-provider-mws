@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
@@ -18,20 +18,20 @@ import (
 
 func TestKafkaUserAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaUserResponse{}
+	emptyApiModel := model.KafkaUserResponse{}
 	_, diags := conv.KafkaUserAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestKafkaUserResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaUserRequest{
-		Spec: apimodel.KafkaUserSpecRequest{
-			Roles: []apimodel.KafkaClusterRoleRequest{},
+	emptyApiModelRequest := model.KafkaUserRequest{
+		Spec: model.KafkaUserSpecRequest{
+			Roles: []model.KafkaClusterRoleRequest{},
 		},
 	}
 
-	emptyApiModelResponse, err := apimodel.KafkaUserRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.KafkaUserRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.KafkaUserAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -40,7 +40,7 @@ func TestKafkaUserResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.KafkaUserTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.KafkaUserRequestToResponse(filledApiModelRequest)
+	result, err := model.KafkaUserRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -53,8 +53,8 @@ func TestUpdateKafkaUserRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.KafkaUser
 	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.KafkaUserMetadata).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateKafkaUserRequest{
-		Metadata: optional.OptionalNil[apimodel.UpdateKafkaUserMetadataRequest]{
+	expectedUpdateModel := &model.UpdateKafkaUserRequest{
+		Metadata: optional.OptionalNil[model.UpdateKafkaUserMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},
@@ -68,18 +68,18 @@ func TestUpdateKafkaUserRequestConverters(t *testing.T) {
 
 func TestKafkaUserMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaUserMetadataResponse{}
+	emptyApiModel := model.KafkaUserMetadataResponse{}
 	_, diags := conv.KafkaUserMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestKafkaUserMetadataResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaUserMetadataRequest{
-		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
+	emptyApiModelRequest := model.KafkaUserMetadataRequest{
+		TypedResourceMetadataRequest: commonmodel.TypedResourceMetadataRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.KafkaUserMetadataRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.KafkaUserMetadataRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.KafkaUserMetadataAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -88,7 +88,7 @@ func TestKafkaUserMetadataResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.KafkaUserMetadataTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.KafkaUserMetadataRequestToResponse(filledApiModelRequest)
+	result, err := model.KafkaUserMetadataRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -100,7 +100,7 @@ func TestUpdateKafkaUserMetadataRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.KafkaUserMetadata
 	var stateTfModel tfmodel.KafkaUserMetadata
 
-	expectedUpdateModel := &apimodel.UpdateKafkaUserMetadataRequest{}
+	expectedUpdateModel := &model.UpdateKafkaUserMetadataRequest{}
 
 	result, diags := conv.KafkaUserMetadataTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

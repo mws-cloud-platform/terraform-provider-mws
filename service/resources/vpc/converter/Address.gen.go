@@ -11,16 +11,16 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/ipaddress"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func AddressAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.AddressOptionalResponse) (*tfmodel.Address, tfdiag.Diagnostics) {
+func AddressAPIOptionalResponseToTFModel(ctx context.Context, am *model.AddressOptionalResponse) (*tfmodel.Address, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -108,13 +108,13 @@ func AddressAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Addre
 	return &t, diags
 }
 
-func AddressTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Address) (*apimodel.AddressRequest, tfdiag.Diagnostics) {
+func AddressTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Address) (*model.AddressRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.AddressRequest
+	var am model.AddressRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
@@ -158,7 +158,7 @@ func AddressTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Address) (*ap
 			return nil, diags
 		}
 
-		am.Spec.Dns = make([]commonapimodel.VpcAddressDnsSpecRequest, 0, len(dns))
+		am.Spec.Dns = make([]commonmodel.VpcAddressDnsSpecRequest, 0, len(dns))
 
 		for _, entity := range dns {
 			tmp, d := commonconv.VpcAddressDnsSpecTFToAPIRequestModel(ctx, &entity)
@@ -173,7 +173,7 @@ func AddressTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Address) (*ap
 	return &am, diags
 }
 
-func AddressTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Address) (*apimodel.UpdateAddressRequest, tfdiag.Diagnostics) {
+func AddressTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Address) (*model.UpdateAddressRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -182,7 +182,7 @@ func AddressTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateAddressRequest
+	var am model.UpdateAddressRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -216,7 +216,7 @@ func AddressTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.
 	if !plan.Subnet.Equal(state.Subnet) {
 		if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateVpcAddressSpecRequest{})
+				am.Spec.SetTo(model.UpdateVpcAddressSpecRequest{})
 			}
 			subnetRef, err := vpc.ParseSubnetRef(ctx, plan.Subnet.ValueString())
 			if err != nil {
@@ -230,7 +230,7 @@ func AddressTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.
 	if !plan.IpAddress.Equal(state.IpAddress) {
 		if !plan.IpAddress.IsNull() && !plan.IpAddress.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateVpcAddressSpecRequest{})
+				am.Spec.SetTo(model.UpdateVpcAddressSpecRequest{})
 			}
 			tmpIpAddress, err := ipaddress.ParseIPAddressString(plan.IpAddress.ValueString())
 			if err != nil {
@@ -244,7 +244,7 @@ func AddressTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.
 	if !plan.Dns.Equal(state.Dns) {
 		if !plan.Dns.IsNull() && !plan.Dns.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateVpcAddressSpecRequest{})
+				am.Spec.SetTo(model.UpdateVpcAddressSpecRequest{})
 			}
 			dns := make([]tfcommon.VpcAddressDnsSpec, 0)
 			dDns := plan.Dns.ElementsAs(ctx, &dns, false)
@@ -253,7 +253,7 @@ func AddressTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.
 				return nil, diags
 			}
 
-			dnsTmp := make([]commonapimodel.UpdateVpcAddressDnsSpecRequest, 0, len(dns))
+			dnsTmp := make([]commonmodel.UpdateVpcAddressDnsSpecRequest, 0, len(dns))
 
 			for _, entity := range dns {
 				stateEntity := tfcommon.VpcAddressDnsSpec{}
@@ -267,7 +267,7 @@ func AddressTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.
 			am.Spec.Value.Dns.SetTo(dnsTmp)
 		} else if plan.Dns.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateVpcAddressSpecRequest{})
+				am.Spec.SetTo(model.UpdateVpcAddressSpecRequest{})
 			}
 			am.Spec.Value.Dns.SetToNull()
 		}

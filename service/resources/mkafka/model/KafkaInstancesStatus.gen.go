@@ -14,7 +14,7 @@ type KafkaInstancesStatus struct {
 
 func (s *KafkaInstancesStatus) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Описание ресурсов хостов брокеров и контроллеров.`,
+		MarkdownDescription: `Описание ресурсов хостов брокеров и контроллера.`,
 		Attributes: map[string]schema.Attribute{
 			"broker": schema.SingleNestedAttribute{
 				Attributes:          new(KafkaInstanceStatus).GetSchema().Attributes,

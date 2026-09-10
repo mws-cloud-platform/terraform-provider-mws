@@ -9,35 +9,35 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/duration"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
 func TestVpcAddressDnsSpecAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.VpcAddressDnsSpec{}
+	emptyApiModel := commonmodel.VpcAddressDnsSpec{}
 	_, diags := commonconv.VpcAddressDnsSpecAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestVpcAddressDnsSpecAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.VpcAddressDnsSpecResponse{}
+	emptyApiModel := commonmodel.VpcAddressDnsSpecResponse{}
 	_, diags := commonconv.VpcAddressDnsSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestVpcAddressDnsSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.VpcAddressDnsSpecOptionalResponse{}
+	emptyApiModel := commonmodel.VpcAddressDnsSpecOptionalResponse{}
 	_, diags := commonconv.VpcAddressDnsSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestVpcAddressDnsSpecConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.VpcAddressDnsSpec{
+	emptyApiModel := commonmodel.VpcAddressDnsSpec{
 		Name: "name",
 		Ttl:  duration.MustParseString("PT0S"),
 		Ptr:  false,
@@ -54,13 +54,13 @@ func TestVpcAddressDnsSpecConverters(t *testing.T) {
 
 func TestVpcAddressDnsSpecResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonapimodel.VpcAddressDnsSpecRequest{
+	emptyApiModelRequest := commonmodel.VpcAddressDnsSpecRequest{
 		Name: "name",
 		Ttl:  duration.MustParseString("PT0S"),
 		Ptr:  false,
 	}
 
-	emptyApiModelResponse, err := commonapimodel.VpcAddressDnsSpecRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonmodel.VpcAddressDnsSpecRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.VpcAddressDnsSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -69,7 +69,7 @@ func TestVpcAddressDnsSpecResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := commonconv.VpcAddressDnsSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := commonapimodel.VpcAddressDnsSpecRequestToResponse(filledApiModelRequest)
+	result, err := commonmodel.VpcAddressDnsSpecRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -77,13 +77,13 @@ func TestVpcAddressDnsSpecResponseConverters(t *testing.T) {
 
 func TestVpcAddressDnsSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonapimodel.VpcAddressDnsSpecRequest{
+	emptyApiModelRequest := commonmodel.VpcAddressDnsSpecRequest{
 		Name: "name",
 		Ttl:  duration.MustParseString("PT0S"),
 		Ptr:  false,
 	}
 
-	emptyApiModelResponse, err := commonapimodel.VpcAddressDnsSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonmodel.VpcAddressDnsSpecRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.VpcAddressDnsSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -92,7 +92,7 @@ func TestVpcAddressDnsSpecOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := commonconv.VpcAddressDnsSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := commonapimodel.VpcAddressDnsSpecRequestToOptionalResponse(filledApiModelRequest)
+	result, err := commonmodel.VpcAddressDnsSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -104,7 +104,7 @@ func TestUpdateVpcAddressDnsSpecConverters(t *testing.T) {
 	var nullPlanTfModel tfcommon.VpcAddressDnsSpec
 	var stateTfModel tfcommon.VpcAddressDnsSpec
 
-	expectedUpdateModel := &commonapimodel.UpdateVpcAddressDnsSpec{}
+	expectedUpdateModel := &commonmodel.UpdateVpcAddressDnsSpec{}
 
 	result, diags := commonconv.VpcAddressDnsSpecTFToAPIUpdateModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())
@@ -118,7 +118,7 @@ func TestUpdateVpcAddressDnsSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfcommon.VpcAddressDnsSpec
 	var stateTfModel tfcommon.VpcAddressDnsSpec
 
-	expectedUpdateModel := &commonapimodel.UpdateVpcAddressDnsSpecRequest{}
+	expectedUpdateModel := &commonmodel.UpdateVpcAddressDnsSpecRequest{}
 
 	result, diags := commonconv.VpcAddressDnsSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

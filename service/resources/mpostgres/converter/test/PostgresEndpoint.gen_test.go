@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
@@ -16,20 +16,20 @@ import (
 
 func TestPostgresEndpointAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.PostgresEndpointResponse{}
+	emptyApiModel := model.PostgresEndpointResponse{}
 	_, diags := conv.PostgresEndpointAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestPostgresEndpointResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.PostgresEndpointRequest{
+	emptyApiModelRequest := model.PostgresEndpointRequest{
 		Name:             "name",
 		Network:          vpc.NewMustNetworkRef("projectID", "networkID"),
-		PrimaryAddresses: []apimodel.PostgresNetworkAddressRequest{},
+		PrimaryAddresses: []model.PostgresNetworkAddressRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.PostgresEndpointRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.PostgresEndpointRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.PostgresEndpointAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -38,7 +38,7 @@ func TestPostgresEndpointResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.PostgresEndpointTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.PostgresEndpointRequestToResponse(filledApiModelRequest)
+	result, err := model.PostgresEndpointRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -50,7 +50,7 @@ func TestUpdatePostgresEndpointRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.PostgresEndpoint
 	var stateTfModel tfmodel.PostgresEndpoint
 
-	expectedUpdateModel := &apimodel.UpdatePostgresEndpointRequest{}
+	expectedUpdateModel := &model.UpdatePostgresEndpointRequest{}
 
 	result, diags := conv.PostgresEndpointTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

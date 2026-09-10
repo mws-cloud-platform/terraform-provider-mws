@@ -91,6 +91,7 @@ func resources() []func() resource.Resource {
 func dataSources() []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		dscertmanager.NewCertificateDataSource,
+		dscompute.NewVmTypeDataSource,
 		dscompute.NewVirtualMachineDataSource,
 		dscompute.NewSnapshotDataSource,
 		dscompute.NewImageDataSource,

@@ -13,7 +13,7 @@ type FirewallRuleDestinationSpec struct {
 
 func (s *FirewallRuleDestinationSpec) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Спецификация группы адресов.`,
+		MarkdownDescription: `Группа CIDR-ов, выступающая в качестве перечня получателей траффика, к которому будет применено Firewall правило.`,
 		Attributes: map[string]schema.Attribute{
 			"cidrs": schema.ListAttribute{
 				ElementType:         types.StringType,

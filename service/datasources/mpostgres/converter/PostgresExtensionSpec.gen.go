@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/model"
 )
 
-func PostgresExtensionSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresExtensionSpecResponse) (*tfmodel.PostgresExtensionSpec, tfdiag.Diagnostics) {
+func PostgresExtensionSpecAPIResponseToTFModel(ctx context.Context, am *model.PostgresExtensionSpecResponse) (*tfmodel.PostgresExtensionSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -23,19 +23,4 @@ func PostgresExtensionSpecAPIResponseToTFModel(ctx context.Context, am *apimodel
 	t.Name = types.StringValue(am.Name)
 
 	return &t, diags
-}
-
-func PostgresExtensionSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresExtensionSpec) (*apimodel.PostgresExtensionSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresExtensionSpecRequest
-
-	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
-		am.Name = plan.Name.ValueString()
-	}
-
-	return &am, diags
 }

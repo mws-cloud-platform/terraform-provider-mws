@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func PossiblyZeroIopsAPIToTFModel(ctx context.Context, am *apimodel.PossiblyZeroIops) (tfmodel.PossiblyZeroIops, tfdiag.Diagnostics) {
+func PossiblyZeroIopsAPIToTFModel(ctx context.Context, am *model.PossiblyZeroIops) (tfmodel.PossiblyZeroIops, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.PossiblyZeroIops{}, nil
 	}
@@ -23,17 +23,4 @@ func PossiblyZeroIopsAPIToTFModel(ctx context.Context, am *apimodel.PossiblyZero
 	t = tfmodel.PossiblyZeroIops(types.Int64Value(int64(*am)))
 
 	return t, diags
-}
-
-func PossiblyZeroIopsTFToAPIModel(ctx context.Context, plan tfmodel.PossiblyZeroIops) (*apimodel.PossiblyZeroIops, tfdiag.Diagnostics) {
-	var diags tfdiag.Diagnostics
-	var am apimodel.PossiblyZeroIops
-
-	var tmp = types.Int64(plan)
-	if tmp.IsNull() {
-		return nil, diags
-	}
-	am = apimodel.PossiblyZeroIops(tmp.ValueInt64())
-
-	return &am, diags
 }

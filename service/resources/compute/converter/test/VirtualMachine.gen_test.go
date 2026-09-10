@@ -10,8 +10,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	"go.mws.cloud/go-sdk/service/resources/references/iam"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -21,27 +21,27 @@ import (
 
 func TestVirtualMachineAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.VirtualMachineOptionalResponse{}
+	emptyApiModel := model.VirtualMachineOptionalResponse{}
 	_, diags := conv.VirtualMachineAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestVirtualMachineOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.VirtualMachineRequest{
-		Spec: apimodel.VirtualMachineSpecRequest{
+	emptyApiModelRequest := model.VirtualMachineRequest{
+		Spec: model.VirtualMachineSpecRequest{
 			Zone:   "zone",
 			VmType: compute.NewMustVmTypeRef("vmTypeID"),
-			Storage: apimodel.StorageSpecRequest{
-				Disks: []apimodel.StorageDiskSpecOrRefWithAttachmentsRequest{},
+			Storage: model.StorageSpecRequest{
+				Disks: []model.StorageDiskSpecOrRefWithAttachmentsRequest{},
 			},
-			Network: apimodel.NetworkSpecRequest{
-				NetworkInterfaces: []apimodel.NetworkInterfaceSpecRequest{},
+			Network: model.NetworkSpecRequest{
+				NetworkInterfaces: []model.NetworkInterfaceSpecRequest{},
 			},
 		},
 	}
 
-	emptyApiModelResponse, err := apimodel.VirtualMachineRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.VirtualMachineRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.VirtualMachineAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -50,7 +50,7 @@ func TestVirtualMachineOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.VirtualMachineTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.VirtualMachineRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.VirtualMachineRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -66,17 +66,17 @@ func TestUpdateVirtualMachineRequestConverters(t *testing.T) {
 	stateTfModel.Os = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.OsSpec).GetSchema().Attributes))
 	stateTfModel.ServiceAccount = types.StringValue("")
 
-	expectedUpdateModel := &apimodel.UpdateVirtualMachineRequest{
-		Metadata: optional.OptionalNil[apimodel.UpdateVirtualMachineMetadataRequest]{
+	expectedUpdateModel := &model.UpdateVirtualMachineRequest{
+		Metadata: optional.OptionalNil[model.UpdateVirtualMachineMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},
-		Spec: optional.NewOptional(apimodel.UpdateVirtualMachineSpecRequest{
-			Hardware: optional.OptionalNil[apimodel.UpdateHardwareSpecRequest]{
+		Spec: optional.NewOptional(model.UpdateVirtualMachineSpecRequest{
+			Hardware: optional.OptionalNil[model.UpdateHardwareSpecRequest]{
 				Set:  true,
 				Null: true,
 			},
-			Os: optional.OptionalNil[apimodel.UpdateOsSpecRequest]{
+			Os: optional.OptionalNil[model.UpdateOsSpecRequest]{
 				Set:  true,
 				Null: true,
 			},
@@ -95,18 +95,18 @@ func TestUpdateVirtualMachineRequestConverters(t *testing.T) {
 
 func TestVirtualMachineMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.VirtualMachineMetadataOptionalResponse{}
+	emptyApiModel := model.VirtualMachineMetadataOptionalResponse{}
 	_, diags := conv.VirtualMachineMetadataAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestVirtualMachineMetadataOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.VirtualMachineMetadataRequest{
-		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
+	emptyApiModelRequest := model.VirtualMachineMetadataRequest{
+		TypedResourceMetadataRequest: commonmodel.TypedResourceMetadataRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.VirtualMachineMetadataRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.VirtualMachineMetadataRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.VirtualMachineMetadataAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -115,7 +115,7 @@ func TestVirtualMachineMetadataOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.VirtualMachineMetadataTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.VirtualMachineMetadataRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.VirtualMachineMetadataRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -127,7 +127,7 @@ func TestUpdateVirtualMachineMetadataRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.VirtualMachineMetadata
 	var stateTfModel tfmodel.VirtualMachineMetadata
 
-	expectedUpdateModel := &apimodel.UpdateVirtualMachineMetadataRequest{}
+	expectedUpdateModel := &model.UpdateVirtualMachineMetadataRequest{}
 
 	result, diags := conv.VirtualMachineMetadataTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

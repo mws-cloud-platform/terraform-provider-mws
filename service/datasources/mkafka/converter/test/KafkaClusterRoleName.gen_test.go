@@ -8,26 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/converter"
 )
 
 func TestKafkaClusterRoleNameAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaClusterRoleName("")
+	emptyApiModel := model.KafkaClusterRoleName("")
 	_, diags := conv.KafkaClusterRoleNameAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestKafkaClusterRoleNameConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := apimodel.KafkaClusterRoleName("")
-
-	tfModel, diags := conv.KafkaClusterRoleNameAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-
-	result, diags := conv.KafkaClusterRoleNameTFToAPIModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	require.Equal(t, emptyApiModel, *result)
 }

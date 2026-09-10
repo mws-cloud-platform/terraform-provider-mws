@@ -19,7 +19,7 @@ import (
 	"go.mws.cloud/go-sdk/mws/wait"
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
 	"go.mws.cloud/go-sdk/service/certmanager/client"
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
 	resourcesdk "go.mws.cloud/go-sdk/service/certmanager/sdk"
 	certmanagerref "go.mws.cloud/go-sdk/service/resources/references/certmanager"
 	"go.mws.cloud/terraform-provider-mws/internal/cmp"
@@ -141,7 +141,7 @@ func (m *CertificateResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	body, diags = func(ctx context.Context, planApiRequest *apimodel.CertificateRequest) (*apimodel.CertificateRequest, tfdiag.Diagnostics) {
+	body, diags = func(ctx context.Context, planApiRequest *model.CertificateRequest) (*model.CertificateRequest, tfdiag.Diagnostics) {
 
 		var configData tfmodel.CertificateModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
@@ -302,7 +302,7 @@ func (m *CertificateResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	body, diags = func(ctx context.Context, planApiRequest *apimodel.UpdateCertificateRequest) (*apimodel.UpdateCertificateRequest, tfdiag.Diagnostics) {
+	body, diags = func(ctx context.Context, planApiRequest *model.UpdateCertificateRequest) (*model.UpdateCertificateRequest, tfdiag.Diagnostics) {
 
 		var configData tfmodel.CertificateModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)

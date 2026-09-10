@@ -17,7 +17,7 @@ type AddressStatus struct {
 
 func (s *AddressStatus) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Статус адреса.`,
+		MarkdownDescription: `Описывает статус внутреннего адреса.`,
 		Attributes: map[string]schema.Attribute{
 			"ready": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.ResourceStatusReady).GetSchema().Attributes,
@@ -29,7 +29,7 @@ func (s *AddressStatus) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"ip_address": schema.StringAttribute{
-				MarkdownDescription: `Присвоенный адрес. Совпадает с запрошенным ipAddress из спецификации, если последний указан при создании адреса
+				MarkdownDescription: `Присвоенный адрес. Совпадает с запрошенным IP-адресом из спецификации, если последний указан при создании адреса
 
 IPv4- или IPv6-адрес`,
 				Computed: true,

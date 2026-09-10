@@ -7,16 +7,14 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/go-sdk/pkg/apimodels/units/duration"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/nlb/model"
 )
 
-func NlbHealthCheckAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NlbHealthCheckOptionalResponse) (*tfmodel.NlbHealthCheck, tfdiag.Diagnostics) {
+func NlbHealthCheckAPIOptionalResponseToTFModel(ctx context.Context, am *model.NlbHealthCheckOptionalResponse) (*tfmodel.NlbHealthCheck, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -38,7 +36,11 @@ func NlbHealthCheckAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	}
 	t.Protocol = protocolTfObject
 
-	t.Interval = types.StringValue(ptr.Value(am.Interval.RawValue()))
+	if val, ok := am.Interval.Get(); ok {
+		t.Interval = types.StringValue(ptr.Value(val.RawValue()))
+	} else {
+		t.Interval = types.StringNull()
+	}
 
 	t.Timeout = types.StringValue(ptr.Value(am.Timeout.RawValue()))
 
@@ -55,57 +57,4 @@ func NlbHealthCheckAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	}
 
 	return &t, diags
-}
-
-func NlbHealthCheckTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbHealthCheck) (*apimodel.NlbHealthCheckRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.NlbHealthCheckRequest
-
-	if !plan.Protocol.IsNull() && !plan.Protocol.IsUnknown() {
-		protocolPlan := tfmodel.NlbHealthCheckProtocol{}
-		protocolPlanDiag := plan.Protocol.As(ctx, &protocolPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, protocolPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		protocolTmp, protocolDiag := NlbHealthCheckProtocolTFToAPIRequestModel(ctx, &protocolPlan)
-		diags = append(diags, protocolDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Protocol = *protocolTmp
-	}
-
-	if !plan.Interval.IsNull() && !plan.Interval.IsUnknown() {
-		tmpInterval, err := duration.ParseString(plan.Interval.ValueString())
-		if err != nil {
-			diags.AddError("Duration string parsing", err.Error())
-			return nil, diags
-		}
-		am.Interval = tmpInterval
-	}
-
-	if !plan.Timeout.IsNull() && !plan.Timeout.IsUnknown() {
-		tmpTimeout, err := duration.ParseString(plan.Timeout.ValueString())
-		if err != nil {
-			diags.AddError("Duration string parsing", err.Error())
-			return nil, diags
-		}
-		am.Timeout = tmpTimeout
-	}
-
-	if !plan.UnhealthyThreshold.IsNull() && !plan.UnhealthyThreshold.IsUnknown() {
-		am.UnhealthyThreshold = ptr.Get(int(plan.UnhealthyThreshold.ValueInt64()))
-	}
-
-	if !plan.HealthyThreshold.IsNull() && !plan.HealthyThreshold.IsUnknown() {
-		am.HealthyThreshold = ptr.Get(int(plan.HealthyThreshold.ValueInt64()))
-	}
-
-	return &am, diags
 }

@@ -19,14 +19,14 @@ type ClickhouseClusterInstanceResource struct {
 
 func (s *ClickhouseClusterInstanceResource) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Описание инстанса шарда.`,
+		MarkdownDescription: `Описание узла шарда.`,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				MarkdownDescription: `Идентификатор инстанса шарда`,
+				MarkdownDescription: `Идентификатор узла шарда`,
 				Computed:            true,
 			},
 			"index": schema.Int64Attribute{
-				MarkdownDescription: `Индекс реплики в шарде в кластере Clickhouse, который будет указан в настройках кластера в макросе "replica". Влияет на очередность исполнения распределенных запросов в кластере`,
+				MarkdownDescription: `Индекс реплики в шарде в кластере ClickHouse, который будет указан в настройках кластера в макросе "replica". Влияет на очередность исполнения распределенных запросов в кластере`,
 				Computed:            true,
 			},
 			"zone": schema.StringAttribute{
@@ -37,7 +37,7 @@ func (s *ClickhouseClusterInstanceResource) GetSchema() schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(ClickhouseEndpointResource).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Список эндпойнтов для подключения к инстансу`,
+				MarkdownDescription: `Список эндпойнтов для подключения к узлу`,
 				Computed:            true,
 			},
 			"health": schema.StringAttribute{

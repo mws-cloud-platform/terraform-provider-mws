@@ -3,9 +3,7 @@
 package model
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -19,46 +17,8 @@ func (s *CertificateManagedSpecIssuer) GetSchema() schema.Schema {
 `,
 		Attributes: map[string]schema.Attribute{
 			"acme": schema.SingleNestedAttribute{
-				Attributes: new(CertificateManagedSpecIssuerAcme).GetSchema().Attributes,
+				Attributes: new(AcmeIssuer).GetSchema().Attributes,
 				Optional:   true,
-			},
-		},
-	}
-}
-
-type CertificateManagedSpecIssuerAcme struct {
-	Server        CertificateManagedSpecAcmeServer `tfsdk:"server"`
-	ChallengeType CertificateChallengeType         `tfsdk:"challenge_type"`
-	Profile       types.String                     `tfsdk:"profile"`
-}
-
-func (s *CertificateManagedSpecIssuerAcme) GetSchema() schema.Schema {
-	return schema.Schema{
-		MarkdownDescription: `Представление поля Acme анонимного типа структуры CertificateManagedSpecIssuer`,
-		Attributes: map[string]schema.Attribute{
-			"server": schema.StringAttribute{
-				MarkdownDescription: `ACME-сервер для выпуска сертификата`,
-				Validators: []validator.String{
-					stringvalidator.OneOf(
-						"LETS_ENCRYPT",
-					),
-				},
-				Required: true,
-			},
-			"challenge_type": schema.StringAttribute{
-				MarkdownDescription: `Предпочтительный тип проверки домена (challenge).
-Возможные значения: DNS01 или HTTP01. По умолчанию используется DNS01`,
-				Validators: []validator.String{
-					stringvalidator.OneOf(
-						"DNS01",
-						"HTTP01",
-					),
-				},
-				Required: true,
-			},
-			"profile": schema.StringAttribute{
-				MarkdownDescription: `Профиль сертификата`,
-				Optional:            true,
 			},
 		},
 	}

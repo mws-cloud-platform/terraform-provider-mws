@@ -24,7 +24,7 @@ func (s *RouteStatusNextHop) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"nat_gateway": schema.StringAttribute{
-				MarkdownDescription: `NAT шлюз`,
+				MarkdownDescription: `NAT-шлюз`,
 				Computed:            true,
 			},
 			"address": schema.SingleNestedAttribute{

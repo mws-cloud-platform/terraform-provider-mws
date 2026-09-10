@@ -10,14 +10,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func NetworkAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NetworkOptionalResponse) (*tfmodel.Network, tfdiag.Diagnostics) {
+func NetworkAPIOptionalResponseToTFModel(ctx context.Context, am *model.NetworkOptionalResponse) (*tfmodel.Network, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -82,13 +82,13 @@ func NetworkAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Netwo
 	return &t, diags
 }
 
-func NetworkTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Network) (*apimodel.NetworkRequest, tfdiag.Diagnostics) {
+func NetworkTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Network) (*model.NetworkRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.NetworkRequest
+	var am model.NetworkRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
@@ -117,7 +117,7 @@ func NetworkTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Network) (*ap
 	return &am, diags
 }
 
-func NetworkTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Network) (*apimodel.UpdateNetworkRequest, tfdiag.Diagnostics) {
+func NetworkTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Network) (*model.UpdateNetworkRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -126,7 +126,7 @@ func NetworkTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateNetworkRequest
+	var am model.UpdateNetworkRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -160,7 +160,7 @@ func NetworkTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.
 	if !plan.Mtu.Equal(state.Mtu) {
 		if !plan.Mtu.IsNull() && !plan.Mtu.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateVpcNetworkSpecRequest{})
+				am.Spec.SetTo(model.UpdateVpcNetworkSpecRequest{})
 			}
 			am.Spec.Value.Mtu.SetTo(int32(plan.Mtu.ValueInt64()))
 		}
@@ -169,7 +169,7 @@ func NetworkTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.
 	if !plan.InternetAccess.Equal(state.InternetAccess) {
 		if !plan.InternetAccess.IsNull() && !plan.InternetAccess.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateVpcNetworkSpecRequest{})
+				am.Spec.SetTo(model.UpdateVpcNetworkSpecRequest{})
 			}
 			am.Spec.Value.InternetAccess.SetTo(plan.InternetAccess.ValueBool())
 		}

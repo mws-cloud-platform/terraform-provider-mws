@@ -11,12 +11,12 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func RouteDestinationAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.RouteDestinationOptionalResponse) (*tfmodel.RouteDestination, tfdiag.Diagnostics) {
+func RouteDestinationAPIOptionalResponseToTFModel(ctx context.Context, am *model.RouteDestinationOptionalResponse) (*tfmodel.RouteDestination, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -41,13 +41,13 @@ func RouteDestinationAPIOptionalResponseToTFModel(ctx context.Context, am *apimo
 	return &t, diags
 }
 
-func RouteDestinationTFToAPIRequestModel(ctx context.Context, plan *tfmodel.RouteDestination) (*apimodel.RouteDestinationRequest, tfdiag.Diagnostics) {
+func RouteDestinationTFToAPIRequestModel(ctx context.Context, plan *tfmodel.RouteDestination) (*model.RouteDestinationRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.RouteDestinationRequest
+	var am model.RouteDestinationRequest
 
 	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
 		specPlan := tfmodel.RouteDestinationSpec{}
@@ -68,7 +68,7 @@ func RouteDestinationTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Rout
 	return &am, diags
 }
 
-func RouteDestinationTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.RouteDestination) (*apimodel.UpdateRouteDestinationRequest, tfdiag.Diagnostics) {
+func RouteDestinationTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.RouteDestination) (*model.UpdateRouteDestinationRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -77,7 +77,7 @@ func RouteDestinationTFToAPIUpdateRequestModel(ctx context.Context, plan, state 
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateRouteDestinationRequest
+	var am model.UpdateRouteDestinationRequest
 
 	if !plan.Spec.Equal(state.Spec) {
 		if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
@@ -109,7 +109,7 @@ func RouteDestinationTFToAPIUpdateRequestModel(ctx context.Context, plan, state 
 	return &am, diags
 }
 
-func RouteDestinationSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.RouteDestinationSpecOptionalResponse) (*tfmodel.RouteDestinationSpec, tfdiag.Diagnostics) {
+func RouteDestinationSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.RouteDestinationSpecOptionalResponse) (*tfmodel.RouteDestinationSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -138,13 +138,13 @@ func RouteDestinationSpecAPIOptionalResponseToTFModel(ctx context.Context, am *a
 	return &t, diags
 }
 
-func RouteDestinationSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.RouteDestinationSpec) (*apimodel.RouteDestinationSpecRequest, tfdiag.Diagnostics) {
+func RouteDestinationSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.RouteDestinationSpec) (*model.RouteDestinationSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.RouteDestinationSpecRequest
+	var am model.RouteDestinationSpecRequest
 
 	if !plan.Cidrs.IsNull() && !plan.Cidrs.IsUnknown() {
 		cidrs := make([]types.String, 0)
@@ -169,7 +169,7 @@ func RouteDestinationSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.
 	return &am, diags
 }
 
-func RouteDestinationSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.RouteDestinationSpec) (*apimodel.UpdateRouteDestinationSpecRequest, tfdiag.Diagnostics) {
+func RouteDestinationSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.RouteDestinationSpec) (*model.UpdateRouteDestinationSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -178,7 +178,7 @@ func RouteDestinationSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, st
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateRouteDestinationSpecRequest
+	var am model.UpdateRouteDestinationSpecRequest
 
 	if !plan.Cidrs.Equal(state.Cidrs) {
 		if !plan.Cidrs.IsNull() && !plan.Cidrs.IsUnknown() {

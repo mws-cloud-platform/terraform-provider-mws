@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func OsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.OsSpecOptionalResponse) (*tfmodel.OsSpec, tfdiag.Diagnostics) {
+func OsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.OsSpecOptionalResponse) (*tfmodel.OsSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -61,13 +61,13 @@ func OsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.OsSpec
 	return &t, diags
 }
 
-func OsSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OsSpec) (*apimodel.OsSpecRequest, tfdiag.Diagnostics) {
+func OsSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OsSpec) (*model.OsSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.OsSpecRequest
+	var am model.OsSpecRequest
 
 	if !plan.Hostname.IsNull() && !plan.Hostname.IsUnknown() {
 		am.Hostname = plan.Hostname.ValueStringPointer()
@@ -100,7 +100,7 @@ func OsSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OsSpec) (*apim
 	return &am, diags
 }
 
-func OsSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.OsSpec) (*apimodel.UpdateOsSpecRequest, tfdiag.Diagnostics) {
+func OsSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.OsSpec) (*model.UpdateOsSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -109,7 +109,7 @@ func OsSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.O
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateOsSpecRequest
+	var am model.UpdateOsSpecRequest
 
 	if !plan.Hostname.Equal(state.Hostname) {
 		if !plan.Hostname.IsNull() && !plan.Hostname.IsUnknown() {
@@ -161,7 +161,7 @@ func OsSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.O
 	return &am, diags
 }
 
-func OsSpecMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.OsSpecMetadataOptionalResponse) (*tfmodel.OsSpecMetadata, tfdiag.Diagnostics) {
+func OsSpecMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *model.OsSpecMetadataOptionalResponse) (*tfmodel.OsSpecMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -190,13 +190,13 @@ func OsSpecMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func OsSpecMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OsSpecMetadata) (*apimodel.OsSpecMetadataRequest, tfdiag.Diagnostics) {
+func OsSpecMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OsSpecMetadata) (*model.OsSpecMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.OsSpecMetadataRequest
+	var am model.OsSpecMetadataRequest
 
 	if !plan.Attributes.IsNull() && !plan.Attributes.IsUnknown() {
 		attributes := make(map[string]types.String)
@@ -216,7 +216,7 @@ func OsSpecMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OsSpec
 	return &am, diags
 }
 
-func OsSpecMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.OsSpecMetadata) (*apimodel.UpdateOsSpecMetadataRequest, tfdiag.Diagnostics) {
+func OsSpecMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.OsSpecMetadata) (*model.UpdateOsSpecMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -225,7 +225,7 @@ func OsSpecMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateOsSpecMetadataRequest
+	var am model.UpdateOsSpecMetadataRequest
 
 	if !plan.Attributes.Equal(state.Attributes) {
 		if !plan.Attributes.IsNull() && !plan.Attributes.IsUnknown() {

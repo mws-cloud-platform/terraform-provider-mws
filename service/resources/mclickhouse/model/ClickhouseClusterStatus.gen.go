@@ -30,7 +30,7 @@ func (s *ClickhouseClusterStatus) GetSchema() schema.Schema {
 			"health": schema.StringAttribute{
 				MarkdownDescription: `Работоспособность кластера:
   * "ALIVE"    - Полностью работоспособен;
-  * "DEGRADED" - Деградирует (некоторые, но не все, экземпляры неработоспособны);
+  * "DEGRADED" - Деградирует (некоторые, но не все, узлы неработоспособны);
   * "FAILED"   - Неработоспособен;
   * "UNKNOWN"  - Не удаётся определить состояние (на этапе создания)`,
 				Validators: []validator.String{

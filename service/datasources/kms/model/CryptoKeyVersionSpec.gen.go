@@ -7,26 +7,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type CryptoKeyVersionSpecDestructionPolicy struct {
-	ScheduledDestructionTime types.String `tfsdk:"scheduled_destruction_time"`
-}
-
-func (s *CryptoKeyVersionSpecDestructionPolicy) GetSchema() schema.Schema {
-	return schema.Schema{
-		MarkdownDescription: `Представление поля DestructionPolicy анонимного типа структуры CryptoKeyVersionSpec`,
-		Attributes: map[string]schema.Attribute{
-			"scheduled_destruction_time": schema.StringAttribute{
-				MarkdownDescription: `Метка времени, указывающая, когда версия ключа должна быть уничтожена.
-Если это поле установлено, версия ключа будет автоматически уничтожена в указанное время
-
-Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
-				Computed:           true,
-				DeprecationMessage: `Отказываемся в пользу scheduledDestructionTime в блоке status`,
-			},
-		},
-	}
-}
-
 type CryptoKeyVersionSpecUsagePolicy struct {
 	Enabled types.Bool `tfsdk:"enabled"`
 }

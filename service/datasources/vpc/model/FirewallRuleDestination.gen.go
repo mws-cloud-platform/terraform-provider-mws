@@ -13,7 +13,7 @@ type FirewallRuleDestination struct {
 
 func (s *FirewallRuleDestination) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Критерий применимости правила, описывает пункт назначения пакета.`,
+		MarkdownDescription: `Спецификация назначения траффика, к которому будет применено Firewall правило.`,
 		Attributes: map[string]schema.Attribute{
 			"spec": schema.SingleNestedAttribute{
 				Attributes:          new(FirewallRuleDestinationSpec).GetSchema().Attributes,

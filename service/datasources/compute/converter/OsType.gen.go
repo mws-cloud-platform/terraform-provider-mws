@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func OsTypeAPIToTFModel(ctx context.Context, am *apimodel.OsType) (tfmodel.OsType, tfdiag.Diagnostics) {
+func OsTypeAPIToTFModel(ctx context.Context, am *model.OsType) (tfmodel.OsType, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.OsType{}, nil
 	}
@@ -23,17 +23,4 @@ func OsTypeAPIToTFModel(ctx context.Context, am *apimodel.OsType) (tfmodel.OsTyp
 	t = tfmodel.OsType(types.StringValue(string(*am)))
 
 	return t, diags
-}
-
-func OsTypeTFToAPIModel(ctx context.Context, plan tfmodel.OsType) (*apimodel.OsType, tfdiag.Diagnostics) {
-	var diags tfdiag.Diagnostics
-	var am apimodel.OsType
-
-	var tmp = types.String(plan)
-	if tmp.IsNull() {
-		return nil, diags
-	}
-	am = apimodel.OsType(tmp.ValueString())
-
-	return &am, diags
 }

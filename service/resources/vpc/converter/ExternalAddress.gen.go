@@ -12,14 +12,14 @@ import (
 
 	"go.mws.cloud/go-sdk/service/resources/references/rm"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func ExternalAddressAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ExternalAddressOptionalResponse) (*tfmodel.ExternalAddress, tfdiag.Diagnostics) {
+func ExternalAddressAPIOptionalResponseToTFModel(ctx context.Context, am *model.ExternalAddressOptionalResponse) (*tfmodel.ExternalAddress, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -84,13 +84,13 @@ func ExternalAddressAPIOptionalResponseToTFModel(ctx context.Context, am *apimod
 	return &t, diags
 }
 
-func ExternalAddressTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ExternalAddress) (*apimodel.ExternalAddressRequest, tfdiag.Diagnostics) {
+func ExternalAddressTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ExternalAddress) (*model.ExternalAddressRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ExternalAddressRequest
+	var am model.ExternalAddressRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
@@ -129,7 +129,7 @@ func ExternalAddressTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Exter
 	return &am, diags
 }
 
-func ExternalAddressTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ExternalAddress) (*apimodel.UpdateExternalAddressRequest, tfdiag.Diagnostics) {
+func ExternalAddressTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ExternalAddress) (*model.UpdateExternalAddressRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -138,7 +138,7 @@ func ExternalAddressTFToAPIUpdateRequestModel(ctx context.Context, plan, state *
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateExternalAddressRequest
+	var am model.UpdateExternalAddressRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -172,7 +172,7 @@ func ExternalAddressTFToAPIUpdateRequestModel(ctx context.Context, plan, state *
 	if !plan.Region.Equal(state.Region) {
 		if !plan.Region.IsNull() && !plan.Region.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateVpcExternalAddressSpecRequest{})
+				am.Spec.SetTo(model.UpdateVpcExternalAddressSpecRequest{})
 			}
 			regionRef, err := rm.ParseRegionRef(ctx, plan.Region.ValueString())
 			if err != nil {
@@ -186,7 +186,7 @@ func ExternalAddressTFToAPIUpdateRequestModel(ctx context.Context, plan, state *
 	if !plan.NatGateway.Equal(state.NatGateway) {
 		if !plan.NatGateway.IsNull() && !plan.NatGateway.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateVpcExternalAddressSpecRequest{})
+				am.Spec.SetTo(model.UpdateVpcExternalAddressSpecRequest{})
 			}
 			natGatewayRef, err := vpc.ParseNatGatewayRef(ctx, plan.NatGateway.ValueString())
 			if err != nil {

@@ -8,12 +8,12 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func StorageSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.StorageSpecOptionalResponse) (*tfmodel.StorageSpec, tfdiag.Diagnostics) {
+func StorageSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.StorageSpecOptionalResponse) (*tfmodel.StorageSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -78,13 +78,13 @@ func StorageSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.S
 	return &t, diags
 }
 
-func StorageSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.StorageSpec) (*apimodel.StorageSpecRequest, tfdiag.Diagnostics) {
+func StorageSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.StorageSpec) (*model.StorageSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.StorageSpecRequest
+	var am model.StorageSpecRequest
 
 	if !plan.Disks.IsNull() && !plan.Disks.IsUnknown() {
 		disks := make([]tfmodel.StorageDiskSpecOrRefWithAttachments, 0)
@@ -94,7 +94,7 @@ func StorageSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.StorageSp
 			return nil, diags
 		}
 
-		am.Disks = make([]apimodel.StorageDiskSpecOrRefWithAttachmentsRequest, 0, len(disks))
+		am.Disks = make([]model.StorageDiskSpecOrRefWithAttachmentsRequest, 0, len(disks))
 
 		for _, entity := range disks {
 			tmp, d := StorageDiskSpecOrRefWithAttachmentsTFToAPIRequestModel(ctx, &entity)
@@ -114,7 +114,7 @@ func StorageSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.StorageSp
 			return nil, diags
 		}
 
-		am.LocalDisks = make([]apimodel.StorageLocalDiskSpecRequest, 0, len(localDisks))
+		am.LocalDisks = make([]model.StorageLocalDiskSpecRequest, 0, len(localDisks))
 
 		for _, entity := range localDisks {
 			tmp, d := StorageLocalDiskSpecTFToAPIRequestModel(ctx, &entity)
@@ -129,7 +129,7 @@ func StorageSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.StorageSp
 	return &am, diags
 }
 
-func StorageSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.StorageSpec) (*apimodel.UpdateStorageSpecRequest, tfdiag.Diagnostics) {
+func StorageSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.StorageSpec) (*model.UpdateStorageSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -138,7 +138,7 @@ func StorageSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmo
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateStorageSpecRequest
+	var am model.UpdateStorageSpecRequest
 
 	if !plan.Disks.Equal(state.Disks) {
 		if !plan.Disks.IsNull() && !plan.Disks.IsUnknown() {
@@ -149,7 +149,7 @@ func StorageSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmo
 				return nil, diags
 			}
 
-			disksTmp := make([]apimodel.UpdateStorageDiskSpecOrRefWithAttachmentsRequest, 0, len(disks))
+			disksTmp := make([]model.UpdateStorageDiskSpecOrRefWithAttachmentsRequest, 0, len(disks))
 
 			for _, entity := range disks {
 				stateEntity := tfmodel.StorageDiskSpecOrRefWithAttachments{}
@@ -173,7 +173,7 @@ func StorageSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmo
 				return nil, diags
 			}
 
-			localDisksTmp := make([]apimodel.UpdateStorageLocalDiskSpecRequest, 0, len(localDisks))
+			localDisksTmp := make([]model.UpdateStorageLocalDiskSpecRequest, 0, len(localDisks))
 
 			for _, entity := range localDisks {
 				stateEntity := tfmodel.StorageLocalDiskSpec{}

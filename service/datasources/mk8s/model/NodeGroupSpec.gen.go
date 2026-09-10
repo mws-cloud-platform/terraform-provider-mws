@@ -57,7 +57,7 @@ func (s *NodeGroupSpecScaleAutoscaling) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля Autoscaling анонимного типа структуры NodeGroupSpecScale`,
 		Attributes: map[string]schema.Attribute{
 			"min": schema.Int64Attribute{
-				MarkdownDescription: `Минимально количество узлов в группе узлов`,
+				MarkdownDescription: `Минимальное количество узлов в группе узлов`,
 				Computed:            true,
 			},
 			"max": schema.Int64Attribute{

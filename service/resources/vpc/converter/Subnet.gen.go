@@ -12,14 +12,14 @@ import (
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/resources/references/rm"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func SubnetAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.SubnetOptionalResponse) (*tfmodel.Subnet, tfdiag.Diagnostics) {
+func SubnetAPIOptionalResponseToTFModel(ctx context.Context, am *model.SubnetOptionalResponse) (*tfmodel.Subnet, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -98,13 +98,13 @@ func SubnetAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Subnet
 	return &t, diags
 }
 
-func SubnetTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Subnet) (*apimodel.SubnetRequest, tfdiag.Diagnostics) {
+func SubnetTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Subnet) (*model.SubnetRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.SubnetRequest
+	var am model.SubnetRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
@@ -159,7 +159,7 @@ func SubnetTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Subnet) (*apim
 	return &am, diags
 }
 
-func SubnetTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Subnet) (*apimodel.UpdateSubnetRequest, tfdiag.Diagnostics) {
+func SubnetTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Subnet) (*model.UpdateSubnetRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -168,7 +168,7 @@ func SubnetTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.S
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateSubnetRequest
+	var am model.UpdateSubnetRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -202,7 +202,7 @@ func SubnetTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.S
 	if !plan.Region.Equal(state.Region) {
 		if !plan.Region.IsNull() && !plan.Region.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateSubnetSpecRequest{})
+				am.Spec.SetTo(model.UpdateSubnetSpecRequest{})
 			}
 			regionRef, err := rm.ParseRegionRef(ctx, plan.Region.ValueString())
 			if err != nil {
@@ -216,7 +216,7 @@ func SubnetTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.S
 	if !plan.Cidr.Equal(state.Cidr) {
 		if !plan.Cidr.IsNull() && !plan.Cidr.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateSubnetSpecRequest{})
+				am.Spec.SetTo(model.UpdateSubnetSpecRequest{})
 			}
 			tmpCidr, err := cidraddress.ParseCIDR4AddressString(plan.Cidr.ValueString())
 			if err != nil {
@@ -230,7 +230,7 @@ func SubnetTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.S
 	if !plan.DhcpOptions.Equal(state.DhcpOptions) {
 		if !plan.DhcpOptions.IsNull() && !plan.DhcpOptions.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateSubnetSpecRequest{})
+				am.Spec.SetTo(model.UpdateSubnetSpecRequest{})
 			}
 			dhcpOptionsPlan := tfmodel.SubnetDhcpOptions{}
 			dhcpOptionsPlanDiag := plan.DhcpOptions.As(ctx, &dhcpOptionsPlan, basetypes.ObjectAsOptions{})
@@ -256,7 +256,7 @@ func SubnetTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.S
 			am.Spec.Value.DhcpOptions.SetTo(*dhcpOptionsTmp)
 		} else if plan.DhcpOptions.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateSubnetSpecRequest{})
+				am.Spec.SetTo(model.UpdateSubnetSpecRequest{})
 			}
 			am.Spec.Value.DhcpOptions.SetToNull()
 		}

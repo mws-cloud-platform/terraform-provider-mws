@@ -8,12 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/model"
 )
 
-func PostgresNetworkAddressSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresNetworkAddressSpecResponse) (*tfmodel.PostgresNetworkAddressSpec, tfdiag.Diagnostics) {
+func PostgresNetworkAddressSpecAPIResponseToTFModel(ctx context.Context, am *model.PostgresNetworkAddressSpecResponse) (*tfmodel.PostgresNetworkAddressSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -24,24 +23,4 @@ func PostgresNetworkAddressSpecAPIResponseToTFModel(ctx context.Context, am *api
 	t.Subnet = types.StringValue(am.Subnet.Path())
 
 	return &t, diags
-}
-
-func PostgresNetworkAddressSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresNetworkAddressSpec) (*apimodel.PostgresNetworkAddressSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresNetworkAddressSpecRequest
-
-	if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {
-		subnetRef, err := vpc.ParseSubnetRef(ctx, plan.Subnet.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Subnet = subnetRef
-	}
-
-	return &am, diags
 }

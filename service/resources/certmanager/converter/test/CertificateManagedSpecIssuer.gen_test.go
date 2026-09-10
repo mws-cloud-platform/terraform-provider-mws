@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/model"
@@ -17,16 +17,16 @@ import (
 
 func TestCertificateManagedSpecIssuerAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.CertificateManagedSpecIssuerOptionalResponse{}
+	emptyApiModel := model.CertificateManagedSpecIssuerOptionalResponse{}
 	_, diags := conv.CertificateManagedSpecIssuerAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestCertificateManagedSpecIssuerOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.CertificateManagedSpecIssuerRequest{}
+	emptyApiModelRequest := model.CertificateManagedSpecIssuerRequest{}
 
-	emptyApiModelResponse, err := apimodel.CertificateManagedSpecIssuerRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.CertificateManagedSpecIssuerRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.CertificateManagedSpecIssuerAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -35,7 +35,7 @@ func TestCertificateManagedSpecIssuerOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.CertificateManagedSpecIssuerTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.CertificateManagedSpecIssuerRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.CertificateManagedSpecIssuerRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -46,59 +46,16 @@ func TestUpdateCertificateManagedSpecIssuerRequestConverters(t *testing.T) {
 
 	var nullPlanTfModel tfmodel.CertificateManagedSpecIssuer
 	var stateTfModel tfmodel.CertificateManagedSpecIssuer
-	stateTfModel.Acme = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.CertificateManagedSpecIssuerAcme).GetSchema().Attributes))
+	stateTfModel.Acme = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.AcmeIssuer).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateCertificateManagedSpecIssuerRequest{
-		Acme: optional.OptionalNil[apimodel.UpdateCertificateManagedSpecIssuerAcmeRequest]{
+	expectedUpdateModel := &model.UpdateCertificateManagedSpecIssuerRequest{
+		Acme: optional.OptionalNil[model.UpdateAcmeIssuerRequest]{
 			Set:  true,
 			Null: true,
 		},
 	}
 
 	result, diags := conv.CertificateManagedSpecIssuerTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
-	require.False(t, diags.HasError())
-
-	require.Equal(t, expectedUpdateModel, result)
-}
-
-func TestCertificateManagedSpecIssuerAcmeAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := apimodel.CertificateManagedSpecIssuerAcmeOptionalResponse{}
-	_, diags := conv.CertificateManagedSpecIssuerAcmeAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
-func TestCertificateManagedSpecIssuerAcmeOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.CertificateManagedSpecIssuerAcmeRequest{
-		Server:        "",
-		ChallengeType: "",
-	}
-
-	emptyApiModelResponse, err := apimodel.CertificateManagedSpecIssuerAcmeRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.CertificateManagedSpecIssuerAcmeAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.CertificateManagedSpecIssuerAcmeTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.CertificateManagedSpecIssuerAcmeRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
-func TestUpdateCertificateManagedSpecIssuerAcmeRequestConverters(t *testing.T) {
-	t.Parallel()
-
-	var nullPlanTfModel tfmodel.CertificateManagedSpecIssuerAcme
-	var stateTfModel tfmodel.CertificateManagedSpecIssuerAcme
-
-	expectedUpdateModel := &apimodel.UpdateCertificateManagedSpecIssuerAcmeRequest{}
-
-	result, diags := conv.CertificateManagedSpecIssuerAcmeTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())
 
 	require.Equal(t, expectedUpdateModel, result)

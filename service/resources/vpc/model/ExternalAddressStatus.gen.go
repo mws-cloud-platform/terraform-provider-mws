@@ -18,7 +18,7 @@ type ExternalAddressStatus struct {
 
 func (s *ExternalAddressStatus) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Статус внешнего адреса.`,
+		MarkdownDescription: `Описывает статус внешнего адреса.`,
 		Attributes: map[string]schema.Attribute{
 			"ready": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.ResourceStatusReady).GetSchema().Attributes,

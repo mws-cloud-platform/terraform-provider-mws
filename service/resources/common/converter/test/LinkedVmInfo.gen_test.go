@@ -8,35 +8,35 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 )
 
 func TestLinkedVmInfoAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.LinkedVmInfo{}
+	emptyApiModel := commonmodel.LinkedVmInfo{}
 	_, diags := commonconv.LinkedVmInfoAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestLinkedVmInfoAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.LinkedVmInfoResponse{}
+	emptyApiModel := commonmodel.LinkedVmInfoResponse{}
 	_, diags := commonconv.LinkedVmInfoAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestLinkedVmInfoAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.LinkedVmInfoOptionalResponse{}
+	emptyApiModel := commonmodel.LinkedVmInfoOptionalResponse{}
 	_, diags := commonconv.LinkedVmInfoAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestLinkedVmInfoConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.LinkedVmInfo{
+	emptyApiModel := commonmodel.LinkedVmInfo{
 		Id:   compute.NewMustVirtualMachineRef("projectID", "virtualMachineID"),
 		Name: "name",
 	}
@@ -52,11 +52,11 @@ func TestLinkedVmInfoConverters(t *testing.T) {
 
 func TestLinkedVmInfoResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonapimodel.LinkedVmInfoRequest{
+	emptyApiModelRequest := commonmodel.LinkedVmInfoRequest{
 		Name: "name",
 	}
 
-	emptyApiModelResponse, err := commonapimodel.LinkedVmInfoRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonmodel.LinkedVmInfoRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.LinkedVmInfoAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -65,7 +65,7 @@ func TestLinkedVmInfoResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := commonconv.LinkedVmInfoTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := commonapimodel.LinkedVmInfoRequestToResponse(filledApiModelRequest)
+	result, err := commonmodel.LinkedVmInfoRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -73,11 +73,11 @@ func TestLinkedVmInfoResponseConverters(t *testing.T) {
 
 func TestLinkedVmInfoOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonapimodel.LinkedVmInfoRequest{
+	emptyApiModelRequest := commonmodel.LinkedVmInfoRequest{
 		Name: "name",
 	}
 
-	emptyApiModelResponse, err := commonapimodel.LinkedVmInfoRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonmodel.LinkedVmInfoRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.LinkedVmInfoAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -86,7 +86,7 @@ func TestLinkedVmInfoOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := commonconv.LinkedVmInfoTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := commonapimodel.LinkedVmInfoRequestToOptionalResponse(filledApiModelRequest)
+	result, err := commonmodel.LinkedVmInfoRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)

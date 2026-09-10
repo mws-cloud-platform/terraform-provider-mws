@@ -8,12 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	resmodels "go.mws.cloud/go-sdk/pkg/resources/models"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 )
 
-func TypedUsageAPIToTFModel(ctx context.Context, am *commonapimodel.TypedUsage) (*tfcommon.TypedUsage, tfdiag.Diagnostics) {
+func TypedUsageAPIToTFModel(ctx context.Context, am *commonmodel.TypedUsage) (*tfcommon.TypedUsage, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -30,7 +29,7 @@ func TypedUsageAPIToTFModel(ctx context.Context, am *commonapimodel.TypedUsage) 
 	return &t, diags
 }
 
-func TypedUsageAPIResponseToTFModel(ctx context.Context, am *commonapimodel.TypedUsageResponse) (*tfcommon.TypedUsage, tfdiag.Diagnostics) {
+func TypedUsageAPIResponseToTFModel(ctx context.Context, am *commonmodel.TypedUsageResponse) (*tfcommon.TypedUsage, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -47,7 +46,7 @@ func TypedUsageAPIResponseToTFModel(ctx context.Context, am *commonapimodel.Type
 	return &t, diags
 }
 
-func TypedUsageAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.TypedUsageOptionalResponse) (*tfcommon.TypedUsage, tfdiag.Diagnostics) {
+func TypedUsageAPIOptionalResponseToTFModel(ctx context.Context, am *commonmodel.TypedUsageOptionalResponse) (*tfcommon.TypedUsage, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -62,60 +61,4 @@ func TypedUsageAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimo
 	t.Resource = types.StringValue(am.Resource.ID())
 
 	return &t, diags
-}
-
-func TypedUsageTFToAPIModel(ctx context.Context, plan *tfcommon.TypedUsage) (*commonapimodel.TypedUsage, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am commonapimodel.TypedUsage
-
-	if !plan.UsageType.IsNull() && !plan.UsageType.IsUnknown() {
-		am.UsageType = plan.UsageType.ValueString()
-	}
-
-	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
-		am.Name = plan.Name.ValueString()
-	}
-
-	if !plan.Resource.IsNull() && !plan.Resource.IsUnknown() {
-		resourceID, err := resmodels.ParseAnyResourceID(plan.Resource.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Resource = resourceID
-	}
-
-	return &am, diags
-}
-
-func TypedUsageTFToAPIRequestModel(ctx context.Context, plan *tfcommon.TypedUsage) (*commonapimodel.TypedUsageRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am commonapimodel.TypedUsageRequest
-
-	if !plan.UsageType.IsNull() && !plan.UsageType.IsUnknown() {
-		am.UsageType = plan.UsageType.ValueString()
-	}
-
-	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
-		am.Name = plan.Name.ValueString()
-	}
-
-	if !plan.Resource.IsNull() && !plan.Resource.IsUnknown() {
-		resourceID, err := resmodels.ParseAnyResourceID(plan.Resource.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Resource = resourceID
-	}
-
-	return &am, diags
 }

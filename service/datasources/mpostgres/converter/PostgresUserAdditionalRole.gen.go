@@ -10,11 +10,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/model"
 )
 
-func PostgresUserAdditionalRoleAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresUserAdditionalRoleResponse) (*tfmodel.PostgresUserAdditionalRole, tfdiag.Diagnostics) {
+func PostgresUserAdditionalRoleAPIResponseToTFModel(ctx context.Context, am *model.PostgresUserAdditionalRoleResponse) (*tfmodel.PostgresUserAdditionalRole, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -35,28 +35,4 @@ func PostgresUserAdditionalRoleAPIResponseToTFModel(ctx context.Context, am *api
 	}
 
 	return &t, diags
-}
-
-func PostgresUserAdditionalRoleTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresUserAdditionalRole) (*apimodel.PostgresUserAdditionalRoleRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresUserAdditionalRoleRequest
-
-	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
-		am.Name = ptr.Get(apimodel.PostgresUserAdditionalRoleNameRequest(plan.Name.ValueString()))
-	}
-
-	if !plan.ExpiresAt.IsNull() && !plan.ExpiresAt.IsUnknown() {
-		tmpExpiresAt, err := time.Parse(time.RFC3339, plan.ExpiresAt.ValueString())
-		if err != nil {
-			diags.AddError("time string parsing", err.Error())
-			return nil, diags
-		}
-		am.ExpiresAt = &tmpExpiresAt
-	}
-
-	return &am, diags
 }

@@ -10,12 +10,12 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/ipaddress"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
-func ClusterPrimaryEndpointSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClusterPrimaryEndpointSpecOptionalResponse) (*tfmodel.ClusterPrimaryEndpointSpec, tfdiag.Diagnostics) {
+func ClusterPrimaryEndpointSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClusterPrimaryEndpointSpecOptionalResponse) (*tfmodel.ClusterPrimaryEndpointSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -34,13 +34,13 @@ func ClusterPrimaryEndpointSpecAPIOptionalResponseToTFModel(ctx context.Context,
 	return &t, diags
 }
 
-func ClusterPrimaryEndpointSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterPrimaryEndpointSpec) (*apimodel.ClusterPrimaryEndpointSpecRequest, tfdiag.Diagnostics) {
+func ClusterPrimaryEndpointSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterPrimaryEndpointSpec) (*model.ClusterPrimaryEndpointSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClusterPrimaryEndpointSpecRequest
+	var am model.ClusterPrimaryEndpointSpecRequest
 
 	if !plan.IpAddress.IsNull() && !plan.IpAddress.IsUnknown() {
 		tmpIpAddress, err := ipaddress.ParseIP4AddressString(plan.IpAddress.ValueString())
@@ -63,7 +63,7 @@ func ClusterPrimaryEndpointSpecTFToAPIRequestModel(ctx context.Context, plan *tf
 	return &am, diags
 }
 
-func ClusterPrimaryEndpointSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClusterPrimaryEndpointSpec) (*apimodel.UpdateClusterPrimaryEndpointSpecRequest, tfdiag.Diagnostics) {
+func ClusterPrimaryEndpointSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClusterPrimaryEndpointSpec) (*model.UpdateClusterPrimaryEndpointSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -72,7 +72,7 @@ func ClusterPrimaryEndpointSpecTFToAPIUpdateRequestModel(ctx context.Context, pl
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateClusterPrimaryEndpointSpecRequest
+	var am model.UpdateClusterPrimaryEndpointSpecRequest
 
 	if !plan.IpAddress.Equal(state.IpAddress) {
 		if !plan.IpAddress.IsNull() && !plan.IpAddress.IsUnknown() {

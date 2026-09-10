@@ -7,14 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/model"
 )
 
-func KafkaDataDiskSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaDataDiskSpecResponse) (*tfmodel.KafkaDataDiskSpec, tfdiag.Diagnostics) {
+func KafkaDataDiskSpecAPIResponseToTFModel(ctx context.Context, am *model.KafkaDataDiskSpecResponse) (*tfmodel.KafkaDataDiskSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -47,42 +46,4 @@ func KafkaDataDiskSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.Kaf
 	}
 
 	return &t, diags
-}
-
-func KafkaDataDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaDataDiskSpec) (*apimodel.KafkaDataDiskSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaDataDiskSpecRequest
-
-	if !plan.Size.IsNull() && !plan.Size.IsUnknown() {
-		tmpSize, err := bytesize.ParseString(plan.Size.ValueString())
-		if err != nil {
-			diags.AddError("ByteSize string parsing", err.Error())
-			return nil, diags
-		}
-		am.Size = tmpSize
-	}
-
-	if !plan.Type.IsNull() && !plan.Type.IsUnknown() {
-		typeTmp, typeDiag := KafkaDataDiskTypeTFToAPIModel(ctx, plan.Type)
-		diags = append(diags, typeDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Type = typeTmp
-	}
-
-	if !plan.Iops.IsNull() && !plan.Iops.IsUnknown() {
-		iopsTmp, iopsDiag := KafkaDataDiskIopsTFToAPIModel(ctx, plan.Iops)
-		diags = append(diags, iopsDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Iops = iopsTmp
-	}
-
-	return &am, diags
 }

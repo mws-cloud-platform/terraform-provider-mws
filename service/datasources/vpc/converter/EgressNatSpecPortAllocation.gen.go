@@ -7,15 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/go-sdk/pkg/apimodels/units/largenumber"
-	unitsrange "go.mws.cloud/go-sdk/pkg/apimodels/units/range"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/model"
 )
 
-func EgressNatSpecPortAllocationAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.EgressNatSpecPortAllocationOptionalResponse) (*tfmodel.EgressNatSpecPortAllocation, tfdiag.Diagnostics) {
+func EgressNatSpecPortAllocationAPIOptionalResponseToTFModel(ctx context.Context, am *model.EgressNatSpecPortAllocationOptionalResponse) (*tfmodel.EgressNatSpecPortAllocation, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -26,24 +24,4 @@ func EgressNatSpecPortAllocationAPIOptionalResponseToTFModel(ctx context.Context
 	t.PortsPerClient = types.StringValue(ptr.Value(am.PortsPerClient.RawValue()))
 
 	return &t, diags
-}
-
-func EgressNatSpecPortAllocationTFToAPIRequestModel(ctx context.Context, plan *tfmodel.EgressNatSpecPortAllocation) (*apimodel.EgressNatSpecPortAllocationRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.EgressNatSpecPortAllocationRequest
-
-	if !plan.PortsPerClient.IsNull() && !plan.PortsPerClient.IsUnknown() {
-		tmpPortsPerClient, err := unitsrange.ParseString[largenumber.LargeNumber](plan.PortsPerClient.ValueString())
-		if err != nil {
-			diags.AddError("LargeNumber string parsing", err.Error())
-			return nil, diags
-		}
-		am.PortsPerClient = tmpPortsPerClient
-	}
-
-	return &am, diags
 }

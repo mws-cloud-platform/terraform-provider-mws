@@ -41,11 +41,11 @@ func (m *NodeGroupDataSource) Schema(ctx context.Context, req datasource.SchemaR
 	tflog.Info(ctx, "NodeGroupDataSource.Schema")
 	resp.Schema = new(tfmodel.NodeGroup).GetSchema()
 	resp.Schema.Attributes["cluster_name"] = schema.StringAttribute{
-		MarkdownDescription: `Имя Cluster`,
+		MarkdownDescription: `Имя кластера`,
 		Required:            true,
 	}
 	resp.Schema.Attributes["node_group_name"] = schema.StringAttribute{
-		MarkdownDescription: `Имя Node-группы`,
+		MarkdownDescription: `Имя группы узлов`,
 		Required:            true,
 	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{

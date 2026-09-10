@@ -7,16 +7,15 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/secretmanager/model"
+	"go.mws.cloud/go-sdk/service/secretmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/secretmanager/model"
 )
 
-func SecretVersionAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.SecretVersionOptionalResponse) (*tfmodel.SecretVersion, tfdiag.Diagnostics) {
+func SecretVersionAPIOptionalResponseToTFModel(ctx context.Context, am *model.SecretVersionOptionalResponse) (*tfmodel.SecretVersion, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -61,35 +60,4 @@ func SecretVersionAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel
 	}
 
 	return &t, diags
-}
-
-func SecretVersionTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SecretVersion) (*apimodel.SecretVersionRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.SecretVersionRequest
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.Active.IsNull() && !plan.Active.IsUnknown() {
-		am.Spec.Active = plan.Active.ValueBoolPointer()
-	}
-
-	return &am, diags
 }

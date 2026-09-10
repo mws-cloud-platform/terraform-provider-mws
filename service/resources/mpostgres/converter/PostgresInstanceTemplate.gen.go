@@ -9,13 +9,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func PostgresInstanceTemplateAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresInstanceTemplateResponse) (*tfmodel.PostgresInstanceTemplate, tfdiag.Diagnostics) {
+func PostgresInstanceTemplateAPIResponseToTFModel(ctx context.Context, am *model.PostgresInstanceTemplateResponse) (*tfmodel.PostgresInstanceTemplate, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -42,13 +42,13 @@ func PostgresInstanceTemplateAPIResponseToTFModel(ctx context.Context, am *apimo
 	return &t, diags
 }
 
-func PostgresInstanceTemplateTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresInstanceTemplate) (*apimodel.PostgresInstanceTemplateRequest, tfdiag.Diagnostics) {
+func PostgresInstanceTemplateTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresInstanceTemplate) (*model.PostgresInstanceTemplateRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresInstanceTemplateRequest
+	var am model.PostgresInstanceTemplateRequest
 
 	if !plan.VmType.IsNull() && !plan.VmType.IsUnknown() {
 		vmTypeRef, err := compute.ParseVmTypeRef(ctx, plan.VmType.ValueString())
@@ -78,7 +78,7 @@ func PostgresInstanceTemplateTFToAPIRequestModel(ctx context.Context, plan *tfmo
 	return &am, diags
 }
 
-func PostgresInstanceTemplateTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresInstanceTemplate) (*apimodel.UpdatePostgresInstanceTemplateRequest, tfdiag.Diagnostics) {
+func PostgresInstanceTemplateTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresInstanceTemplate) (*model.UpdatePostgresInstanceTemplateRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -87,7 +87,7 @@ func PostgresInstanceTemplateTFToAPIUpdateRequestModel(ctx context.Context, plan
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdatePostgresInstanceTemplateRequest
+	var am model.UpdatePostgresInstanceTemplateRequest
 
 	if !plan.VmType.Equal(state.VmType) {
 		if !plan.VmType.IsNull() && !plan.VmType.IsUnknown() {

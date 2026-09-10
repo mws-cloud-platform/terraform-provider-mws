@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func PostgresExternalAccessSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresExternalAccessSpecResponse) (*tfmodel.PostgresExternalAccessSpec, tfdiag.Diagnostics) {
+func PostgresExternalAccessSpecAPIResponseToTFModel(ctx context.Context, am *model.PostgresExternalAccessSpecResponse) (*tfmodel.PostgresExternalAccessSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -33,13 +33,13 @@ func PostgresExternalAccessSpecAPIResponseToTFModel(ctx context.Context, am *api
 	return &t, diags
 }
 
-func PostgresExternalAccessSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresExternalAccessSpec) (*apimodel.PostgresExternalAccessSpecRequest, tfdiag.Diagnostics) {
+func PostgresExternalAccessSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresExternalAccessSpec) (*model.PostgresExternalAccessSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresExternalAccessSpecRequest
+	var am model.PostgresExternalAccessSpecRequest
 
 	if !plan.Allowed.IsNull() && !plan.Allowed.IsUnknown() {
 		am.Allowed = plan.Allowed.ValueBool()
@@ -57,7 +57,7 @@ func PostgresExternalAccessSpecTFToAPIRequestModel(ctx context.Context, plan *tf
 	return &am, diags
 }
 
-func PostgresExternalAccessSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresExternalAccessSpec) (*apimodel.UpdatePostgresExternalAccessSpecRequest, tfdiag.Diagnostics) {
+func PostgresExternalAccessSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresExternalAccessSpec) (*model.UpdatePostgresExternalAccessSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -66,7 +66,7 @@ func PostgresExternalAccessSpecTFToAPIUpdateRequestModel(ctx context.Context, pl
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdatePostgresExternalAccessSpecRequest
+	var am model.UpdatePostgresExternalAccessSpecRequest
 
 	if !plan.Allowed.Equal(state.Allowed) {
 		if !plan.Allowed.IsNull() && !plan.Allowed.IsUnknown() {

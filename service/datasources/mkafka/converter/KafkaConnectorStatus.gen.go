@@ -8,14 +8,14 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/model"
 )
 
-func KafkaConnectorStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaConnectorStatusResponse) (*tfmodel.KafkaConnectorStatus, tfdiag.Diagnostics) {
+func KafkaConnectorStatusAPIResponseToTFModel(ctx context.Context, am *model.KafkaConnectorStatusResponse) (*tfmodel.KafkaConnectorStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

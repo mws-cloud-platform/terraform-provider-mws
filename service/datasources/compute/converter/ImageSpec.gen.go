@@ -9,12 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
-	"go.mws.cloud/go-sdk/service/resources/references/compute"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func ImageSpecSourceAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ImageSpecSourceOptionalResponse) (*tfmodel.ImageSpecSource, tfdiag.Diagnostics) {
+func ImageSpecSourceAPIOptionalResponseToTFModel(ctx context.Context, am *model.ImageSpecSourceOptionalResponse) (*tfmodel.ImageSpecSource, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -41,37 +40,4 @@ func ImageSpecSourceAPIOptionalResponseToTFModel(ctx context.Context, am *apimod
 	}
 
 	return &t, diags
-}
-
-func ImageSpecSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ImageSpecSource) (*apimodel.ImageSpecSourceRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ImageSpecSourceRequest
-
-	if !plan.ExternalUrl.IsNull() && !plan.ExternalUrl.IsUnknown() {
-		am.ExternalUrl = plan.ExternalUrl.ValueStringPointer()
-	}
-
-	if !plan.DiskId.IsNull() && !plan.DiskId.IsUnknown() {
-		diskIdRef, err := compute.ParseDiskRef(ctx, plan.DiskId.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.DiskId = &diskIdRef
-	}
-
-	if !plan.ImageId.IsNull() && !plan.ImageId.IsUnknown() {
-		imageIdRef, err := compute.ParseImageRef(ctx, plan.ImageId.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.ImageId = &imageIdRef
-	}
-
-	return &am, diags
 }

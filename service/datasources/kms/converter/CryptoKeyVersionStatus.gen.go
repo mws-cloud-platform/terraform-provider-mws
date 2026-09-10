@@ -10,14 +10,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/kms/model"
+	"go.mws.cloud/go-sdk/service/kms/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/kms/model"
 )
 
-func CryptoKeyVersionStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.CryptoKeyVersionStatusResponse) (*tfmodel.CryptoKeyVersionStatus, tfdiag.Diagnostics) {
+func CryptoKeyVersionStatusAPIResponseToTFModel(ctx context.Context, am *model.CryptoKeyVersionStatusResponse) (*tfmodel.CryptoKeyVersionStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -78,7 +78,7 @@ func CryptoKeyVersionStatusAPIResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func CryptoKeyVersionStatusDestructionAPIResponseToTFModel(ctx context.Context, am *apimodel.CryptoKeyVersionStatusDestructionResponse) (*tfmodel.CryptoKeyVersionStatusDestruction, tfdiag.Diagnostics) {
+func CryptoKeyVersionStatusDestructionAPIResponseToTFModel(ctx context.Context, am *model.CryptoKeyVersionStatusDestructionResponse) (*tfmodel.CryptoKeyVersionStatusDestruction, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

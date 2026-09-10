@@ -8,17 +8,17 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 
 	"go.mws.cloud/go-sdk/pkg/apimodels/sensitive"
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/model"
 )
 
-func SelfManagedSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SelfManagedSpec) (*apimodel.SelfManagedSpecRequest, tfdiag.Diagnostics) {
+func SelfManagedSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SelfManagedSpec) (*model.SelfManagedSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.SelfManagedSpecRequest
+	var am model.SelfManagedSpecRequest
 
 	if !plan.Certificate.IsNull() && !plan.Certificate.IsUnknown() {
 		am.Certificate = plan.Certificate.ValueString()
@@ -35,7 +35,7 @@ func SelfManagedSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SelfM
 	return &am, diags
 }
 
-func SelfManagedSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.SelfManagedSpec) (*apimodel.UpdateSelfManagedSpecRequest, tfdiag.Diagnostics) {
+func SelfManagedSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.SelfManagedSpec) (*model.UpdateSelfManagedSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -44,7 +44,7 @@ func SelfManagedSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateSelfManagedSpecRequest
+	var am model.UpdateSelfManagedSpecRequest
 
 	if !plan.Certificate.Equal(state.Certificate) {
 		if !plan.Certificate.IsNull() && !plan.Certificate.IsUnknown() {

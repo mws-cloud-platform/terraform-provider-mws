@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
@@ -17,16 +17,16 @@ import (
 
 func TestPostgresClusterBackupAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.PostgresClusterBackupResponse{}
+	emptyApiModel := model.PostgresClusterBackupResponse{}
 	_, diags := conv.PostgresClusterBackupAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestPostgresClusterBackupResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.PostgresClusterBackupRequest{}
+	emptyApiModelRequest := model.PostgresClusterBackupRequest{}
 
-	emptyApiModelResponse, err := apimodel.PostgresClusterBackupRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.PostgresClusterBackupRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.PostgresClusterBackupAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -35,7 +35,7 @@ func TestPostgresClusterBackupResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.PostgresClusterBackupTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.PostgresClusterBackupRequestToResponse(filledApiModelRequest)
+	result, err := model.PostgresClusterBackupRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -48,8 +48,8 @@ func TestUpdatePostgresClusterBackupRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.PostgresClusterBackup
 	stateTfModel.Daily = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.PostgresClusterBackupDaily).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdatePostgresClusterBackupRequest{
-		Daily: optional.OptionalNil[apimodel.UpdatePostgresClusterBackupDailyRequest]{
+	expectedUpdateModel := &model.UpdatePostgresClusterBackupRequest{
+		Daily: optional.OptionalNil[model.UpdatePostgresClusterBackupDailyRequest]{
 			Set:  true,
 			Null: true,
 		},

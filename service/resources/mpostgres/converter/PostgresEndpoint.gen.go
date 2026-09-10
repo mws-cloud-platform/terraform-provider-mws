@@ -8,13 +8,13 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func PostgresEndpointAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresEndpointResponse) (*tfmodel.PostgresEndpoint, tfdiag.Diagnostics) {
+func PostgresEndpointAPIResponseToTFModel(ctx context.Context, am *model.PostgresEndpointResponse) (*tfmodel.PostgresEndpoint, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -110,13 +110,13 @@ func PostgresEndpointAPIResponseToTFModel(ctx context.Context, am *apimodel.Post
 	return &t, diags
 }
 
-func PostgresEndpointTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresEndpoint) (*apimodel.PostgresEndpointRequest, tfdiag.Diagnostics) {
+func PostgresEndpointTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresEndpoint) (*model.PostgresEndpointRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresEndpointRequest
+	var am model.PostgresEndpointRequest
 
 	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
 		am.Name = plan.Name.ValueString()
@@ -139,7 +139,7 @@ func PostgresEndpointTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Post
 			return nil, diags
 		}
 
-		am.PrimaryAddresses = make([]apimodel.PostgresNetworkAddressRequest, 0, len(primaryAddresses))
+		am.PrimaryAddresses = make([]model.PostgresNetworkAddressRequest, 0, len(primaryAddresses))
 
 		for _, entity := range primaryAddresses {
 			tmp, d := PostgresNetworkAddressTFToAPIRequestModel(ctx, &entity)
@@ -159,7 +159,7 @@ func PostgresEndpointTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Post
 			return nil, diags
 		}
 
-		am.ReadOnlyAddresses = make([]apimodel.PostgresNetworkAddressRequest, 0, len(readOnlyAddresses))
+		am.ReadOnlyAddresses = make([]model.PostgresNetworkAddressRequest, 0, len(readOnlyAddresses))
 
 		for _, entity := range readOnlyAddresses {
 			tmp, d := PostgresNetworkAddressTFToAPIRequestModel(ctx, &entity)
@@ -179,7 +179,7 @@ func PostgresEndpointTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Post
 			return nil, diags
 		}
 
-		am.DirectAddresses = make([]apimodel.PostgresNetworkDirectAddressRequest, 0, len(directAddresses))
+		am.DirectAddresses = make([]model.PostgresNetworkDirectAddressRequest, 0, len(directAddresses))
 
 		for _, entity := range directAddresses {
 			tmp, d := PostgresNetworkDirectAddressTFToAPIRequestModel(ctx, &entity)
@@ -194,7 +194,7 @@ func PostgresEndpointTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Post
 	return &am, diags
 }
 
-func PostgresEndpointTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresEndpoint) (*apimodel.UpdatePostgresEndpointRequest, tfdiag.Diagnostics) {
+func PostgresEndpointTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresEndpoint) (*model.UpdatePostgresEndpointRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -203,7 +203,7 @@ func PostgresEndpointTFToAPIUpdateRequestModel(ctx context.Context, plan, state 
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdatePostgresEndpointRequest
+	var am model.UpdatePostgresEndpointRequest
 
 	if !plan.Name.Equal(state.Name) {
 		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
@@ -231,7 +231,7 @@ func PostgresEndpointTFToAPIUpdateRequestModel(ctx context.Context, plan, state 
 				return nil, diags
 			}
 
-			primaryAddressesTmp := make([]apimodel.UpdatePostgresNetworkAddressRequest, 0, len(primaryAddresses))
+			primaryAddressesTmp := make([]model.UpdatePostgresNetworkAddressRequest, 0, len(primaryAddresses))
 
 			for _, entity := range primaryAddresses {
 				stateEntity := tfmodel.PostgresNetworkAddress{}
@@ -255,7 +255,7 @@ func PostgresEndpointTFToAPIUpdateRequestModel(ctx context.Context, plan, state 
 				return nil, diags
 			}
 
-			readOnlyAddressesTmp := make([]apimodel.UpdatePostgresNetworkAddressRequest, 0, len(readOnlyAddresses))
+			readOnlyAddressesTmp := make([]model.UpdatePostgresNetworkAddressRequest, 0, len(readOnlyAddresses))
 
 			for _, entity := range readOnlyAddresses {
 				stateEntity := tfmodel.PostgresNetworkAddress{}
@@ -279,7 +279,7 @@ func PostgresEndpointTFToAPIUpdateRequestModel(ctx context.Context, plan, state 
 				return nil, diags
 			}
 
-			directAddressesTmp := make([]apimodel.UpdatePostgresNetworkDirectAddressRequest, 0, len(directAddresses))
+			directAddressesTmp := make([]model.UpdatePostgresNetworkDirectAddressRequest, 0, len(directAddresses))
 
 			for _, entity := range directAddresses {
 				stateEntity := tfmodel.PostgresNetworkDirectAddress{}

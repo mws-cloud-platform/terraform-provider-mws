@@ -10,12 +10,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
-func TypedResourceMetadataAPIToTFModel(ctx context.Context, am *commonapimodel.TypedResourceMetadata) (*tfcommon.TypedResourceMetadata, tfdiag.Diagnostics) {
+func TypedResourceMetadataAPIToTFModel(ctx context.Context, am *commonmodel.TypedResourceMetadata) (*tfcommon.TypedResourceMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -83,7 +83,7 @@ func TypedResourceMetadataAPIToTFModel(ctx context.Context, am *commonapimodel.T
 	return &t, diags
 }
 
-func TypedResourceMetadataAPIResponseToTFModel(ctx context.Context, am *commonapimodel.TypedResourceMetadataResponse) (*tfcommon.TypedResourceMetadata, tfdiag.Diagnostics) {
+func TypedResourceMetadataAPIResponseToTFModel(ctx context.Context, am *commonmodel.TypedResourceMetadataResponse) (*tfcommon.TypedResourceMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -151,7 +151,7 @@ func TypedResourceMetadataAPIResponseToTFModel(ctx context.Context, am *commonap
 	return &t, diags
 }
 
-func TypedResourceMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.TypedResourceMetadataOptionalResponse) (*tfcommon.TypedResourceMetadata, tfdiag.Diagnostics) {
+func TypedResourceMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *commonmodel.TypedResourceMetadataOptionalResponse) (*tfcommon.TypedResourceMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -219,13 +219,13 @@ func TypedResourceMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *
 	return &t, diags
 }
 
-func TypedResourceMetadataTFToAPIModel(ctx context.Context, plan *tfcommon.TypedResourceMetadata) (*commonapimodel.TypedResourceMetadata, tfdiag.Diagnostics) {
+func TypedResourceMetadataTFToAPIModel(ctx context.Context, plan *tfcommon.TypedResourceMetadata) (*commonmodel.TypedResourceMetadata, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.TypedResourceMetadata
+	var am commonmodel.TypedResourceMetadata
 
 	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
 		am.DisplayName = plan.DisplayName.ValueStringPointer()
@@ -266,7 +266,7 @@ func TypedResourceMetadataTFToAPIModel(ctx context.Context, plan *tfcommon.Typed
 			return nil, diags
 		}
 
-		am.Usages = make([]commonapimodel.TypedUsage, 0, len(usages))
+		am.Usages = make([]commonmodel.TypedUsage, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := TypedUsageTFToAPIModel(ctx, &entity)
@@ -285,13 +285,13 @@ func TypedResourceMetadataTFToAPIModel(ctx context.Context, plan *tfcommon.Typed
 	return &am, diags
 }
 
-func TypedResourceMetadataTFToAPIRequestModel(ctx context.Context, plan *tfcommon.TypedResourceMetadata) (*commonapimodel.TypedResourceMetadataRequest, tfdiag.Diagnostics) {
+func TypedResourceMetadataTFToAPIRequestModel(ctx context.Context, plan *tfcommon.TypedResourceMetadata) (*commonmodel.TypedResourceMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.TypedResourceMetadataRequest
+	var am commonmodel.TypedResourceMetadataRequest
 
 	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
 		am.DisplayName = plan.DisplayName.ValueStringPointer()
@@ -305,7 +305,7 @@ func TypedResourceMetadataTFToAPIRequestModel(ctx context.Context, plan *tfcommo
 			return nil, diags
 		}
 
-		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
+		am.Usages = make([]commonmodel.TypedUsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := TypedUsageTFToAPIRequestModel(ctx, &entity)
@@ -324,7 +324,7 @@ func TypedResourceMetadataTFToAPIRequestModel(ctx context.Context, plan *tfcommo
 	return &am, diags
 }
 
-func TypedResourceMetadataTFToAPIUpdateModel(ctx context.Context, plan, state *tfcommon.TypedResourceMetadata) (*commonapimodel.UpdateTypedResourceMetadata, tfdiag.Diagnostics) {
+func TypedResourceMetadataTFToAPIUpdateModel(ctx context.Context, plan, state *tfcommon.TypedResourceMetadata) (*commonmodel.UpdateTypedResourceMetadata, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -333,7 +333,7 @@ func TypedResourceMetadataTFToAPIUpdateModel(ctx context.Context, plan, state *t
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.UpdateTypedResourceMetadata
+	var am commonmodel.UpdateTypedResourceMetadata
 
 	if !plan.DisplayName.Equal(state.DisplayName) {
 		if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
@@ -383,7 +383,7 @@ func TypedResourceMetadataTFToAPIUpdateModel(ctx context.Context, plan, state *t
 				return nil, diags
 			}
 
-			usagesTmp := make([]commonapimodel.UpdateTypedUsage, 0, len(usages))
+			usagesTmp := make([]commonmodel.UpdateTypedUsage, 0, len(usages))
 
 			for _, entity := range usages {
 				stateEntity := tfcommon.TypedUsage{}
@@ -407,7 +407,7 @@ func TypedResourceMetadataTFToAPIUpdateModel(ctx context.Context, plan, state *t
 	return &am, diags
 }
 
-func TypedResourceMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfcommon.TypedResourceMetadata) (*commonapimodel.UpdateTypedResourceMetadataRequest, tfdiag.Diagnostics) {
+func TypedResourceMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfcommon.TypedResourceMetadata) (*commonmodel.UpdateTypedResourceMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -416,7 +416,7 @@ func TypedResourceMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, s
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.UpdateTypedResourceMetadataRequest
+	var am commonmodel.UpdateTypedResourceMetadataRequest
 
 	if !plan.DisplayName.Equal(state.DisplayName) {
 		if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
@@ -433,7 +433,7 @@ func TypedResourceMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, s
 				return nil, diags
 			}
 
-			usagesTmp := make([]commonapimodel.UpdateTypedUsageRequest, 0, len(usages))
+			usagesTmp := make([]commonmodel.UpdateTypedUsageRequest, 0, len(usages))
 
 			for _, entity := range usages {
 				stateEntity := tfcommon.TypedUsage{}

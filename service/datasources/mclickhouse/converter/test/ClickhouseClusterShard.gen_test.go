@@ -7,45 +7,14 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
-	"go.mws.cloud/go-sdk/service/resources/references/mclickhouse"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/converter"
 )
 
 func TestClickhouseClusterShardAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClickhouseClusterShardOptionalResponse{}
+	emptyApiModel := model.ClickhouseClusterShardOptionalResponse{}
 	_, diags := conv.ClickhouseClusterShardAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestClickhouseClusterShardOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.ClickhouseClusterShardRequest{
-		Name: "name",
-		Resources: apimodel.ClickhouseInstanceHWResourcesRequest{
-			VmType: mclickhouse.NewMustClickhouseVmTypeRef("vmTypeID"),
-			Disk: apimodel.ClickhouseInstanceDiskSpecRequest{
-				Size: bytesize.MustParseString("0 B"),
-				Type: "",
-			},
-		},
-		Instances: []apimodel.ClickhouseClusterInstanceRequest{},
-	}
-
-	emptyApiModelResponse, err := apimodel.ClickhouseClusterShardRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.ClickhouseClusterShardAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.ClickhouseClusterShardTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.ClickhouseClusterShardRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

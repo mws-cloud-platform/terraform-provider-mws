@@ -8,12 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/model"
 )
 
-func KafkaEndpointBrokerAddressSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaEndpointBrokerAddressSpecResponse) (*tfmodel.KafkaEndpointBrokerAddressSpec, tfdiag.Diagnostics) {
+func KafkaEndpointBrokerAddressSpecAPIResponseToTFModel(ctx context.Context, am *model.KafkaEndpointBrokerAddressSpecResponse) (*tfmodel.KafkaEndpointBrokerAddressSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -24,24 +23,4 @@ func KafkaEndpointBrokerAddressSpecAPIResponseToTFModel(ctx context.Context, am 
 	t.Subnet = types.StringValue(am.Subnet.Path())
 
 	return &t, diags
-}
-
-func KafkaEndpointBrokerAddressSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaEndpointBrokerAddressSpec) (*apimodel.KafkaEndpointBrokerAddressSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaEndpointBrokerAddressSpecRequest
-
-	if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {
-		subnetRef, err := vpc.ParseSubnetRef(ctx, plan.Subnet.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Subnet = subnetRef
-	}
-
-	return &am, diags
 }

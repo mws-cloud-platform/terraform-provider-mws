@@ -7,18 +7,15 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/nlb/model"
 )
 
-func NlbRuleAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NlbRuleOptionalResponse) (*tfmodel.NlbRule, tfdiag.Diagnostics) {
+func NlbRuleAPIOptionalResponseToTFModel(ctx context.Context, am *model.NlbRuleOptionalResponse) (*tfmodel.NlbRule, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -80,59 +77,4 @@ func NlbRuleAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NlbRu
 	}
 
 	return &t, diags
-}
-
-func NlbRuleTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbRule) (*apimodel.NlbRuleRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.NlbRuleRequest
-
-	if !plan.ProtoPort.IsNull() && !plan.ProtoPort.IsUnknown() {
-		am.ProtoPort = plan.ProtoPort.ValueString()
-	}
-
-	if !plan.TargetPort.IsNull() && !plan.TargetPort.IsUnknown() {
-		am.TargetPort = ptr.Get(int32(plan.TargetPort.ValueInt64()))
-	}
-
-	if !plan.TargetAddressGroups.IsNull() && !plan.TargetAddressGroups.IsUnknown() {
-		targetAddressGroups := make([]tfcommon.VpcAddressGroupSpecOrRef, 0)
-		dTargetAddressGroups := plan.TargetAddressGroups.ElementsAs(ctx, &targetAddressGroups, false)
-		diags = append(diags, dTargetAddressGroups...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.TargetAddressGroups = make([]commonapimodel.VpcAddressGroupSpecOrRefRequest, 0, len(targetAddressGroups))
-
-		for _, entity := range targetAddressGroups {
-			tmp, d := commonconv.VpcAddressGroupSpecOrRefTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.TargetAddressGroups = append(am.TargetAddressGroups, *tmp)
-		}
-	}
-
-	if !plan.HealthCheck.IsNull() && !plan.HealthCheck.IsUnknown() {
-		healthCheckPlan := tfmodel.NlbHealthCheck{}
-		healthCheckPlanDiag := plan.HealthCheck.As(ctx, &healthCheckPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, healthCheckPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		healthCheckTmp, healthCheckDiag := NlbHealthCheckTFToAPIRequestModel(ctx, &healthCheckPlan)
-		diags = append(diags, healthCheckDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.HealthCheck = healthCheckTmp
-	}
-
-	return &am, diags
 }

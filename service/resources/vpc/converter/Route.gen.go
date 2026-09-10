@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func RouteAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.RouteOptionalResponse) (*tfmodel.Route, tfdiag.Diagnostics) {
+func RouteAPIOptionalResponseToTFModel(ctx context.Context, am *model.RouteOptionalResponse) (*tfmodel.Route, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -97,13 +97,13 @@ func RouteAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.RouteOp
 	return &t, diags
 }
 
-func RouteTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Route) (*apimodel.RouteRequest, tfdiag.Diagnostics) {
+func RouteTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Route) (*model.RouteRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.RouteRequest
+	var am model.RouteRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
@@ -156,7 +156,7 @@ func RouteTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Route) (*apimod
 	return &am, diags
 }
 
-func RouteTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Route) (*apimodel.UpdateRouteRequest, tfdiag.Diagnostics) {
+func RouteTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Route) (*model.UpdateRouteRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -165,7 +165,7 @@ func RouteTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Ro
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateRouteRequest
+	var am model.UpdateRouteRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -199,7 +199,7 @@ func RouteTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Ro
 	if !plan.Destination.Equal(state.Destination) {
 		if !plan.Destination.IsNull() && !plan.Destination.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateRouteSpecRequest{})
+				am.Spec.SetTo(model.UpdateRouteSpecRequest{})
 			}
 			destinationPlan := tfmodel.RouteDestination{}
 			destinationPlanDiag := plan.Destination.As(ctx, &destinationPlan, basetypes.ObjectAsOptions{})
@@ -229,7 +229,7 @@ func RouteTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Ro
 	if !plan.NextHop.Equal(state.NextHop) {
 		if !plan.NextHop.IsNull() && !plan.NextHop.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateRouteSpecRequest{})
+				am.Spec.SetTo(model.UpdateRouteSpecRequest{})
 			}
 			nextHopPlan := tfmodel.RouteNextHop{}
 			nextHopPlanDiag := plan.NextHop.As(ctx, &nextHopPlan, basetypes.ObjectAsOptions{})

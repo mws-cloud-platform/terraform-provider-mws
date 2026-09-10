@@ -7,16 +7,14 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 )
 
-func ResourceExternalAddressSpecOrRefAPIToTFModel(ctx context.Context, am *commonapimodel.ResourceExternalAddressSpecOrRef) (*tfcommon.ResourceExternalAddressSpecOrRef, tfdiag.Diagnostics) {
+func ResourceExternalAddressSpecOrRefAPIToTFModel(ctx context.Context, am *commonmodel.ResourceExternalAddressSpecOrRef) (*tfcommon.ResourceExternalAddressSpecOrRef, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -51,7 +49,7 @@ func ResourceExternalAddressSpecOrRefAPIToTFModel(ctx context.Context, am *commo
 	return &t, diags
 }
 
-func ResourceExternalAddressSpecOrRefAPIResponseToTFModel(ctx context.Context, am *commonapimodel.ResourceExternalAddressSpecOrRefResponse) (*tfcommon.ResourceExternalAddressSpecOrRef, tfdiag.Diagnostics) {
+func ResourceExternalAddressSpecOrRefAPIResponseToTFModel(ctx context.Context, am *commonmodel.ResourceExternalAddressSpecOrRefResponse) (*tfcommon.ResourceExternalAddressSpecOrRef, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -86,7 +84,7 @@ func ResourceExternalAddressSpecOrRefAPIResponseToTFModel(ctx context.Context, a
 	return &t, diags
 }
 
-func ResourceExternalAddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.ResourceExternalAddressSpecOrRefOptionalResponse) (*tfcommon.ResourceExternalAddressSpecOrRef, tfdiag.Diagnostics) {
+func ResourceExternalAddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *commonmodel.ResourceExternalAddressSpecOrRefOptionalResponse) (*tfcommon.ResourceExternalAddressSpecOrRef, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -119,76 +117,4 @@ func ResourceExternalAddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Co
 	}
 
 	return &t, diags
-}
-
-func ResourceExternalAddressSpecOrRefTFToAPIModel(ctx context.Context, plan *tfcommon.ResourceExternalAddressSpecOrRef) (*commonapimodel.ResourceExternalAddressSpecOrRef, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am commonapimodel.ResourceExternalAddressSpecOrRef
-
-	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
-		refRef, err := vpc.ParseExternalAddressRef(ctx, plan.Ref.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Ref = &refRef
-	}
-
-	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
-		specPlan := tfcommon.ResourceExternalAddressSpec{}
-		specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, specPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		specTmp, specDiag := ResourceExternalAddressSpecTFToAPIModel(ctx, &specPlan)
-		diags = append(diags, specDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec = specTmp
-	}
-
-	return &am, diags
-}
-
-func ResourceExternalAddressSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfcommon.ResourceExternalAddressSpecOrRef) (*commonapimodel.ResourceExternalAddressSpecOrRefRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am commonapimodel.ResourceExternalAddressSpecOrRefRequest
-
-	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
-		refRef, err := vpc.ParseExternalAddressRef(ctx, plan.Ref.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Ref = &refRef
-	}
-
-	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
-		specPlan := tfcommon.ResourceExternalAddressSpec{}
-		specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, specPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		specTmp, specDiag := ResourceExternalAddressSpecTFToAPIRequestModel(ctx, &specPlan)
-		diags = append(diags, specDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec = specTmp
-	}
-
-	return &am, diags
 }

@@ -10,14 +10,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/model"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
-func CertificateStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.CertificateStatusResponse) (*tfmodel.CertificateStatus, tfdiag.Diagnostics) {
+func CertificateStatusAPIResponseToTFModel(ctx context.Context, am *model.CertificateStatusResponse) (*tfmodel.CertificateStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

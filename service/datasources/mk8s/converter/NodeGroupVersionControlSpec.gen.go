@@ -7,16 +7,15 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/model"
 )
 
-func NodeGroupVersionControlSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NodeGroupVersionControlSpecOptionalResponse) (*tfmodel.NodeGroupVersionControlSpec, tfdiag.Diagnostics) {
+func NodeGroupVersionControlSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.NodeGroupVersionControlSpecOptionalResponse) (*tfmodel.NodeGroupVersionControlSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -55,39 +54,4 @@ func NodeGroupVersionControlSpecAPIOptionalResponseToTFModel(ctx context.Context
 	}
 
 	return &t, diags
-}
-
-func NodeGroupVersionControlSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroupVersionControlSpec) (*apimodel.NodeGroupVersionControlSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.NodeGroupVersionControlSpecRequest
-
-	if !plan.Version.IsNull() && !plan.Version.IsUnknown() {
-		am.Version = plan.Version.ValueStringPointer()
-	}
-
-	if !plan.AutoUpdate.IsNull() && !plan.AutoUpdate.IsUnknown() {
-		am.AutoUpdate = plan.AutoUpdate.ValueBoolPointer()
-	}
-
-	if !plan.MaintenanceWindow.IsNull() && !plan.MaintenanceWindow.IsUnknown() {
-		maintenanceWindowPlan := tfcommon.MaintenanceWindow{}
-		maintenanceWindowPlanDiag := plan.MaintenanceWindow.As(ctx, &maintenanceWindowPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, maintenanceWindowPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		maintenanceWindowTmp, maintenanceWindowDiag := commonconv.MaintenanceWindowTFToAPIRequestModel(ctx, &maintenanceWindowPlan)
-		diags = append(diags, maintenanceWindowDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.MaintenanceWindow = maintenanceWindowTmp
-	}
-
-	return &am, diags
 }

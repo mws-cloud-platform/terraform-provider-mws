@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	"go.mws.cloud/go-sdk/service/resources/references/rm"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func ClickhouseClusterCoordinatorInstanceAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseClusterCoordinatorInstanceOptionalResponse) (*tfmodel.ClickhouseClusterCoordinatorInstance, tfdiag.Diagnostics) {
+func ClickhouseClusterCoordinatorInstanceAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseClusterCoordinatorInstanceOptionalResponse) (*tfmodel.ClickhouseClusterCoordinatorInstance, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -33,13 +33,13 @@ func ClickhouseClusterCoordinatorInstanceAPIOptionalResponseToTFModel(ctx contex
 	return &t, diags
 }
 
-func ClickhouseClusterCoordinatorInstanceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterCoordinatorInstance) (*apimodel.ClickhouseClusterCoordinatorInstanceRequest, tfdiag.Diagnostics) {
+func ClickhouseClusterCoordinatorInstanceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterCoordinatorInstance) (*model.ClickhouseClusterCoordinatorInstanceRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseClusterCoordinatorInstanceRequest
+	var am model.ClickhouseClusterCoordinatorInstanceRequest
 
 	if !plan.Count.IsNull() && !plan.Count.IsUnknown() {
 		am.Count = ptr.Get(int(plan.Count.ValueInt64()))
@@ -57,7 +57,7 @@ func ClickhouseClusterCoordinatorInstanceTFToAPIRequestModel(ctx context.Context
 	return &am, diags
 }
 
-func ClickhouseClusterCoordinatorInstanceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseClusterCoordinatorInstance) (*apimodel.UpdateClickhouseClusterCoordinatorInstanceRequest, tfdiag.Diagnostics) {
+func ClickhouseClusterCoordinatorInstanceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseClusterCoordinatorInstance) (*model.UpdateClickhouseClusterCoordinatorInstanceRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -66,7 +66,7 @@ func ClickhouseClusterCoordinatorInstanceTFToAPIUpdateRequestModel(ctx context.C
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateClickhouseClusterCoordinatorInstanceRequest
+	var am model.UpdateClickhouseClusterCoordinatorInstanceRequest
 
 	if !plan.Count.Equal(state.Count) {
 		if !plan.Count.IsNull() && !plan.Count.IsUnknown() {

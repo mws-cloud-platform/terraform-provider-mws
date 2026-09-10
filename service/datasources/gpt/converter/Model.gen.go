@@ -10,14 +10,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/gpt/model"
+	"go.mws.cloud/go-sdk/service/gpt/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/gpt/model"
 )
 
-func ModelAPIResponseToTFModel(ctx context.Context, am *apimodel.ModelResponse) (*tfmodel.Model, tfdiag.Diagnostics) {
+func ModelAPIResponseToTFModel(ctx context.Context, am *model.ModelResponse) (*tfmodel.Model, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -158,7 +158,7 @@ func ModelAPIResponseToTFModel(ctx context.Context, am *apimodel.ModelResponse) 
 	return &t, diags
 }
 
-func ModelMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.ModelMetadataResponse) (*tfmodel.ModelMetadata, tfdiag.Diagnostics) {
+func ModelMetadataAPIResponseToTFModel(ctx context.Context, am *model.ModelMetadataResponse) (*tfmodel.ModelMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

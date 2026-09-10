@@ -10,8 +10,8 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
@@ -21,30 +21,30 @@ import (
 
 func TestKafkaClusterAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaClusterResponse{}
+	emptyApiModel := model.KafkaClusterResponse{}
 	_, diags := conv.KafkaClusterAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestKafkaClusterResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaClusterRequest{
-		Spec: apimodel.KafkaClusterSpecRequest{
+	emptyApiModelRequest := model.KafkaClusterRequest{
+		Spec: model.KafkaClusterSpecRequest{
 			Version:   "version",
-			Endpoints: []apimodel.KafkaEndpointRequest{},
-			Instances: apimodel.KafkaInstanceRequest{
-				Broker: apimodel.KafkaInstanceSpecRequest{
+			Endpoints: []model.KafkaEndpointRequest{},
+			Instances: model.KafkaInstanceRequest{
+				Broker: model.KafkaInstanceSpecRequest{
 					VmType: compute.NewMustVmTypeRef("vmTypeID"),
-					Disk: apimodel.KafkaDataDiskSpecRequest{
+					Disk: model.KafkaDataDiskSpecRequest{
 						Size: bytesize.MustParseString("0 B"),
 					},
 				},
-				Controller: apimodel.KafkaControllerInstanceSpecRequest{},
+				Controller: model.KafkaControllerInstanceSpecRequest{},
 			},
 		},
 	}
 
-	emptyApiModelResponse, err := apimodel.KafkaClusterRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.KafkaClusterRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.KafkaClusterAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -53,7 +53,7 @@ func TestKafkaClusterResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.KafkaClusterTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.KafkaClusterRequestToResponse(filledApiModelRequest)
+	result, err := model.KafkaClusterRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -69,21 +69,21 @@ func TestUpdateKafkaClusterRequestConverters(t *testing.T) {
 	stateTfModel.SchemaRegistry = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.KafkaSchemaRegistrySpec).GetSchema().Attributes))
 	stateTfModel.Balancer = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.KafkaBalancerSpec).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateKafkaClusterRequest{
-		Metadata: optional.OptionalNil[apimodel.UpdateKafkaClusterMetadataRequest]{
+	expectedUpdateModel := &model.UpdateKafkaClusterRequest{
+		Metadata: optional.OptionalNil[model.UpdateKafkaClusterMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},
-		Spec: optional.NewOptional(apimodel.UpdateKafkaClusterSpecRequest{
-			MaintenanceWindow: optional.OptionalNil[commonapimodel.UpdateMaintenanceWindowRequest]{
+		Spec: optional.NewOptional(model.UpdateKafkaClusterSpecRequest{
+			MaintenanceWindow: optional.OptionalNil[commonmodel.UpdateMaintenanceWindowRequest]{
 				Set:  true,
 				Null: true,
 			},
-			SchemaRegistry: optional.OptionalNil[apimodel.UpdateKafkaSchemaRegistrySpecRequest]{
+			SchemaRegistry: optional.OptionalNil[model.UpdateKafkaSchemaRegistrySpecRequest]{
 				Set:  true,
 				Null: true,
 			},
-			Balancer: optional.OptionalNil[apimodel.UpdateKafkaBalancerSpecRequest]{
+			Balancer: optional.OptionalNil[model.UpdateKafkaBalancerSpecRequest]{
 				Set:  true,
 				Null: true,
 			},
@@ -98,18 +98,18 @@ func TestUpdateKafkaClusterRequestConverters(t *testing.T) {
 
 func TestKafkaClusterMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaClusterMetadataResponse{}
+	emptyApiModel := model.KafkaClusterMetadataResponse{}
 	_, diags := conv.KafkaClusterMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestKafkaClusterMetadataResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaClusterMetadataRequest{
-		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
+	emptyApiModelRequest := model.KafkaClusterMetadataRequest{
+		TypedResourceMetadataRequest: commonmodel.TypedResourceMetadataRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.KafkaClusterMetadataRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.KafkaClusterMetadataRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.KafkaClusterMetadataAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -118,7 +118,7 @@ func TestKafkaClusterMetadataResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.KafkaClusterMetadataTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.KafkaClusterMetadataRequestToResponse(filledApiModelRequest)
+	result, err := model.KafkaClusterMetadataRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -130,7 +130,7 @@ func TestUpdateKafkaClusterMetadataRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.KafkaClusterMetadata
 	var stateTfModel tfmodel.KafkaClusterMetadata
 
-	expectedUpdateModel := &apimodel.UpdateKafkaClusterMetadataRequest{}
+	expectedUpdateModel := &model.UpdateKafkaClusterMetadataRequest{}
 
 	result, diags := conv.KafkaClusterMetadataTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

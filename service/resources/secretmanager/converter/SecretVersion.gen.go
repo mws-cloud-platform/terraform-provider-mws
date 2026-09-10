@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/secretmanager/model"
+	"go.mws.cloud/go-sdk/service/secretmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager/model"
 )
 
-func SecretVersionAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.SecretVersionOptionalResponse) (*tfmodel.SecretVersion, tfdiag.Diagnostics) {
+func SecretVersionAPIOptionalResponseToTFModel(ctx context.Context, am *model.SecretVersionOptionalResponse) (*tfmodel.SecretVersion, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -65,13 +65,13 @@ func SecretVersionAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel
 	return &t, diags
 }
 
-func SecretVersionTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SecretVersion) (*apimodel.SecretVersionRequest, tfdiag.Diagnostics) {
+func SecretVersionTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SecretVersion) (*model.SecretVersionRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.SecretVersionRequest
+	var am model.SecretVersionRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
@@ -105,7 +105,7 @@ func SecretVersionTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SecretV
 	return &am, diags
 }
 
-func SecretVersionTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.SecretVersion) (*apimodel.UpdateSecretVersionRequest, tfdiag.Diagnostics) {
+func SecretVersionTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.SecretVersion) (*model.UpdateSecretVersionRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -114,7 +114,7 @@ func SecretVersionTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tf
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateSecretVersionRequest
+	var am model.UpdateSecretVersionRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -148,7 +148,7 @@ func SecretVersionTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tf
 	if !plan.Active.Equal(state.Active) {
 		if !plan.Active.IsNull() && !plan.Active.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateSecretVersionSpecRequest{})
+				am.Spec.SetTo(model.UpdateSecretVersionSpecRequest{})
 			}
 			am.Spec.Value.Active.SetTo(plan.Active.ValueBool())
 		}
@@ -157,7 +157,7 @@ func SecretVersionTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tf
 	if !plan.Data.Equal(state.Data) {
 		if !plan.Data.IsNull() && !plan.Data.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateSecretVersionSpecRequest{})
+				am.Spec.SetTo(model.UpdateSecretVersionSpecRequest{})
 			}
 			dataTmp, dataDiag := SecretVersionDataSpecTFToAPIUpdateModel(ctx, plan.Data)
 			diags = append(diags, dataDiag...)

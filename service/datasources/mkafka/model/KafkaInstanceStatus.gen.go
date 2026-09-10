@@ -13,7 +13,7 @@ type KafkaInstanceStatus struct {
 
 func (s *KafkaInstanceStatus) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Параметры виртуальной машины, где работает брокер Кафки.`,
+		MarkdownDescription: `Параметры узла-брокера кластера Managed Kafka.`,
 		Attributes: map[string]schema.Attribute{
 			"disk": schema.SingleNestedAttribute{
 				Attributes:          new(KafkaDataDiskStatus).GetSchema().Attributes,

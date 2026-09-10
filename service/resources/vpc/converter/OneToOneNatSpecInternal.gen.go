@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func OneToOneNatSpecInternalAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.OneToOneNatSpecInternalOptionalResponse) (*tfmodel.OneToOneNatSpecInternal, tfdiag.Diagnostics) {
+func OneToOneNatSpecInternalAPIOptionalResponseToTFModel(ctx context.Context, am *model.OneToOneNatSpecInternalOptionalResponse) (*tfmodel.OneToOneNatSpecInternal, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -41,13 +41,13 @@ func OneToOneNatSpecInternalAPIOptionalResponseToTFModel(ctx context.Context, am
 	return &t, diags
 }
 
-func OneToOneNatSpecInternalTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OneToOneNatSpecInternal) (*apimodel.OneToOneNatSpecInternalRequest, tfdiag.Diagnostics) {
+func OneToOneNatSpecInternalTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OneToOneNatSpecInternal) (*model.OneToOneNatSpecInternalRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.OneToOneNatSpecInternalRequest
+	var am model.OneToOneNatSpecInternalRequest
 
 	if !plan.Address.IsNull() && !plan.Address.IsUnknown() {
 		addressPlan := tfcommon.ResourceAddressSpecOrRef{}
@@ -68,7 +68,7 @@ func OneToOneNatSpecInternalTFToAPIRequestModel(ctx context.Context, plan *tfmod
 	return &am, diags
 }
 
-func OneToOneNatSpecInternalTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.OneToOneNatSpecInternal) (*apimodel.UpdateOneToOneNatSpecInternalRequest, tfdiag.Diagnostics) {
+func OneToOneNatSpecInternalTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.OneToOneNatSpecInternal) (*model.UpdateOneToOneNatSpecInternalRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -77,7 +77,7 @@ func OneToOneNatSpecInternalTFToAPIUpdateRequestModel(ctx context.Context, plan,
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateOneToOneNatSpecInternalRequest
+	var am model.UpdateOneToOneNatSpecInternalRequest
 
 	if !plan.Address.Equal(state.Address) {
 		if !plan.Address.IsNull() && !plan.Address.IsUnknown() {

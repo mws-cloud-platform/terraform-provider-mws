@@ -14,14 +14,14 @@ type ClusterPrimaryEndpointSpecOrRef struct {
 
 func (s *ClusterPrimaryEndpointSpecOrRef) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `ip-адрес внутри vpc`,
+		MarkdownDescription: `Конфигурация primary-эндпоинта кластера — подсеть или идентификатор внутреннего IP-адреса`,
 		Attributes: map[string]schema.Attribute{
 			"ref": schema.StringAttribute{
 				Optional: true,
 			},
 			"spec": schema.SingleNestedAttribute{
 				Attributes:          new(ClusterPrimaryEndpointSpec).GetSchema().Attributes,
-				MarkdownDescription: `Описание subnet пользователя, из которого будет выделен ip-адрес`,
+				MarkdownDescription: `Конфигурация подсети, из которой будет выделен IP-адрес`,
 				Optional:            true,
 			},
 		},

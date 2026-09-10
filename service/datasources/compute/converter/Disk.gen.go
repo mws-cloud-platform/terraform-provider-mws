@@ -7,19 +7,16 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
-	"go.mws.cloud/go-sdk/service/resources/references/compute"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func DiskAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.DiskOptionalResponse) (*tfmodel.Disk, tfdiag.Diagnostics) {
+func DiskAPIOptionalResponseToTFModel(ctx context.Context, am *model.DiskOptionalResponse) (*tfmodel.Disk, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -148,112 +145,4 @@ func DiskAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.DiskOpti
 	}
 
 	return &t, diags
-}
-
-func DiskTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Disk) (*apimodel.DiskRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.DiskRequest
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
-		am.Spec.Zone = plan.Zone.ValueString()
-	}
-
-	if !plan.Size.IsNull() && !plan.Size.IsUnknown() {
-		tmpSize, err := bytesize.ParseString(plan.Size.ValueString())
-		if err != nil {
-			diags.AddError("ByteSize string parsing", err.Error())
-			return nil, diags
-		}
-		am.Spec.Size = &tmpSize
-	}
-
-	if !plan.Source.IsNull() && !plan.Source.IsUnknown() {
-		sourcePlan := tfmodel.DiskSpecSource{}
-		sourcePlanDiag := plan.Source.As(ctx, &sourcePlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, sourcePlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		sourceTmp, sourceDiag := DiskSpecSourceTFToAPIRequestModel(ctx, &sourcePlan)
-		diags = append(diags, sourceDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Source = sourceTmp
-	}
-
-	if !plan.DiskType.IsNull() && !plan.DiskType.IsUnknown() {
-		diskTypeRef, err := compute.ParseDiskTypeRef(ctx, plan.DiskType.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Spec.DiskType = &diskTypeRef
-	}
-
-	if !plan.Iops.IsNull() && !plan.Iops.IsUnknown() {
-		iopsTmp, iopsDiag := IopsTFToAPIModel(ctx, plan.Iops)
-		diags = append(diags, iopsDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Iops = iopsTmp
-	}
-
-	if !plan.BlockSize.IsNull() && !plan.BlockSize.IsUnknown() {
-		tmpBlockSize, err := bytesize.ParseString(plan.BlockSize.ValueString())
-		if err != nil {
-			diags.AddError("ByteSize string parsing", err.Error())
-			return nil, diags
-		}
-		am.Spec.BlockSize = &tmpBlockSize
-	}
-
-	if !plan.OsType.IsNull() && !plan.OsType.IsUnknown() {
-		osTypeTmp, osTypeDiag := OsTypeTFToAPIModel(ctx, plan.OsType)
-		diags = append(diags, osTypeDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.OsType = osTypeTmp
-	}
-
-	if !plan.Encryption.IsNull() && !plan.Encryption.IsUnknown() {
-		encryptionPlan := tfmodel.EncryptionSpec{}
-		encryptionPlanDiag := plan.Encryption.As(ctx, &encryptionPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, encryptionPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		encryptionTmp, encryptionDiag := EncryptionSpecTFToAPIRequestModel(ctx, &encryptionPlan)
-		diags = append(diags, encryptionDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Encryption = encryptionTmp
-	}
-
-	return &am, diags
 }

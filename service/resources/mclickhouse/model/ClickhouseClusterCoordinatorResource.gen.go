@@ -17,10 +17,10 @@ type ClickhouseClusterCoordinatorResource struct {
 
 func (s *ClickhouseClusterCoordinatorResource) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Описание координаторов кластера.`,
+		MarkdownDescription: `Описание координатора кластера.`,
 		Attributes: map[string]schema.Attribute{
 			"type": schema.StringAttribute{
-				MarkdownDescription: `Тип координатора. Если не указано, то при наличии более одного хоста, используется Clickhouse Keeper`,
+				MarkdownDescription: `Тип координатора. Если не указано, то при наличии более одного узла, используется ClickHouse Keeper`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"CLICKHOUSE_KEEPER",
@@ -31,14 +31,14 @@ func (s *ClickhouseClusterCoordinatorResource) GetSchema() schema.Schema {
 			},
 			"resources": schema.SingleNestedAttribute{
 				Attributes:          new(ClickhouseCoordinatorHWResources).GetSchema().Attributes,
-				MarkdownDescription: `Параметры виртуальной машины, где будет работать Clickhouse Keeper/Zookeeper. Необязательный параметр в standalone-конфигурации`,
+				MarkdownDescription: `Параметры виртуальной машины, на которой будет работать ClickHouse Keeper. Необязательный параметр в standalone-конфигурации`,
 				Computed:            true,
 			},
 			"instances": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(ClickhouseClusterCoordinatorInstanceResource).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Описание инстансов координатора`,
+				MarkdownDescription: `Описание узлов координатора`,
 				Computed:            true,
 			},
 		},

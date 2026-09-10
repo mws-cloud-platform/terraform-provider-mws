@@ -8,25 +8,25 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
 func TestClickhouseClusterBootstrapAdminSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClickhouseClusterBootstrapAdminSpecOptionalResponse{}
+	emptyApiModel := model.ClickhouseClusterBootstrapAdminSpecOptionalResponse{}
 	_, diags := conv.ClickhouseClusterBootstrapAdminSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClickhouseClusterBootstrapAdminSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.ClickhouseClusterBootstrapAdminSpecRequest{
+	emptyApiModelRequest := model.ClickhouseClusterBootstrapAdminSpecRequest{
 		Username: "username",
 	}
 
-	emptyApiModelResponse, err := apimodel.ClickhouseClusterBootstrapAdminSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.ClickhouseClusterBootstrapAdminSpecRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.ClickhouseClusterBootstrapAdminSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -35,7 +35,7 @@ func TestClickhouseClusterBootstrapAdminSpecOptionalResponseConverters(t *testin
 	filledApiModelRequest, diags := conv.ClickhouseClusterBootstrapAdminSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.ClickhouseClusterBootstrapAdminSpecRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.ClickhouseClusterBootstrapAdminSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -47,7 +47,7 @@ func TestUpdateClickhouseClusterBootstrapAdminSpecRequestConverters(t *testing.T
 	var nullPlanTfModel tfmodel.ClickhouseClusterBootstrapAdminSpec
 	var stateTfModel tfmodel.ClickhouseClusterBootstrapAdminSpec
 
-	expectedUpdateModel := &apimodel.UpdateClickhouseClusterBootstrapAdminSpecRequest{}
+	expectedUpdateModel := &model.UpdateClickhouseClusterBootstrapAdminSpecRequest{}
 
 	result, diags := conv.ClickhouseClusterBootstrapAdminSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

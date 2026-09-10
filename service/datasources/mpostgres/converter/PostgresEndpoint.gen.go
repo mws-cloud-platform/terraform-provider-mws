@@ -8,13 +8,12 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/model"
 )
 
-func PostgresEndpointAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresEndpointResponse) (*tfmodel.PostgresEndpoint, tfdiag.Diagnostics) {
+func PostgresEndpointAPIResponseToTFModel(ctx context.Context, am *model.PostgresEndpointResponse) (*tfmodel.PostgresEndpoint, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -108,88 +107,4 @@ func PostgresEndpointAPIResponseToTFModel(ctx context.Context, am *apimodel.Post
 	}
 
 	return &t, diags
-}
-
-func PostgresEndpointTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresEndpoint) (*apimodel.PostgresEndpointRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresEndpointRequest
-
-	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
-		am.Name = plan.Name.ValueString()
-	}
-
-	if !plan.Network.IsNull() && !plan.Network.IsUnknown() {
-		networkRef, err := vpc.ParseNetworkRef(ctx, plan.Network.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Network = networkRef
-	}
-
-	if !plan.PrimaryAddresses.IsNull() && !plan.PrimaryAddresses.IsUnknown() {
-		primaryAddresses := make([]tfmodel.PostgresNetworkAddress, 0)
-		dPrimaryAddresses := plan.PrimaryAddresses.ElementsAs(ctx, &primaryAddresses, false)
-		diags = append(diags, dPrimaryAddresses...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.PrimaryAddresses = make([]apimodel.PostgresNetworkAddressRequest, 0, len(primaryAddresses))
-
-		for _, entity := range primaryAddresses {
-			tmp, d := PostgresNetworkAddressTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.PrimaryAddresses = append(am.PrimaryAddresses, *tmp)
-		}
-	}
-
-	if !plan.ReadOnlyAddresses.IsNull() && !plan.ReadOnlyAddresses.IsUnknown() {
-		readOnlyAddresses := make([]tfmodel.PostgresNetworkAddress, 0)
-		dReadOnlyAddresses := plan.ReadOnlyAddresses.ElementsAs(ctx, &readOnlyAddresses, false)
-		diags = append(diags, dReadOnlyAddresses...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.ReadOnlyAddresses = make([]apimodel.PostgresNetworkAddressRequest, 0, len(readOnlyAddresses))
-
-		for _, entity := range readOnlyAddresses {
-			tmp, d := PostgresNetworkAddressTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.ReadOnlyAddresses = append(am.ReadOnlyAddresses, *tmp)
-		}
-	}
-
-	if !plan.DirectAddresses.IsNull() && !plan.DirectAddresses.IsUnknown() {
-		directAddresses := make([]tfmodel.PostgresNetworkDirectAddress, 0)
-		dDirectAddresses := plan.DirectAddresses.ElementsAs(ctx, &directAddresses, false)
-		diags = append(diags, dDirectAddresses...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.DirectAddresses = make([]apimodel.PostgresNetworkDirectAddressRequest, 0, len(directAddresses))
-
-		for _, entity := range directAddresses {
-			tmp, d := PostgresNetworkDirectAddressTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.DirectAddresses = append(am.DirectAddresses, *tmp)
-		}
-	}
-
-	return &am, diags
 }

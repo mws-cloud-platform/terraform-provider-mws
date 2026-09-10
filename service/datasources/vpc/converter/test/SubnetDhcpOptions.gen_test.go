@@ -8,58 +8,20 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
 func TestSubnetDhcpOptionsAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.SubnetDhcpOptionsOptionalResponse{}
+	emptyApiModel := model.SubnetDhcpOptionsOptionalResponse{}
 	_, diags := conv.SubnetDhcpOptionsAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestSubnetDhcpOptionsOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.SubnetDhcpOptionsRequest{}
-
-	emptyApiModelResponse, err := apimodel.SubnetDhcpOptionsRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.SubnetDhcpOptionsAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.SubnetDhcpOptionsTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.SubnetDhcpOptionsRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
 func TestSubnetDhcpOptionsAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.SubnetDhcpOptionsResponse{}
+	emptyApiModel := model.SubnetDhcpOptionsResponse{}
 	_, diags := conv.SubnetDhcpOptionsAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestSubnetDhcpOptionsResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.SubnetDhcpOptionsRequest{}
-
-	emptyApiModelResponse, err := apimodel.SubnetDhcpOptionsRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.SubnetDhcpOptionsAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.SubnetDhcpOptionsTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.SubnetDhcpOptionsRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

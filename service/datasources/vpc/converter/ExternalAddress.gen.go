@@ -7,19 +7,16 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	"go.mws.cloud/go-sdk/service/resources/references/rm"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/model"
 )
 
-func ExternalAddressAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ExternalAddressOptionalResponse) (*tfmodel.ExternalAddress, tfdiag.Diagnostics) {
+func ExternalAddressAPIOptionalResponseToTFModel(ctx context.Context, am *model.ExternalAddressOptionalResponse) (*tfmodel.ExternalAddress, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -82,49 +79,4 @@ func ExternalAddressAPIOptionalResponseToTFModel(ctx context.Context, am *apimod
 	}
 
 	return &t, diags
-}
-
-func ExternalAddressTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ExternalAddress) (*apimodel.ExternalAddressRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ExternalAddressRequest
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.Region.IsNull() && !plan.Region.IsUnknown() {
-		regionRef, err := rm.ParseRegionRef(ctx, plan.Region.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Spec.Region = &regionRef
-	}
-
-	if !plan.NatGateway.IsNull() && !plan.NatGateway.IsUnknown() {
-		natGatewayRef, err := vpc.ParseNatGatewayRef(ctx, plan.NatGateway.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Spec.NatGateway = &natGatewayRef
-	}
-
-	return &am, diags
 }

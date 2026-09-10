@@ -8,14 +8,14 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/secretmanager/model"
+	"go.mws.cloud/go-sdk/service/secretmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/secretmanager/model"
 )
 
-func SecretVersionStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.SecretVersionStatusResponse) (*tfmodel.SecretVersionStatus, tfdiag.Diagnostics) {
+func SecretVersionStatusAPIResponseToTFModel(ctx context.Context, am *model.SecretVersionStatusResponse) (*tfmodel.SecretVersionStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

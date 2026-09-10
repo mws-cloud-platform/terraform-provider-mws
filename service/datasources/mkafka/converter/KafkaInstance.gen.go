@@ -7,14 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/model"
 )
 
-func KafkaInstanceAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaInstanceResponse) (*tfmodel.KafkaInstance, tfdiag.Diagnostics) {
+func KafkaInstanceAPIResponseToTFModel(ctx context.Context, am *model.KafkaInstanceResponse) (*tfmodel.KafkaInstance, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -51,47 +50,4 @@ func KafkaInstanceAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaIn
 	t.Controller = controllerTfObject
 
 	return &t, diags
-}
-
-func KafkaInstanceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaInstance) (*apimodel.KafkaInstanceRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaInstanceRequest
-
-	if !plan.Broker.IsNull() && !plan.Broker.IsUnknown() {
-		brokerPlan := tfmodel.KafkaInstanceSpec{}
-		brokerPlanDiag := plan.Broker.As(ctx, &brokerPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, brokerPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		brokerTmp, brokerDiag := KafkaInstanceSpecTFToAPIRequestModel(ctx, &brokerPlan)
-		diags = append(diags, brokerDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Broker = *brokerTmp
-	}
-
-	if !plan.Controller.IsNull() && !plan.Controller.IsUnknown() {
-		controllerPlan := tfmodel.KafkaControllerInstanceSpec{}
-		controllerPlanDiag := plan.Controller.As(ctx, &controllerPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, controllerPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		controllerTmp, controllerDiag := KafkaControllerInstanceSpecTFToAPIRequestModel(ctx, &controllerPlan)
-		diags = append(diags, controllerDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Controller = *controllerTmp
-	}
-
-	return &am, diags
 }

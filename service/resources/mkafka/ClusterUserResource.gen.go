@@ -19,7 +19,7 @@ import (
 	"go.mws.cloud/go-sdk/mws/wait"
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
 	"go.mws.cloud/go-sdk/service/mkafka/client"
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	resourcesdk "go.mws.cloud/go-sdk/service/mkafka/sdk"
 	mkafkaref "go.mws.cloud/go-sdk/service/resources/references/mkafka"
 	"go.mws.cloud/terraform-provider-mws/internal/cmp"
@@ -148,7 +148,7 @@ func (m *ClusterUserResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	body, diags = func(ctx context.Context, planApiRequest *apimodel.KafkaUserRequest) (*apimodel.KafkaUserRequest, tfdiag.Diagnostics) {
+	body, diags = func(ctx context.Context, planApiRequest *model.KafkaUserRequest) (*model.KafkaUserRequest, tfdiag.Diagnostics) {
 
 		var configData tfmodel.ClusterUserModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
@@ -311,7 +311,7 @@ func (m *ClusterUserResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	body, diags = func(ctx context.Context, planApiRequest *apimodel.UpdateKafkaUserRequest) (*apimodel.UpdateKafkaUserRequest, tfdiag.Diagnostics) {
+	body, diags = func(ctx context.Context, planApiRequest *model.UpdateKafkaUserRequest) (*model.UpdateKafkaUserRequest, tfdiag.Diagnostics) {
 
 		var configData tfmodel.ClusterUserModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)

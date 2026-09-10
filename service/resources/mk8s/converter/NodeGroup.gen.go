@@ -11,14 +11,14 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
-func NodeGroupAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NodeGroupOptionalResponse) (*tfmodel.NodeGroup, tfdiag.Diagnostics) {
+func NodeGroupAPIOptionalResponseToTFModel(ctx context.Context, am *model.NodeGroupOptionalResponse) (*tfmodel.NodeGroup, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -250,13 +250,13 @@ func NodeGroupAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Nod
 	return &t, diags
 }
 
-func NodeGroupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroup) (*apimodel.NodeGroupRequest, tfdiag.Diagnostics) {
+func NodeGroupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroup) (*model.NodeGroupRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.NodeGroupRequest
+	var am model.NodeGroupRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
@@ -331,7 +331,7 @@ func NodeGroupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroup) 
 			return nil, diags
 		}
 
-		am.Spec.LocalDisks = make([]apimodel.LocalDiskSpecRequest, 0, len(localDisks))
+		am.Spec.LocalDisks = make([]model.LocalDiskSpecRequest, 0, len(localDisks))
 
 		for _, entity := range localDisks {
 			tmp, d := LocalDiskSpecTFToAPIRequestModel(ctx, &entity)
@@ -367,7 +367,7 @@ func NodeGroupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroup) 
 			return nil, diags
 		}
 
-		am.Spec.Labels = make([]apimodel.NodeLabelSpecRequest, 0, len(labels))
+		am.Spec.Labels = make([]model.NodeLabelSpecRequest, 0, len(labels))
 
 		for _, entity := range labels {
 			tmp, d := NodeLabelSpecTFToAPIRequestModel(ctx, &entity)
@@ -387,7 +387,7 @@ func NodeGroupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroup) 
 			return nil, diags
 		}
 
-		am.Spec.Taints = make([]apimodel.NodeTaintSpecRequest, 0, len(taints))
+		am.Spec.Taints = make([]model.NodeTaintSpecRequest, 0, len(taints))
 
 		for _, entity := range taints {
 			tmp, d := NodeTaintSpecTFToAPIRequestModel(ctx, &entity)
@@ -450,7 +450,7 @@ func NodeGroupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroup) 
 	return &am, diags
 }
 
-func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NodeGroup) (*apimodel.UpdateNodeGroupRequest, tfdiag.Diagnostics) {
+func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NodeGroup) (*model.UpdateNodeGroupRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -459,7 +459,7 @@ func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateNodeGroupRequest
+	var am model.UpdateNodeGroupRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -493,7 +493,7 @@ func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	if !plan.Zone.Equal(state.Zone) {
 		if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateNodeGroupSpecRequest{})
+				am.Spec.SetTo(model.UpdateNodeGroupSpecRequest{})
 			}
 			am.Spec.Value.Zone.SetTo(plan.Zone.ValueString())
 		}
@@ -502,7 +502,7 @@ func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	if !plan.Subnet.Equal(state.Subnet) {
 		if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateNodeGroupSpecRequest{})
+				am.Spec.SetTo(model.UpdateNodeGroupSpecRequest{})
 			}
 			subnetPlan := tfmodel.NodeGroupSpecSubnet{}
 			subnetPlanDiag := plan.Subnet.As(ctx, &subnetPlan, basetypes.ObjectAsOptions{})
@@ -532,7 +532,7 @@ func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	if !plan.VmType.Equal(state.VmType) {
 		if !plan.VmType.IsNull() && !plan.VmType.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateNodeGroupSpecRequest{})
+				am.Spec.SetTo(model.UpdateNodeGroupSpecRequest{})
 			}
 			vmTypePlan := tfmodel.NodeGroupSpecVmType{}
 			vmTypePlanDiag := plan.VmType.As(ctx, &vmTypePlan, basetypes.ObjectAsOptions{})
@@ -562,7 +562,7 @@ func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	if !plan.ImageStorageSize.Equal(state.ImageStorageSize) {
 		if !plan.ImageStorageSize.IsNull() && !plan.ImageStorageSize.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateNodeGroupSpecRequest{})
+				am.Spec.SetTo(model.UpdateNodeGroupSpecRequest{})
 			}
 			tmpImageStorageSize, err := bytesize.ParseString(plan.ImageStorageSize.ValueString())
 			if err != nil {
@@ -576,7 +576,7 @@ func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	if !plan.ImageStorageIops.Equal(state.ImageStorageIops) {
 		if !plan.ImageStorageIops.IsNull() && !plan.ImageStorageIops.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateNodeGroupSpecRequest{})
+				am.Spec.SetTo(model.UpdateNodeGroupSpecRequest{})
 			}
 			am.Spec.Value.ImageStorageIops.SetTo(plan.ImageStorageIops.ValueInt64())
 		}
@@ -585,7 +585,7 @@ func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	if !plan.LocalDisks.Equal(state.LocalDisks) {
 		if !plan.LocalDisks.IsNull() && !plan.LocalDisks.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateNodeGroupSpecRequest{})
+				am.Spec.SetTo(model.UpdateNodeGroupSpecRequest{})
 			}
 			localDisks := make([]tfmodel.LocalDiskSpec, 0)
 			dLocalDisks := plan.LocalDisks.ElementsAs(ctx, &localDisks, false)
@@ -594,7 +594,7 @@ func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 				return nil, diags
 			}
 
-			localDisksTmp := make([]apimodel.UpdateLocalDiskSpecRequest, 0, len(localDisks))
+			localDisksTmp := make([]model.UpdateLocalDiskSpecRequest, 0, len(localDisks))
 
 			for _, entity := range localDisks {
 				stateEntity := tfmodel.LocalDiskSpec{}
@@ -608,7 +608,7 @@ func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 			am.Spec.Value.LocalDisks.SetTo(localDisksTmp)
 		} else if plan.LocalDisks.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateNodeGroupSpecRequest{})
+				am.Spec.SetTo(model.UpdateNodeGroupSpecRequest{})
 			}
 			am.Spec.Value.LocalDisks.SetToNull()
 		}
@@ -617,7 +617,7 @@ func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	if !plan.Scale.Equal(state.Scale) {
 		if !plan.Scale.IsNull() && !plan.Scale.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateNodeGroupSpecRequest{})
+				am.Spec.SetTo(model.UpdateNodeGroupSpecRequest{})
 			}
 			scalePlan := tfmodel.NodeGroupSpecScale{}
 			scalePlanDiag := plan.Scale.As(ctx, &scalePlan, basetypes.ObjectAsOptions{})
@@ -647,7 +647,7 @@ func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	if !plan.Labels.Equal(state.Labels) {
 		if !plan.Labels.IsNull() && !plan.Labels.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateNodeGroupSpecRequest{})
+				am.Spec.SetTo(model.UpdateNodeGroupSpecRequest{})
 			}
 			labels := make([]tfmodel.NodeLabelSpec, 0)
 			dLabels := plan.Labels.ElementsAs(ctx, &labels, false)
@@ -656,7 +656,7 @@ func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 				return nil, diags
 			}
 
-			labelsTmp := make([]apimodel.UpdateNodeLabelSpecRequest, 0, len(labels))
+			labelsTmp := make([]model.UpdateNodeLabelSpecRequest, 0, len(labels))
 
 			for _, entity := range labels {
 				stateEntity := tfmodel.NodeLabelSpec{}
@@ -670,7 +670,7 @@ func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 			am.Spec.Value.Labels.SetTo(labelsTmp)
 		} else if plan.Labels.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateNodeGroupSpecRequest{})
+				am.Spec.SetTo(model.UpdateNodeGroupSpecRequest{})
 			}
 			am.Spec.Value.Labels.SetToNull()
 		}
@@ -679,7 +679,7 @@ func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	if !plan.Taints.Equal(state.Taints) {
 		if !plan.Taints.IsNull() && !plan.Taints.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateNodeGroupSpecRequest{})
+				am.Spec.SetTo(model.UpdateNodeGroupSpecRequest{})
 			}
 			taints := make([]tfmodel.NodeTaintSpec, 0)
 			dTaints := plan.Taints.ElementsAs(ctx, &taints, false)
@@ -688,7 +688,7 @@ func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 				return nil, diags
 			}
 
-			taintsTmp := make([]apimodel.UpdateNodeTaintSpecRequest, 0, len(taints))
+			taintsTmp := make([]model.UpdateNodeTaintSpecRequest, 0, len(taints))
 
 			for _, entity := range taints {
 				stateEntity := tfmodel.NodeTaintSpec{}
@@ -702,7 +702,7 @@ func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 			am.Spec.Value.Taints.SetTo(taintsTmp)
 		} else if plan.Taints.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateNodeGroupSpecRequest{})
+				am.Spec.SetTo(model.UpdateNodeGroupSpecRequest{})
 			}
 			am.Spec.Value.Taints.SetToNull()
 		}
@@ -711,7 +711,7 @@ func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	if !plan.VersionControl.Equal(state.VersionControl) {
 		if !plan.VersionControl.IsNull() && !plan.VersionControl.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateNodeGroupSpecRequest{})
+				am.Spec.SetTo(model.UpdateNodeGroupSpecRequest{})
 			}
 			versionControlPlan := tfmodel.NodeGroupVersionControlSpec{}
 			versionControlPlanDiag := plan.VersionControl.As(ctx, &versionControlPlan, basetypes.ObjectAsOptions{})
@@ -741,7 +741,7 @@ func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	if !plan.RolloutStrategy.Equal(state.RolloutStrategy) {
 		if !plan.RolloutStrategy.IsNull() && !plan.RolloutStrategy.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateNodeGroupSpecRequest{})
+				am.Spec.SetTo(model.UpdateNodeGroupSpecRequest{})
 			}
 			rolloutStrategyPlan := tfmodel.NodeGroupSpecRolloutStrategy{}
 			rolloutStrategyPlanDiag := plan.RolloutStrategy.As(ctx, &rolloutStrategyPlan, basetypes.ObjectAsOptions{})
@@ -771,7 +771,7 @@ func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 	if !plan.ServiceAccount.Equal(state.ServiceAccount) {
 		if !plan.ServiceAccount.IsNull() && !plan.ServiceAccount.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateNodeGroupSpecRequest{})
+				am.Spec.SetTo(model.UpdateNodeGroupSpecRequest{})
 			}
 			serviceAccountPlan := tfmodel.NodeGroupSpecServiceAccount{}
 			serviceAccountPlanDiag := plan.ServiceAccount.As(ctx, &serviceAccountPlan, basetypes.ObjectAsOptions{})

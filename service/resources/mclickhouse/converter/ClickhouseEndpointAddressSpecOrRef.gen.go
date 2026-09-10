@@ -10,13 +10,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func ClickhouseEndpointAddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseEndpointAddressSpecOrRefOptionalResponse) (*tfmodel.ClickhouseEndpointAddressSpecOrRef, tfdiag.Diagnostics) {
+func ClickhouseEndpointAddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseEndpointAddressSpecOrRefOptionalResponse) (*tfmodel.ClickhouseEndpointAddressSpecOrRef, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -51,13 +51,13 @@ func ClickhouseEndpointAddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.
 	return &t, diags
 }
 
-func ClickhouseEndpointAddressSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseEndpointAddressSpecOrRef) (*apimodel.ClickhouseEndpointAddressSpecOrRefRequest, tfdiag.Diagnostics) {
+func ClickhouseEndpointAddressSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseEndpointAddressSpecOrRef) (*model.ClickhouseEndpointAddressSpecOrRefRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseEndpointAddressSpecOrRefRequest
+	var am model.ClickhouseEndpointAddressSpecOrRefRequest
 
 	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
 		refRef, err := vpc.ParseAddressRef(ctx, plan.Ref.ValueString())
@@ -87,7 +87,7 @@ func ClickhouseEndpointAddressSpecOrRefTFToAPIRequestModel(ctx context.Context, 
 	return &am, diags
 }
 
-func ClickhouseEndpointAddressSpecOrRefTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseEndpointAddressSpecOrRef) (*apimodel.UpdateClickhouseEndpointAddressSpecOrRefRequest, tfdiag.Diagnostics) {
+func ClickhouseEndpointAddressSpecOrRefTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseEndpointAddressSpecOrRef) (*model.UpdateClickhouseEndpointAddressSpecOrRefRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -96,7 +96,7 @@ func ClickhouseEndpointAddressSpecOrRefTFToAPIUpdateRequestModel(ctx context.Con
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateClickhouseEndpointAddressSpecOrRefRequest
+	var am model.UpdateClickhouseEndpointAddressSpecOrRefRequest
 
 	if !plan.Ref.Equal(state.Ref) {
 		if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {

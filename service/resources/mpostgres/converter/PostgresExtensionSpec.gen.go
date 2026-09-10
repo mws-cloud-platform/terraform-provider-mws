@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func PostgresExtensionSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresExtensionSpecResponse) (*tfmodel.PostgresExtensionSpec, tfdiag.Diagnostics) {
+func PostgresExtensionSpecAPIResponseToTFModel(ctx context.Context, am *model.PostgresExtensionSpecResponse) (*tfmodel.PostgresExtensionSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -25,13 +25,13 @@ func PostgresExtensionSpecAPIResponseToTFModel(ctx context.Context, am *apimodel
 	return &t, diags
 }
 
-func PostgresExtensionSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresExtensionSpec) (*apimodel.PostgresExtensionSpecRequest, tfdiag.Diagnostics) {
+func PostgresExtensionSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresExtensionSpec) (*model.PostgresExtensionSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresExtensionSpecRequest
+	var am model.PostgresExtensionSpecRequest
 
 	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
 		am.Name = plan.Name.ValueString()
@@ -40,7 +40,7 @@ func PostgresExtensionSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel
 	return &am, diags
 }
 
-func PostgresExtensionSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresExtensionSpec) (*apimodel.UpdatePostgresExtensionSpecRequest, tfdiag.Diagnostics) {
+func PostgresExtensionSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresExtensionSpec) (*model.UpdatePostgresExtensionSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -49,7 +49,7 @@ func PostgresExtensionSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, s
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdatePostgresExtensionSpecRequest
+	var am model.UpdatePostgresExtensionSpecRequest
 
 	if !plan.Name.Equal(state.Name) {
 		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {

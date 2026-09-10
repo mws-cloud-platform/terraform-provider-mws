@@ -8,87 +8,20 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
 )
 
 func TestPostgresBackupAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.PostgresBackupResponse{}
+	emptyApiModel := model.PostgresBackupResponse{}
 	_, diags := conv.PostgresBackupAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestPostgresBackupResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.PostgresBackupRequest{}
-
-	emptyApiModelResponse, err := apimodel.PostgresBackupRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.PostgresBackupAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.PostgresBackupTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.PostgresBackupRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
 func TestPostgresBackupMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.PostgresBackupMetadataResponse{}
+	emptyApiModel := model.PostgresBackupMetadataResponse{}
 	_, diags := conv.PostgresBackupMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestPostgresBackupMetadataResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.PostgresBackupMetadataRequest{
-		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
-	}
-
-	emptyApiModelResponse, err := apimodel.PostgresBackupMetadataRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.PostgresBackupMetadataAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.PostgresBackupMetadataTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.PostgresBackupMetadataRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
-func TestPostgresBackupSpecAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := apimodel.PostgresBackupSpecResponse{}
-	_, diags := conv.PostgresBackupSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
-func TestPostgresBackupSpecResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.PostgresBackupSpecRequest{}
-
-	emptyApiModelResponse, err := apimodel.PostgresBackupSpecRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.PostgresBackupSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.PostgresBackupSpecTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.PostgresBackupSpecRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

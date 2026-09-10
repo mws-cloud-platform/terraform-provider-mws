@@ -9,25 +9,25 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
 func TestFirewallRuleSourceSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.FirewallRuleSourceSpecOptionalResponse{}
+	emptyApiModel := model.FirewallRuleSourceSpecOptionalResponse{}
 	_, diags := conv.FirewallRuleSourceSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestFirewallRuleSourceSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.FirewallRuleSourceSpecRequest{
+	emptyApiModelRequest := model.FirewallRuleSourceSpecRequest{
 		Cidrs: []cidraddress.CIDR4Address{},
 	}
 
-	emptyApiModelResponse, err := apimodel.FirewallRuleSourceSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.FirewallRuleSourceSpecRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.FirewallRuleSourceSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -36,7 +36,7 @@ func TestFirewallRuleSourceSpecOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.FirewallRuleSourceSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.FirewallRuleSourceSpecRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.FirewallRuleSourceSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -48,7 +48,7 @@ func TestUpdateFirewallRuleSourceSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.FirewallRuleSourceSpec
 	var stateTfModel tfmodel.FirewallRuleSourceSpec
 
-	expectedUpdateModel := &apimodel.UpdateFirewallRuleSourceSpecRequest{}
+	expectedUpdateModel := &model.UpdateFirewallRuleSourceSpecRequest{}
 
 	result, diags := conv.FirewallRuleSourceSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

@@ -7,15 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/model"
 )
 
-func ClickhouseClusterShardAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseClusterShardOptionalResponse) (*tfmodel.ClickhouseClusterShard, tfdiag.Diagnostics) {
+func ClickhouseClusterShardAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseClusterShardOptionalResponse) (*tfmodel.ClickhouseClusterShard, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -106,83 +104,4 @@ func ClickhouseClusterShardAPIOptionalResponseToTFModel(ctx context.Context, am 
 	}
 
 	return &t, diags
-}
-
-func ClickhouseClusterShardTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterShard) (*apimodel.ClickhouseClusterShardRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseClusterShardRequest
-
-	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
-		am.Name = plan.Name.ValueString()
-	}
-
-	if !plan.Count.IsNull() && !plan.Count.IsUnknown() {
-		am.Count = ptr.Get(int(plan.Count.ValueInt64()))
-	}
-
-	if !plan.Resources.IsNull() && !plan.Resources.IsUnknown() {
-		resourcesPlan := tfmodel.ClickhouseInstanceHWResources{}
-		resourcesPlanDiag := plan.Resources.As(ctx, &resourcesPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, resourcesPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		resourcesTmp, resourcesDiag := ClickhouseInstanceHWResourcesTFToAPIRequestModel(ctx, &resourcesPlan)
-		diags = append(diags, resourcesDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Resources = *resourcesTmp
-	}
-
-	if !plan.Weight.IsNull() && !plan.Weight.IsUnknown() {
-		am.Weight = ptr.Get(int(plan.Weight.ValueInt64()))
-	}
-
-	if !plan.Endpoints.IsNull() && !plan.Endpoints.IsUnknown() {
-		endpoints := make([]tfmodel.ClickhouseEndpoint, 0)
-		dEndpoints := plan.Endpoints.ElementsAs(ctx, &endpoints, false)
-		diags = append(diags, dEndpoints...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Endpoints = make([]apimodel.ClickhouseEndpointRequest, 0, len(endpoints))
-
-		for _, entity := range endpoints {
-			tmp, d := ClickhouseEndpointTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.Endpoints = append(am.Endpoints, *tmp)
-		}
-	}
-
-	if !plan.Instances.IsNull() && !plan.Instances.IsUnknown() {
-		instances := make([]tfmodel.ClickhouseClusterInstance, 0)
-		dInstances := plan.Instances.ElementsAs(ctx, &instances, false)
-		diags = append(diags, dInstances...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Instances = make([]apimodel.ClickhouseClusterInstanceRequest, 0, len(instances))
-
-		for _, entity := range instances {
-			tmp, d := ClickhouseClusterInstanceTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.Instances = append(am.Instances, *tmp)
-		}
-	}
-
-	return &am, diags
 }

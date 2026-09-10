@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/model"
 )
 
-func ClusterStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.ClusterStatusResponse) (*tfmodel.ClusterStatus, tfdiag.Diagnostics) {
+func ClusterStatusAPIResponseToTFModel(ctx context.Context, am *model.ClusterStatusResponse) (*tfmodel.ClusterStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -137,7 +137,7 @@ func ClusterStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.Cluster
 	return &t, diags
 }
 
-func ClusterStatusClusterStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.ClusterStatusClusterStatusResponse) (*tfmodel.ClusterStatusClusterStatus, tfdiag.Diagnostics) {
+func ClusterStatusClusterStatusAPIResponseToTFModel(ctx context.Context, am *model.ClusterStatusClusterStatusResponse) (*tfmodel.ClusterStatusClusterStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -160,7 +160,7 @@ func ClusterStatusClusterStatusAPIResponseToTFModel(ctx context.Context, am *api
 	return &t, diags
 }
 
-func ClusterStatusNetworkAPIResponseToTFModel(ctx context.Context, am *apimodel.ClusterStatusNetworkResponse) (*tfmodel.ClusterStatusNetwork, tfdiag.Diagnostics) {
+func ClusterStatusNetworkAPIResponseToTFModel(ctx context.Context, am *model.ClusterStatusNetworkResponse) (*tfmodel.ClusterStatusNetwork, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -255,7 +255,7 @@ func ClusterStatusNetworkAPIResponseToTFModel(ctx context.Context, am *apimodel.
 	return &t, diags
 }
 
-func ClusterStatusNetworkPrimaryEndpointAPIResponseToTFModel(ctx context.Context, am *apimodel.ClusterStatusNetworkPrimaryEndpointResponse) (*tfmodel.ClusterStatusNetworkPrimaryEndpoint, tfdiag.Diagnostics) {
+func ClusterStatusNetworkPrimaryEndpointAPIResponseToTFModel(ctx context.Context, am *model.ClusterStatusNetworkPrimaryEndpointResponse) (*tfmodel.ClusterStatusNetworkPrimaryEndpoint, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -268,7 +268,7 @@ func ClusterStatusNetworkPrimaryEndpointAPIResponseToTFModel(ctx context.Context
 	return &t, diags
 }
 
-func ClusterStatusNetworkPublicEndpointAPIResponseToTFModel(ctx context.Context, am *apimodel.ClusterStatusNetworkPublicEndpointResponse) (*tfmodel.ClusterStatusNetworkPublicEndpoint, tfdiag.Diagnostics) {
+func ClusterStatusNetworkPublicEndpointAPIResponseToTFModel(ctx context.Context, am *model.ClusterStatusNetworkPublicEndpointResponse) (*tfmodel.ClusterStatusNetworkPublicEndpoint, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -281,7 +281,7 @@ func ClusterStatusNetworkPublicEndpointAPIResponseToTFModel(ctx context.Context,
 	return &t, diags
 }
 
-func ClusterStatusNetworkSubnetAPIResponseToTFModel(ctx context.Context, am *apimodel.ClusterStatusNetworkSubnetResponse) (*tfmodel.ClusterStatusNetworkSubnet, tfdiag.Diagnostics) {
+func ClusterStatusNetworkSubnetAPIResponseToTFModel(ctx context.Context, am *model.ClusterStatusNetworkSubnetResponse) (*tfmodel.ClusterStatusNetworkSubnet, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -294,7 +294,7 @@ func ClusterStatusNetworkSubnetAPIResponseToTFModel(ctx context.Context, am *api
 	return &t, diags
 }
 
-func ClusterStatusNetworkVpcNetworkAPIResponseToTFModel(ctx context.Context, am *apimodel.ClusterStatusNetworkVpcNetworkResponse) (*tfmodel.ClusterStatusNetworkVpcNetwork, tfdiag.Diagnostics) {
+func ClusterStatusNetworkVpcNetworkAPIResponseToTFModel(ctx context.Context, am *model.ClusterStatusNetworkVpcNetworkResponse) (*tfmodel.ClusterStatusNetworkVpcNetwork, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

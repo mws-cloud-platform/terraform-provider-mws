@@ -7,19 +7,16 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
-	"go.mws.cloud/go-sdk/service/resources/references/iam"
-	"go.mws.cloud/go-sdk/service/resources/references/support"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/certmanager/model"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 )
 
-func CertificateRoleBindingAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.CertificateRoleBindingOptionalResponse) (*tfmodel.CertificateRoleBinding, tfdiag.Diagnostics) {
+func CertificateRoleBindingAPIOptionalResponseToTFModel(ctx context.Context, am *model.CertificateRoleBindingOptionalResponse) (*tfmodel.CertificateRoleBinding, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -88,65 +85,4 @@ func CertificateRoleBindingAPIOptionalResponseToTFModel(ctx context.Context, am 
 	}
 
 	return &t, diags
-}
-
-func CertificateRoleBindingTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CertificateRoleBinding) (*apimodel.CertificateRoleBindingRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.CertificateRoleBindingRequest
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.Subject.IsNull() && !plan.Subject.IsUnknown() {
-		subjectPlan := tfcommon.CommonRoleBindingSpecSubject{}
-		subjectPlanDiag := plan.Subject.As(ctx, &subjectPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, subjectPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		subjectTmp, subjectDiag := commonconv.CommonRoleBindingSpecSubjectTFToAPIRequestModel(ctx, &subjectPlan)
-		diags = append(diags, subjectDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Subject = *subjectTmp
-	}
-
-	if !plan.Role.IsNull() && !plan.Role.IsUnknown() {
-		roleRef, err := iam.ParseRoleRef(ctx, plan.Role.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Spec.Role = roleRef
-	}
-
-	if !plan.SupportRequestId.IsNull() && !plan.SupportRequestId.IsUnknown() {
-		supportRequestIdRef, err := support.ParseRequestIDRef(ctx, plan.SupportRequestId.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Spec.SupportRequestId = &supportRequestIdRef
-	}
-
-	return &am, diags
 }

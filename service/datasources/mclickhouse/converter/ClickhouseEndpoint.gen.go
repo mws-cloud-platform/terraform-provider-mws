@@ -7,14 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/model"
 )
 
-func ClickhouseEndpointAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseEndpointOptionalResponse) (*tfmodel.ClickhouseEndpoint, tfdiag.Diagnostics) {
+func ClickhouseEndpointAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseEndpointOptionalResponse) (*tfmodel.ClickhouseEndpoint, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -55,47 +54,4 @@ func ClickhouseEndpointAPIOptionalResponseToTFModel(ctx context.Context, am *api
 	}
 
 	return &t, diags
-}
-
-func ClickhouseEndpointTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseEndpoint) (*apimodel.ClickhouseEndpointRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseEndpointRequest
-
-	if !plan.Address.IsNull() && !plan.Address.IsUnknown() {
-		addressPlan := tfmodel.ClickhouseEndpointAddressSpecOrRef{}
-		addressPlanDiag := plan.Address.As(ctx, &addressPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, addressPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		addressTmp, addressDiag := ClickhouseEndpointAddressSpecOrRefTFToAPIRequestModel(ctx, &addressPlan)
-		diags = append(diags, addressDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Address = *addressTmp
-	}
-
-	if !plan.ExternalAddress.IsNull() && !plan.ExternalAddress.IsUnknown() {
-		externalAddressPlan := tfmodel.ClickhouseEndpointExternalAddressSpecOrRef{}
-		externalAddressPlanDiag := plan.ExternalAddress.As(ctx, &externalAddressPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, externalAddressPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		externalAddressTmp, externalAddressDiag := ClickhouseEndpointExternalAddressSpecOrRefTFToAPIRequestModel(ctx, &externalAddressPlan)
-		diags = append(diags, externalAddressDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.ExternalAddress = externalAddressTmp
-	}
-
-	return &am, diags
 }

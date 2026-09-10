@@ -10,8 +10,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/kms/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/kms/model"
 	"go.mws.cloud/go-sdk/service/resources/references/kms"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
@@ -21,18 +21,18 @@ import (
 
 func TestCryptoKeyAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.CryptoKeyOptionalResponse{}
+	emptyApiModel := model.CryptoKeyOptionalResponse{}
 	_, diags := conv.CryptoKeyAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestCryptoKeyOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.CryptoKeyRequest{
-		Spec: apimodel.CryptoKeySpecRequest{},
+	emptyApiModelRequest := model.CryptoKeyRequest{
+		Spec: model.CryptoKeySpecRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.CryptoKeyRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.CryptoKeyRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.CryptoKeyAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -41,7 +41,7 @@ func TestCryptoKeyOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.CryptoKeyTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.CryptoKeyRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.CryptoKeyRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -58,21 +58,21 @@ func TestUpdateCryptoKeyRequestConverters(t *testing.T) {
 	stateTfModel.RotationPolicy = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.CryptoKeySpecRotationPolicy).GetSchema().Attributes))
 	stateTfModel.PrimaryKeyVersionRef = types.StringValue("")
 
-	expectedUpdateModel := &apimodel.UpdateCryptoKeyRequest{
-		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+	expectedUpdateModel := &model.UpdateCryptoKeyRequest{
+		Metadata: optional.OptionalNil[commonmodel.UpdateCommonTypedResourceMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},
-		Spec: optional.NewOptional(apimodel.UpdateCryptoKeySpecRequest{
-			DestructionPolicy: optional.OptionalNil[apimodel.UpdateCryptoKeySpecDestructionPolicyRequest]{
+		Spec: optional.NewOptional(model.UpdateCryptoKeySpecRequest{
+			DestructionPolicy: optional.OptionalNil[model.UpdateCryptoKeySpecDestructionPolicyRequest]{
 				Set:  true,
 				Null: true,
 			},
-			UsagePolicy: optional.OptionalNil[apimodel.UpdateCryptoKeySpecUsagePolicyRequest]{
+			UsagePolicy: optional.OptionalNil[model.UpdateCryptoKeySpecUsagePolicyRequest]{
 				Set:  true,
 				Null: true,
 			},
-			RotationPolicy: optional.OptionalNil[apimodel.UpdateCryptoKeySpecRotationPolicyRequest]{
+			RotationPolicy: optional.OptionalNil[model.UpdateCryptoKeySpecRotationPolicyRequest]{
 				Set:  true,
 				Null: true,
 			},

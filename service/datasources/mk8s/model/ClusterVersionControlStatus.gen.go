@@ -20,15 +20,15 @@ func (s *ClusterVersionControlStatus) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"release_channel": schema.StringAttribute{
-				MarkdownDescription: `Cluster обновляется всегда до default версии, поэтому необходимо выбрать релизный канал и настроить окно обслуживания`,
+				MarkdownDescription: `Релизный канал кластера`,
 				Computed:            true,
 			},
 			"version": schema.StringAttribute{
-				MarkdownDescription: `Текущая версия Cluster`,
+				MarkdownDescription: `Текущая версия кластера`,
 				Computed:            true,
 			},
 			"maintenance_window": schema.SingleNestedAttribute{
-				Attributes: new(tfcommon.MaintenanceWindow2).GetSchema().Attributes,
+				Attributes: new(tfcommon.MaintenanceWindow).GetSchema().Attributes,
 				Computed:   true,
 			},
 		},

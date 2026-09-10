@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/model"
 )
@@ -19,7 +19,7 @@ func TestUpdateSelfManagedSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.SelfManagedSpec
 	var stateTfModel tfmodel.SelfManagedSpec
 
-	expectedUpdateModel := &apimodel.UpdateSelfManagedSpecRequest{}
+	expectedUpdateModel := &model.UpdateSelfManagedSpecRequest{}
 
 	result, diags := conv.SelfManagedSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

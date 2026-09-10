@@ -7,16 +7,14 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/model"
 )
 
-func KafkaEndpointExternalAddressSpecOrRefAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaEndpointExternalAddressSpecOrRefResponse) (*tfmodel.KafkaEndpointExternalAddressSpecOrRef, tfdiag.Diagnostics) {
+func KafkaEndpointExternalAddressSpecOrRefAPIResponseToTFModel(ctx context.Context, am *model.KafkaEndpointExternalAddressSpecOrRefResponse) (*tfmodel.KafkaEndpointExternalAddressSpecOrRef, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -31,13 +29,13 @@ func KafkaEndpointExternalAddressSpecOrRefAPIResponseToTFModel(ctx context.Conte
 	}
 
 	if am.Spec != nil {
-		specTmp, d := KafkaEndpointExternalAddressSpecOrRefSpecAPIResponseToTFModel(ctx, am.Spec)
+		specTmp, d := KafkaEndpointExternalAddressSpecAPIResponseToTFModel(ctx, am.Spec)
 		diags = append(diags, d...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		specTfObject, d := types.ObjectValueFrom(ctx,
-			tfconv.GetAttributesTypes(new(tfmodel.KafkaEndpointExternalAddressSpecOrRefSpec).GetSchema().Attributes),
+			tfconv.GetAttributesTypes(new(tfmodel.KafkaEndpointExternalAddressSpec).GetSchema().Attributes),
 			*specTmp)
 		diags = append(diags, d...)
 		if diags.HasError() {
@@ -45,66 +43,8 @@ func KafkaEndpointExternalAddressSpecOrRefAPIResponseToTFModel(ctx context.Conte
 		}
 		t.Spec = specTfObject
 	} else {
-		t.Spec = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.KafkaEndpointExternalAddressSpecOrRefSpec).GetSchema().Attributes))
+		t.Spec = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.KafkaEndpointExternalAddressSpec).GetSchema().Attributes))
 	}
 
 	return &t, diags
-}
-
-func KafkaEndpointExternalAddressSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaEndpointExternalAddressSpecOrRef) (*apimodel.KafkaEndpointExternalAddressSpecOrRefRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaEndpointExternalAddressSpecOrRefRequest
-
-	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
-		refRef, err := vpc.ParseExternalAddressRef(ctx, plan.Ref.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Ref = &refRef
-	}
-
-	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
-		specPlan := tfmodel.KafkaEndpointExternalAddressSpecOrRefSpec{}
-		specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, specPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		specTmp, specDiag := KafkaEndpointExternalAddressSpecOrRefSpecTFToAPIRequestModel(ctx, &specPlan)
-		diags = append(diags, specDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec = specTmp
-	}
-
-	return &am, diags
-}
-
-func KafkaEndpointExternalAddressSpecOrRefSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaEndpointExternalAddressSpecOrRefSpecResponse) (*tfmodel.KafkaEndpointExternalAddressSpecOrRefSpec, tfdiag.Diagnostics) {
-	if am == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var t tfmodel.KafkaEndpointExternalAddressSpecOrRefSpec
-
-	return &t, diags
-}
-
-func KafkaEndpointExternalAddressSpecOrRefSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaEndpointExternalAddressSpecOrRefSpec) (*apimodel.KafkaEndpointExternalAddressSpecOrRefSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaEndpointExternalAddressSpecOrRefSpecRequest
-
-	return &am, diags
 }

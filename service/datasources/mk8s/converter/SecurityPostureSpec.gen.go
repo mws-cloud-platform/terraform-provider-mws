@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/model"
 )
 
-func SecurityPostureSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.SecurityPostureSpecOptionalResponse) (*tfmodel.SecurityPostureSpec, tfdiag.Diagnostics) {
+func SecurityPostureSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.SecurityPostureSpecOptionalResponse) (*tfmodel.SecurityPostureSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -27,19 +27,4 @@ func SecurityPostureSpecAPIOptionalResponseToTFModel(ctx context.Context, am *ap
 	}
 
 	return &t, diags
-}
-
-func SecurityPostureSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SecurityPostureSpec) (*apimodel.SecurityPostureSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.SecurityPostureSpecRequest
-
-	if !plan.Enabled.IsNull() && !plan.Enabled.IsUnknown() {
-		am.Enabled = plan.Enabled.ValueBoolPointer()
-	}
-
-	return &am, diags
 }

@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
-func SecurityPostureSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.SecurityPostureSpecOptionalResponse) (*tfmodel.SecurityPostureSpec, tfdiag.Diagnostics) {
+func SecurityPostureSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.SecurityPostureSpecOptionalResponse) (*tfmodel.SecurityPostureSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -29,13 +29,13 @@ func SecurityPostureSpecAPIOptionalResponseToTFModel(ctx context.Context, am *ap
 	return &t, diags
 }
 
-func SecurityPostureSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SecurityPostureSpec) (*apimodel.SecurityPostureSpecRequest, tfdiag.Diagnostics) {
+func SecurityPostureSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SecurityPostureSpec) (*model.SecurityPostureSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.SecurityPostureSpecRequest
+	var am model.SecurityPostureSpecRequest
 
 	if !plan.Enabled.IsNull() && !plan.Enabled.IsUnknown() {
 		am.Enabled = plan.Enabled.ValueBoolPointer()
@@ -44,7 +44,7 @@ func SecurityPostureSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.S
 	return &am, diags
 }
 
-func SecurityPostureSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.SecurityPostureSpec) (*apimodel.UpdateSecurityPostureSpecRequest, tfdiag.Diagnostics) {
+func SecurityPostureSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.SecurityPostureSpec) (*model.UpdateSecurityPostureSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -53,7 +53,7 @@ func SecurityPostureSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, sta
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateSecurityPostureSpecRequest
+	var am model.UpdateSecurityPostureSpecRequest
 
 	if !plan.Enabled.Equal(state.Enabled) {
 		if !plan.Enabled.IsNull() && !plan.Enabled.IsUnknown() {

@@ -10,11 +10,11 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func StorageLocalDiskSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.StorageLocalDiskSpecOptionalResponse) (*tfmodel.StorageLocalDiskSpec, tfdiag.Diagnostics) {
+func StorageLocalDiskSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.StorageLocalDiskSpecOptionalResponse) (*tfmodel.StorageLocalDiskSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -35,13 +35,13 @@ func StorageLocalDiskSpecAPIOptionalResponseToTFModel(ctx context.Context, am *a
 	return &t, diags
 }
 
-func StorageLocalDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.StorageLocalDiskSpec) (*apimodel.StorageLocalDiskSpecRequest, tfdiag.Diagnostics) {
+func StorageLocalDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.StorageLocalDiskSpec) (*model.StorageLocalDiskSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.StorageLocalDiskSpecRequest
+	var am model.StorageLocalDiskSpecRequest
 
 	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
 		am.Name = plan.Name.ValueString()
@@ -63,7 +63,7 @@ func StorageLocalDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.
 	return &am, diags
 }
 
-func StorageLocalDiskSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.StorageLocalDiskSpec) (*apimodel.UpdateStorageLocalDiskSpecRequest, tfdiag.Diagnostics) {
+func StorageLocalDiskSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.StorageLocalDiskSpec) (*model.UpdateStorageLocalDiskSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -72,7 +72,7 @@ func StorageLocalDiskSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, st
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateStorageLocalDiskSpecRequest
+	var am model.UpdateStorageLocalDiskSpecRequest
 
 	if !plan.Name.Equal(state.Name) {
 		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {

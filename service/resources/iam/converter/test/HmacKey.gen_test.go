@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/iam/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/iam/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/iam/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/iam/model"
@@ -18,18 +18,18 @@ import (
 
 func TestHmacKeyAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.HmacKeyResponse{}
+	emptyApiModel := model.HmacKeyResponse{}
 	_, diags := conv.HmacKeyAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestHmacKeyResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.HmacKeyRequest{
-		Spec: apimodel.HmacKeySpecRequest{},
+	emptyApiModelRequest := model.HmacKeyRequest{
+		Spec: model.HmacKeySpecRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.HmacKeyRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.HmacKeyRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.HmacKeyAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -38,7 +38,7 @@ func TestHmacKeyResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.HmacKeyTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.HmacKeyRequestToResponse(filledApiModelRequest)
+	result, err := model.HmacKeyRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -51,8 +51,8 @@ func TestUpdateHmacKeyRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.HmacKey
 	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.HmacKeyMetadata).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateHmacKeyRequest{
-		Metadata: optional.OptionalNil[apimodel.UpdateHmacKeyMetadataRequest]{
+	expectedUpdateModel := &model.UpdateHmacKeyRequest{
+		Metadata: optional.OptionalNil[model.UpdateHmacKeyMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},
@@ -66,18 +66,18 @@ func TestUpdateHmacKeyRequestConverters(t *testing.T) {
 
 func TestHmacKeyMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.HmacKeyMetadataResponse{}
+	emptyApiModel := model.HmacKeyMetadataResponse{}
 	_, diags := conv.HmacKeyMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestHmacKeyMetadataResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.HmacKeyMetadataRequest{
-		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
+	emptyApiModelRequest := model.HmacKeyMetadataRequest{
+		TypedResourceMetadataRequest: commonmodel.TypedResourceMetadataRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.HmacKeyMetadataRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.HmacKeyMetadataRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.HmacKeyMetadataAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -86,7 +86,7 @@ func TestHmacKeyMetadataResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.HmacKeyMetadataTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.HmacKeyMetadataRequestToResponse(filledApiModelRequest)
+	result, err := model.HmacKeyMetadataRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -98,7 +98,7 @@ func TestUpdateHmacKeyMetadataRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.HmacKeyMetadata
 	var stateTfModel tfmodel.HmacKeyMetadata
 
-	expectedUpdateModel := &apimodel.UpdateHmacKeyMetadataRequest{}
+	expectedUpdateModel := &model.UpdateHmacKeyMetadataRequest{}
 
 	result, diags := conv.HmacKeyMetadataTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

@@ -7,16 +7,15 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/model"
 )
 
-func ClusterAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClusterOptionalResponse) (*tfmodel.Cluster, tfdiag.Diagnostics) {
+func ClusterAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClusterOptionalResponse) (*tfmodel.Cluster, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -145,111 +144,4 @@ func ClusterAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Clust
 	}
 
 	return &t, diags
-}
-
-func ClusterTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Cluster) (*apimodel.ClusterRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ClusterRequest
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.Availability.IsNull() && !plan.Availability.IsUnknown() {
-		availabilityPlan := tfmodel.ClusterAvailabilitySpec{}
-		availabilityPlanDiag := plan.Availability.As(ctx, &availabilityPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, availabilityPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		availabilityTmp, availabilityDiag := ClusterAvailabilitySpecTFToAPIRequestModel(ctx, &availabilityPlan)
-		diags = append(diags, availabilityDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Availability = *availabilityTmp
-	}
-
-	if !plan.Network.IsNull() && !plan.Network.IsUnknown() {
-		networkPlan := tfmodel.ClusterSpecNetwork{}
-		networkPlanDiag := plan.Network.As(ctx, &networkPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, networkPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		networkTmp, networkDiag := ClusterSpecNetworkTFToAPIRequestModel(ctx, &networkPlan)
-		diags = append(diags, networkDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Network = *networkTmp
-	}
-
-	if !plan.VersionControl.IsNull() && !plan.VersionControl.IsUnknown() {
-		versionControlPlan := tfmodel.ClusterVersionControlSpec{}
-		versionControlPlanDiag := plan.VersionControl.As(ctx, &versionControlPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, versionControlPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		versionControlTmp, versionControlDiag := ClusterVersionControlSpecTFToAPIRequestModel(ctx, &versionControlPlan)
-		diags = append(diags, versionControlDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.VersionControl = *versionControlTmp
-	}
-
-	if !plan.Plugins.IsNull() && !plan.Plugins.IsUnknown() {
-		pluginsPlan := tfmodel.PluginsSpec{}
-		pluginsPlanDiag := plan.Plugins.As(ctx, &pluginsPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, pluginsPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		pluginsTmp, pluginsDiag := PluginsSpecTFToAPIRequestModel(ctx, &pluginsPlan)
-		diags = append(diags, pluginsDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Plugins = pluginsTmp
-	}
-
-	if !plan.SecurityPosture.IsNull() && !plan.SecurityPosture.IsUnknown() {
-		securityPosturePlan := tfmodel.SecurityPostureSpec{}
-		securityPosturePlanDiag := plan.SecurityPosture.As(ctx, &securityPosturePlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, securityPosturePlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		securityPostureTmp, securityPostureDiag := SecurityPostureSpecTFToAPIRequestModel(ctx, &securityPosturePlan)
-		diags = append(diags, securityPostureDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.SecurityPosture = securityPostureTmp
-	}
-
-	return &am, diags
 }

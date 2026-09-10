@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/model"
 )
 
-func CertificateManagedSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.CertificateManagedSpecOptionalResponse) (*tfmodel.CertificateManagedSpec, tfdiag.Diagnostics) {
+func CertificateManagedSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.CertificateManagedSpecOptionalResponse) (*tfmodel.CertificateManagedSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -62,10 +62,10 @@ func CertificateManagedSpecAPIOptionalResponseToTFModel(ctx context.Context, am 
 		t.Issuer = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.CertificateManagedSpecIssuer).GetSchema().Attributes))
 	}
 
-	if am.Domains != nil {
-		domains := make([]types.String, 0, len(am.Domains))
+	if val, ok := am.Domains.Get(); ok {
+		domains := make([]types.String, 0, len(val))
 
-		for _, entity := range am.Domains {
+		for _, entity := range val {
 			domains = append(domains, types.StringValue(entity))
 		}
 
@@ -83,13 +83,13 @@ func CertificateManagedSpecAPIOptionalResponseToTFModel(ctx context.Context, am 
 	return &t, diags
 }
 
-func CertificateManagedSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CertificateManagedSpec) (*apimodel.CertificateManagedSpecRequest, tfdiag.Diagnostics) {
+func CertificateManagedSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CertificateManagedSpec) (*model.CertificateManagedSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.CertificateManagedSpecRequest
+	var am model.CertificateManagedSpecRequest
 
 	if !plan.PreferredChallengeType.IsNull() && !plan.PreferredChallengeType.IsUnknown() {
 		preferredChallengeTypeTmp, preferredChallengeTypeDiag := CertificateChallengeTypeTFToAPIModel(ctx, plan.PreferredChallengeType)
@@ -143,7 +143,7 @@ func CertificateManagedSpecTFToAPIRequestModel(ctx context.Context, plan *tfmode
 	return &am, diags
 }
 
-func CertificateManagedSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.CertificateManagedSpec) (*apimodel.UpdateCertificateManagedSpecRequest, tfdiag.Diagnostics) {
+func CertificateManagedSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.CertificateManagedSpec) (*model.UpdateCertificateManagedSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -152,7 +152,7 @@ func CertificateManagedSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, 
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateCertificateManagedSpecRequest
+	var am model.UpdateCertificateManagedSpecRequest
 
 	if !plan.PreferredChallengeType.Equal(state.PreferredChallengeType) {
 		if !plan.PreferredChallengeType.IsNull() && !plan.PreferredChallengeType.IsUnknown() {

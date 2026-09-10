@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 )
 
-func ResourceStatusReadyAPIToTFModel(ctx context.Context, am *commonapimodel.ResourceStatusReady) (*tfcommon.ResourceStatusReady, tfdiag.Diagnostics) {
+func ResourceStatusReadyAPIToTFModel(ctx context.Context, am *commonmodel.ResourceStatusReady) (*tfcommon.ResourceStatusReady, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -36,7 +36,7 @@ func ResourceStatusReadyAPIToTFModel(ctx context.Context, am *commonapimodel.Res
 	return &t, diags
 }
 
-func ResourceStatusReadyAPIResponseToTFModel(ctx context.Context, am *commonapimodel.ResourceStatusReadyResponse) (*tfcommon.ResourceStatusReady, tfdiag.Diagnostics) {
+func ResourceStatusReadyAPIResponseToTFModel(ctx context.Context, am *commonmodel.ResourceStatusReadyResponse) (*tfcommon.ResourceStatusReady, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -60,7 +60,7 @@ func ResourceStatusReadyAPIResponseToTFModel(ctx context.Context, am *commonapim
 	return &t, diags
 }
 
-func ResourceStatusReadyAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.ResourceStatusReadyOptionalResponse) (*tfcommon.ResourceStatusReady, tfdiag.Diagnostics) {
+func ResourceStatusReadyAPIOptionalResponseToTFModel(ctx context.Context, am *commonmodel.ResourceStatusReadyOptionalResponse) (*tfcommon.ResourceStatusReady, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -82,52 +82,4 @@ func ResourceStatusReadyAPIOptionalResponseToTFModel(ctx context.Context, am *co
 	}
 
 	return &t, diags
-}
-
-func ResourceStatusReadyTFToAPIModel(ctx context.Context, plan *tfcommon.ResourceStatusReady) (*commonapimodel.ResourceStatusReady, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am commonapimodel.ResourceStatusReady
-
-	if !plan.State.IsNull() && !plan.State.IsUnknown() {
-		stateTmp, stateDiag := ResourceStatusStateTFToAPIModel(ctx, plan.State)
-		diags = append(diags, stateDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.State = *stateTmp
-	}
-
-	if !plan.Message.IsNull() && !plan.Message.IsUnknown() {
-		am.Message = plan.Message.ValueStringPointer()
-	}
-
-	return &am, diags
-}
-
-func ResourceStatusReadyTFToAPIRequestModel(ctx context.Context, plan *tfcommon.ResourceStatusReady) (*commonapimodel.ResourceStatusReadyRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am commonapimodel.ResourceStatusReadyRequest
-
-	if !plan.State.IsNull() && !plan.State.IsUnknown() {
-		stateTmp, stateDiag := ResourceStatusStateTFToAPIModel(ctx, plan.State)
-		diags = append(diags, stateDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.State = *stateTmp
-	}
-
-	if !plan.Message.IsNull() && !plan.Message.IsUnknown() {
-		am.Message = plan.Message.ValueStringPointer()
-	}
-
-	return &am, diags
 }

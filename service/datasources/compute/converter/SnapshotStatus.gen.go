@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func SnapshotStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.SnapshotStatusResponse) (*tfmodel.SnapshotStatus, tfdiag.Diagnostics) {
+func SnapshotStatusAPIResponseToTFModel(ctx context.Context, am *model.SnapshotStatusResponse) (*tfmodel.SnapshotStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -69,7 +69,7 @@ func SnapshotStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.Snapsh
 	}
 
 	if am.OsType != nil {
-		osTypeTmp, d := OsType2APIToTFModel(ctx, am.OsType)
+		osTypeTmp, d := OsTypeAPIToTFModel(ctx, am.OsType)
 		diags = append(diags, d...)
 		if diags.HasError() {
 			return nil, diags

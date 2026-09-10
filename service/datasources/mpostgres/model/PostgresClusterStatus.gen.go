@@ -70,7 +70,7 @@ func (s *PostgresClusterStatus) GetSchema() schema.Schema {
   * "ALIVE"    - Полностью работоспособен;
   * "DEGRADED" - Деградирует (некоторые, но не все, экземпляры неработоспособны);
   * "FAILED"   - Неработоспособен;
-  * "UNKNOWN"  - Не удается определить состояние (на этапе создания)`,
+  * "UNKNOWN"  - Не удаётся определить состояние (на этапе создания)`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"ALIVE",
@@ -100,7 +100,7 @@ func (s *PostgresClusterStatus) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"maintenance_window": schema.SingleNestedAttribute{
-				Attributes: new(tfcommon.MaintenanceWindow2).GetSchema().Attributes,
+				Attributes: new(tfcommon.MaintenanceWindow).GetSchema().Attributes,
 				Computed:   true,
 			},
 			"backup": schema.SingleNestedAttribute{

@@ -11,8 +11,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
@@ -21,23 +21,23 @@ import (
 
 func TestFirewallRuleAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.FirewallRuleOptionalResponse{}
+	emptyApiModel := model.FirewallRuleOptionalResponse{}
 	_, diags := conv.FirewallRuleAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestFirewallRuleOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.FirewallRuleRequest{
-		Spec: apimodel.FirewallRuleSpecRequest{
+	emptyApiModelRequest := model.FirewallRuleRequest{
+		Spec: model.FirewallRuleSpecRequest{
 			Direction:   "",
 			Action:      "",
-			Source:      apimodel.FirewallRuleSourceRequest{},
-			Destination: apimodel.FirewallRuleDestinationRequest{},
+			Source:      model.FirewallRuleSourceRequest{},
+			Destination: model.FirewallRuleDestinationRequest{},
 		},
 	}
 
-	emptyApiModelResponse, err := apimodel.FirewallRuleRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.FirewallRuleRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.FirewallRuleAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -46,7 +46,7 @@ func TestFirewallRuleOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.FirewallRuleTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.FirewallRuleRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.FirewallRuleRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -60,12 +60,12 @@ func TestUpdateFirewallRuleRequestConverters(t *testing.T) {
 	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
 	stateTfModel.ProtoPorts = types.ListValueMust(types.StringType, []tfattr.Value{})
 
-	expectedUpdateModel := &apimodel.UpdateFirewallRuleRequest{
-		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+	expectedUpdateModel := &model.UpdateFirewallRuleRequest{
+		Metadata: optional.OptionalNil[commonmodel.UpdateCommonTypedResourceMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},
-		Spec: optional.NewOptional(apimodel.UpdateFirewallRuleSpecRequest{
+		Spec: optional.NewOptional(model.UpdateFirewallRuleSpecRequest{
 			ProtoPorts: optional.OptionalNil[[]string]{
 				Set:  true,
 				Null: true,

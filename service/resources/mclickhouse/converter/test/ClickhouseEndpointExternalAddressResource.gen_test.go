@@ -8,13 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
 )
 
 func TestClickhouseEndpointExternalAddressResourceAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClickhouseEndpointExternalAddressResourceResponse{}
+	emptyApiModel := model.ClickhouseEndpointExternalAddressResourceResponse{}
 	_, diags := conv.ClickhouseEndpointExternalAddressResourceAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }

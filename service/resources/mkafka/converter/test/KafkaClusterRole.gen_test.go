@@ -8,25 +8,25 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
 func TestKafkaClusterRoleAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaClusterRoleResponse{}
+	emptyApiModel := model.KafkaClusterRoleResponse{}
 	_, diags := conv.KafkaClusterRoleAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestKafkaClusterRoleResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaClusterRoleRequest{
+	emptyApiModelRequest := model.KafkaClusterRoleRequest{
 		Name: "",
 	}
 
-	emptyApiModelResponse, err := apimodel.KafkaClusterRoleRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.KafkaClusterRoleRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.KafkaClusterRoleAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -35,7 +35,7 @@ func TestKafkaClusterRoleResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.KafkaClusterRoleTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.KafkaClusterRoleRequestToResponse(filledApiModelRequest)
+	result, err := model.KafkaClusterRoleRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -47,7 +47,7 @@ func TestUpdateKafkaClusterRoleRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.KafkaClusterRole
 	var stateTfModel tfmodel.KafkaClusterRole
 
-	expectedUpdateModel := &apimodel.UpdateKafkaClusterRoleRequest{}
+	expectedUpdateModel := &model.UpdateKafkaClusterRoleRequest{}
 
 	result, diags := conv.KafkaClusterRoleTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

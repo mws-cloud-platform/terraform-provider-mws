@@ -7,14 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/go-sdk/pkg/apimodels/ipaddress"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/model"
 )
 
-func SubnetDhcpOptionsAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.SubnetDhcpOptionsOptionalResponse) (*tfmodel.SubnetDhcpOptions, tfdiag.Diagnostics) {
+func SubnetDhcpOptionsAPIOptionalResponseToTFModel(ctx context.Context, am *model.SubnetDhcpOptionsOptionalResponse) (*tfmodel.SubnetDhcpOptions, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -67,7 +66,7 @@ func SubnetDhcpOptionsAPIOptionalResponseToTFModel(ctx context.Context, am *apim
 	return &t, diags
 }
 
-func SubnetDhcpOptionsAPIResponseToTFModel(ctx context.Context, am *apimodel.SubnetDhcpOptionsResponse) (*tfmodel.SubnetDhcpOptions, tfdiag.Diagnostics) {
+func SubnetDhcpOptionsAPIResponseToTFModel(ctx context.Context, am *model.SubnetDhcpOptionsResponse) (*tfmodel.SubnetDhcpOptions, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -118,59 +117,4 @@ func SubnetDhcpOptionsAPIResponseToTFModel(ctx context.Context, am *apimodel.Sub
 	}
 
 	return &t, diags
-}
-
-func SubnetDhcpOptionsTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SubnetDhcpOptions) (*apimodel.SubnetDhcpOptionsRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.SubnetDhcpOptionsRequest
-
-	if !plan.DomainName.IsNull() && !plan.DomainName.IsUnknown() {
-		am.DomainName = plan.DomainName.ValueStringPointer()
-	}
-
-	if !plan.DomainNameServers.IsNull() && !plan.DomainNameServers.IsUnknown() {
-		domainNameServers := make([]types.String, 0)
-		dDomainNameServers := plan.DomainNameServers.ElementsAs(ctx, &domainNameServers, false)
-		diags = append(diags, dDomainNameServers...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.DomainNameServers = make([]ipaddress.IP4Address, 0, len(domainNameServers))
-
-		for _, entity := range domainNameServers {
-			tmp, err := ipaddress.ParseIP4AddressString(entity.ValueString())
-			if err != nil {
-				diags.AddError("IP4Address string parsing", err.Error())
-				return nil, diags
-			}
-			am.DomainNameServers = append(am.DomainNameServers, tmp)
-		}
-	}
-
-	if !plan.NtpServers.IsNull() && !plan.NtpServers.IsUnknown() {
-		ntpServers := make([]types.String, 0)
-		dNtpServers := plan.NtpServers.ElementsAs(ctx, &ntpServers, false)
-		diags = append(diags, dNtpServers...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.NtpServers = make([]ipaddress.IP4Address, 0, len(ntpServers))
-
-		for _, entity := range ntpServers {
-			tmp, err := ipaddress.ParseIP4AddressString(entity.ValueString())
-			if err != nil {
-				diags.AddError("IP4Address string parsing", err.Error())
-				return nil, diags
-			}
-			am.NtpServers = append(am.NtpServers, tmp)
-		}
-	}
-
-	return &am, diags
 }

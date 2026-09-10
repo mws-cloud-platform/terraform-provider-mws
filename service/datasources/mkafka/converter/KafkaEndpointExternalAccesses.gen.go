@@ -8,12 +8,12 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/model"
 )
 
-func KafkaEndpointExternalAccessesAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaEndpointExternalAccessesResponse) (*tfmodel.KafkaEndpointExternalAccesses, tfdiag.Diagnostics) {
+func KafkaEndpointExternalAccessesAPIResponseToTFModel(ctx context.Context, am *model.KafkaEndpointExternalAccessesResponse) (*tfmodel.KafkaEndpointExternalAccesses, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -51,39 +51,4 @@ func KafkaEndpointExternalAccessesAPIResponseToTFModel(ctx context.Context, am *
 	}
 
 	return &t, diags
-}
-
-func KafkaEndpointExternalAccessesTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaEndpointExternalAccesses) (*apimodel.KafkaEndpointExternalAccessesRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaEndpointExternalAccessesRequest
-
-	if !plan.Allowed.IsNull() && !plan.Allowed.IsUnknown() {
-		am.Allowed = plan.Allowed.ValueBool()
-	}
-
-	if !plan.BrokerAddresses.IsNull() && !plan.BrokerAddresses.IsUnknown() {
-		brokerAddresses := make([]tfmodel.KafkaEndpointExternalAddressSpecOrRef, 0)
-		dBrokerAddresses := plan.BrokerAddresses.ElementsAs(ctx, &brokerAddresses, false)
-		diags = append(diags, dBrokerAddresses...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.BrokerAddresses = make([]apimodel.KafkaEndpointExternalAddressSpecOrRefRequest, 0, len(brokerAddresses))
-
-		for _, entity := range brokerAddresses {
-			tmp, d := KafkaEndpointExternalAddressSpecOrRefTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.BrokerAddresses = append(am.BrokerAddresses, *tmp)
-		}
-	}
-
-	return &am, diags
 }

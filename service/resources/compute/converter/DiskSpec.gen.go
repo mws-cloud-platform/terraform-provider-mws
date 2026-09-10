@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func DiskSpecSourceAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.DiskSpecSourceOptionalResponse) (*tfmodel.DiskSpecSource, tfdiag.Diagnostics) {
+func DiskSpecSourceAPIOptionalResponseToTFModel(ctx context.Context, am *model.DiskSpecSourceOptionalResponse) (*tfmodel.DiskSpecSource, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -43,13 +43,13 @@ func DiskSpecSourceAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func DiskSpecSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DiskSpecSource) (*apimodel.DiskSpecSourceRequest, tfdiag.Diagnostics) {
+func DiskSpecSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DiskSpecSource) (*model.DiskSpecSourceRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.DiskSpecSourceRequest
+	var am model.DiskSpecSourceRequest
 
 	if !plan.Image.IsNull() && !plan.Image.IsUnknown() {
 		imageRef, err := compute.ParseImageRef(ctx, plan.Image.ValueString())
@@ -81,7 +81,7 @@ func DiskSpecSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DiskSp
 	return &am, diags
 }
 
-func DiskSpecSourceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.DiskSpecSource) (*apimodel.UpdateDiskSpecSourceRequest, tfdiag.Diagnostics) {
+func DiskSpecSourceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.DiskSpecSource) (*model.UpdateDiskSpecSourceRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -90,7 +90,7 @@ func DiskSpecSourceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateDiskSpecSourceRequest
+	var am model.UpdateDiskSpecSourceRequest
 
 	if !plan.Image.Equal(state.Image) {
 		if !plan.Image.IsNull() && !plan.Image.IsUnknown() {

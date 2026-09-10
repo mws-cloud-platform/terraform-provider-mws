@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
@@ -19,20 +19,20 @@ import (
 
 func TestDiskBackupAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.DiskBackupOptionalResponse{}
+	emptyApiModel := model.DiskBackupOptionalResponse{}
 	_, diags := conv.DiskBackupAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestDiskBackupOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.DiskBackupRequest{
-		Spec: apimodel.DiskBackupSpecRequest{
-			Source: apimodel.DiskBackupSourceRequest{},
+	emptyApiModelRequest := model.DiskBackupRequest{
+		Spec: model.DiskBackupSpecRequest{
+			Source: model.DiskBackupSourceRequest{},
 		},
 	}
 
-	emptyApiModelResponse, err := apimodel.DiskBackupRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.DiskBackupRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.DiskBackupAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -41,7 +41,7 @@ func TestDiskBackupOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.DiskBackupTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.DiskBackupRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.DiskBackupRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -54,8 +54,8 @@ func TestUpdateDiskBackupRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.DiskBackup
 	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateDiskBackupRequest{
-		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+	expectedUpdateModel := &model.UpdateDiskBackupRequest{
+		Metadata: optional.OptionalNil[commonmodel.UpdateCommonTypedResourceMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},

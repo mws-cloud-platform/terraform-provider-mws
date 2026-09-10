@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
@@ -19,20 +19,20 @@ import (
 
 func TestDiskAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.DiskOptionalResponse{}
+	emptyApiModel := model.DiskOptionalResponse{}
 	_, diags := conv.DiskAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestDiskOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.DiskRequest{
-		Spec: apimodel.DiskSpecRequest{
+	emptyApiModelRequest := model.DiskRequest{
+		Spec: model.DiskSpecRequest{
 			Zone: "zone",
 		},
 	}
 
-	emptyApiModelResponse, err := apimodel.DiskRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.DiskRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.DiskAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -41,7 +41,7 @@ func TestDiskOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.DiskTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.DiskRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.DiskRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -56,17 +56,17 @@ func TestUpdateDiskRequestConverters(t *testing.T) {
 	stateTfModel.Source = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.DiskSpecSource).GetSchema().Attributes))
 	stateTfModel.Encryption = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.EncryptionSpec).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateDiskRequest{
-		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+	expectedUpdateModel := &model.UpdateDiskRequest{
+		Metadata: optional.OptionalNil[commonmodel.UpdateCommonTypedResourceMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},
-		Spec: optional.NewOptional(apimodel.UpdateDiskSpecRequest{
-			Source: optional.OptionalNil[apimodel.UpdateDiskSpecSourceRequest]{
+		Spec: optional.NewOptional(model.UpdateDiskSpecRequest{
+			Source: optional.OptionalNil[model.UpdateDiskSpecSourceRequest]{
 				Set:  true,
 				Null: true,
 			},
-			Encryption: optional.OptionalNil[apimodel.UpdateEncryptionSpecRequest]{
+			Encryption: optional.OptionalNil[model.UpdateEncryptionSpecRequest]{
 				Set:  true,
 				Null: true,
 			},

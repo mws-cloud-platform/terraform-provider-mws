@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
-func CommonRoleBindingStatusAPIToTFModel(ctx context.Context, am *commonapimodel.CommonRoleBindingStatus) (*tfcommon.CommonRoleBindingStatus, tfdiag.Diagnostics) {
+func CommonRoleBindingStatusAPIToTFModel(ctx context.Context, am *commonmodel.CommonRoleBindingStatus) (*tfcommon.CommonRoleBindingStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -39,7 +39,7 @@ func CommonRoleBindingStatusAPIToTFModel(ctx context.Context, am *commonapimodel
 	return &t, diags
 }
 
-func CommonRoleBindingStatusAPIResponseToTFModel(ctx context.Context, am *commonapimodel.CommonRoleBindingStatusResponse) (*tfcommon.CommonRoleBindingStatus, tfdiag.Diagnostics) {
+func CommonRoleBindingStatusAPIResponseToTFModel(ctx context.Context, am *commonmodel.CommonRoleBindingStatusResponse) (*tfcommon.CommonRoleBindingStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -64,7 +64,7 @@ func CommonRoleBindingStatusAPIResponseToTFModel(ctx context.Context, am *common
 	return &t, diags
 }
 
-func CommonRoleBindingStatusAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.CommonRoleBindingStatusOptionalResponse) (*tfcommon.CommonRoleBindingStatus, tfdiag.Diagnostics) {
+func CommonRoleBindingStatusAPIOptionalResponseToTFModel(ctx context.Context, am *commonmodel.CommonRoleBindingStatusOptionalResponse) (*tfcommon.CommonRoleBindingStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -89,13 +89,13 @@ func CommonRoleBindingStatusAPIOptionalResponseToTFModel(ctx context.Context, am
 	return &t, diags
 }
 
-func CommonRoleBindingStatusTFToAPIModel(ctx context.Context, plan *tfcommon.CommonRoleBindingStatus) (*commonapimodel.CommonRoleBindingStatus, tfdiag.Diagnostics) {
+func CommonRoleBindingStatusTFToAPIModel(ctx context.Context, plan *tfcommon.CommonRoleBindingStatus) (*commonmodel.CommonRoleBindingStatus, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.CommonRoleBindingStatus
+	var am commonmodel.CommonRoleBindingStatus
 
 	if !plan.Ready.IsNull() && !plan.Ready.IsUnknown() {
 		readyPlan := tfcommon.ResourceStatusReady{}
@@ -116,13 +116,13 @@ func CommonRoleBindingStatusTFToAPIModel(ctx context.Context, plan *tfcommon.Com
 	return &am, diags
 }
 
-func CommonRoleBindingStatusTFToAPIRequestModel(ctx context.Context, plan *tfcommon.CommonRoleBindingStatus) (*commonapimodel.CommonRoleBindingStatusRequest, tfdiag.Diagnostics) {
+func CommonRoleBindingStatusTFToAPIRequestModel(ctx context.Context, plan *tfcommon.CommonRoleBindingStatus) (*commonmodel.CommonRoleBindingStatusRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.CommonRoleBindingStatusRequest
+	var am commonmodel.CommonRoleBindingStatusRequest
 
 	if !plan.Ready.IsNull() && !plan.Ready.IsUnknown() {
 		readyPlan := tfcommon.ResourceStatusReady{}
@@ -143,7 +143,7 @@ func CommonRoleBindingStatusTFToAPIRequestModel(ctx context.Context, plan *tfcom
 	return &am, diags
 }
 
-func CommonRoleBindingStatusTFToAPIUpdateModel(ctx context.Context, plan, state *tfcommon.CommonRoleBindingStatus) (*commonapimodel.UpdateCommonRoleBindingStatus, tfdiag.Diagnostics) {
+func CommonRoleBindingStatusTFToAPIUpdateModel(ctx context.Context, plan, state *tfcommon.CommonRoleBindingStatus) (*commonmodel.UpdateCommonRoleBindingStatus, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -152,7 +152,7 @@ func CommonRoleBindingStatusTFToAPIUpdateModel(ctx context.Context, plan, state 
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.UpdateCommonRoleBindingStatus
+	var am commonmodel.UpdateCommonRoleBindingStatus
 
 	if !plan.Ready.Equal(state.Ready) {
 		if !plan.Ready.IsNull() && !plan.Ready.IsUnknown() {
@@ -184,7 +184,7 @@ func CommonRoleBindingStatusTFToAPIUpdateModel(ctx context.Context, plan, state 
 	return &am, diags
 }
 
-func CommonRoleBindingStatusTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfcommon.CommonRoleBindingStatus) (*commonapimodel.UpdateCommonRoleBindingStatusRequest, tfdiag.Diagnostics) {
+func CommonRoleBindingStatusTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfcommon.CommonRoleBindingStatus) (*commonmodel.UpdateCommonRoleBindingStatusRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -193,7 +193,7 @@ func CommonRoleBindingStatusTFToAPIUpdateRequestModel(ctx context.Context, plan,
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.UpdateCommonRoleBindingStatusRequest
+	var am commonmodel.UpdateCommonRoleBindingStatusRequest
 
 	if !plan.Ready.Equal(state.Ready) {
 		if !plan.Ready.IsNull() && !plan.Ready.IsUnknown() {

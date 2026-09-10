@@ -19,7 +19,7 @@ import (
 	"go.mws.cloud/go-sdk/mws/wait"
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
 	"go.mws.cloud/go-sdk/service/mpostgres/client"
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	resourcesdk "go.mws.cloud/go-sdk/service/mpostgres/sdk"
 	mpostgresref "go.mws.cloud/go-sdk/service/resources/references/mpostgres"
 	"go.mws.cloud/terraform-provider-mws/internal/cmp"
@@ -148,7 +148,7 @@ func (m *ClusterUserResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	body, diags = func(ctx context.Context, planApiRequest *apimodel.PostgresClusterUserRequest) (*apimodel.PostgresClusterUserRequest, tfdiag.Diagnostics) {
+	body, diags = func(ctx context.Context, planApiRequest *model.PostgresClusterUserRequest) (*model.PostgresClusterUserRequest, tfdiag.Diagnostics) {
 
 		var configData tfmodel.ClusterUserModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
@@ -311,7 +311,7 @@ func (m *ClusterUserResource) Update(ctx context.Context, req resource.UpdateReq
 		return
 	}
 
-	body, diags = func(ctx context.Context, planApiRequest *apimodel.UpdatePostgresClusterUserRequest) (*apimodel.UpdatePostgresClusterUserRequest, tfdiag.Diagnostics) {
+	body, diags = func(ctx context.Context, planApiRequest *model.UpdatePostgresClusterUserRequest) (*model.UpdatePostgresClusterUserRequest, tfdiag.Diagnostics) {
 
 		var configData tfmodel.ClusterUserModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)

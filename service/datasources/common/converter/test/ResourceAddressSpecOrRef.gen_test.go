@@ -8,78 +8,27 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
 func TestResourceAddressSpecOrRefAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceAddressSpecOrRef{}
+	emptyApiModel := commonmodel.ResourceAddressSpecOrRef{}
 	_, diags := commonconv.ResourceAddressSpecOrRefAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestResourceAddressSpecOrRefAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceAddressSpecOrRefResponse{}
+	emptyApiModel := commonmodel.ResourceAddressSpecOrRefResponse{}
 	_, diags := commonconv.ResourceAddressSpecOrRefAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestResourceAddressSpecOrRefAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceAddressSpecOrRefOptionalResponse{}
+	emptyApiModel := commonmodel.ResourceAddressSpecOrRefOptionalResponse{}
 	_, diags := commonconv.ResourceAddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestResourceAddressSpecOrRefConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceAddressSpecOrRef{}
-
-	tfModel, diags := commonconv.ResourceAddressSpecOrRefAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-
-	result, diags := commonconv.ResourceAddressSpecOrRefTFToAPIModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	require.Equal(t, emptyApiModel, *result)
-}
-
-func TestResourceAddressSpecOrRefResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := commonapimodel.ResourceAddressSpecOrRefRequest{}
-
-	emptyApiModelResponse, err := commonapimodel.ResourceAddressSpecOrRefRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := commonconv.ResourceAddressSpecOrRefAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := commonconv.ResourceAddressSpecOrRefTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := commonapimodel.ResourceAddressSpecOrRefRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
-func TestResourceAddressSpecOrRefOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := commonapimodel.ResourceAddressSpecOrRefRequest{}
-
-	emptyApiModelResponse, err := commonapimodel.ResourceAddressSpecOrRefRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := commonconv.ResourceAddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := commonconv.ResourceAddressSpecOrRefTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := commonapimodel.ResourceAddressSpecOrRefRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

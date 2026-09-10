@@ -7,15 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/model"
 )
 
-func KafkaS3SinkConnectorAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.KafkaS3SinkConnectorOptionalResponse) (*tfmodel.KafkaS3SinkConnector, tfdiag.Diagnostics) {
+func KafkaS3SinkConnectorAPIOptionalResponseToTFModel(ctx context.Context, am *model.KafkaS3SinkConnectorOptionalResponse) (*tfmodel.KafkaS3SinkConnector, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -119,87 +117,4 @@ func KafkaS3SinkConnectorAPIOptionalResponseToTFModel(ctx context.Context, am *a
 	}
 
 	return &t, diags
-}
-
-func KafkaS3SinkConnectorTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaS3SinkConnector) (*apimodel.KafkaS3SinkConnectorRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaS3SinkConnectorRequest
-
-	if !plan.Topics.IsNull() && !plan.Topics.IsUnknown() {
-		am.Topics = plan.Topics.ValueStringPointer()
-	}
-
-	if !plan.TopicsRegex.IsNull() && !plan.TopicsRegex.IsUnknown() {
-		am.TopicsRegex = plan.TopicsRegex.ValueStringPointer()
-	}
-
-	if !plan.S3Properties.IsNull() && !plan.S3Properties.IsUnknown() {
-		s3PropertiesPlan := tfmodel.KafkaS3Properties{}
-		s3PropertiesPlanDiag := plan.S3Properties.As(ctx, &s3PropertiesPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, s3PropertiesPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		s3PropertiesTmp, s3PropertiesDiag := KafkaS3PropertiesTFToAPIRequestModel(ctx, &s3PropertiesPlan)
-		diags = append(diags, s3PropertiesDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.S3Properties = s3PropertiesTmp
-	}
-
-	if !plan.TasksMax.IsNull() && !plan.TasksMax.IsUnknown() {
-		am.TasksMax = ptr.Get(int32(plan.TasksMax.ValueInt64()))
-	}
-
-	if !plan.InputFormat.IsNull() && !plan.InputFormat.IsUnknown() {
-		am.InputFormat = ptr.Get(apimodel.KafkaS3SinkConnectorInputFormatRequest(plan.InputFormat.ValueString()))
-	}
-
-	if !plan.OutputFormat.IsNull() && !plan.OutputFormat.IsUnknown() {
-		am.OutputFormat = ptr.Get(apimodel.KafkaS3SinkConnectorOutputFormatRequest(plan.OutputFormat.ValueString()))
-	}
-
-	if !plan.FileCompressionType.IsNull() && !plan.FileCompressionType.IsUnknown() {
-		am.FileCompressionType = ptr.Get(apimodel.KafkaS3SinkConnectorFileCompressionTypeRequest(plan.FileCompressionType.ValueString()))
-	}
-
-	if !plan.OutputFields.IsNull() && !plan.OutputFields.IsUnknown() {
-		outputFields := make([]tfmodel.KafkaConnectorOutputFields, 0)
-		dOutputFields := plan.OutputFields.ElementsAs(ctx, &outputFields, false)
-		diags = append(diags, dOutputFields...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.OutputFields = make([]apimodel.KafkaConnectorOutputFields, 0, len(outputFields))
-
-		for _, entity := range outputFields {
-			tmp, d := KafkaConnectorOutputFieldsTFToAPIModel(ctx, entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.OutputFields = append(am.OutputFields, *tmp)
-		}
-	}
-
-	if !plan.OutputEnvelope.IsNull() && !plan.OutputEnvelope.IsUnknown() {
-		am.OutputEnvelope = plan.OutputEnvelope.ValueBoolPointer()
-	}
-
-	if !plan.ErrorHandling.IsNull() && !plan.ErrorHandling.IsUnknown() {
-		am.ErrorHandling = ptr.Get(apimodel.KafkaS3SinkConnectorErrorHandlingRequest(plan.ErrorHandling.ValueString()))
-	}
-
-	if !plan.DlqTopic.IsNull() && !plan.DlqTopic.IsUnknown() {
-		am.DlqTopic = plan.DlqTopic.ValueStringPointer()
-	}
-
-	return &am, diags
 }

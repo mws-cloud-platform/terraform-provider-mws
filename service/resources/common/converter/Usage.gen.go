@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
-func UsageAPIToTFModel(ctx context.Context, am *commonapimodel.Usage) (*tfcommon.Usage, tfdiag.Diagnostics) {
+func UsageAPIToTFModel(ctx context.Context, am *commonmodel.Usage) (*tfcommon.Usage, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -29,7 +29,7 @@ func UsageAPIToTFModel(ctx context.Context, am *commonapimodel.Usage) (*tfcommon
 	return &t, diags
 }
 
-func UsageAPIResponseToTFModel(ctx context.Context, am *commonapimodel.UsageResponse) (*tfcommon.Usage, tfdiag.Diagnostics) {
+func UsageAPIResponseToTFModel(ctx context.Context, am *commonmodel.UsageResponse) (*tfcommon.Usage, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -46,7 +46,7 @@ func UsageAPIResponseToTFModel(ctx context.Context, am *commonapimodel.UsageResp
 	return &t, diags
 }
 
-func UsageAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.UsageOptionalResponse) (*tfcommon.Usage, tfdiag.Diagnostics) {
+func UsageAPIOptionalResponseToTFModel(ctx context.Context, am *commonmodel.UsageOptionalResponse) (*tfcommon.Usage, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -63,13 +63,13 @@ func UsageAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.U
 	return &t, diags
 }
 
-func UsageTFToAPIModel(ctx context.Context, plan *tfcommon.Usage) (*commonapimodel.Usage, tfdiag.Diagnostics) {
+func UsageTFToAPIModel(ctx context.Context, plan *tfcommon.Usage) (*commonmodel.Usage, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.Usage
+	var am commonmodel.Usage
 
 	if !plan.UsageType.IsNull() && !plan.UsageType.IsUnknown() {
 		am.UsageType = plan.UsageType.ValueString()
@@ -86,13 +86,13 @@ func UsageTFToAPIModel(ctx context.Context, plan *tfcommon.Usage) (*commonapimod
 	return &am, diags
 }
 
-func UsageTFToAPIRequestModel(ctx context.Context, plan *tfcommon.Usage) (*commonapimodel.UsageRequest, tfdiag.Diagnostics) {
+func UsageTFToAPIRequestModel(ctx context.Context, plan *tfcommon.Usage) (*commonmodel.UsageRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.UsageRequest
+	var am commonmodel.UsageRequest
 
 	if !plan.UsageType.IsNull() && !plan.UsageType.IsUnknown() {
 		am.UsageType = plan.UsageType.ValueString()
@@ -109,7 +109,7 @@ func UsageTFToAPIRequestModel(ctx context.Context, plan *tfcommon.Usage) (*commo
 	return &am, diags
 }
 
-func UsageTFToAPIUpdateModel(ctx context.Context, plan, state *tfcommon.Usage) (*commonapimodel.UpdateUsage, tfdiag.Diagnostics) {
+func UsageTFToAPIUpdateModel(ctx context.Context, plan, state *tfcommon.Usage) (*commonmodel.UpdateUsage, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -118,7 +118,7 @@ func UsageTFToAPIUpdateModel(ctx context.Context, plan, state *tfcommon.Usage) (
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.UpdateUsage
+	var am commonmodel.UpdateUsage
 
 	if !plan.UsageType.Equal(state.UsageType) {
 		if !plan.UsageType.IsNull() && !plan.UsageType.IsUnknown() {
@@ -141,7 +141,7 @@ func UsageTFToAPIUpdateModel(ctx context.Context, plan, state *tfcommon.Usage) (
 	return &am, diags
 }
 
-func UsageTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfcommon.Usage) (*commonapimodel.UpdateUsageRequest, tfdiag.Diagnostics) {
+func UsageTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfcommon.Usage) (*commonmodel.UpdateUsageRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -150,7 +150,7 @@ func UsageTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfcommon.U
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.UpdateUsageRequest
+	var am commonmodel.UpdateUsageRequest
 
 	if !plan.UsageType.Equal(state.UsageType) {
 		if !plan.UsageType.IsNull() && !plan.UsageType.IsUnknown() {

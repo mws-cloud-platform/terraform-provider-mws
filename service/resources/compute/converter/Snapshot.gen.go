@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func SnapshotAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.SnapshotOptionalResponse) (*tfmodel.Snapshot, tfdiag.Diagnostics) {
+func SnapshotAPIOptionalResponseToTFModel(ctx context.Context, am *model.SnapshotOptionalResponse) (*tfmodel.Snapshot, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -94,13 +94,13 @@ func SnapshotAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Snap
 	return &t, diags
 }
 
-func SnapshotTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Snapshot) (*apimodel.SnapshotRequest, tfdiag.Diagnostics) {
+func SnapshotTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Snapshot) (*model.SnapshotRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.SnapshotRequest
+	var am model.SnapshotRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
@@ -146,7 +146,7 @@ func SnapshotTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Snapshot) (*
 	return &am, diags
 }
 
-func SnapshotTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Snapshot) (*apimodel.UpdateSnapshotRequest, tfdiag.Diagnostics) {
+func SnapshotTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Snapshot) (*model.UpdateSnapshotRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -155,7 +155,7 @@ func SnapshotTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateSnapshotRequest
+	var am model.UpdateSnapshotRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -189,7 +189,7 @@ func SnapshotTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel
 	if !plan.Source.Equal(state.Source) {
 		if !plan.Source.IsNull() && !plan.Source.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateSnapshotSpecRequest{})
+				am.Spec.SetTo(model.UpdateSnapshotSpecRequest{})
 			}
 			sourcePlan := tfmodel.SnapshotSource{}
 			sourcePlanDiag := plan.Source.As(ctx, &sourcePlan, basetypes.ObjectAsOptions{})
@@ -219,7 +219,7 @@ func SnapshotTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel
 	if !plan.OsType.Equal(state.OsType) {
 		if !plan.OsType.IsNull() && !plan.OsType.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateSnapshotSpecRequest{})
+				am.Spec.SetTo(model.UpdateSnapshotSpecRequest{})
 			}
 			osTypeTmp, osTypeDiag := OsTypeTFToAPIModel(ctx, plan.OsType)
 			diags = append(diags, osTypeDiag...)

@@ -7,16 +7,15 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/certmanager/model"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 )
 
-func CertificateAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.CertificateOptionalResponse) (*tfmodel.Certificate, tfdiag.Diagnostics) {
+func CertificateAPIOptionalResponseToTFModel(ctx context.Context, am *model.CertificateOptionalResponse) (*tfmodel.Certificate, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -73,47 +72,4 @@ func CertificateAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.C
 	}
 
 	return &t, diags
-}
-
-func CertificateTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Certificate) (*apimodel.CertificateRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.CertificateRequest
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.Managed.IsNull() && !plan.Managed.IsUnknown() {
-		managedPlan := tfmodel.CertificateManagedSpec{}
-		managedPlanDiag := plan.Managed.As(ctx, &managedPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, managedPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		managedTmp, managedDiag := CertificateManagedSpecTFToAPIRequestModel(ctx, &managedPlan)
-		diags = append(diags, managedDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Managed = managedTmp
-	}
-
-	return &am, diags
 }

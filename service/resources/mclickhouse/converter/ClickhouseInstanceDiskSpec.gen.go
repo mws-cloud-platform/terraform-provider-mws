@@ -10,11 +10,11 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func ClickhouseInstanceDiskSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseInstanceDiskSpecOptionalResponse) (*tfmodel.ClickhouseInstanceDiskSpec, tfdiag.Diagnostics) {
+func ClickhouseInstanceDiskSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseInstanceDiskSpecOptionalResponse) (*tfmodel.ClickhouseInstanceDiskSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -45,7 +45,7 @@ func ClickhouseInstanceDiskSpecAPIOptionalResponseToTFModel(ctx context.Context,
 	return &t, diags
 }
 
-func ClickhouseInstanceDiskSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseInstanceDiskSpecResponse) (*tfmodel.ClickhouseInstanceDiskSpec, tfdiag.Diagnostics) {
+func ClickhouseInstanceDiskSpecAPIResponseToTFModel(ctx context.Context, am *model.ClickhouseInstanceDiskSpecResponse) (*tfmodel.ClickhouseInstanceDiskSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -76,13 +76,13 @@ func ClickhouseInstanceDiskSpecAPIResponseToTFModel(ctx context.Context, am *api
 	return &t, diags
 }
 
-func ClickhouseInstanceDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseInstanceDiskSpec) (*apimodel.ClickhouseInstanceDiskSpecRequest, tfdiag.Diagnostics) {
+func ClickhouseInstanceDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseInstanceDiskSpec) (*model.ClickhouseInstanceDiskSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseInstanceDiskSpecRequest
+	var am model.ClickhouseInstanceDiskSpecRequest
 
 	if !plan.Size.IsNull() && !plan.Size.IsUnknown() {
 		tmpSize, err := bytesize.ParseString(plan.Size.ValueString())
@@ -114,7 +114,7 @@ func ClickhouseInstanceDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tf
 	return &am, diags
 }
 
-func ClickhouseInstanceDiskSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseInstanceDiskSpec) (*apimodel.UpdateClickhouseInstanceDiskSpecRequest, tfdiag.Diagnostics) {
+func ClickhouseInstanceDiskSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseInstanceDiskSpec) (*model.UpdateClickhouseInstanceDiskSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -123,7 +123,7 @@ func ClickhouseInstanceDiskSpecTFToAPIUpdateRequestModel(ctx context.Context, pl
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateClickhouseInstanceDiskSpecRequest
+	var am model.UpdateClickhouseInstanceDiskSpecRequest
 
 	if !plan.Size.Equal(state.Size) {
 		if !plan.Size.IsNull() && !plan.Size.IsUnknown() {

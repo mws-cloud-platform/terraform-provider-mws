@@ -421,7 +421,7 @@ Optional:
 Read-Only:
 
 - `balancer` (Attributes) Настройка балансировщика кластера (see [below for nested schema](#nestedatt--status--balancer))
-- `effective_kafka_config` (Map of String) Конфигурация параметров кластера после валидации и преобразования из пользователского ввода
+- `effective_kafka_config` (Map of String) Конфигурация параметров кластера после валидации и преобразования из пользовательского ввода
 - `endpoints` (Attributes List) Описание эндпойнтов в сетях пользователя (VPC) для подключения к брокерам кластера (see [below for nested schema](#nestedatt--status--endpoints))
 - `health` (String) Работоспособность кластера:
   * "ALIVE"    - Полностью работоспособен;

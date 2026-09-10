@@ -7,14 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/model"
 )
 
-func FirewallRuleSourceSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.FirewallRuleSourceSpecOptionalResponse) (*tfmodel.FirewallRuleSourceSpec, tfdiag.Diagnostics) {
+func FirewallRuleSourceSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.FirewallRuleSourceSpecOptionalResponse) (*tfmodel.FirewallRuleSourceSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -41,35 +40,4 @@ func FirewallRuleSourceSpecAPIOptionalResponseToTFModel(ctx context.Context, am 
 	}
 
 	return &t, diags
-}
-
-func FirewallRuleSourceSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.FirewallRuleSourceSpec) (*apimodel.FirewallRuleSourceSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.FirewallRuleSourceSpecRequest
-
-	if !plan.Cidrs.IsNull() && !plan.Cidrs.IsUnknown() {
-		cidrs := make([]types.String, 0)
-		dCidrs := plan.Cidrs.ElementsAs(ctx, &cidrs, false)
-		diags = append(diags, dCidrs...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Cidrs = make([]cidraddress.CIDR4Address, 0, len(cidrs))
-
-		for _, entity := range cidrs {
-			tmp, err := cidraddress.ParseCIDR4AddressString(entity.ValueString())
-			if err != nil {
-				diags.AddError("CIDR4Address string parsing", err.Error())
-				return nil, diags
-			}
-			am.Cidrs = append(am.Cidrs, tmp)
-		}
-	}
-
-	return &am, diags
 }

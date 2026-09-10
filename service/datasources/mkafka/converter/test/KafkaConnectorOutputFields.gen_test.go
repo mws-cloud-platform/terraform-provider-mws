@@ -8,26 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/converter"
 )
 
 func TestKafkaConnectorOutputFieldsAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaConnectorOutputFields("")
+	emptyApiModel := model.KafkaConnectorOutputFields("")
 	_, diags := conv.KafkaConnectorOutputFieldsAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestKafkaConnectorOutputFieldsConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := apimodel.KafkaConnectorOutputFields("")
-
-	tfModel, diags := conv.KafkaConnectorOutputFieldsAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-
-	result, diags := conv.KafkaConnectorOutputFieldsTFToAPIModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	require.Equal(t, emptyApiModel, *result)
 }

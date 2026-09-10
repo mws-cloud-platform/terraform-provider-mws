@@ -8,23 +8,23 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
 func TestClickhouseClusterBackupAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClickhouseClusterBackupOptionalResponse{}
+	emptyApiModel := model.ClickhouseClusterBackupOptionalResponse{}
 	_, diags := conv.ClickhouseClusterBackupAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClickhouseClusterBackupOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.ClickhouseClusterBackupRequest{}
+	emptyApiModelRequest := model.ClickhouseClusterBackupRequest{}
 
-	emptyApiModelResponse, err := apimodel.ClickhouseClusterBackupRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.ClickhouseClusterBackupRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.ClickhouseClusterBackupAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -33,7 +33,7 @@ func TestClickhouseClusterBackupOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.ClickhouseClusterBackupTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.ClickhouseClusterBackupRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.ClickhouseClusterBackupRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -45,7 +45,7 @@ func TestUpdateClickhouseClusterBackupRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.ClickhouseClusterBackup
 	var stateTfModel tfmodel.ClickhouseClusterBackup
 
-	expectedUpdateModel := &apimodel.UpdateClickhouseClusterBackupRequest{}
+	expectedUpdateModel := &model.UpdateClickhouseClusterBackupRequest{}
 
 	result, diags := conv.ClickhouseClusterBackupTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

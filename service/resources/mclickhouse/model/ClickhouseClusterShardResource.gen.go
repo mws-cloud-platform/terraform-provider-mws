@@ -26,7 +26,7 @@ func (s *ClickhouseClusterShardResource) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"name": schema.StringAttribute{
-				MarkdownDescription: `Имя шарда, которому будут принадлежать инстансы`,
+				MarkdownDescription: `Имя шарда, которому будут принадлежать узлы`,
 				Computed:            true,
 			},
 			"weight": schema.Int64Attribute{
@@ -34,12 +34,12 @@ func (s *ClickhouseClusterShardResource) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"index": schema.Int64Attribute{
-				MarkdownDescription: `Индекс шарда в кластере Clickhouse, который будет указан в настройках кластера в макросе "shard".  Влияет на очередность исполнения распределенных запросов в кластере`,
+				MarkdownDescription: `Индекс шарда в кластере ClickHouse, который будет указан в настройках кластера в макросе "shard". Влияет на очередность исполнения распределенных запросов в кластере`,
 				Computed:            true,
 			},
 			"resources": schema.SingleNestedAttribute{
 				Attributes:          new(ClickhouseInstanceHWResources).GetSchema().Attributes,
-				MarkdownDescription: `Параметры виртуальной машины, где будут работать инстансы Clickhouse данного шарда`,
+				MarkdownDescription: `Параметры виртуальной машины, где будут работать узлы ClickHouse данного шарда`,
 				Computed:            true,
 			},
 			"endpoints": schema.ListNestedAttribute{
@@ -53,7 +53,7 @@ func (s *ClickhouseClusterShardResource) GetSchema() schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(ClickhouseClusterInstanceResource).GetSchema().Attributes,
 				},
-				MarkdownDescription: `Описание инстансов шарда`,
+				MarkdownDescription: `Описание узлов шарда`,
 				Computed:            true,
 			},
 		},

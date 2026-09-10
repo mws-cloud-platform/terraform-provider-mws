@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
-func NodeTaintSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NodeTaintSpecOptionalResponse) (*tfmodel.NodeTaintSpec, tfdiag.Diagnostics) {
+func NodeTaintSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.NodeTaintSpecOptionalResponse) (*tfmodel.NodeTaintSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -29,7 +29,7 @@ func NodeTaintSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel
 	return &t, diags
 }
 
-func NodeTaintSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.NodeTaintSpecResponse) (*tfmodel.NodeTaintSpec, tfdiag.Diagnostics) {
+func NodeTaintSpecAPIResponseToTFModel(ctx context.Context, am *model.NodeTaintSpecResponse) (*tfmodel.NodeTaintSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -46,13 +46,13 @@ func NodeTaintSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.NodeTai
 	return &t, diags
 }
 
-func NodeTaintSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeTaintSpec) (*apimodel.NodeTaintSpecRequest, tfdiag.Diagnostics) {
+func NodeTaintSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeTaintSpec) (*model.NodeTaintSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.NodeTaintSpecRequest
+	var am model.NodeTaintSpecRequest
 
 	if !plan.Key.IsNull() && !plan.Key.IsUnknown() {
 		am.Key = plan.Key.ValueString()
@@ -63,13 +63,13 @@ func NodeTaintSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeTai
 	}
 
 	if !plan.Effect.IsNull() && !plan.Effect.IsUnknown() {
-		am.Effect = apimodel.NodeTaintSpecEffectRequest(plan.Effect.ValueString())
+		am.Effect = model.NodeTaintSpecEffectRequest(plan.Effect.ValueString())
 	}
 
 	return &am, diags
 }
 
-func NodeTaintSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NodeTaintSpec) (*apimodel.UpdateNodeTaintSpecRequest, tfdiag.Diagnostics) {
+func NodeTaintSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NodeTaintSpec) (*model.UpdateNodeTaintSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -78,7 +78,7 @@ func NodeTaintSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tf
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateNodeTaintSpecRequest
+	var am model.UpdateNodeTaintSpecRequest
 
 	if !plan.Key.Equal(state.Key) {
 		if !plan.Key.IsNull() && !plan.Key.IsUnknown() {
@@ -94,7 +94,7 @@ func NodeTaintSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tf
 
 	if !plan.Effect.Equal(state.Effect) {
 		if !plan.Effect.IsNull() && !plan.Effect.IsUnknown() {
-			am.Effect.SetTo(apimodel.NodeTaintSpecEffectRequest(plan.Effect.ValueString()))
+			am.Effect.SetTo(model.NodeTaintSpecEffectRequest(plan.Effect.ValueString()))
 		}
 	}
 

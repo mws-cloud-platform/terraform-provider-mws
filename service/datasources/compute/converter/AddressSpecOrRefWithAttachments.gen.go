@@ -7,14 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func AddressSpecOrRefWithAttachmentsAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.AddressSpecOrRefWithAttachmentsOptionalResponse) (*tfmodel.AddressSpecOrRefWithAttachments, tfdiag.Diagnostics) {
+func AddressSpecOrRefWithAttachmentsAPIOptionalResponseToTFModel(ctx context.Context, am *model.AddressSpecOrRefWithAttachmentsOptionalResponse) (*tfmodel.AddressSpecOrRefWithAttachments, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -55,47 +54,4 @@ func AddressSpecOrRefWithAttachmentsAPIOptionalResponseToTFModel(ctx context.Con
 	}
 
 	return &t, diags
-}
-
-func AddressSpecOrRefWithAttachmentsTFToAPIRequestModel(ctx context.Context, plan *tfmodel.AddressSpecOrRefWithAttachments) (*apimodel.AddressSpecOrRefWithAttachmentsRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.AddressSpecOrRefWithAttachmentsRequest
-
-	if !plan.Address.IsNull() && !plan.Address.IsUnknown() {
-		addressPlan := tfmodel.AddressSpecOrRef{}
-		addressPlanDiag := plan.Address.As(ctx, &addressPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, addressPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		addressTmp, addressDiag := AddressSpecOrRefTFToAPIRequestModel(ctx, &addressPlan)
-		diags = append(diags, addressDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Address = *addressTmp
-	}
-
-	if !plan.OneToOneNat.IsNull() && !plan.OneToOneNat.IsUnknown() {
-		oneToOneNatPlan := tfmodel.ComputeOneToOneNatSpec{}
-		oneToOneNatPlanDiag := plan.OneToOneNat.As(ctx, &oneToOneNatPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, oneToOneNatPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		oneToOneNatTmp, oneToOneNatDiag := ComputeOneToOneNatSpecTFToAPIRequestModel(ctx, &oneToOneNatPlan)
-		diags = append(diags, oneToOneNatDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.OneToOneNat = oneToOneNatTmp
-	}
-
-	return &am, diags
 }

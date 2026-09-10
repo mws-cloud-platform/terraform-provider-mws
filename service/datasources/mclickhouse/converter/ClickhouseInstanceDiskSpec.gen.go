@@ -7,14 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/model"
 )
 
-func ClickhouseInstanceDiskSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseInstanceDiskSpecOptionalResponse) (*tfmodel.ClickhouseInstanceDiskSpec, tfdiag.Diagnostics) {
+func ClickhouseInstanceDiskSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseInstanceDiskSpecOptionalResponse) (*tfmodel.ClickhouseInstanceDiskSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -45,7 +44,7 @@ func ClickhouseInstanceDiskSpecAPIOptionalResponseToTFModel(ctx context.Context,
 	return &t, diags
 }
 
-func ClickhouseInstanceDiskSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseInstanceDiskSpecResponse) (*tfmodel.ClickhouseInstanceDiskSpec, tfdiag.Diagnostics) {
+func ClickhouseInstanceDiskSpecAPIResponseToTFModel(ctx context.Context, am *model.ClickhouseInstanceDiskSpecResponse) (*tfmodel.ClickhouseInstanceDiskSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -74,42 +73,4 @@ func ClickhouseInstanceDiskSpecAPIResponseToTFModel(ctx context.Context, am *api
 	}
 
 	return &t, diags
-}
-
-func ClickhouseInstanceDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseInstanceDiskSpec) (*apimodel.ClickhouseInstanceDiskSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseInstanceDiskSpecRequest
-
-	if !plan.Size.IsNull() && !plan.Size.IsUnknown() {
-		tmpSize, err := bytesize.ParseString(plan.Size.ValueString())
-		if err != nil {
-			diags.AddError("ByteSize string parsing", err.Error())
-			return nil, diags
-		}
-		am.Size = tmpSize
-	}
-
-	if !plan.Type.IsNull() && !plan.Type.IsUnknown() {
-		typeTmp, typeDiag := ClickhouseDataDiskTypeTFToAPIModel(ctx, plan.Type)
-		diags = append(diags, typeDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Type = *typeTmp
-	}
-
-	if !plan.Iops.IsNull() && !plan.Iops.IsUnknown() {
-		iopsTmp, iopsDiag := IopsTFToAPIModel(ctx, plan.Iops)
-		diags = append(diags, iopsDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Iops = iopsTmp
-	}
-
-	return &am, diags
 }

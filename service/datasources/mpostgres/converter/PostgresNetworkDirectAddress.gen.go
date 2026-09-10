@@ -7,17 +7,14 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
-	"go.mws.cloud/go-sdk/service/resources/references/rm"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/model"
 )
 
-func PostgresNetworkDirectAddressAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresNetworkDirectAddressResponse) (*tfmodel.PostgresNetworkDirectAddress, tfdiag.Diagnostics) {
+func PostgresNetworkDirectAddressAPIResponseToTFModel(ctx context.Context, am *model.PostgresNetworkDirectAddressResponse) (*tfmodel.PostgresNetworkDirectAddress, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -74,65 +71,4 @@ func PostgresNetworkDirectAddressAPIResponseToTFModel(ctx context.Context, am *a
 	}
 
 	return &t, diags
-}
-
-func PostgresNetworkDirectAddressTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresNetworkDirectAddress) (*apimodel.PostgresNetworkDirectAddressRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresNetworkDirectAddressRequest
-
-	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
-		refRef, err := vpc.ParseAddressRef(ctx, plan.Ref.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Ref = &refRef
-	}
-
-	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
-		specPlan := tfmodel.PostgresNetworkAddressSpec{}
-		specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, specPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		specTmp, specDiag := PostgresNetworkAddressSpecTFToAPIRequestModel(ctx, &specPlan)
-		diags = append(diags, specDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec = specTmp
-	}
-
-	if !plan.ExternalAccess.IsNull() && !plan.ExternalAccess.IsUnknown() {
-		externalAccessPlan := tfmodel.PostgresExternalAccessSpec{}
-		externalAccessPlanDiag := plan.ExternalAccess.As(ctx, &externalAccessPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, externalAccessPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		externalAccessTmp, externalAccessDiag := PostgresExternalAccessSpecTFToAPIRequestModel(ctx, &externalAccessPlan)
-		diags = append(diags, externalAccessDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.ExternalAccess = externalAccessTmp
-	}
-
-	if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
-		zoneRef, err := rm.ParseZoneRef(ctx, plan.Zone.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Zone = &zoneRef
-	}
-
-	return &am, diags
 }

@@ -20,20 +20,10 @@ func (s *OneToOneNatAddressSpecOrRef) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"spec": schema.SingleNestedAttribute{
-				Attributes:          new(OneToOneNatAddressSpecOrRefSpec).GetSchema().Attributes,
+				Attributes:          new(OneToOneNatAddressSpec).GetSchema().Attributes,
 				MarkdownDescription: `NAT правило для связи внутреннего адреса с внешним адресом`,
 				Computed:            true,
 			},
 		},
-	}
-}
-
-type OneToOneNatAddressSpecOrRefSpec struct {
-}
-
-func (s *OneToOneNatAddressSpecOrRefSpec) GetSchema() schema.Schema {
-	return schema.Schema{
-		MarkdownDescription: `Представление поля Spec анонимного типа структуры OneToOneNatAddressSpecOrRef`,
-		Attributes:          map[string]schema.Attribute{},
 	}
 }

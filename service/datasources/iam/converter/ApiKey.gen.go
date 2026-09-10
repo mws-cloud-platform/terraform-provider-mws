@@ -8,18 +8,16 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/iam/model"
+	"go.mws.cloud/go-sdk/service/iam/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/iam/model"
 )
 
-func ApiKeyAPIResponseToTFModel(ctx context.Context, am *apimodel.ApiKeyResponse) (*tfmodel.ApiKey, tfdiag.Diagnostics) {
+func ApiKeyAPIResponseToTFModel(ctx context.Context, am *model.ApiKeyResponse) (*tfmodel.ApiKey, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -84,47 +82,7 @@ func ApiKeyAPIResponseToTFModel(ctx context.Context, am *apimodel.ApiKeyResponse
 	return &t, diags
 }
 
-func ApiKeyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ApiKey) (*apimodel.ApiKeyRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ApiKeyRequest
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfmodel.ApiKeyMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := ApiKeyMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.ExpireTime.IsNull() && !plan.ExpireTime.IsUnknown() {
-		tmpExpireTime, err := time.Parse(time.RFC3339, plan.ExpireTime.ValueString())
-		if err != nil {
-			diags.AddError("time string parsing", err.Error())
-			return nil, diags
-		}
-		am.Spec.ExpireTime = &tmpExpireTime
-	}
-
-	if !plan.Active.IsNull() && !plan.Active.IsUnknown() {
-		am.Spec.Active = plan.Active.ValueBoolPointer()
-	}
-
-	return &am, diags
-}
-
-func ApiKeyMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.ApiKeyMetadataResponse) (*tfmodel.ApiKeyMetadata, tfdiag.Diagnostics) {
+func ApiKeyMetadataAPIResponseToTFModel(ctx context.Context, am *model.ApiKeyMetadataResponse) (*tfmodel.ApiKeyMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -196,43 +154,4 @@ func ApiKeyMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.ApiKey
 	}
 
 	return &t, diags
-}
-
-func ApiKeyMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ApiKeyMetadata) (*apimodel.ApiKeyMetadataRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ApiKeyMetadataRequest
-
-	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
-		am.DisplayName = plan.DisplayName.ValueStringPointer()
-	}
-
-	if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
-		usages := make([]tfcommon.TypedUsage, 0)
-		dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
-		diags = append(diags, dUsages...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
-
-		for _, entity := range usages {
-			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.Usages = append(am.Usages, *tmp)
-		}
-	}
-
-	if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
-		am.Description = plan.Description.ValueStringPointer()
-	}
-
-	return &am, diags
 }

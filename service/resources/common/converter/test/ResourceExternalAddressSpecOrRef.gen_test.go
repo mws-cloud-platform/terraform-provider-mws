@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
@@ -19,28 +19,28 @@ import (
 
 func TestResourceExternalAddressSpecOrRefAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceExternalAddressSpecOrRef{}
+	emptyApiModel := commonmodel.ResourceExternalAddressSpecOrRef{}
 	_, diags := commonconv.ResourceExternalAddressSpecOrRefAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestResourceExternalAddressSpecOrRefAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceExternalAddressSpecOrRefResponse{}
+	emptyApiModel := commonmodel.ResourceExternalAddressSpecOrRefResponse{}
 	_, diags := commonconv.ResourceExternalAddressSpecOrRefAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestResourceExternalAddressSpecOrRefAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceExternalAddressSpecOrRefOptionalResponse{}
+	emptyApiModel := commonmodel.ResourceExternalAddressSpecOrRefOptionalResponse{}
 	_, diags := commonconv.ResourceExternalAddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestResourceExternalAddressSpecOrRefConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceExternalAddressSpecOrRef{}
+	emptyApiModel := commonmodel.ResourceExternalAddressSpecOrRef{}
 
 	tfModel, diags := commonconv.ResourceExternalAddressSpecOrRefAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
@@ -53,9 +53,9 @@ func TestResourceExternalAddressSpecOrRefConverters(t *testing.T) {
 
 func TestResourceExternalAddressSpecOrRefResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonapimodel.ResourceExternalAddressSpecOrRefRequest{}
+	emptyApiModelRequest := commonmodel.ResourceExternalAddressSpecOrRefRequest{}
 
-	emptyApiModelResponse, err := commonapimodel.ResourceExternalAddressSpecOrRefRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonmodel.ResourceExternalAddressSpecOrRefRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.ResourceExternalAddressSpecOrRefAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -64,7 +64,7 @@ func TestResourceExternalAddressSpecOrRefResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := commonconv.ResourceExternalAddressSpecOrRefTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := commonapimodel.ResourceExternalAddressSpecOrRefRequestToResponse(filledApiModelRequest)
+	result, err := commonmodel.ResourceExternalAddressSpecOrRefRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -72,9 +72,9 @@ func TestResourceExternalAddressSpecOrRefResponseConverters(t *testing.T) {
 
 func TestResourceExternalAddressSpecOrRefOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonapimodel.ResourceExternalAddressSpecOrRefRequest{}
+	emptyApiModelRequest := commonmodel.ResourceExternalAddressSpecOrRefRequest{}
 
-	emptyApiModelResponse, err := commonapimodel.ResourceExternalAddressSpecOrRefRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonmodel.ResourceExternalAddressSpecOrRefRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.ResourceExternalAddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -83,7 +83,7 @@ func TestResourceExternalAddressSpecOrRefOptionalResponseConverters(t *testing.T
 	filledApiModelRequest, diags := commonconv.ResourceExternalAddressSpecOrRefTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := commonapimodel.ResourceExternalAddressSpecOrRefRequestToOptionalResponse(filledApiModelRequest)
+	result, err := commonmodel.ResourceExternalAddressSpecOrRefRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -97,12 +97,12 @@ func TestUpdateResourceExternalAddressSpecOrRefConverters(t *testing.T) {
 	stateTfModel.Ref = types.StringValue("")
 	stateTfModel.Spec = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.ResourceExternalAddressSpec).GetSchema().Attributes))
 
-	expectedUpdateModel := &commonapimodel.UpdateResourceExternalAddressSpecOrRef{
+	expectedUpdateModel := &commonmodel.UpdateResourceExternalAddressSpecOrRef{
 		Ref: optional.OptionalNil[vpc.ExternalAddressRef]{
 			Set:  true,
 			Null: true,
 		},
-		Spec: optional.OptionalNil[commonapimodel.UpdateResourceExternalAddressSpec]{
+		Spec: optional.OptionalNil[commonmodel.UpdateResourceExternalAddressSpec]{
 			Set:  true,
 			Null: true,
 		},
@@ -122,12 +122,12 @@ func TestUpdateResourceExternalAddressSpecOrRefRequestConverters(t *testing.T) {
 	stateTfModel.Ref = types.StringValue("")
 	stateTfModel.Spec = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.ResourceExternalAddressSpec).GetSchema().Attributes))
 
-	expectedUpdateModel := &commonapimodel.UpdateResourceExternalAddressSpecOrRefRequest{
+	expectedUpdateModel := &commonmodel.UpdateResourceExternalAddressSpecOrRefRequest{
 		Ref: optional.OptionalNil[vpc.ExternalAddressRef]{
 			Set:  true,
 			Null: true,
 		},
-		Spec: optional.OptionalNil[commonapimodel.UpdateResourceExternalAddressSpecRequest]{
+		Spec: optional.OptionalNil[commonmodel.UpdateResourceExternalAddressSpecRequest]{
 			Set:  true,
 			Null: true,
 		},

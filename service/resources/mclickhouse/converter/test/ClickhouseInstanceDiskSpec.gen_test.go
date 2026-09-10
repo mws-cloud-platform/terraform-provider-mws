@@ -9,26 +9,26 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
 func TestClickhouseInstanceDiskSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClickhouseInstanceDiskSpecOptionalResponse{}
+	emptyApiModel := model.ClickhouseInstanceDiskSpecOptionalResponse{}
 	_, diags := conv.ClickhouseInstanceDiskSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClickhouseInstanceDiskSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.ClickhouseInstanceDiskSpecRequest{
+	emptyApiModelRequest := model.ClickhouseInstanceDiskSpecRequest{
 		Size: bytesize.MustParseString("0 B"),
 		Type: "",
 	}
 
-	emptyApiModelResponse, err := apimodel.ClickhouseInstanceDiskSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.ClickhouseInstanceDiskSpecRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.ClickhouseInstanceDiskSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -37,7 +37,7 @@ func TestClickhouseInstanceDiskSpecOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.ClickhouseInstanceDiskSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.ClickhouseInstanceDiskSpecRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.ClickhouseInstanceDiskSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -45,19 +45,19 @@ func TestClickhouseInstanceDiskSpecOptionalResponseConverters(t *testing.T) {
 
 func TestClickhouseInstanceDiskSpecAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClickhouseInstanceDiskSpecResponse{}
+	emptyApiModel := model.ClickhouseInstanceDiskSpecResponse{}
 	_, diags := conv.ClickhouseInstanceDiskSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClickhouseInstanceDiskSpecResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.ClickhouseInstanceDiskSpecRequest{
+	emptyApiModelRequest := model.ClickhouseInstanceDiskSpecRequest{
 		Size: bytesize.MustParseString("0 B"),
 		Type: "",
 	}
 
-	emptyApiModelResponse, err := apimodel.ClickhouseInstanceDiskSpecRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.ClickhouseInstanceDiskSpecRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.ClickhouseInstanceDiskSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -66,7 +66,7 @@ func TestClickhouseInstanceDiskSpecResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.ClickhouseInstanceDiskSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.ClickhouseInstanceDiskSpecRequestToResponse(filledApiModelRequest)
+	result, err := model.ClickhouseInstanceDiskSpecRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -78,7 +78,7 @@ func TestUpdateClickhouseInstanceDiskSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.ClickhouseInstanceDiskSpec
 	var stateTfModel tfmodel.ClickhouseInstanceDiskSpec
 
-	expectedUpdateModel := &apimodel.UpdateClickhouseInstanceDiskSpecRequest{}
+	expectedUpdateModel := &model.UpdateClickhouseInstanceDiskSpecRequest{}
 
 	result, diags := conv.ClickhouseInstanceDiskSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func AddressSpecOrRefWithAttachmentsAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.AddressSpecOrRefWithAttachmentsOptionalResponse) (*tfmodel.AddressSpecOrRefWithAttachments, tfdiag.Diagnostics) {
+func AddressSpecOrRefWithAttachmentsAPIOptionalResponseToTFModel(ctx context.Context, am *model.AddressSpecOrRefWithAttachmentsOptionalResponse) (*tfmodel.AddressSpecOrRefWithAttachments, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -57,13 +57,13 @@ func AddressSpecOrRefWithAttachmentsAPIOptionalResponseToTFModel(ctx context.Con
 	return &t, diags
 }
 
-func AddressSpecOrRefWithAttachmentsTFToAPIRequestModel(ctx context.Context, plan *tfmodel.AddressSpecOrRefWithAttachments) (*apimodel.AddressSpecOrRefWithAttachmentsRequest, tfdiag.Diagnostics) {
+func AddressSpecOrRefWithAttachmentsTFToAPIRequestModel(ctx context.Context, plan *tfmodel.AddressSpecOrRefWithAttachments) (*model.AddressSpecOrRefWithAttachmentsRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.AddressSpecOrRefWithAttachmentsRequest
+	var am model.AddressSpecOrRefWithAttachmentsRequest
 
 	if !plan.Address.IsNull() && !plan.Address.IsUnknown() {
 		addressPlan := tfmodel.AddressSpecOrRef{}
@@ -100,7 +100,7 @@ func AddressSpecOrRefWithAttachmentsTFToAPIRequestModel(ctx context.Context, pla
 	return &am, diags
 }
 
-func AddressSpecOrRefWithAttachmentsTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.AddressSpecOrRefWithAttachments) (*apimodel.UpdateAddressSpecOrRefWithAttachmentsRequest, tfdiag.Diagnostics) {
+func AddressSpecOrRefWithAttachmentsTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.AddressSpecOrRefWithAttachments) (*model.UpdateAddressSpecOrRefWithAttachmentsRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -109,7 +109,7 @@ func AddressSpecOrRefWithAttachmentsTFToAPIUpdateRequestModel(ctx context.Contex
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateAddressSpecOrRefWithAttachmentsRequest
+	var am model.UpdateAddressSpecOrRefWithAttachmentsRequest
 
 	if !plan.Address.Equal(state.Address) {
 		if !plan.Address.IsNull() && !plan.Address.IsUnknown() {

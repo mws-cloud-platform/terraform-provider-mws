@@ -8,12 +8,12 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func NetworkSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NetworkSpecOptionalResponse) (*tfmodel.NetworkSpec, tfdiag.Diagnostics) {
+func NetworkSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.NetworkSpecOptionalResponse) (*tfmodel.NetworkSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -51,13 +51,13 @@ func NetworkSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.N
 	return &t, diags
 }
 
-func NetworkSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NetworkSpec) (*apimodel.NetworkSpecRequest, tfdiag.Diagnostics) {
+func NetworkSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NetworkSpec) (*model.NetworkSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.NetworkSpecRequest
+	var am model.NetworkSpecRequest
 
 	if !plan.NetworkInterfaces.IsNull() && !plan.NetworkInterfaces.IsUnknown() {
 		networkInterfaces := make([]tfmodel.NetworkInterfaceSpec, 0)
@@ -67,7 +67,7 @@ func NetworkSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NetworkSp
 			return nil, diags
 		}
 
-		am.NetworkInterfaces = make([]apimodel.NetworkInterfaceSpecRequest, 0, len(networkInterfaces))
+		am.NetworkInterfaces = make([]model.NetworkInterfaceSpecRequest, 0, len(networkInterfaces))
 
 		for _, entity := range networkInterfaces {
 			tmp, d := NetworkInterfaceSpecTFToAPIRequestModel(ctx, &entity)
@@ -82,7 +82,7 @@ func NetworkSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NetworkSp
 	return &am, diags
 }
 
-func NetworkSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NetworkSpec) (*apimodel.UpdateNetworkSpecRequest, tfdiag.Diagnostics) {
+func NetworkSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NetworkSpec) (*model.UpdateNetworkSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -91,7 +91,7 @@ func NetworkSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmo
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateNetworkSpecRequest
+	var am model.UpdateNetworkSpecRequest
 
 	if !plan.NetworkInterfaces.Equal(state.NetworkInterfaces) {
 		if !plan.NetworkInterfaces.IsNull() && !plan.NetworkInterfaces.IsUnknown() {
@@ -102,7 +102,7 @@ func NetworkSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmo
 				return nil, diags
 			}
 
-			networkInterfacesTmp := make([]apimodel.UpdateNetworkInterfaceSpecRequest, 0, len(networkInterfaces))
+			networkInterfacesTmp := make([]model.UpdateNetworkInterfaceSpecRequest, 0, len(networkInterfaces))
 
 			for _, entity := range networkInterfaces {
 				stateEntity := tfmodel.NetworkInterfaceSpec{}

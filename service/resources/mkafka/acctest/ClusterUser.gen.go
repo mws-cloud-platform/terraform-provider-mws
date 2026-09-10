@@ -8,9 +8,9 @@ import (
 
 	"go.mws.cloud/go-sdk/mws"
 	commonerrors "go.mws.cloud/go-sdk/mws/errors"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/mkafka/client"
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	resourcesdk "go.mws.cloud/go-sdk/service/mkafka/sdk"
 	mkafkaref "go.mws.cloud/go-sdk/service/resources/references/mkafka"
 	"go.mws.cloud/terraform-provider-mws/internal/acctest"
@@ -34,7 +34,7 @@ func ClusterUserTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleResou
 				return fmt.Errorf("invalid resource state")
 			}
 			state := r.Status.Ready.State
-			if string(state) != string(commonapimodel.ResourceStatusState_OK) {
+			if string(state) != string(commonmodel.ResourceStatusState_OK) {
 				return fmt.Errorf("invalid resource state: %s", state)
 			}
 			return nil
@@ -52,7 +52,7 @@ func ClusterUserTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleResou
 	}, nil
 }
 
-func GetClusterUser(ctx context.Context, sdk *resourcesdk.KafkaUser, id string) (*apimodel.KafkaUserResponse, error) {
+func GetClusterUser(ctx context.Context, sdk *resourcesdk.KafkaUser, id string) (*model.KafkaUserResponse, error) {
 	ref, err := mkafkaref.ParseKafkaClusterUserRef(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("parse reference: %w", err)

@@ -10,11 +10,11 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func KafkaDataDiskSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaDataDiskSpecResponse) (*tfmodel.KafkaDataDiskSpec, tfdiag.Diagnostics) {
+func KafkaDataDiskSpecAPIResponseToTFModel(ctx context.Context, am *model.KafkaDataDiskSpecResponse) (*tfmodel.KafkaDataDiskSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -49,13 +49,13 @@ func KafkaDataDiskSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.Kaf
 	return &t, diags
 }
 
-func KafkaDataDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaDataDiskSpec) (*apimodel.KafkaDataDiskSpecRequest, tfdiag.Diagnostics) {
+func KafkaDataDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaDataDiskSpec) (*model.KafkaDataDiskSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaDataDiskSpecRequest
+	var am model.KafkaDataDiskSpecRequest
 
 	if !plan.Size.IsNull() && !plan.Size.IsUnknown() {
 		tmpSize, err := bytesize.ParseString(plan.Size.ValueString())
@@ -87,7 +87,7 @@ func KafkaDataDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Kaf
 	return &am, diags
 }
 
-func KafkaDataDiskSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaDataDiskSpec) (*apimodel.UpdateKafkaDataDiskSpecRequest, tfdiag.Diagnostics) {
+func KafkaDataDiskSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaDataDiskSpec) (*model.UpdateKafkaDataDiskSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -96,7 +96,7 @@ func KafkaDataDiskSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateKafkaDataDiskSpecRequest
+	var am model.UpdateKafkaDataDiskSpecRequest
 
 	if !plan.Size.Equal(state.Size) {
 		if !plan.Size.IsNull() && !plan.Size.IsUnknown() {

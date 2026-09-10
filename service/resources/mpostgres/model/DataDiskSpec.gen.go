@@ -31,8 +31,8 @@ func (s *DataDiskSpec) GetSchema() schema.Schema {
 			},
 			"type": schema.StringAttribute{
 				MarkdownDescription: `Тип используемого диска:
-* "NETWORK_STANDARD_SSD" — сетевой SSD;
-* "LOCAL" — локальный диск`,
+* "NETWORK_STANDARD_SSD" — сетевой SSD
+* "LOCAL" — локальный SSD`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"NETWORK_STANDARD_SSD",

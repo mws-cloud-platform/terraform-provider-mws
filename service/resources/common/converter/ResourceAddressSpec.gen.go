@@ -10,13 +10,13 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/ipaddress"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
-func ResourceAddressSpecAPIToTFModel(ctx context.Context, am *commonapimodel.ResourceAddressSpec) (*tfcommon.ResourceAddressSpec, tfdiag.Diagnostics) {
+func ResourceAddressSpecAPIToTFModel(ctx context.Context, am *commonmodel.ResourceAddressSpec) (*tfcommon.ResourceAddressSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -62,7 +62,7 @@ func ResourceAddressSpecAPIToTFModel(ctx context.Context, am *commonapimodel.Res
 	return &t, diags
 }
 
-func ResourceAddressSpecAPIResponseToTFModel(ctx context.Context, am *commonapimodel.ResourceAddressSpecResponse) (*tfcommon.ResourceAddressSpec, tfdiag.Diagnostics) {
+func ResourceAddressSpecAPIResponseToTFModel(ctx context.Context, am *commonmodel.ResourceAddressSpecResponse) (*tfcommon.ResourceAddressSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -108,7 +108,7 @@ func ResourceAddressSpecAPIResponseToTFModel(ctx context.Context, am *commonapim
 	return &t, diags
 }
 
-func ResourceAddressSpecAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.ResourceAddressSpecOptionalResponse) (*tfcommon.ResourceAddressSpec, tfdiag.Diagnostics) {
+func ResourceAddressSpecAPIOptionalResponseToTFModel(ctx context.Context, am *commonmodel.ResourceAddressSpecOptionalResponse) (*tfcommon.ResourceAddressSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -154,13 +154,13 @@ func ResourceAddressSpecAPIOptionalResponseToTFModel(ctx context.Context, am *co
 	return &t, diags
 }
 
-func ResourceAddressSpecTFToAPIModel(ctx context.Context, plan *tfcommon.ResourceAddressSpec) (*commonapimodel.ResourceAddressSpec, tfdiag.Diagnostics) {
+func ResourceAddressSpecTFToAPIModel(ctx context.Context, plan *tfcommon.ResourceAddressSpec) (*commonmodel.ResourceAddressSpec, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.ResourceAddressSpec
+	var am commonmodel.ResourceAddressSpec
 
 	if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {
 		subnetRef, err := vpc.ParseSubnetRef(ctx, plan.Subnet.ValueString())
@@ -188,7 +188,7 @@ func ResourceAddressSpecTFToAPIModel(ctx context.Context, plan *tfcommon.Resourc
 			return nil, diags
 		}
 
-		am.Dns = make([]commonapimodel.VpcAddressDnsSpec, 0, len(dns))
+		am.Dns = make([]commonmodel.VpcAddressDnsSpec, 0, len(dns))
 
 		for _, entity := range dns {
 			tmp, d := VpcAddressDnsSpecTFToAPIModel(ctx, &entity)
@@ -203,13 +203,13 @@ func ResourceAddressSpecTFToAPIModel(ctx context.Context, plan *tfcommon.Resourc
 	return &am, diags
 }
 
-func ResourceAddressSpecTFToAPIRequestModel(ctx context.Context, plan *tfcommon.ResourceAddressSpec) (*commonapimodel.ResourceAddressSpecRequest, tfdiag.Diagnostics) {
+func ResourceAddressSpecTFToAPIRequestModel(ctx context.Context, plan *tfcommon.ResourceAddressSpec) (*commonmodel.ResourceAddressSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.ResourceAddressSpecRequest
+	var am commonmodel.ResourceAddressSpecRequest
 
 	if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {
 		subnetRef, err := vpc.ParseSubnetRef(ctx, plan.Subnet.ValueString())
@@ -237,7 +237,7 @@ func ResourceAddressSpecTFToAPIRequestModel(ctx context.Context, plan *tfcommon.
 			return nil, diags
 		}
 
-		am.Dns = make([]commonapimodel.VpcAddressDnsSpecRequest, 0, len(dns))
+		am.Dns = make([]commonmodel.VpcAddressDnsSpecRequest, 0, len(dns))
 
 		for _, entity := range dns {
 			tmp, d := VpcAddressDnsSpecTFToAPIRequestModel(ctx, &entity)
@@ -252,7 +252,7 @@ func ResourceAddressSpecTFToAPIRequestModel(ctx context.Context, plan *tfcommon.
 	return &am, diags
 }
 
-func ResourceAddressSpecTFToAPIUpdateModel(ctx context.Context, plan, state *tfcommon.ResourceAddressSpec) (*commonapimodel.UpdateResourceAddressSpec, tfdiag.Diagnostics) {
+func ResourceAddressSpecTFToAPIUpdateModel(ctx context.Context, plan, state *tfcommon.ResourceAddressSpec) (*commonmodel.UpdateResourceAddressSpec, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -261,7 +261,7 @@ func ResourceAddressSpecTFToAPIUpdateModel(ctx context.Context, plan, state *tfc
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.UpdateResourceAddressSpec
+	var am commonmodel.UpdateResourceAddressSpec
 
 	if !plan.Subnet.Equal(state.Subnet) {
 		if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {
@@ -294,7 +294,7 @@ func ResourceAddressSpecTFToAPIUpdateModel(ctx context.Context, plan, state *tfc
 				return nil, diags
 			}
 
-			dnsTmp := make([]commonapimodel.UpdateVpcAddressDnsSpec, 0, len(dns))
+			dnsTmp := make([]commonmodel.UpdateVpcAddressDnsSpec, 0, len(dns))
 
 			for _, entity := range dns {
 				stateEntity := tfcommon.VpcAddressDnsSpec{}
@@ -314,7 +314,7 @@ func ResourceAddressSpecTFToAPIUpdateModel(ctx context.Context, plan, state *tfc
 	return &am, diags
 }
 
-func ResourceAddressSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfcommon.ResourceAddressSpec) (*commonapimodel.UpdateResourceAddressSpecRequest, tfdiag.Diagnostics) {
+func ResourceAddressSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfcommon.ResourceAddressSpec) (*commonmodel.UpdateResourceAddressSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -323,7 +323,7 @@ func ResourceAddressSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, sta
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.UpdateResourceAddressSpecRequest
+	var am commonmodel.UpdateResourceAddressSpecRequest
 
 	if !plan.Subnet.Equal(state.Subnet) {
 		if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {
@@ -356,7 +356,7 @@ func ResourceAddressSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, sta
 				return nil, diags
 			}
 
-			dnsTmp := make([]commonapimodel.UpdateVpcAddressDnsSpecRequest, 0, len(dns))
+			dnsTmp := make([]commonmodel.UpdateVpcAddressDnsSpecRequest, 0, len(dns))
 
 			for _, entity := range dns {
 				stateEntity := tfcommon.VpcAddressDnsSpec{}

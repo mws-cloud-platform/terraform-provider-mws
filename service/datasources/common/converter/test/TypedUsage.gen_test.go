@@ -8,91 +8,27 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	resmodels "go.mws.cloud/go-sdk/pkg/resources/models"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
 func TestTypedUsageAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.TypedUsage{}
+	emptyApiModel := commonmodel.TypedUsage{}
 	_, diags := commonconv.TypedUsageAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestTypedUsageAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.TypedUsageResponse{}
+	emptyApiModel := commonmodel.TypedUsageResponse{}
 	_, diags := commonconv.TypedUsageAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestTypedUsageAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.TypedUsageOptionalResponse{}
+	emptyApiModel := commonmodel.TypedUsageOptionalResponse{}
 	_, diags := commonconv.TypedUsageAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestTypedUsageConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonapimodel.TypedUsage{
-		UsageType: "usageType",
-		Name:      "name",
-		Resource:  resmodels.NewMustAnyResourceID("ID"),
-	}
-
-	tfModel, diags := commonconv.TypedUsageAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-
-	result, diags := commonconv.TypedUsageTFToAPIModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	require.Equal(t, emptyApiModel, *result)
-}
-
-func TestTypedUsageResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := commonapimodel.TypedUsageRequest{
-		UsageType: "usageType",
-		Name:      "name",
-		Resource:  resmodels.NewMustAnyResourceID("ID"),
-	}
-
-	emptyApiModelResponse, err := commonapimodel.TypedUsageRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := commonconv.TypedUsageAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := commonconv.TypedUsageTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := commonapimodel.TypedUsageRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
-func TestTypedUsageOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := commonapimodel.TypedUsageRequest{
-		UsageType: "usageType",
-		Name:      "name",
-		Resource:  resmodels.NewMustAnyResourceID("ID"),
-	}
-
-	emptyApiModelResponse, err := commonapimodel.TypedUsageRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := commonconv.TypedUsageAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := commonconv.TypedUsageTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := commonapimodel.TypedUsageRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

@@ -7,14 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/go-sdk/pkg/apimodels/units/duration"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 )
 
-func VpcAddressDnsSpecAPIToTFModel(ctx context.Context, am *commonapimodel.VpcAddressDnsSpec) (*tfcommon.VpcAddressDnsSpec, tfdiag.Diagnostics) {
+func VpcAddressDnsSpecAPIToTFModel(ctx context.Context, am *commonmodel.VpcAddressDnsSpec) (*tfcommon.VpcAddressDnsSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -31,7 +30,7 @@ func VpcAddressDnsSpecAPIToTFModel(ctx context.Context, am *commonapimodel.VpcAd
 	return &t, diags
 }
 
-func VpcAddressDnsSpecAPIResponseToTFModel(ctx context.Context, am *commonapimodel.VpcAddressDnsSpecResponse) (*tfcommon.VpcAddressDnsSpec, tfdiag.Diagnostics) {
+func VpcAddressDnsSpecAPIResponseToTFModel(ctx context.Context, am *commonmodel.VpcAddressDnsSpecResponse) (*tfcommon.VpcAddressDnsSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -48,7 +47,7 @@ func VpcAddressDnsSpecAPIResponseToTFModel(ctx context.Context, am *commonapimod
 	return &t, diags
 }
 
-func VpcAddressDnsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.VpcAddressDnsSpecOptionalResponse) (*tfcommon.VpcAddressDnsSpec, tfdiag.Diagnostics) {
+func VpcAddressDnsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *commonmodel.VpcAddressDnsSpecOptionalResponse) (*tfcommon.VpcAddressDnsSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -63,60 +62,4 @@ func VpcAddressDnsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *comm
 	t.Ptr = types.BoolValue(am.Ptr)
 
 	return &t, diags
-}
-
-func VpcAddressDnsSpecTFToAPIModel(ctx context.Context, plan *tfcommon.VpcAddressDnsSpec) (*commonapimodel.VpcAddressDnsSpec, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am commonapimodel.VpcAddressDnsSpec
-
-	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
-		am.Name = plan.Name.ValueString()
-	}
-
-	if !plan.Ttl.IsNull() && !plan.Ttl.IsUnknown() {
-		tmpTtl, err := duration.ParseString(plan.Ttl.ValueString())
-		if err != nil {
-			diags.AddError("Duration string parsing", err.Error())
-			return nil, diags
-		}
-		am.Ttl = tmpTtl
-	}
-
-	if !plan.Ptr.IsNull() && !plan.Ptr.IsUnknown() {
-		am.Ptr = plan.Ptr.ValueBool()
-	}
-
-	return &am, diags
-}
-
-func VpcAddressDnsSpecTFToAPIRequestModel(ctx context.Context, plan *tfcommon.VpcAddressDnsSpec) (*commonapimodel.VpcAddressDnsSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am commonapimodel.VpcAddressDnsSpecRequest
-
-	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
-		am.Name = plan.Name.ValueString()
-	}
-
-	if !plan.Ttl.IsNull() && !plan.Ttl.IsUnknown() {
-		tmpTtl, err := duration.ParseString(plan.Ttl.ValueString())
-		if err != nil {
-			diags.AddError("Duration string parsing", err.Error())
-			return nil, diags
-		}
-		am.Ttl = tmpTtl
-	}
-
-	if !plan.Ptr.IsNull() && !plan.Ptr.IsUnknown() {
-		am.Ptr = plan.Ptr.ValueBool()
-	}
-
-	return &am, diags
 }

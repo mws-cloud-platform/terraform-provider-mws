@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/model"
 )
 
-func ClusterStateAPIToTFModel(ctx context.Context, am *apimodel.ClusterState) (tfmodel.ClusterState, tfdiag.Diagnostics) {
+func ClusterStateAPIToTFModel(ctx context.Context, am *model.ClusterState) (tfmodel.ClusterState, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.ClusterState{}, nil
 	}
@@ -23,17 +23,4 @@ func ClusterStateAPIToTFModel(ctx context.Context, am *apimodel.ClusterState) (t
 	t = tfmodel.ClusterState(types.StringValue(string(*am)))
 
 	return t, diags
-}
-
-func ClusterStateTFToAPIModel(ctx context.Context, plan tfmodel.ClusterState) (*apimodel.ClusterState, tfdiag.Diagnostics) {
-	var diags tfdiag.Diagnostics
-	var am apimodel.ClusterState
-
-	var tmp = types.String(plan)
-	if tmp.IsNull() {
-		return nil, diags
-	}
-	am = apimodel.ClusterState(tmp.ValueString())
-
-	return &am, diags
 }

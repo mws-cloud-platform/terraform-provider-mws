@@ -18,7 +18,7 @@ type RoleStage struct {
 
 func (s *RoleStage) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Состояние роли (этап жизненного цикла).`,
+		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"code": schema.StringAttribute{
 				Validators: []validator.String{

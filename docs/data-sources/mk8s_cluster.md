@@ -27,7 +27,7 @@ data "mws_mk8s_cluster" "example_cluster" {
 
 ### Required
 
-- `cluster_name` (String) Имя Cluster
+- `cluster_name` (String) Имя кластера
 
 ### Optional
 
@@ -41,7 +41,7 @@ data "mws_mk8s_cluster" "example_cluster" {
 - `network` (Attributes) (see [below for nested schema](#nestedatt--network))
 - `plugins` (Attributes) (see [below for nested schema](#nestedatt--plugins))
 - `security_posture` (Attributes) Настройка KSP для кластера (see [below for nested schema](#nestedatt--security_posture))
-- `status` (Attributes) Описывает статусную модель k8s cluster (see [below for nested schema](#nestedatt--status))
+- `status` (Attributes) Статусная модель кластера Kubernetes (see [below for nested schema](#nestedatt--status))
 - `version_control` (Attributes) (see [below for nested schema](#nestedatt--version_control))
 
 <a id="nestedatt--availability"></a>
@@ -49,15 +49,24 @@ data "mws_mk8s_cluster" "example_cluster" {
 
 Read-Only:
 
+- `regional` (Attributes) Высокодоступный кластер с несколькими мастерами в разных зонах доступности одного региона (see [below for nested schema](#nestedatt--availability--regional))
 - `standalone` (Attributes) Кластер с одним мастером (see [below for nested schema](#nestedatt--availability--standalone))
-- `zonal_ha` (Attributes) Зональный высокодоступный кластер с несколькими мастерами (see [below for nested schema](#nestedatt--availability--zonal_ha))
+- `zonal_ha` (Attributes) Зональный высокодоступный кластер с несколькими мастерами в одной зоне доступности (see [below for nested schema](#nestedatt--availability--zonal_ha))
+
+<a id="nestedatt--availability--regional"></a>
+### Nested Schema for `availability.regional`
+
+Read-Only:
+
+- `zones` (List of String) Имена зон для размещения кластера. Должно быть ровно три зоны
+
 
 <a id="nestedatt--availability--standalone"></a>
 ### Nested Schema for `availability.standalone`
 
 Read-Only:
 
-- `zone` (String) Имя зоны для размещения cluster
+- `zone` (String) Имя зоны для размещения кластера
 
 
 <a id="nestedatt--availability--zonal_ha"></a>
@@ -65,7 +74,7 @@ Read-Only:
 
 Read-Only:
 
-- `zone` (String) Имя зоны для размещения cluster
+- `zone` (String) Имя зоны для размещения кластера
 
 
 
@@ -105,12 +114,12 @@ Read-Only:
 
 Read-Only:
 
-- `pods_cidr` (String) Необходим ip-range v4
+- `pods_cidr` (String) CIDR IPv4-адресов
 
 IPv4 подсеть в CIDR нотации
-- `primary_endpoint` (Attributes) Ip-адрес внутри vpc (see [below for nested schema](#nestedatt--network--primary_endpoint))
-- `public_endpoint` (Attributes) Внешний ip-адрес (see [below for nested schema](#nestedatt--network--public_endpoint))
-- `services_cidr` (String) Необходим ip-range v4
+- `primary_endpoint` (Attributes) IP-адрес внутри VPC (see [below for nested schema](#nestedatt--network--primary_endpoint))
+- `public_endpoint` (Attributes) Внешний IP-адрес (see [below for nested schema](#nestedatt--network--public_endpoint))
+- `services_cidr` (String) CIDR IPv4-адресов
 
 IPv4 подсеть в CIDR нотации
 
@@ -120,7 +129,7 @@ IPv4 подсеть в CIDR нотации
 Read-Only:
 
 - `ref` (String)
-- `spec` (Attributes) Описание subnet пользователя, из которого будет выделен ip-адрес (see [below for nested schema](#nestedatt--network--primary_endpoint--spec))
+- `spec` (Attributes) Конфигурация подсети, из которой будет выделен IP-адрес (see [below for nested schema](#nestedatt--network--primary_endpoint--spec))
 
 <a id="nestedatt--network--primary_endpoint--spec"></a>
 ### Nested Schema for `network.primary_endpoint.spec`
@@ -140,14 +149,15 @@ IPv4-адрес
 Read-Only:
 
 - `ref` (String)
-- `spec` (Attributes) Ожидаем пустой объект в случае автоматического выделения внешнего ip-адреса (see [below for nested schema](#nestedatt--network--public_endpoint--spec))
+- `spec` (Attributes) Конфигурация публичного эндпоинта кластера.
+При автоматическом выделении внешнего IP-адреса ожидается пустой объект (see [below for nested schema](#nestedatt--network--public_endpoint--spec))
 
 <a id="nestedatt--network--public_endpoint--spec"></a>
 ### Nested Schema for `network.public_endpoint.spec`
 
 Read-Only:
 
-- `version` (String) Версия IP протокола
+- `version` (String) Версия протокола IP
 
 
 
@@ -182,7 +192,7 @@ Read-Only:
 
 Read-Only:
 
-- `cluster_ca_certificate` (String) Root сертификат кластера
+- `cluster_ca_certificate` (String) Корневой сертификат кластера
 - `cluster_status` (Attributes) (see [below for nested schema](#nestedatt--status--cluster_status))
 - `network` (Attributes) (see [below for nested schema](#nestedatt--status--network))
 - `plugins` (Attributes) (see [below for nested schema](#nestedatt--status--plugins))
@@ -196,7 +206,7 @@ Read-Only:
 Read-Only:
 
 - `message` (String)
-- `state` (String) Текущий статус cluster
+- `state` (String) Текущий статус кластера
 
 
 <a id="nestedatt--status--network"></a>
@@ -205,9 +215,9 @@ Read-Only:
 Read-Only:
 
 - `primary_address` (String) IPv4-адрес
-- `primary_endpoint` (Attributes) Внутренний ip-адрес (see [below for nested schema](#nestedatt--status--network--primary_endpoint))
+- `primary_endpoint` (Attributes) Внутренний IP-адрес (see [below for nested schema](#nestedatt--status--network--primary_endpoint))
 - `public_address` (String) IPv4-адрес
-- `public_endpoint` (Attributes) Внешний ip-адрес (see [below for nested schema](#nestedatt--status--network--public_endpoint))
+- `public_endpoint` (Attributes) Внешний IP-адрес (see [below for nested schema](#nestedatt--status--network--public_endpoint))
 - `subnet` (Attributes) (see [below for nested schema](#nestedatt--status--network--subnet))
 - `vpc_network` (Attributes) (see [below for nested schema](#nestedatt--status--network--vpc_network))
 
@@ -284,8 +294,8 @@ Read-Only:
 Read-Only:
 
 - `maintenance_window` (Attributes) (see [below for nested schema](#nestedatt--status--version_control--maintenance_window))
-- `release_channel` (String) Cluster обновляется всегда до default версии, поэтому необходимо выбрать релизный канал и настроить окно обслуживания
-- `version` (String) Текущая версия Cluster
+- `release_channel` (String) Релизный канал кластера
+- `version` (String) Текущая версия кластера
 
 <a id="nestedatt--status--version_control--maintenance_window"></a>
 ### Nested Schema for `status.version_control.maintenance_window`
@@ -321,9 +331,9 @@ Read-Only:
 
 Read-Only:
 
-- `maintenance_window` (Attributes) Если окно обслуживания не заполнено, то время проведения работ не ограничено. Duration нельзя указывать, так как обновление мастер нод не прерывается (see [below for nested schema](#nestedatt--version_control--maintenance_window))
-- `release_channel` (String) Cluster обновляется всегда до default версии, поэтому необходимо выбрать релизный канал и настроить окно обслуживания
-- `version` (String) Минимальная версия Cluster. Автоматически обновляется до версии default в окно обслуживания. При указании версии выше default обновление запускается немедленно. Во время автоматического обновления это поле не изменяется, а актуальная версия указывается в статусе Cluster
+- `maintenance_window` (Attributes) Окно обслуживания кластера.  Если окно не задано, то время проведения работ не ограничено. Продолжительность (duration) не указывается, так как обновление master-узлов не прерывается (see [below for nested schema](#nestedatt--version_control--maintenance_window))
+- `release_channel` (String) Релизный канал кластера
+- `version` (String) Минимальная версия кластера. Автоматически обновляется до версии default в окно обслуживания. При указании версии выше default обновление запускается немедленно. Во время автоматического обновления это поле не изменяется, а актуальная версия указывается в статусе Cluster
 
 <a id="nestedatt--version_control--maintenance_window"></a>
 ### Nested Schema for `version_control.maintenance_window`

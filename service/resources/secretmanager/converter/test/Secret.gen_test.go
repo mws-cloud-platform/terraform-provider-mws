@@ -10,9 +10,9 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/secretmanager"
-	apimodel "go.mws.cloud/go-sdk/service/secretmanager/model"
+	"go.mws.cloud/go-sdk/service/secretmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager/converter"
@@ -21,18 +21,18 @@ import (
 
 func TestSecretAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.SecretOptionalResponse{}
+	emptyApiModel := model.SecretOptionalResponse{}
 	_, diags := conv.SecretAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestSecretOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.SecretRequest{
-		Spec: apimodel.SecretSpecRequest{},
+	emptyApiModelRequest := model.SecretRequest{
+		Spec: model.SecretSpecRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.SecretRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.SecretRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.SecretAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -41,7 +41,7 @@ func TestSecretOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.SecretTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.SecretRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.SecretRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -56,17 +56,17 @@ func TestUpdateSecretRequestConverters(t *testing.T) {
 	stateTfModel.CurrentSecretVersion = types.StringValue("")
 	stateTfModel.Encryption = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.EncryptionSpec).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateSecretRequest{
-		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+	expectedUpdateModel := &model.UpdateSecretRequest{
+		Metadata: optional.OptionalNil[commonmodel.UpdateCommonTypedResourceMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},
-		Spec: optional.NewOptional(apimodel.UpdateSecretSpecRequest{
+		Spec: optional.NewOptional(model.UpdateSecretSpecRequest{
 			CurrentSecretVersion: optional.OptionalNil[secretmanager.SecretVersionRef]{
 				Set:  true,
 				Null: true,
 			},
-			Encryption: optional.OptionalNil[apimodel.UpdateEncryptionSpecRequest]{
+			Encryption: optional.OptionalNil[model.UpdateEncryptionSpecRequest]{
 				Set:  true,
 				Null: true,
 			},

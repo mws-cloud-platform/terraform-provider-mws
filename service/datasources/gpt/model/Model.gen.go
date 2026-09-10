@@ -52,8 +52,9 @@ func (s *Model) GetSchema() schema.Schema {
 				Computed:   true,
 			},
 			"modalities": schema.SingleNestedAttribute{
-				Attributes: new(Modalities).GetSchema().Attributes,
-				Computed:   true,
+				Attributes:         new(Modalities).GetSchema().Attributes,
+				Computed:           true,
+				DeprecationMessage: `Отказываемся из-за разделения на input и output модальности`,
 			},
 			"capabilities": schema.SingleNestedAttribute{
 				Attributes: new(Capabilities).GetSchema().Attributes,

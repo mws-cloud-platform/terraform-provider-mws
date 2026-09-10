@@ -48,7 +48,7 @@ func (s *CertificateManagedSpec) GetSchema() schema.Schema {
 			"domains": schema.ListAttribute{
 				ElementType:         types.StringType,
 				MarkdownDescription: `Список доменов, для которых будет выдан сертификат`,
-				Required:            true,
+				Optional:            true,
 			},
 		},
 	}

@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/nlb/model"
 )
 
-func NlbListenerAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NlbListenerOptionalResponse) (*tfmodel.NlbListener, tfdiag.Diagnostics) {
+func NlbListenerAPIOptionalResponseToTFModel(ctx context.Context, am *model.NlbListenerOptionalResponse) (*tfmodel.NlbListener, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -61,13 +61,13 @@ func NlbListenerAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.N
 	return &t, diags
 }
 
-func NlbListenerTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbListener) (*apimodel.NlbListenerRequest, tfdiag.Diagnostics) {
+func NlbListenerTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbListener) (*model.NlbListenerRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.NlbListenerRequest
+	var am model.NlbListenerRequest
 
 	if !plan.Internal.IsNull() && !plan.Internal.IsUnknown() {
 		internalPlan := tfmodel.NlbListenerInternal{}
@@ -104,7 +104,7 @@ func NlbListenerTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbListen
 	return &am, diags
 }
 
-func NlbListenerTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NlbListener) (*apimodel.UpdateNlbListenerRequest, tfdiag.Diagnostics) {
+func NlbListenerTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NlbListener) (*model.UpdateNlbListenerRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -113,7 +113,7 @@ func NlbListenerTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmo
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateNlbListenerRequest
+	var am model.UpdateNlbListenerRequest
 
 	if !plan.Internal.Equal(state.Internal) {
 		if !plan.Internal.IsNull() && !plan.Internal.IsUnknown() {

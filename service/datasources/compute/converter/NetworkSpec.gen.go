@@ -8,12 +8,12 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func NetworkSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NetworkSpecOptionalResponse) (*tfmodel.NetworkSpec, tfdiag.Diagnostics) {
+func NetworkSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.NetworkSpecOptionalResponse) (*tfmodel.NetworkSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -49,35 +49,4 @@ func NetworkSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.N
 	}
 
 	return &t, diags
-}
-
-func NetworkSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NetworkSpec) (*apimodel.NetworkSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.NetworkSpecRequest
-
-	if !plan.NetworkInterfaces.IsNull() && !plan.NetworkInterfaces.IsUnknown() {
-		networkInterfaces := make([]tfmodel.NetworkInterfaceSpec, 0)
-		dNetworkInterfaces := plan.NetworkInterfaces.ElementsAs(ctx, &networkInterfaces, false)
-		diags = append(diags, dNetworkInterfaces...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.NetworkInterfaces = make([]apimodel.NetworkInterfaceSpecRequest, 0, len(networkInterfaces))
-
-		for _, entity := range networkInterfaces {
-			tmp, d := NetworkInterfaceSpecTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.NetworkInterfaces = append(am.NetworkInterfaces, *tmp)
-		}
-	}
-
-	return &am, diags
 }

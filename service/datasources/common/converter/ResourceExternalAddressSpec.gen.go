@@ -9,12 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 )
 
-func ResourceExternalAddressSpecAPIToTFModel(ctx context.Context, am *commonapimodel.ResourceExternalAddressSpec) (*tfcommon.ResourceExternalAddressSpec, tfdiag.Diagnostics) {
+func ResourceExternalAddressSpecAPIToTFModel(ctx context.Context, am *commonmodel.ResourceExternalAddressSpec) (*tfcommon.ResourceExternalAddressSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -31,7 +30,7 @@ func ResourceExternalAddressSpecAPIToTFModel(ctx context.Context, am *commonapim
 	return &t, diags
 }
 
-func ResourceExternalAddressSpecAPIResponseToTFModel(ctx context.Context, am *commonapimodel.ResourceExternalAddressSpecResponse) (*tfcommon.ResourceExternalAddressSpec, tfdiag.Diagnostics) {
+func ResourceExternalAddressSpecAPIResponseToTFModel(ctx context.Context, am *commonmodel.ResourceExternalAddressSpecResponse) (*tfcommon.ResourceExternalAddressSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -48,7 +47,7 @@ func ResourceExternalAddressSpecAPIResponseToTFModel(ctx context.Context, am *co
 	return &t, diags
 }
 
-func ResourceExternalAddressSpecAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.ResourceExternalAddressSpecOptionalResponse) (*tfcommon.ResourceExternalAddressSpec, tfdiag.Diagnostics) {
+func ResourceExternalAddressSpecAPIOptionalResponseToTFModel(ctx context.Context, am *commonmodel.ResourceExternalAddressSpecOptionalResponse) (*tfcommon.ResourceExternalAddressSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -63,44 +62,4 @@ func ResourceExternalAddressSpecAPIOptionalResponseToTFModel(ctx context.Context
 	}
 
 	return &t, diags
-}
-
-func ResourceExternalAddressSpecTFToAPIModel(ctx context.Context, plan *tfcommon.ResourceExternalAddressSpec) (*commonapimodel.ResourceExternalAddressSpec, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am commonapimodel.ResourceExternalAddressSpec
-
-	if !plan.NatGateway.IsNull() && !plan.NatGateway.IsUnknown() {
-		natGatewayRef, err := vpc.ParseNatGatewayRef(ctx, plan.NatGateway.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.NatGateway = &natGatewayRef
-	}
-
-	return &am, diags
-}
-
-func ResourceExternalAddressSpecTFToAPIRequestModel(ctx context.Context, plan *tfcommon.ResourceExternalAddressSpec) (*commonapimodel.ResourceExternalAddressSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am commonapimodel.ResourceExternalAddressSpecRequest
-
-	if !plan.NatGateway.IsNull() && !plan.NatGateway.IsUnknown() {
-		natGatewayRef, err := vpc.ParseNatGatewayRef(ctx, plan.NatGateway.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.NatGateway = &natGatewayRef
-	}
-
-	return &am, diags
 }

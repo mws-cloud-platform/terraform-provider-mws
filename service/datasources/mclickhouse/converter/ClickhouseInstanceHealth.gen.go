@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/model"
 )
 
-func ClickhouseInstanceHealthAPIToTFModel(ctx context.Context, am *apimodel.ClickhouseInstanceHealth) (tfmodel.ClickhouseInstanceHealth, tfdiag.Diagnostics) {
+func ClickhouseInstanceHealthAPIToTFModel(ctx context.Context, am *model.ClickhouseInstanceHealth) (tfmodel.ClickhouseInstanceHealth, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.ClickhouseInstanceHealth{}, nil
 	}
@@ -23,17 +23,4 @@ func ClickhouseInstanceHealthAPIToTFModel(ctx context.Context, am *apimodel.Clic
 	t = tfmodel.ClickhouseInstanceHealth(types.StringValue(string(*am)))
 
 	return t, diags
-}
-
-func ClickhouseInstanceHealthTFToAPIModel(ctx context.Context, plan tfmodel.ClickhouseInstanceHealth) (*apimodel.ClickhouseInstanceHealth, tfdiag.Diagnostics) {
-	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseInstanceHealth
-
-	var tmp = types.String(plan)
-	if tmp.IsNull() {
-		return nil, diags
-	}
-	am = apimodel.ClickhouseInstanceHealth(tmp.ValueString())
-
-	return &am, diags
 }

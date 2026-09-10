@@ -8,12 +8,12 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func KafkaEndpointBrokerAddressSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaEndpointBrokerAddressSpecResponse) (*tfmodel.KafkaEndpointBrokerAddressSpec, tfdiag.Diagnostics) {
+func KafkaEndpointBrokerAddressSpecAPIResponseToTFModel(ctx context.Context, am *model.KafkaEndpointBrokerAddressSpecResponse) (*tfmodel.KafkaEndpointBrokerAddressSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -26,13 +26,13 @@ func KafkaEndpointBrokerAddressSpecAPIResponseToTFModel(ctx context.Context, am 
 	return &t, diags
 }
 
-func KafkaEndpointBrokerAddressSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaEndpointBrokerAddressSpec) (*apimodel.KafkaEndpointBrokerAddressSpecRequest, tfdiag.Diagnostics) {
+func KafkaEndpointBrokerAddressSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaEndpointBrokerAddressSpec) (*model.KafkaEndpointBrokerAddressSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaEndpointBrokerAddressSpecRequest
+	var am model.KafkaEndpointBrokerAddressSpecRequest
 
 	if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {
 		subnetRef, err := vpc.ParseSubnetRef(ctx, plan.Subnet.ValueString())
@@ -46,7 +46,7 @@ func KafkaEndpointBrokerAddressSpecTFToAPIRequestModel(ctx context.Context, plan
 	return &am, diags
 }
 
-func KafkaEndpointBrokerAddressSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaEndpointBrokerAddressSpec) (*apimodel.UpdateKafkaEndpointBrokerAddressSpecRequest, tfdiag.Diagnostics) {
+func KafkaEndpointBrokerAddressSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaEndpointBrokerAddressSpec) (*model.UpdateKafkaEndpointBrokerAddressSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -55,7 +55,7 @@ func KafkaEndpointBrokerAddressSpecTFToAPIUpdateRequestModel(ctx context.Context
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateKafkaEndpointBrokerAddressSpecRequest
+	var am model.UpdateKafkaEndpointBrokerAddressSpecRequest
 
 	if !plan.Subnet.Equal(state.Subnet) {
 		if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {

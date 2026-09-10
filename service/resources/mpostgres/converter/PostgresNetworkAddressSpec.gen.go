@@ -8,12 +8,12 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func PostgresNetworkAddressSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresNetworkAddressSpecResponse) (*tfmodel.PostgresNetworkAddressSpec, tfdiag.Diagnostics) {
+func PostgresNetworkAddressSpecAPIResponseToTFModel(ctx context.Context, am *model.PostgresNetworkAddressSpecResponse) (*tfmodel.PostgresNetworkAddressSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -26,13 +26,13 @@ func PostgresNetworkAddressSpecAPIResponseToTFModel(ctx context.Context, am *api
 	return &t, diags
 }
 
-func PostgresNetworkAddressSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresNetworkAddressSpec) (*apimodel.PostgresNetworkAddressSpecRequest, tfdiag.Diagnostics) {
+func PostgresNetworkAddressSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresNetworkAddressSpec) (*model.PostgresNetworkAddressSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresNetworkAddressSpecRequest
+	var am model.PostgresNetworkAddressSpecRequest
 
 	if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {
 		subnetRef, err := vpc.ParseSubnetRef(ctx, plan.Subnet.ValueString())
@@ -46,7 +46,7 @@ func PostgresNetworkAddressSpecTFToAPIRequestModel(ctx context.Context, plan *tf
 	return &am, diags
 }
 
-func PostgresNetworkAddressSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresNetworkAddressSpec) (*apimodel.UpdatePostgresNetworkAddressSpecRequest, tfdiag.Diagnostics) {
+func PostgresNetworkAddressSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresNetworkAddressSpec) (*model.UpdatePostgresNetworkAddressSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -55,7 +55,7 @@ func PostgresNetworkAddressSpecTFToAPIUpdateRequestModel(ctx context.Context, pl
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdatePostgresNetworkAddressSpecRequest
+	var am model.UpdatePostgresNetworkAddressSpecRequest
 
 	if !plan.Subnet.Equal(state.Subnet) {
 		if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {

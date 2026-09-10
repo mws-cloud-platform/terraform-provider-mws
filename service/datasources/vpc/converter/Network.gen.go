@@ -7,17 +7,15 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/model"
 )
 
-func NetworkAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NetworkOptionalResponse) (*tfmodel.Network, tfdiag.Diagnostics) {
+func NetworkAPIOptionalResponseToTFModel(ctx context.Context, am *model.NetworkOptionalResponse) (*tfmodel.Network, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -80,39 +78,4 @@ func NetworkAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Netwo
 	}
 
 	return &t, diags
-}
-
-func NetworkTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Network) (*apimodel.NetworkRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.NetworkRequest
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.Mtu.IsNull() && !plan.Mtu.IsUnknown() {
-		am.Spec.Mtu = ptr.Get(int32(plan.Mtu.ValueInt64()))
-	}
-
-	if !plan.InternetAccess.IsNull() && !plan.InternetAccess.IsUnknown() {
-		am.Spec.InternetAccess = plan.InternetAccess.ValueBoolPointer()
-	}
-
-	return &am, diags
 }

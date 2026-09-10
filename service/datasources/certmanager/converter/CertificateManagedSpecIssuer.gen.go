@@ -7,14 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/certmanager/model"
 )
 
-func CertificateManagedSpecIssuerAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.CertificateManagedSpecIssuerOptionalResponse) (*tfmodel.CertificateManagedSpecIssuer, tfdiag.Diagnostics) {
+func CertificateManagedSpecIssuerAPIOptionalResponseToTFModel(ctx context.Context, am *model.CertificateManagedSpecIssuerOptionalResponse) (*tfmodel.CertificateManagedSpecIssuer, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -23,13 +22,13 @@ func CertificateManagedSpecIssuerAPIOptionalResponseToTFModel(ctx context.Contex
 	var t tfmodel.CertificateManagedSpecIssuer
 
 	if val, ok := am.Acme.Get(); ok {
-		acmeTmp, d := CertificateManagedSpecIssuerAcmeAPIOptionalResponseToTFModel(ctx, &val)
+		acmeTmp, d := AcmeIssuerAPIOptionalResponseToTFModel(ctx, &val)
 		diags = append(diags, d...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		acmeTfObject, d := types.ObjectValueFrom(ctx,
-			tfconv.GetAttributesTypes(new(tfmodel.CertificateManagedSpecIssuerAcme).GetSchema().Attributes),
+			tfconv.GetAttributesTypes(new(tfmodel.AcmeIssuer).GetSchema().Attributes),
 			*acmeTmp)
 		diags = append(diags, d...)
 		if diags.HasError() {
@@ -37,99 +36,8 @@ func CertificateManagedSpecIssuerAPIOptionalResponseToTFModel(ctx context.Contex
 		}
 		t.Acme = acmeTfObject
 	} else {
-		t.Acme = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.CertificateManagedSpecIssuerAcme).GetSchema().Attributes))
+		t.Acme = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.AcmeIssuer).GetSchema().Attributes))
 	}
 
 	return &t, diags
-}
-
-func CertificateManagedSpecIssuerTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CertificateManagedSpecIssuer) (*apimodel.CertificateManagedSpecIssuerRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.CertificateManagedSpecIssuerRequest
-
-	if !plan.Acme.IsNull() && !plan.Acme.IsUnknown() {
-		acmePlan := tfmodel.CertificateManagedSpecIssuerAcme{}
-		acmePlanDiag := plan.Acme.As(ctx, &acmePlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, acmePlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		acmeTmp, acmeDiag := CertificateManagedSpecIssuerAcmeTFToAPIRequestModel(ctx, &acmePlan)
-		diags = append(diags, acmeDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Acme = acmeTmp
-	}
-
-	return &am, diags
-}
-
-func CertificateManagedSpecIssuerAcmeAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.CertificateManagedSpecIssuerAcmeOptionalResponse) (*tfmodel.CertificateManagedSpecIssuerAcme, tfdiag.Diagnostics) {
-	if am == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var t tfmodel.CertificateManagedSpecIssuerAcme
-
-	serverTmp, d := CertificateManagedSpecAcmeServerAPIToTFModel(ctx, &am.Server)
-	diags = append(diags, d...)
-	if diags.HasError() {
-		return nil, diags
-	}
-	t.Server = serverTmp
-
-	challengeTypeTmp, d := CertificateChallengeTypeAPIToTFModel(ctx, &am.ChallengeType)
-	diags = append(diags, d...)
-	if diags.HasError() {
-		return nil, diags
-	}
-	t.ChallengeType = challengeTypeTmp
-
-	if val, ok := am.Profile.Get(); ok {
-		t.Profile = types.StringValue(val)
-	} else {
-		t.Profile = types.StringNull()
-	}
-
-	return &t, diags
-}
-
-func CertificateManagedSpecIssuerAcmeTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CertificateManagedSpecIssuerAcme) (*apimodel.CertificateManagedSpecIssuerAcmeRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.CertificateManagedSpecIssuerAcmeRequest
-
-	if !plan.Server.IsNull() && !plan.Server.IsUnknown() {
-		serverTmp, serverDiag := CertificateManagedSpecAcmeServerTFToAPIModel(ctx, plan.Server)
-		diags = append(diags, serverDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Server = *serverTmp
-	}
-
-	if !plan.ChallengeType.IsNull() && !plan.ChallengeType.IsUnknown() {
-		challengeTypeTmp, challengeTypeDiag := CertificateChallengeTypeTFToAPIModel(ctx, plan.ChallengeType)
-		diags = append(diags, challengeTypeDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.ChallengeType = *challengeTypeTmp
-	}
-
-	if !plan.Profile.IsNull() && !plan.Profile.IsUnknown() {
-		am.Profile = plan.Profile.ValueStringPointer()
-	}
-
-	return &am, diags
 }

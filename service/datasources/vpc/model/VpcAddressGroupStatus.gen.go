@@ -18,7 +18,7 @@ type VpcAddressGroupStatus struct {
 
 func (s *VpcAddressGroupStatus) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Статус группы адресов.`,
+		MarkdownDescription: `Описывает статус группы адресов.`,
 		Attributes: map[string]schema.Attribute{
 			"ready": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.ResourceStatusReady).GetSchema().Attributes,

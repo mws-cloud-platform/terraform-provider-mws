@@ -8,23 +8,23 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
 func TestKafkaSchemaRegistrySpecAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaSchemaRegistrySpecResponse{}
+	emptyApiModel := model.KafkaSchemaRegistrySpecResponse{}
 	_, diags := conv.KafkaSchemaRegistrySpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestKafkaSchemaRegistrySpecResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaSchemaRegistrySpecRequest{}
+	emptyApiModelRequest := model.KafkaSchemaRegistrySpecRequest{}
 
-	emptyApiModelResponse, err := apimodel.KafkaSchemaRegistrySpecRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.KafkaSchemaRegistrySpecRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.KafkaSchemaRegistrySpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -33,7 +33,7 @@ func TestKafkaSchemaRegistrySpecResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.KafkaSchemaRegistrySpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.KafkaSchemaRegistrySpecRequestToResponse(filledApiModelRequest)
+	result, err := model.KafkaSchemaRegistrySpecRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -45,7 +45,7 @@ func TestUpdateKafkaSchemaRegistrySpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.KafkaSchemaRegistrySpec
 	var stateTfModel tfmodel.KafkaSchemaRegistrySpec
 
-	expectedUpdateModel := &apimodel.UpdateKafkaSchemaRegistrySpecRequest{}
+	expectedUpdateModel := &model.UpdateKafkaSchemaRegistrySpecRequest{}
 
 	result, diags := conv.KafkaSchemaRegistrySpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

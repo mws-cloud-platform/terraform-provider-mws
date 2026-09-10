@@ -8,12 +8,12 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/nlb/model"
 )
 
-func NlbTargetAddressGroupsStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.NlbTargetAddressGroupsStatusResponse) (*tfmodel.NlbTargetAddressGroupsStatus, tfdiag.Diagnostics) {
+func NlbTargetAddressGroupsStatusAPIResponseToTFModel(ctx context.Context, am *model.NlbTargetAddressGroupsStatusResponse) (*tfmodel.NlbTargetAddressGroupsStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

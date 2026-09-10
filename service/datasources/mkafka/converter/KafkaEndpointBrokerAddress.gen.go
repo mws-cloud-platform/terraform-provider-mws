@@ -7,16 +7,14 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/model"
 )
 
-func KafkaEndpointBrokerAddressAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaEndpointBrokerAddressResponse) (*tfmodel.KafkaEndpointBrokerAddress, tfdiag.Diagnostics) {
+func KafkaEndpointBrokerAddressAPIResponseToTFModel(ctx context.Context, am *model.KafkaEndpointBrokerAddressResponse) (*tfmodel.KafkaEndpointBrokerAddress, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -49,40 +47,4 @@ func KafkaEndpointBrokerAddressAPIResponseToTFModel(ctx context.Context, am *api
 	}
 
 	return &t, diags
-}
-
-func KafkaEndpointBrokerAddressTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaEndpointBrokerAddress) (*apimodel.KafkaEndpointBrokerAddressRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaEndpointBrokerAddressRequest
-
-	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
-		refRef, err := vpc.ParseAddressRef(ctx, plan.Ref.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Ref = &refRef
-	}
-
-	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
-		specPlan := tfmodel.KafkaEndpointBrokerAddressSpec{}
-		specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, specPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		specTmp, specDiag := KafkaEndpointBrokerAddressSpecTFToAPIRequestModel(ctx, &specPlan)
-		diags = append(diags, specDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec = specTmp
-	}
-
-	return &am, diags
 }

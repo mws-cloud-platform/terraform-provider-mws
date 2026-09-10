@@ -19,7 +19,7 @@ import (
 	"go.mws.cloud/go-sdk/mws/wait"
 	ctxvalues "go.mws.cloud/go-sdk/pkg/context/values"
 	"go.mws.cloud/go-sdk/service/mclickhouse/client"
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	resourcesdk "go.mws.cloud/go-sdk/service/mclickhouse/sdk"
 	mclickhouseref "go.mws.cloud/go-sdk/service/resources/references/mclickhouse"
 	"go.mws.cloud/terraform-provider-mws/internal/cmp"
@@ -141,7 +141,7 @@ func (m *ClusterResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	body, diags = func(ctx context.Context, planApiRequest *apimodel.ClickhouseClusterRequest) (*apimodel.ClickhouseClusterRequest, tfdiag.Diagnostics) {
+	body, diags = func(ctx context.Context, planApiRequest *model.ClickhouseClusterRequest) (*model.ClickhouseClusterRequest, tfdiag.Diagnostics) {
 
 		var configData tfmodel.ClusterModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
@@ -302,7 +302,7 @@ func (m *ClusterResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	body, diags = func(ctx context.Context, planApiRequest *apimodel.UpdateClickhouseClusterRequest) (*apimodel.UpdateClickhouseClusterRequest, tfdiag.Diagnostics) {
+	body, diags = func(ctx context.Context, planApiRequest *model.UpdateClickhouseClusterRequest) (*model.UpdateClickhouseClusterRequest, tfdiag.Diagnostics) {
 
 		var configData tfmodel.ClusterModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)

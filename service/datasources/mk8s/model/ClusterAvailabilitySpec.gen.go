@@ -10,6 +10,7 @@ import (
 type ClusterAvailabilitySpec struct {
 	Standalone types.Object `tfsdk:"standalone"`
 	ZonalHa    types.Object `tfsdk:"zonal_ha"`
+	Regional   types.Object `tfsdk:"regional"`
 }
 
 func (s *ClusterAvailabilitySpec) GetSchema() schema.Schema {
@@ -23,7 +24,29 @@ func (s *ClusterAvailabilitySpec) GetSchema() schema.Schema {
 			},
 			"zonal_ha": schema.SingleNestedAttribute{
 				Attributes:          new(ClusterAvailabilitySpecZonalHa).GetSchema().Attributes,
-				MarkdownDescription: `Зональный высокодоступный кластер с несколькими мастерами`,
+				MarkdownDescription: `Зональный высокодоступный кластер с несколькими мастерами в одной зоне доступности`,
+				Computed:            true,
+			},
+			"regional": schema.SingleNestedAttribute{
+				Attributes:          new(ClusterAvailabilitySpecRegional).GetSchema().Attributes,
+				MarkdownDescription: `Высокодоступный кластер с несколькими мастерами в разных зонах доступности одного региона`,
+				Computed:            true,
+			},
+		},
+	}
+}
+
+type ClusterAvailabilitySpecRegional struct {
+	Zones types.List `tfsdk:"zones"`
+}
+
+func (s *ClusterAvailabilitySpecRegional) GetSchema() schema.Schema {
+	return schema.Schema{
+		MarkdownDescription: `Представление поля Regional анонимного типа структуры ClusterAvailabilitySpec`,
+		Attributes: map[string]schema.Attribute{
+			"zones": schema.ListAttribute{
+				ElementType:         types.StringType,
+				MarkdownDescription: `Имена зон для размещения кластера. Должно быть ровно три зоны`,
 				Computed:            true,
 			},
 		},
@@ -39,7 +62,7 @@ func (s *ClusterAvailabilitySpecStandalone) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля Standalone анонимного типа структуры ClusterAvailabilitySpec`,
 		Attributes: map[string]schema.Attribute{
 			"zone": schema.StringAttribute{
-				MarkdownDescription: `Имя зоны для размещения cluster`,
+				MarkdownDescription: `Имя зоны для размещения кластера`,
 				Computed:            true,
 			},
 		},
@@ -55,7 +78,7 @@ func (s *ClusterAvailabilitySpecZonalHa) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля ZonalHa анонимного типа структуры ClusterAvailabilitySpec`,
 		Attributes: map[string]schema.Attribute{
 			"zone": schema.StringAttribute{
-				MarkdownDescription: `Имя зоны для размещения cluster`,
+				MarkdownDescription: `Имя зоны для размещения кластера`,
 				Computed:            true,
 			},
 		},

@@ -26,11 +26,11 @@ func (s *NodeTaintSpec) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"value": schema.StringAttribute{
-				MarkdownDescription: `Значение taint на node. Если строка пустая, то value нет`,
+				MarkdownDescription: `Значение taint на узле`,
 				Computed:            true,
 			},
 			"effect": schema.StringAttribute{
-				MarkdownDescription: `Эффект taint на node, влияющий на pod scheduling, которые под него попадают`,
+				MarkdownDescription: `Эффект taint на узле, влияющий на планирование подов, которые под него попадают`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"NO_SCHEDULE",

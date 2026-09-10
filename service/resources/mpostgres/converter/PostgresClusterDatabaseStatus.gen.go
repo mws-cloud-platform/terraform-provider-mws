@@ -8,14 +8,14 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func PostgresClusterDatabaseStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresClusterDatabaseStatusResponse) (*tfmodel.PostgresClusterDatabaseStatus, tfdiag.Diagnostics) {
+func PostgresClusterDatabaseStatusAPIResponseToTFModel(ctx context.Context, am *model.PostgresClusterDatabaseStatusResponse) (*tfmodel.PostgresClusterDatabaseStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

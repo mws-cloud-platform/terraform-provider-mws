@@ -9,13 +9,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func KafkaInstanceSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaInstanceSpecResponse) (*tfmodel.KafkaInstanceSpec, tfdiag.Diagnostics) {
+func KafkaInstanceSpecAPIResponseToTFModel(ctx context.Context, am *model.KafkaInstanceSpecResponse) (*tfmodel.KafkaInstanceSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -69,13 +69,13 @@ func KafkaInstanceSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.Kaf
 	return &t, diags
 }
 
-func KafkaInstanceSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaInstanceSpec) (*apimodel.KafkaInstanceSpecRequest, tfdiag.Diagnostics) {
+func KafkaInstanceSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaInstanceSpec) (*model.KafkaInstanceSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaInstanceSpecRequest
+	var am model.KafkaInstanceSpecRequest
 
 	if !plan.VmType.IsNull() && !plan.VmType.IsUnknown() {
 		vmTypeRef, err := compute.ParseVmTypeRef(ctx, plan.VmType.ValueString())
@@ -110,7 +110,7 @@ func KafkaInstanceSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Kaf
 			return nil, diags
 		}
 
-		am.Allocation = make([]apimodel.KafkaAllocationRequest, 0, len(allocation))
+		am.Allocation = make([]model.KafkaAllocationRequest, 0, len(allocation))
 
 		for _, entity := range allocation {
 			tmp, d := KafkaAllocationTFToAPIRequestModel(ctx, &entity)
@@ -125,7 +125,7 @@ func KafkaInstanceSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Kaf
 	return &am, diags
 }
 
-func KafkaInstanceSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaInstanceSpec) (*apimodel.UpdateKafkaInstanceSpecRequest, tfdiag.Diagnostics) {
+func KafkaInstanceSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaInstanceSpec) (*model.UpdateKafkaInstanceSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -134,7 +134,7 @@ func KafkaInstanceSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateKafkaInstanceSpecRequest
+	var am model.UpdateKafkaInstanceSpecRequest
 
 	if !plan.VmType.Equal(state.VmType) {
 		if !plan.VmType.IsNull() && !plan.VmType.IsUnknown() {
@@ -183,7 +183,7 @@ func KafkaInstanceSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 				return nil, diags
 			}
 
-			allocationTmp := make([]apimodel.UpdateKafkaAllocationRequest, 0, len(allocation))
+			allocationTmp := make([]model.UpdateKafkaAllocationRequest, 0, len(allocation))
 
 			for _, entity := range allocation {
 				stateEntity := tfmodel.KafkaAllocation{}

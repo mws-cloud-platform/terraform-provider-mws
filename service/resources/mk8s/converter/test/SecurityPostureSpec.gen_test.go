@@ -8,23 +8,23 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
 func TestSecurityPostureSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.SecurityPostureSpecOptionalResponse{}
+	emptyApiModel := model.SecurityPostureSpecOptionalResponse{}
 	_, diags := conv.SecurityPostureSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestSecurityPostureSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.SecurityPostureSpecRequest{}
+	emptyApiModelRequest := model.SecurityPostureSpecRequest{}
 
-	emptyApiModelResponse, err := apimodel.SecurityPostureSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.SecurityPostureSpecRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.SecurityPostureSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -33,7 +33,7 @@ func TestSecurityPostureSpecOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.SecurityPostureSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.SecurityPostureSpecRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.SecurityPostureSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -45,7 +45,7 @@ func TestUpdateSecurityPostureSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.SecurityPostureSpec
 	var stateTfModel tfmodel.SecurityPostureSpec
 
-	expectedUpdateModel := &apimodel.UpdateSecurityPostureSpecRequest{}
+	expectedUpdateModel := &model.UpdateSecurityPostureSpecRequest{}
 
 	result, diags := conv.SecurityPostureSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

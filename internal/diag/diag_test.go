@@ -60,6 +60,27 @@ func TestFormatError(t *testing.T) {
 				TraceID:   traceID,
 			},
 		},
+		{
+			name: "unexpected_status_code_error",
+			err: Error{
+				Err: &mwserrors.UnexpectedStatusCodeError{
+					StatusCode: http.StatusTeapot,
+				},
+				RequestID: requestID,
+				TraceID:   traceID,
+			},
+		},
+		{
+			name: "unexpected_status_code_error_with_data",
+			err: Error{
+				Err: &mwserrors.UnexpectedStatusCodeError{
+					StatusCode: http.StatusTeapot,
+					Data:       []byte("I'm a teapot"),
+				},
+				RequestID: requestID,
+				TraceID:   traceID,
+			},
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			dir.String(t, tc.name+".txt", diag.FormatError(tc.err))

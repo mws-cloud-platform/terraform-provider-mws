@@ -10,15 +10,15 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/nlb/model"
 )
 
-func NlbRuleAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NlbRuleOptionalResponse) (*tfmodel.NlbRule, tfdiag.Diagnostics) {
+func NlbRuleAPIOptionalResponseToTFModel(ctx context.Context, am *model.NlbRuleOptionalResponse) (*tfmodel.NlbRule, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -82,13 +82,13 @@ func NlbRuleAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NlbRu
 	return &t, diags
 }
 
-func NlbRuleTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbRule) (*apimodel.NlbRuleRequest, tfdiag.Diagnostics) {
+func NlbRuleTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbRule) (*model.NlbRuleRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.NlbRuleRequest
+	var am model.NlbRuleRequest
 
 	if !plan.ProtoPort.IsNull() && !plan.ProtoPort.IsUnknown() {
 		am.ProtoPort = plan.ProtoPort.ValueString()
@@ -106,7 +106,7 @@ func NlbRuleTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbRule) (*ap
 			return nil, diags
 		}
 
-		am.TargetAddressGroups = make([]commonapimodel.VpcAddressGroupSpecOrRefRequest, 0, len(targetAddressGroups))
+		am.TargetAddressGroups = make([]commonmodel.VpcAddressGroupSpecOrRefRequest, 0, len(targetAddressGroups))
 
 		for _, entity := range targetAddressGroups {
 			tmp, d := commonconv.VpcAddressGroupSpecOrRefTFToAPIRequestModel(ctx, &entity)
@@ -137,7 +137,7 @@ func NlbRuleTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbRule) (*ap
 	return &am, diags
 }
 
-func NlbRuleTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NlbRule) (*apimodel.UpdateNlbRuleRequest, tfdiag.Diagnostics) {
+func NlbRuleTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NlbRule) (*model.UpdateNlbRuleRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -146,7 +146,7 @@ func NlbRuleTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateNlbRuleRequest
+	var am model.UpdateNlbRuleRequest
 
 	if !plan.ProtoPort.Equal(state.ProtoPort) {
 		if !plan.ProtoPort.IsNull() && !plan.ProtoPort.IsUnknown() {
@@ -171,7 +171,7 @@ func NlbRuleTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.
 				return nil, diags
 			}
 
-			targetAddressGroupsTmp := make([]commonapimodel.UpdateVpcAddressGroupSpecOrRefRequest, 0, len(targetAddressGroups))
+			targetAddressGroupsTmp := make([]commonmodel.UpdateVpcAddressGroupSpecOrRefRequest, 0, len(targetAddressGroups))
 
 			for _, entity := range targetAddressGroups {
 				stateEntity := tfcommon.VpcAddressGroupSpecOrRef{}

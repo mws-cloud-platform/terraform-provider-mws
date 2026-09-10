@@ -7,14 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/model"
 )
 
-func FirewallRuleSourceAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.FirewallRuleSourceOptionalResponse) (*tfmodel.FirewallRuleSource, tfdiag.Diagnostics) {
+func FirewallRuleSourceAPIOptionalResponseToTFModel(ctx context.Context, am *model.FirewallRuleSourceOptionalResponse) (*tfmodel.FirewallRuleSource, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -41,31 +40,4 @@ func FirewallRuleSourceAPIOptionalResponseToTFModel(ctx context.Context, am *api
 	}
 
 	return &t, diags
-}
-
-func FirewallRuleSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.FirewallRuleSource) (*apimodel.FirewallRuleSourceRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.FirewallRuleSourceRequest
-
-	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
-		specPlan := tfmodel.FirewallRuleSourceSpec{}
-		specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, specPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		specTmp, specDiag := FirewallRuleSourceSpecTFToAPIRequestModel(ctx, &specPlan)
-		diags = append(diags, specDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec = specTmp
-	}
-
-	return &am, diags
 }

@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/model"
 )
 
-func ClickhouseClusterShardResourceAPIResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseClusterShardResourceResponse) (*tfmodel.ClickhouseClusterShardResource, tfdiag.Diagnostics) {
+func ClickhouseClusterShardResourceAPIResponseToTFModel(ctx context.Context, am *model.ClickhouseClusterShardResourceResponse) (*tfmodel.ClickhouseClusterShardResource, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

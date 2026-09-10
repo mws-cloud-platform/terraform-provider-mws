@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func ClickhouseClusterCoordinatorAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseClusterCoordinatorOptionalResponse) (*tfmodel.ClickhouseClusterCoordinator, tfdiag.Diagnostics) {
+func ClickhouseClusterCoordinatorAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseClusterCoordinatorOptionalResponse) (*tfmodel.ClickhouseClusterCoordinator, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -77,13 +77,13 @@ func ClickhouseClusterCoordinatorAPIOptionalResponseToTFModel(ctx context.Contex
 	return &t, diags
 }
 
-func ClickhouseClusterCoordinatorTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterCoordinator) (*apimodel.ClickhouseClusterCoordinatorRequest, tfdiag.Diagnostics) {
+func ClickhouseClusterCoordinatorTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterCoordinator) (*model.ClickhouseClusterCoordinatorRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseClusterCoordinatorRequest
+	var am model.ClickhouseClusterCoordinatorRequest
 
 	if !plan.Type.IsNull() && !plan.Type.IsUnknown() {
 		typeTmp, typeDiag := ClickhouseCoordinatorTypeTFToAPIModel(ctx, plan.Type)
@@ -118,7 +118,7 @@ func ClickhouseClusterCoordinatorTFToAPIRequestModel(ctx context.Context, plan *
 			return nil, diags
 		}
 
-		am.Instances = make([]apimodel.ClickhouseClusterCoordinatorInstanceRequest, 0, len(instances))
+		am.Instances = make([]model.ClickhouseClusterCoordinatorInstanceRequest, 0, len(instances))
 
 		for _, entity := range instances {
 			tmp, d := ClickhouseClusterCoordinatorInstanceTFToAPIRequestModel(ctx, &entity)
@@ -133,7 +133,7 @@ func ClickhouseClusterCoordinatorTFToAPIRequestModel(ctx context.Context, plan *
 	return &am, diags
 }
 
-func ClickhouseClusterCoordinatorTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseClusterCoordinator) (*apimodel.UpdateClickhouseClusterCoordinatorRequest, tfdiag.Diagnostics) {
+func ClickhouseClusterCoordinatorTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseClusterCoordinator) (*model.UpdateClickhouseClusterCoordinatorRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -142,7 +142,7 @@ func ClickhouseClusterCoordinatorTFToAPIUpdateRequestModel(ctx context.Context, 
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateClickhouseClusterCoordinatorRequest
+	var am model.UpdateClickhouseClusterCoordinatorRequest
 
 	if !plan.Type.Equal(state.Type) {
 		if !plan.Type.IsNull() && !plan.Type.IsUnknown() {
@@ -191,7 +191,7 @@ func ClickhouseClusterCoordinatorTFToAPIUpdateRequestModel(ctx context.Context, 
 				return nil, diags
 			}
 
-			instancesTmp := make([]apimodel.UpdateClickhouseClusterCoordinatorInstanceRequest, 0, len(instances))
+			instancesTmp := make([]model.UpdateClickhouseClusterCoordinatorInstanceRequest, 0, len(instances))
 
 			for _, entity := range instances {
 				stateEntity := tfmodel.ClickhouseClusterCoordinatorInstance{}

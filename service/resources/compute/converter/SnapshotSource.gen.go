@@ -9,13 +9,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func SnapshotSourceAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.SnapshotSourceOptionalResponse) (*tfmodel.SnapshotSource, tfdiag.Diagnostics) {
+func SnapshotSourceAPIOptionalResponseToTFModel(ctx context.Context, am *model.SnapshotSourceOptionalResponse) (*tfmodel.SnapshotSource, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -44,13 +44,13 @@ func SnapshotSourceAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func SnapshotSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SnapshotSource) (*apimodel.SnapshotSourceRequest, tfdiag.Diagnostics) {
+func SnapshotSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SnapshotSource) (*model.SnapshotSourceRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.SnapshotSourceRequest
+	var am model.SnapshotSourceRequest
 
 	if !plan.Disk.IsNull() && !plan.Disk.IsUnknown() {
 		diskPlan := tfmodel.SnapshotSourceDisk{}
@@ -71,7 +71,7 @@ func SnapshotSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Snapsh
 	return &am, diags
 }
 
-func SnapshotSourceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.SnapshotSource) (*apimodel.UpdateSnapshotSourceRequest, tfdiag.Diagnostics) {
+func SnapshotSourceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.SnapshotSource) (*model.UpdateSnapshotSourceRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -80,7 +80,7 @@ func SnapshotSourceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateSnapshotSourceRequest
+	var am model.UpdateSnapshotSourceRequest
 
 	if !plan.Disk.Equal(state.Disk) {
 		if !plan.Disk.IsNull() && !plan.Disk.IsUnknown() {
@@ -114,7 +114,7 @@ func SnapshotSourceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 	return &am, diags
 }
 
-func SnapshotSourceDiskAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.SnapshotSourceDiskOptionalResponse) (*tfmodel.SnapshotSourceDisk, tfdiag.Diagnostics) {
+func SnapshotSourceDiskAPIOptionalResponseToTFModel(ctx context.Context, am *model.SnapshotSourceDiskOptionalResponse) (*tfmodel.SnapshotSourceDisk, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -127,13 +127,13 @@ func SnapshotSourceDiskAPIOptionalResponseToTFModel(ctx context.Context, am *api
 	return &t, diags
 }
 
-func SnapshotSourceDiskTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SnapshotSourceDisk) (*apimodel.SnapshotSourceDiskRequest, tfdiag.Diagnostics) {
+func SnapshotSourceDiskTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SnapshotSourceDisk) (*model.SnapshotSourceDiskRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.SnapshotSourceDiskRequest
+	var am model.SnapshotSourceDiskRequest
 
 	if !plan.Id.IsNull() && !plan.Id.IsUnknown() {
 		idRef, err := compute.ParseDiskRef(ctx, plan.Id.ValueString())
@@ -147,7 +147,7 @@ func SnapshotSourceDiskTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Sn
 	return &am, diags
 }
 
-func SnapshotSourceDiskTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.SnapshotSourceDisk) (*apimodel.UpdateSnapshotSourceDiskRequest, tfdiag.Diagnostics) {
+func SnapshotSourceDiskTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.SnapshotSourceDisk) (*model.UpdateSnapshotSourceDiskRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -156,7 +156,7 @@ func SnapshotSourceDiskTFToAPIUpdateRequestModel(ctx context.Context, plan, stat
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateSnapshotSourceDiskRequest
+	var am model.UpdateSnapshotSourceDiskRequest
 
 	if !plan.Id.Equal(state.Id) {
 		if !plan.Id.IsNull() && !plan.Id.IsUnknown() {

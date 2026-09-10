@@ -9,9 +9,9 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/iam"
-	apimodel "go.mws.cloud/go-sdk/service/secretmanager/model"
+	"go.mws.cloud/go-sdk/service/secretmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager/converter"
@@ -20,21 +20,21 @@ import (
 
 func TestSecretRoleBindingAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.SecretRoleBindingOptionalResponse{}
+	emptyApiModel := model.SecretRoleBindingOptionalResponse{}
 	_, diags := conv.SecretRoleBindingAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestSecretRoleBindingOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.SecretRoleBindingRequest{
-		Spec: commonapimodel.CommonRoleBindingSpecRequest{
-			Subject: commonapimodel.CommonRoleBindingSpecSubjectRequest{},
+	emptyApiModelRequest := model.SecretRoleBindingRequest{
+		Spec: commonmodel.CommonRoleBindingSpecRequest{
+			Subject: commonmodel.CommonRoleBindingSpecSubjectRequest{},
 			Role:    iam.NewMustRoleRef("roleID"),
 		},
 	}
 
-	emptyApiModelResponse, err := apimodel.SecretRoleBindingRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.SecretRoleBindingRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.SecretRoleBindingAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -43,7 +43,7 @@ func TestSecretRoleBindingOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.SecretRoleBindingTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.SecretRoleBindingRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.SecretRoleBindingRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -56,8 +56,8 @@ func TestUpdateSecretRoleBindingRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.SecretRoleBinding
 	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateSecretRoleBindingRequest{
-		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+	expectedUpdateModel := &model.UpdateSecretRoleBindingRequest{
+		Metadata: optional.OptionalNil[commonmodel.UpdateCommonTypedResourceMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},

@@ -8,27 +8,27 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
 func TestKafkaS3PropertiesAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaS3PropertiesOptionalResponse{}
+	emptyApiModel := model.KafkaS3PropertiesOptionalResponse{}
 	_, diags := conv.KafkaS3PropertiesAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestKafkaS3PropertiesOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaS3PropertiesRequest{
+	emptyApiModelRequest := model.KafkaS3PropertiesRequest{
 		BucketName:  "bucketName",
 		AccessKeyId: "accessKeyId",
 		Endpoint:    "endpoint",
 	}
 
-	emptyApiModelResponse, err := apimodel.KafkaS3PropertiesRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.KafkaS3PropertiesRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.KafkaS3PropertiesAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -37,7 +37,7 @@ func TestKafkaS3PropertiesOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.KafkaS3PropertiesTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.KafkaS3PropertiesRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.KafkaS3PropertiesRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -49,7 +49,7 @@ func TestUpdateKafkaS3PropertiesRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.KafkaS3Properties
 	var stateTfModel tfmodel.KafkaS3Properties
 
-	expectedUpdateModel := &apimodel.UpdateKafkaS3PropertiesRequest{}
+	expectedUpdateModel := &model.UpdateKafkaS3PropertiesRequest{}
 
 	result, diags := conv.KafkaS3PropertiesTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

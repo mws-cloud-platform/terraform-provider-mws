@@ -9,25 +9,25 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
 func TestKafkaDataDiskSpecAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaDataDiskSpecResponse{}
+	emptyApiModel := model.KafkaDataDiskSpecResponse{}
 	_, diags := conv.KafkaDataDiskSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestKafkaDataDiskSpecResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaDataDiskSpecRequest{
+	emptyApiModelRequest := model.KafkaDataDiskSpecRequest{
 		Size: bytesize.MustParseString("0 B"),
 	}
 
-	emptyApiModelResponse, err := apimodel.KafkaDataDiskSpecRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.KafkaDataDiskSpecRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.KafkaDataDiskSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -36,7 +36,7 @@ func TestKafkaDataDiskSpecResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.KafkaDataDiskSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.KafkaDataDiskSpecRequestToResponse(filledApiModelRequest)
+	result, err := model.KafkaDataDiskSpecRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -48,7 +48,7 @@ func TestUpdateKafkaDataDiskSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.KafkaDataDiskSpec
 	var stateTfModel tfmodel.KafkaDataDiskSpec
 
-	expectedUpdateModel := &apimodel.UpdateKafkaDataDiskSpecRequest{}
+	expectedUpdateModel := &model.UpdateKafkaDataDiskSpecRequest{}
 
 	result, diags := conv.KafkaDataDiskSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

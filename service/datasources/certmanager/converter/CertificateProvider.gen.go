@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/certmanager/model"
 )
 
-func CertificateProviderAPIToTFModel(ctx context.Context, am *apimodel.CertificateProvider) (tfmodel.CertificateProvider, tfdiag.Diagnostics) {
+func CertificateProviderAPIToTFModel(ctx context.Context, am *model.CertificateProvider) (tfmodel.CertificateProvider, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.CertificateProvider{}, nil
 	}
@@ -23,17 +23,4 @@ func CertificateProviderAPIToTFModel(ctx context.Context, am *apimodel.Certifica
 	t = tfmodel.CertificateProvider(types.StringValue(string(*am)))
 
 	return t, diags
-}
-
-func CertificateProviderTFToAPIModel(ctx context.Context, plan tfmodel.CertificateProvider) (*apimodel.CertificateProvider, tfdiag.Diagnostics) {
-	var diags tfdiag.Diagnostics
-	var am apimodel.CertificateProvider
-
-	var tmp = types.String(plan)
-	if tmp.IsNull() {
-		return nil, diags
-	}
-	am = apimodel.CertificateProvider(tmp.ValueString())
-
-	return &am, diags
 }

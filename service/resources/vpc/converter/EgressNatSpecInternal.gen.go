@@ -9,11 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func EgressNatSpecInternalAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.EgressNatSpecInternalOptionalResponse) (*tfmodel.EgressNatSpecInternal, tfdiag.Diagnostics) {
+func EgressNatSpecInternalAPIOptionalResponseToTFModel(ctx context.Context, am *model.EgressNatSpecInternalOptionalResponse) (*tfmodel.EgressNatSpecInternal, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -42,13 +42,13 @@ func EgressNatSpecInternalAPIOptionalResponseToTFModel(ctx context.Context, am *
 	return &t, diags
 }
 
-func EgressNatSpecInternalTFToAPIRequestModel(ctx context.Context, plan *tfmodel.EgressNatSpecInternal) (*apimodel.EgressNatSpecInternalRequest, tfdiag.Diagnostics) {
+func EgressNatSpecInternalTFToAPIRequestModel(ctx context.Context, plan *tfmodel.EgressNatSpecInternal) (*model.EgressNatSpecInternalRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.EgressNatSpecInternalRequest
+	var am model.EgressNatSpecInternalRequest
 
 	if !plan.Subnets.IsNull() && !plan.Subnets.IsUnknown() {
 		subnets := make([]types.String, 0)
@@ -73,7 +73,7 @@ func EgressNatSpecInternalTFToAPIRequestModel(ctx context.Context, plan *tfmodel
 	return &am, diags
 }
 
-func EgressNatSpecInternalTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.EgressNatSpecInternal) (*apimodel.UpdateEgressNatSpecInternalRequest, tfdiag.Diagnostics) {
+func EgressNatSpecInternalTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.EgressNatSpecInternal) (*model.UpdateEgressNatSpecInternalRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -82,7 +82,7 @@ func EgressNatSpecInternalTFToAPIUpdateRequestModel(ctx context.Context, plan, s
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateEgressNatSpecInternalRequest
+	var am model.UpdateEgressNatSpecInternalRequest
 
 	if !plan.Subnets.Equal(state.Subnets) {
 		if !plan.Subnets.IsNull() && !plan.Subnets.IsUnknown() {

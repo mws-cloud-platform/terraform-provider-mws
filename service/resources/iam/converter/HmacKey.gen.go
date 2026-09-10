@@ -11,15 +11,15 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/iam/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/iam/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/iam/model"
 )
 
-func HmacKeyAPIResponseToTFModel(ctx context.Context, am *apimodel.HmacKeyResponse) (*tfmodel.HmacKey, tfdiag.Diagnostics) {
+func HmacKeyAPIResponseToTFModel(ctx context.Context, am *model.HmacKeyResponse) (*tfmodel.HmacKey, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -78,13 +78,13 @@ func HmacKeyAPIResponseToTFModel(ctx context.Context, am *apimodel.HmacKeyRespon
 	return &t, diags
 }
 
-func HmacKeyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.HmacKey) (*apimodel.HmacKeyRequest, tfdiag.Diagnostics) {
+func HmacKeyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.HmacKey) (*model.HmacKeyRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.HmacKeyRequest
+	var am model.HmacKeyRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfmodel.HmacKeyMetadata{}
@@ -114,7 +114,7 @@ func HmacKeyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.HmacKey) (*ap
 	return &am, diags
 }
 
-func HmacKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.HmacKey) (*apimodel.UpdateHmacKeyRequest, tfdiag.Diagnostics) {
+func HmacKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.HmacKey) (*model.UpdateHmacKeyRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -123,7 +123,7 @@ func HmacKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateHmacKeyRequest
+	var am model.UpdateHmacKeyRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -157,7 +157,7 @@ func HmacKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.
 	if !plan.ExpirationTime.Equal(state.ExpirationTime) {
 		if !plan.ExpirationTime.IsNull() && !plan.ExpirationTime.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateHmacKeySpecRequest{})
+				am.Spec.SetTo(model.UpdateHmacKeySpecRequest{})
 			}
 			tmpExpirationTime, err := time.Parse(time.RFC3339, plan.ExpirationTime.ValueString())
 			if err != nil {
@@ -171,7 +171,7 @@ func HmacKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.
 	return &am, diags
 }
 
-func HmacKeyMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.HmacKeyMetadataResponse) (*tfmodel.HmacKeyMetadata, tfdiag.Diagnostics) {
+func HmacKeyMetadataAPIResponseToTFModel(ctx context.Context, am *model.HmacKeyMetadataResponse) (*tfmodel.HmacKeyMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -245,13 +245,13 @@ func HmacKeyMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.HmacK
 	return &t, diags
 }
 
-func HmacKeyMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.HmacKeyMetadata) (*apimodel.HmacKeyMetadataRequest, tfdiag.Diagnostics) {
+func HmacKeyMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.HmacKeyMetadata) (*model.HmacKeyMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.HmacKeyMetadataRequest
+	var am model.HmacKeyMetadataRequest
 
 	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
 		am.DisplayName = plan.DisplayName.ValueStringPointer()
@@ -265,7 +265,7 @@ func HmacKeyMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.HmacK
 			return nil, diags
 		}
 
-		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
+		am.Usages = make([]commonmodel.TypedUsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
@@ -284,7 +284,7 @@ func HmacKeyMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.HmacK
 	return &am, diags
 }
 
-func HmacKeyMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.HmacKeyMetadata) (*apimodel.UpdateHmacKeyMetadataRequest, tfdiag.Diagnostics) {
+func HmacKeyMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.HmacKeyMetadata) (*model.UpdateHmacKeyMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -293,7 +293,7 @@ func HmacKeyMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateHmacKeyMetadataRequest
+	var am model.UpdateHmacKeyMetadataRequest
 
 	if !plan.DisplayName.Equal(state.DisplayName) {
 		if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
@@ -310,7 +310,7 @@ func HmacKeyMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *
 				return nil, diags
 			}
 
-			usagesTmp := make([]commonapimodel.UpdateTypedUsageRequest, 0, len(usages))
+			usagesTmp := make([]commonmodel.UpdateTypedUsageRequest, 0, len(usages))
 
 			for _, entity := range usages {
 				stateEntity := tfcommon.TypedUsage{}

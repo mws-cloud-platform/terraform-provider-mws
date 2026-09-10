@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	"go.mws.cloud/go-sdk/service/resources/references/rm"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
@@ -16,19 +16,19 @@ import (
 
 func TestClickhouseClusterInstanceAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClickhouseClusterInstanceOptionalResponse{}
+	emptyApiModel := model.ClickhouseClusterInstanceOptionalResponse{}
 	_, diags := conv.ClickhouseClusterInstanceAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClickhouseClusterInstanceOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.ClickhouseClusterInstanceRequest{
+	emptyApiModelRequest := model.ClickhouseClusterInstanceRequest{
 		Name: "name",
 		Zone: rm.NewMustZoneRef("zoneID"),
 	}
 
-	emptyApiModelResponse, err := apimodel.ClickhouseClusterInstanceRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.ClickhouseClusterInstanceRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.ClickhouseClusterInstanceAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -37,7 +37,7 @@ func TestClickhouseClusterInstanceOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.ClickhouseClusterInstanceTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.ClickhouseClusterInstanceRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.ClickhouseClusterInstanceRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -49,7 +49,7 @@ func TestUpdateClickhouseClusterInstanceRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.ClickhouseClusterInstance
 	var stateTfModel tfmodel.ClickhouseClusterInstance
 
-	expectedUpdateModel := &apimodel.UpdateClickhouseClusterInstanceRequest{}
+	expectedUpdateModel := &model.UpdateClickhouseClusterInstanceRequest{}
 
 	result, diags := conv.ClickhouseClusterInstanceTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/model"
 )
 
-func ClickhouseClusterBootstrapAdminSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseClusterBootstrapAdminSpecOptionalResponse) (*tfmodel.ClickhouseClusterBootstrapAdminSpec, tfdiag.Diagnostics) {
+func ClickhouseClusterBootstrapAdminSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseClusterBootstrapAdminSpecOptionalResponse) (*tfmodel.ClickhouseClusterBootstrapAdminSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -23,19 +23,4 @@ func ClickhouseClusterBootstrapAdminSpecAPIOptionalResponseToTFModel(ctx context
 	t.Username = types.StringValue(am.Username)
 
 	return &t, diags
-}
-
-func ClickhouseClusterBootstrapAdminSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterBootstrapAdminSpec) (*apimodel.ClickhouseClusterBootstrapAdminSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseClusterBootstrapAdminSpecRequest
-
-	if !plan.Username.IsNull() && !plan.Username.IsUnknown() {
-		am.Username = plan.Username.ValueString()
-	}
-
-	return &am, diags
 }

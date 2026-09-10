@@ -8,26 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/converter"
 )
 
 func TestClickhouseInstanceHealthAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClickhouseInstanceHealth("")
+	emptyApiModel := model.ClickhouseInstanceHealth("")
 	_, diags := conv.ClickhouseInstanceHealthAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestClickhouseInstanceHealthConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := apimodel.ClickhouseInstanceHealth("")
-
-	tfModel, diags := conv.ClickhouseInstanceHealthAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-
-	result, diags := conv.ClickhouseInstanceHealthTFToAPIModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	require.Equal(t, emptyApiModel, *result)
 }

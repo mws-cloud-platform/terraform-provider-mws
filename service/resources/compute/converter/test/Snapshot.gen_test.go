@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
@@ -19,20 +19,20 @@ import (
 
 func TestSnapshotAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.SnapshotOptionalResponse{}
+	emptyApiModel := model.SnapshotOptionalResponse{}
 	_, diags := conv.SnapshotAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestSnapshotOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.SnapshotRequest{
-		Spec: apimodel.SnapshotSpecRequest{
-			Source: apimodel.SnapshotSourceRequest{},
+	emptyApiModelRequest := model.SnapshotRequest{
+		Spec: model.SnapshotSpecRequest{
+			Source: model.SnapshotSourceRequest{},
 		},
 	}
 
-	emptyApiModelResponse, err := apimodel.SnapshotRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.SnapshotRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.SnapshotAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -41,7 +41,7 @@ func TestSnapshotOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.SnapshotTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.SnapshotRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.SnapshotRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -54,8 +54,8 @@ func TestUpdateSnapshotRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.Snapshot
 	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateSnapshotRequest{
-		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+	expectedUpdateModel := &model.UpdateSnapshotRequest{
+		Metadata: optional.OptionalNil[commonmodel.UpdateCommonTypedResourceMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},

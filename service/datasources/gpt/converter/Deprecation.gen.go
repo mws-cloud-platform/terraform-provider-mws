@@ -10,11 +10,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/gpt/model"
+	"go.mws.cloud/go-sdk/service/gpt/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/gpt/model"
 )
 
-func DeprecationAPIResponseToTFModel(ctx context.Context, am *apimodel.DeprecationResponse) (*tfmodel.Deprecation, tfdiag.Diagnostics) {
+func DeprecationAPIResponseToTFModel(ctx context.Context, am *model.DeprecationResponse) (*tfmodel.Deprecation, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

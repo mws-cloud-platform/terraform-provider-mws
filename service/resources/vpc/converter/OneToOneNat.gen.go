@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func OneToOneNatAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.OneToOneNatOptionalResponse) (*tfmodel.OneToOneNat, tfdiag.Diagnostics) {
+func OneToOneNatAPIOptionalResponseToTFModel(ctx context.Context, am *model.OneToOneNatOptionalResponse) (*tfmodel.OneToOneNat, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -97,13 +97,13 @@ func OneToOneNatAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.O
 	return &t, diags
 }
 
-func OneToOneNatTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OneToOneNat) (*apimodel.OneToOneNatRequest, tfdiag.Diagnostics) {
+func OneToOneNatTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OneToOneNat) (*model.OneToOneNatRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.OneToOneNatRequest
+	var am model.OneToOneNatRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
@@ -156,7 +156,7 @@ func OneToOneNatTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OneToOneN
 	return &am, diags
 }
 
-func OneToOneNatTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.OneToOneNat) (*apimodel.UpdateOneToOneNatRequest, tfdiag.Diagnostics) {
+func OneToOneNatTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.OneToOneNat) (*model.UpdateOneToOneNatRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -165,7 +165,7 @@ func OneToOneNatTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmo
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateOneToOneNatRequest
+	var am model.UpdateOneToOneNatRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -199,7 +199,7 @@ func OneToOneNatTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmo
 	if !plan.Internal.Equal(state.Internal) {
 		if !plan.Internal.IsNull() && !plan.Internal.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateOneToOneNatSpecRequest{})
+				am.Spec.SetTo(model.UpdateOneToOneNatSpecRequest{})
 			}
 			internalPlan := tfmodel.OneToOneNatSpecInternal{}
 			internalPlanDiag := plan.Internal.As(ctx, &internalPlan, basetypes.ObjectAsOptions{})
@@ -229,7 +229,7 @@ func OneToOneNatTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmo
 	if !plan.External.Equal(state.External) {
 		if !plan.External.IsNull() && !plan.External.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateOneToOneNatSpecRequest{})
+				am.Spec.SetTo(model.UpdateOneToOneNatSpecRequest{})
 			}
 			externalPlan := tfmodel.OneToOneNatSpecExternal{}
 			externalPlanDiag := plan.External.As(ctx, &externalPlan, basetypes.ObjectAsOptions{})

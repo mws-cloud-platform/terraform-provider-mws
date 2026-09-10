@@ -14,7 +14,7 @@ type ClickhouseInstanceHWResources struct {
 
 func (s *ClickhouseInstanceHWResources) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Параметры виртуальной машины, где будут работать инстансы Clickhouse данного шарда.`,
+		MarkdownDescription: `Ресурсы одного узла ClickHouse.`,
 		Attributes: map[string]schema.Attribute{
 			"vm_type": schema.StringAttribute{
 				MarkdownDescription: `Тип виртуальной машины, описывающий ресурсы (vCPU, memory)`,

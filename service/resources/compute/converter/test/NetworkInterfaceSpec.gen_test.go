@@ -8,26 +8,26 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
 func TestNetworkInterfaceSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NetworkInterfaceSpecOptionalResponse{}
+	emptyApiModel := model.NetworkInterfaceSpecOptionalResponse{}
 	_, diags := conv.NetworkInterfaceSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestNetworkInterfaceSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.NetworkInterfaceSpecRequest{
+	emptyApiModelRequest := model.NetworkInterfaceSpecRequest{
 		Name:      "name",
-		Addresses: []apimodel.AddressSpecOrRefWithAttachmentsRequest{},
+		Addresses: []model.AddressSpecOrRefWithAttachmentsRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.NetworkInterfaceSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.NetworkInterfaceSpecRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.NetworkInterfaceSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -36,7 +36,7 @@ func TestNetworkInterfaceSpecOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.NetworkInterfaceSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.NetworkInterfaceSpecRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.NetworkInterfaceSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -48,7 +48,7 @@ func TestUpdateNetworkInterfaceSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.NetworkInterfaceSpec
 	var stateTfModel tfmodel.NetworkInterfaceSpec
 
-	expectedUpdateModel := &apimodel.UpdateNetworkInterfaceSpecRequest{}
+	expectedUpdateModel := &model.UpdateNetworkInterfaceSpecRequest{}
 
 	result, diags := conv.NetworkInterfaceSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

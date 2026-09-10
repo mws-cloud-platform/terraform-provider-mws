@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func KafkaDataDiskTypeAPIToTFModel(ctx context.Context, am *apimodel.KafkaDataDiskType) (tfmodel.KafkaDataDiskType, tfdiag.Diagnostics) {
+func KafkaDataDiskTypeAPIToTFModel(ctx context.Context, am *model.KafkaDataDiskType) (tfmodel.KafkaDataDiskType, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.KafkaDataDiskType{}, nil
 	}
@@ -25,15 +25,15 @@ func KafkaDataDiskTypeAPIToTFModel(ctx context.Context, am *apimodel.KafkaDataDi
 	return t, diags
 }
 
-func KafkaDataDiskTypeTFToAPIModel(ctx context.Context, plan tfmodel.KafkaDataDiskType) (*apimodel.KafkaDataDiskType, tfdiag.Diagnostics) {
+func KafkaDataDiskTypeTFToAPIModel(ctx context.Context, plan tfmodel.KafkaDataDiskType) (*model.KafkaDataDiskType, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaDataDiskType
+	var am model.KafkaDataDiskType
 
 	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}
-	am = apimodel.KafkaDataDiskType(tmp.ValueString())
+	am = model.KafkaDataDiskType(tmp.ValueString())
 
 	return &am, diags
 }

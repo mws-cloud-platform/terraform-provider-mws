@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	"go.mws.cloud/go-sdk/service/resources/references/mclickhouse"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
@@ -17,26 +17,26 @@ import (
 
 func TestClickhouseClusterShardAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClickhouseClusterShardOptionalResponse{}
+	emptyApiModel := model.ClickhouseClusterShardOptionalResponse{}
 	_, diags := conv.ClickhouseClusterShardAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClickhouseClusterShardOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.ClickhouseClusterShardRequest{
+	emptyApiModelRequest := model.ClickhouseClusterShardRequest{
 		Name: "name",
-		Resources: apimodel.ClickhouseInstanceHWResourcesRequest{
+		Resources: model.ClickhouseInstanceHWResourcesRequest{
 			VmType: mclickhouse.NewMustClickhouseVmTypeRef("vmTypeID"),
-			Disk: apimodel.ClickhouseInstanceDiskSpecRequest{
+			Disk: model.ClickhouseInstanceDiskSpecRequest{
 				Size: bytesize.MustParseString("0 B"),
 				Type: "",
 			},
 		},
-		Instances: []apimodel.ClickhouseClusterInstanceRequest{},
+		Instances: []model.ClickhouseClusterInstanceRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.ClickhouseClusterShardRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.ClickhouseClusterShardRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.ClickhouseClusterShardAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -45,7 +45,7 @@ func TestClickhouseClusterShardOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.ClickhouseClusterShardTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.ClickhouseClusterShardRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.ClickhouseClusterShardRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -57,7 +57,7 @@ func TestUpdateClickhouseClusterShardRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.ClickhouseClusterShard
 	var stateTfModel tfmodel.ClickhouseClusterShard
 
-	expectedUpdateModel := &apimodel.UpdateClickhouseClusterShardRequest{}
+	expectedUpdateModel := &model.UpdateClickhouseClusterShardRequest{}
 
 	result, diags := conv.ClickhouseClusterShardTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

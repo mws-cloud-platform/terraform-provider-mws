@@ -11,14 +11,14 @@ import (
 
 type FirewallRuleStatus struct {
 	tfcommon.ResourceStatus
-
+	RegionalStatus
 	Priority types.Int64 `tfsdk:"priority"`
 	Active   types.Bool  `tfsdk:"active"`
 }
 
 func (s *FirewallRuleStatus) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Статус правила файрвола.`,
+		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"ready": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.ResourceStatusReady).GetSchema().Attributes,

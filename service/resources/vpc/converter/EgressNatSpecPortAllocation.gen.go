@@ -11,11 +11,11 @@ import (
 	unitsrange "go.mws.cloud/go-sdk/pkg/apimodels/units/range"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func EgressNatSpecPortAllocationAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.EgressNatSpecPortAllocationOptionalResponse) (*tfmodel.EgressNatSpecPortAllocation, tfdiag.Diagnostics) {
+func EgressNatSpecPortAllocationAPIOptionalResponseToTFModel(ctx context.Context, am *model.EgressNatSpecPortAllocationOptionalResponse) (*tfmodel.EgressNatSpecPortAllocation, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -28,13 +28,13 @@ func EgressNatSpecPortAllocationAPIOptionalResponseToTFModel(ctx context.Context
 	return &t, diags
 }
 
-func EgressNatSpecPortAllocationTFToAPIRequestModel(ctx context.Context, plan *tfmodel.EgressNatSpecPortAllocation) (*apimodel.EgressNatSpecPortAllocationRequest, tfdiag.Diagnostics) {
+func EgressNatSpecPortAllocationTFToAPIRequestModel(ctx context.Context, plan *tfmodel.EgressNatSpecPortAllocation) (*model.EgressNatSpecPortAllocationRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.EgressNatSpecPortAllocationRequest
+	var am model.EgressNatSpecPortAllocationRequest
 
 	if !plan.PortsPerClient.IsNull() && !plan.PortsPerClient.IsUnknown() {
 		tmpPortsPerClient, err := unitsrange.ParseString[largenumber.LargeNumber](plan.PortsPerClient.ValueString())
@@ -48,7 +48,7 @@ func EgressNatSpecPortAllocationTFToAPIRequestModel(ctx context.Context, plan *t
 	return &am, diags
 }
 
-func EgressNatSpecPortAllocationTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.EgressNatSpecPortAllocation) (*apimodel.UpdateEgressNatSpecPortAllocationRequest, tfdiag.Diagnostics) {
+func EgressNatSpecPortAllocationTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.EgressNatSpecPortAllocation) (*model.UpdateEgressNatSpecPortAllocationRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -57,7 +57,7 @@ func EgressNatSpecPortAllocationTFToAPIUpdateRequestModel(ctx context.Context, p
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateEgressNatSpecPortAllocationRequest
+	var am model.UpdateEgressNatSpecPortAllocationRequest
 
 	if !plan.PortsPerClient.Equal(state.PortsPerClient) {
 		if !plan.PortsPerClient.IsNull() && !plan.PortsPerClient.IsUnknown() {

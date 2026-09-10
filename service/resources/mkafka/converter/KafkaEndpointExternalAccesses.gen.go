@@ -8,12 +8,12 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func KafkaEndpointExternalAccessesAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaEndpointExternalAccessesResponse) (*tfmodel.KafkaEndpointExternalAccesses, tfdiag.Diagnostics) {
+func KafkaEndpointExternalAccessesAPIResponseToTFModel(ctx context.Context, am *model.KafkaEndpointExternalAccessesResponse) (*tfmodel.KafkaEndpointExternalAccesses, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -53,13 +53,13 @@ func KafkaEndpointExternalAccessesAPIResponseToTFModel(ctx context.Context, am *
 	return &t, diags
 }
 
-func KafkaEndpointExternalAccessesTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaEndpointExternalAccesses) (*apimodel.KafkaEndpointExternalAccessesRequest, tfdiag.Diagnostics) {
+func KafkaEndpointExternalAccessesTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaEndpointExternalAccesses) (*model.KafkaEndpointExternalAccessesRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaEndpointExternalAccessesRequest
+	var am model.KafkaEndpointExternalAccessesRequest
 
 	if !plan.Allowed.IsNull() && !plan.Allowed.IsUnknown() {
 		am.Allowed = plan.Allowed.ValueBool()
@@ -73,7 +73,7 @@ func KafkaEndpointExternalAccessesTFToAPIRequestModel(ctx context.Context, plan 
 			return nil, diags
 		}
 
-		am.BrokerAddresses = make([]apimodel.KafkaEndpointExternalAddressSpecOrRefRequest, 0, len(brokerAddresses))
+		am.BrokerAddresses = make([]model.KafkaEndpointExternalAddressSpecOrRefRequest, 0, len(brokerAddresses))
 
 		for _, entity := range brokerAddresses {
 			tmp, d := KafkaEndpointExternalAddressSpecOrRefTFToAPIRequestModel(ctx, &entity)
@@ -88,7 +88,7 @@ func KafkaEndpointExternalAccessesTFToAPIRequestModel(ctx context.Context, plan 
 	return &am, diags
 }
 
-func KafkaEndpointExternalAccessesTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaEndpointExternalAccesses) (*apimodel.UpdateKafkaEndpointExternalAccessesRequest, tfdiag.Diagnostics) {
+func KafkaEndpointExternalAccessesTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaEndpointExternalAccesses) (*model.UpdateKafkaEndpointExternalAccessesRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -97,7 +97,7 @@ func KafkaEndpointExternalAccessesTFToAPIUpdateRequestModel(ctx context.Context,
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateKafkaEndpointExternalAccessesRequest
+	var am model.UpdateKafkaEndpointExternalAccessesRequest
 
 	if !plan.Allowed.Equal(state.Allowed) {
 		if !plan.Allowed.IsNull() && !plan.Allowed.IsUnknown() {
@@ -114,7 +114,7 @@ func KafkaEndpointExternalAccessesTFToAPIUpdateRequestModel(ctx context.Context,
 				return nil, diags
 			}
 
-			brokerAddressesTmp := make([]apimodel.UpdateKafkaEndpointExternalAddressSpecOrRefRequest, 0, len(brokerAddresses))
+			brokerAddressesTmp := make([]model.UpdateKafkaEndpointExternalAddressSpecOrRefRequest, 0, len(brokerAddresses))
 
 			for _, entity := range brokerAddresses {
 				stateEntity := tfmodel.KafkaEndpointExternalAddressSpecOrRef{}

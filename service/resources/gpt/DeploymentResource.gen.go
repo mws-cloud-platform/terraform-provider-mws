@@ -49,7 +49,6 @@ func (m *DeploymentResource) Metadata(ctx context.Context, req resource.Metadata
 func (m *DeploymentResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	tflog.Info(ctx, "DeploymentResource.Schema")
 	resp.Schema = new(tfmodel.Deployment).GetSchema()
-	resp.Schema.DeprecationMessage = `Отказываемся из-за разделения на input и output модальности`
 	resp.Schema.Attributes["deployment_name"] = schema.StringAttribute{
 		MarkdownDescription: `Параметр пути для имени деплоймента, уникальный в рамках проекта.`,
 		Required:            true,

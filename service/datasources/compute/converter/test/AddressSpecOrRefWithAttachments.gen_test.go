@@ -8,34 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
 func TestAddressSpecOrRefWithAttachmentsAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.AddressSpecOrRefWithAttachmentsOptionalResponse{}
+	emptyApiModel := model.AddressSpecOrRefWithAttachmentsOptionalResponse{}
 	_, diags := conv.AddressSpecOrRefWithAttachmentsAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestAddressSpecOrRefWithAttachmentsOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.AddressSpecOrRefWithAttachmentsRequest{
-		Address: apimodel.AddressSpecOrRefRequest{},
-	}
-
-	emptyApiModelResponse, err := apimodel.AddressSpecOrRefWithAttachmentsRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.AddressSpecOrRefWithAttachmentsAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.AddressSpecOrRefWithAttachmentsTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.AddressSpecOrRefWithAttachmentsRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

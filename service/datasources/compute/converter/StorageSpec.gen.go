@@ -8,12 +8,12 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func StorageSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.StorageSpecOptionalResponse) (*tfmodel.StorageSpec, tfdiag.Diagnostics) {
+func StorageSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.StorageSpecOptionalResponse) (*tfmodel.StorageSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -76,55 +76,4 @@ func StorageSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.S
 	}
 
 	return &t, diags
-}
-
-func StorageSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.StorageSpec) (*apimodel.StorageSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.StorageSpecRequest
-
-	if !plan.Disks.IsNull() && !plan.Disks.IsUnknown() {
-		disks := make([]tfmodel.StorageDiskSpecOrRefWithAttachments, 0)
-		dDisks := plan.Disks.ElementsAs(ctx, &disks, false)
-		diags = append(diags, dDisks...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Disks = make([]apimodel.StorageDiskSpecOrRefWithAttachmentsRequest, 0, len(disks))
-
-		for _, entity := range disks {
-			tmp, d := StorageDiskSpecOrRefWithAttachmentsTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.Disks = append(am.Disks, *tmp)
-		}
-	}
-
-	if !plan.LocalDisks.IsNull() && !plan.LocalDisks.IsUnknown() {
-		localDisks := make([]tfmodel.StorageLocalDiskSpec, 0)
-		dLocalDisks := plan.LocalDisks.ElementsAs(ctx, &localDisks, false)
-		diags = append(diags, dLocalDisks...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.LocalDisks = make([]apimodel.StorageLocalDiskSpecRequest, 0, len(localDisks))
-
-		for _, entity := range localDisks {
-			tmp, d := StorageLocalDiskSpecTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.LocalDisks = append(am.LocalDisks, *tmp)
-		}
-	}
-
-	return &am, diags
 }

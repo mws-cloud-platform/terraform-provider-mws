@@ -50,14 +50,14 @@ func (m *NodeGroupResource) Schema(ctx context.Context, req resource.SchemaReque
 	tflog.Info(ctx, "NodeGroupResource.Schema")
 	resp.Schema = new(tfmodel.NodeGroup).GetSchema()
 	resp.Schema.Attributes["cluster_name"] = schema.StringAttribute{
-		MarkdownDescription: `Имя Cluster`,
+		MarkdownDescription: `Имя кластера`,
 		Required:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}
 	resp.Schema.Attributes["node_group_name"] = schema.StringAttribute{
-		MarkdownDescription: `Имя Node-группы`,
+		MarkdownDescription: `Имя группы узлов`,
 		Required:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.RequiresReplaceIfConfigured(),

@@ -9,27 +9,27 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
 func TestRouteDestinationAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.RouteDestinationOptionalResponse{}
+	emptyApiModel := model.RouteDestinationOptionalResponse{}
 	_, diags := conv.RouteDestinationAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestRouteDestinationOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.RouteDestinationRequest{
-		Spec: apimodel.RouteDestinationSpecRequest{
+	emptyApiModelRequest := model.RouteDestinationRequest{
+		Spec: model.RouteDestinationSpecRequest{
 			Cidrs: []cidraddress.CIDRAddress{},
 		},
 	}
 
-	emptyApiModelResponse, err := apimodel.RouteDestinationRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.RouteDestinationRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.RouteDestinationAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -38,7 +38,7 @@ func TestRouteDestinationOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.RouteDestinationTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.RouteDestinationRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.RouteDestinationRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -50,7 +50,7 @@ func TestUpdateRouteDestinationRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.RouteDestination
 	var stateTfModel tfmodel.RouteDestination
 
-	expectedUpdateModel := &apimodel.UpdateRouteDestinationRequest{}
+	expectedUpdateModel := &model.UpdateRouteDestinationRequest{}
 
 	result, diags := conv.RouteDestinationTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())
@@ -60,18 +60,18 @@ func TestUpdateRouteDestinationRequestConverters(t *testing.T) {
 
 func TestRouteDestinationSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.RouteDestinationSpecOptionalResponse{}
+	emptyApiModel := model.RouteDestinationSpecOptionalResponse{}
 	_, diags := conv.RouteDestinationSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestRouteDestinationSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.RouteDestinationSpecRequest{
+	emptyApiModelRequest := model.RouteDestinationSpecRequest{
 		Cidrs: []cidraddress.CIDRAddress{},
 	}
 
-	emptyApiModelResponse, err := apimodel.RouteDestinationSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.RouteDestinationSpecRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.RouteDestinationSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -80,7 +80,7 @@ func TestRouteDestinationSpecOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.RouteDestinationSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.RouteDestinationSpecRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.RouteDestinationSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -92,7 +92,7 @@ func TestUpdateRouteDestinationSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.RouteDestinationSpec
 	var stateTfModel tfmodel.RouteDestinationSpec
 
-	expectedUpdateModel := &apimodel.UpdateRouteDestinationSpecRequest{}
+	expectedUpdateModel := &model.UpdateRouteDestinationSpecRequest{}
 
 	result, diags := conv.RouteDestinationSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

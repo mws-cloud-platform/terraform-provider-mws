@@ -10,11 +10,11 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func FirewallRuleSourceSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.FirewallRuleSourceSpecOptionalResponse) (*tfmodel.FirewallRuleSourceSpec, tfdiag.Diagnostics) {
+func FirewallRuleSourceSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.FirewallRuleSourceSpecOptionalResponse) (*tfmodel.FirewallRuleSourceSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -43,13 +43,13 @@ func FirewallRuleSourceSpecAPIOptionalResponseToTFModel(ctx context.Context, am 
 	return &t, diags
 }
 
-func FirewallRuleSourceSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.FirewallRuleSourceSpec) (*apimodel.FirewallRuleSourceSpecRequest, tfdiag.Diagnostics) {
+func FirewallRuleSourceSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.FirewallRuleSourceSpec) (*model.FirewallRuleSourceSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.FirewallRuleSourceSpecRequest
+	var am model.FirewallRuleSourceSpecRequest
 
 	if !plan.Cidrs.IsNull() && !plan.Cidrs.IsUnknown() {
 		cidrs := make([]types.String, 0)
@@ -74,7 +74,7 @@ func FirewallRuleSourceSpecTFToAPIRequestModel(ctx context.Context, plan *tfmode
 	return &am, diags
 }
 
-func FirewallRuleSourceSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.FirewallRuleSourceSpec) (*apimodel.UpdateFirewallRuleSourceSpecRequest, tfdiag.Diagnostics) {
+func FirewallRuleSourceSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.FirewallRuleSourceSpec) (*model.UpdateFirewallRuleSourceSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -83,7 +83,7 @@ func FirewallRuleSourceSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, 
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateFirewallRuleSourceSpecRequest
+	var am model.UpdateFirewallRuleSourceSpecRequest
 
 	if !plan.Cidrs.Equal(state.Cidrs) {
 		if !plan.Cidrs.IsNull() && !plan.Cidrs.IsUnknown() {

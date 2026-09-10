@@ -7,18 +7,16 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func ImageAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ImageOptionalResponse) (*tfmodel.Image, tfdiag.Diagnostics) {
+func ImageAPIOptionalResponseToTFModel(ctx context.Context, am *model.ImageOptionalResponse) (*tfmodel.Image, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -72,6 +70,24 @@ func ImageAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ImageOp
 		t.Family = types.StringValue(val)
 	} else {
 		t.Family = types.StringNull()
+	}
+
+	if val, ok := am.Spec.Regions.Get(); ok {
+		regions := make([]types.String, 0, len(val))
+
+		for _, entity := range val {
+			regions = append(regions, types.StringValue(entity.Path()))
+		}
+
+		regionsList, d := types.ListValueFrom(ctx, types.StringType, regions)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		t.Regions = regionsList
+	} else {
+		t.Regions = types.ListNull(types.StringType)
 	}
 
 	sourceTmp, d := ImageSpecSourceAPIOptionalResponseToTFModel(ctx, &am.Spec.Source)
@@ -135,94 +151,4 @@ func ImageAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ImageOp
 	}
 
 	return &t, diags
-}
-
-func ImageTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Image) (*apimodel.ImageRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ImageRequest
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.Family.IsNull() && !plan.Family.IsUnknown() {
-		am.Spec.Family = plan.Family.ValueStringPointer()
-	}
-
-	if !plan.Source.IsNull() && !plan.Source.IsUnknown() {
-		sourcePlan := tfmodel.ImageSpecSource{}
-		sourcePlanDiag := plan.Source.As(ctx, &sourcePlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, sourcePlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		sourceTmp, sourceDiag := ImageSpecSourceTFToAPIRequestModel(ctx, &sourcePlan)
-		diags = append(diags, sourceDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Source = *sourceTmp
-	}
-
-	if !plan.Activity.IsNull() && !plan.Activity.IsUnknown() {
-		activityTmp, activityDiag := ImageActivityTFToAPIModel(ctx, plan.Activity)
-		diags = append(diags, activityDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Activity = activityTmp
-	}
-
-	if !plan.MinDiskSize.IsNull() && !plan.MinDiskSize.IsUnknown() {
-		tmpMinDiskSize, err := bytesize.ParseString(plan.MinDiskSize.ValueString())
-		if err != nil {
-			diags.AddError("ByteSize string parsing", err.Error())
-			return nil, diags
-		}
-		am.Spec.MinDiskSize = &tmpMinDiskSize
-	}
-
-	if !plan.OsType.IsNull() && !plan.OsType.IsUnknown() {
-		osTypeTmp, osTypeDiag := OsTypeTFToAPIModel(ctx, plan.OsType)
-		diags = append(diags, osTypeDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.OsType = osTypeTmp
-	}
-
-	if !plan.Encryption.IsNull() && !plan.Encryption.IsUnknown() {
-		encryptionPlan := tfmodel.EncryptionSpec{}
-		encryptionPlanDiag := plan.Encryption.As(ctx, &encryptionPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, encryptionPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		encryptionTmp, encryptionDiag := EncryptionSpecTFToAPIRequestModel(ctx, &encryptionPlan)
-		diags = append(diags, encryptionDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Encryption = encryptionTmp
-	}
-
-	return &am, diags
 }

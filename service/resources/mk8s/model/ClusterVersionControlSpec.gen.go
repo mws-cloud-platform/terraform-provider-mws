@@ -20,16 +20,16 @@ func (s *ClusterVersionControlSpec) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"release_channel": schema.StringAttribute{
-				MarkdownDescription: `Cluster обновляется всегда до default версии, поэтому необходимо выбрать релизный канал и настроить окно обслуживания`,
+				MarkdownDescription: `Релизный канал кластера`,
 				Required:            true,
 			},
 			"version": schema.StringAttribute{
-				MarkdownDescription: `Минимальная версия Cluster. Автоматически обновляется до версии default в окно обслуживания. При указании версии выше default обновление запускается немедленно. Во время автоматического обновления это поле не изменяется, а актуальная версия указывается в статусе Cluster`,
+				MarkdownDescription: `Минимальная версия кластера. Автоматически обновляется до версии default в окно обслуживания. При указании версии выше default обновление запускается немедленно. Во время автоматического обновления это поле не изменяется, а актуальная версия указывается в статусе Cluster`,
 				Optional:            true,
 			},
 			"maintenance_window": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.MaintenanceWindow).GetSchema().Attributes,
-				MarkdownDescription: `Если окно обслуживания не заполнено, то время проведения работ не ограничено. Duration нельзя указывать, так как обновление мастер нод не прерывается`,
+				MarkdownDescription: `Окно обслуживания кластера.  Если окно не задано, то время проведения работ не ограничено. Продолжительность (duration) не указывается, так как обновление master-узлов не прерывается`,
 				Optional:            true,
 			},
 		},

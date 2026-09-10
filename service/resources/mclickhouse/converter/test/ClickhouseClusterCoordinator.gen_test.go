@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	"go.mws.cloud/go-sdk/service/resources/references/mclickhouse"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
@@ -17,25 +17,25 @@ import (
 
 func TestClickhouseClusterCoordinatorAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClickhouseClusterCoordinatorOptionalResponse{}
+	emptyApiModel := model.ClickhouseClusterCoordinatorOptionalResponse{}
 	_, diags := conv.ClickhouseClusterCoordinatorAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClickhouseClusterCoordinatorOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.ClickhouseClusterCoordinatorRequest{
-		Resources: apimodel.ClickhouseCoordinatorHWResourcesRequest{
+	emptyApiModelRequest := model.ClickhouseClusterCoordinatorRequest{
+		Resources: model.ClickhouseCoordinatorHWResourcesRequest{
 			VmType: mclickhouse.NewMustClickhouseVmTypeRef("vmTypeID"),
-			Disk: apimodel.ClickhouseInstanceDiskSpecRequest{
+			Disk: model.ClickhouseInstanceDiskSpecRequest{
 				Size: bytesize.MustParseString("0 B"),
 				Type: "",
 			},
 		},
-		Instances: []apimodel.ClickhouseClusterCoordinatorInstanceRequest{},
+		Instances: []model.ClickhouseClusterCoordinatorInstanceRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.ClickhouseClusterCoordinatorRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.ClickhouseClusterCoordinatorRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.ClickhouseClusterCoordinatorAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -44,7 +44,7 @@ func TestClickhouseClusterCoordinatorOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.ClickhouseClusterCoordinatorTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.ClickhouseClusterCoordinatorRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.ClickhouseClusterCoordinatorRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -56,7 +56,7 @@ func TestUpdateClickhouseClusterCoordinatorRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.ClickhouseClusterCoordinator
 	var stateTfModel tfmodel.ClickhouseClusterCoordinator
 
-	expectedUpdateModel := &apimodel.UpdateClickhouseClusterCoordinatorRequest{}
+	expectedUpdateModel := &model.UpdateClickhouseClusterCoordinatorRequest{}
 
 	result, diags := conv.ClickhouseClusterCoordinatorTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

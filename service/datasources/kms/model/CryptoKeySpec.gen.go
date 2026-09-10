@@ -8,8 +8,7 @@ import (
 )
 
 type CryptoKeySpecDestructionPolicy struct {
-	DefaultDestructionIntervalDays types.Int64  `tfsdk:"default_destruction_interval_days"`
-	ScheduledDestructionTime       types.String `tfsdk:"scheduled_destruction_time"`
+	DefaultDestructionIntervalDays types.Int64 `tfsdk:"default_destruction_interval_days"`
 }
 
 func (s *CryptoKeySpecDestructionPolicy) GetSchema() schema.Schema {
@@ -22,14 +21,6 @@ func (s *CryptoKeySpecDestructionPolicy) GetSchema() schema.Schema {
 Значение можно задать только при создании ключа, и оно не может быть изменено позже.
 Если значение не указано при создании ключа, используется значение по умолчанию (1 день)`,
 				Computed: true,
-			},
-			"scheduled_destruction_time": schema.StringAttribute{
-				MarkdownDescription: `Временная метка, указывающая, когда ключ должен быть уничтожен.
-Если это поле установлено, ключ будет автоматически уничтожен в указанное время
-
-Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
-				Computed:           true,
-				DeprecationMessage: `Отказываемся в пользу scheduledDestructionTime в блоке status`,
 			},
 		},
 	}

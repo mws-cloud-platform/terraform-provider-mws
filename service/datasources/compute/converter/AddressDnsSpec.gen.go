@@ -7,14 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/go-sdk/pkg/apimodels/units/duration"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func AddressDnsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.AddressDnsSpecOptionalResponse) (*tfmodel.AddressDnsSpec, tfdiag.Diagnostics) {
+func AddressDnsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.AddressDnsSpecOptionalResponse) (*tfmodel.AddressDnsSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -29,32 +28,4 @@ func AddressDnsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	t.Ptr = types.BoolValue(am.Ptr)
 
 	return &t, diags
-}
-
-func AddressDnsSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.AddressDnsSpec) (*apimodel.AddressDnsSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.AddressDnsSpecRequest
-
-	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
-		am.Name = plan.Name.ValueString()
-	}
-
-	if !plan.Ttl.IsNull() && !plan.Ttl.IsUnknown() {
-		tmpTtl, err := duration.ParseString(plan.Ttl.ValueString())
-		if err != nil {
-			diags.AddError("Duration string parsing", err.Error())
-			return nil, diags
-		}
-		am.Ttl = tmpTtl
-	}
-
-	if !plan.Ptr.IsNull() && !plan.Ptr.IsUnknown() {
-		am.Ptr = plan.Ptr.ValueBool()
-	}
-
-	return &am, diags
 }

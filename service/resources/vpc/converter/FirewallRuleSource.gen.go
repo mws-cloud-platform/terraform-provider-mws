@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func FirewallRuleSourceAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.FirewallRuleSourceOptionalResponse) (*tfmodel.FirewallRuleSource, tfdiag.Diagnostics) {
+func FirewallRuleSourceAPIOptionalResponseToTFModel(ctx context.Context, am *model.FirewallRuleSourceOptionalResponse) (*tfmodel.FirewallRuleSource, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -43,13 +43,13 @@ func FirewallRuleSourceAPIOptionalResponseToTFModel(ctx context.Context, am *api
 	return &t, diags
 }
 
-func FirewallRuleSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.FirewallRuleSource) (*apimodel.FirewallRuleSourceRequest, tfdiag.Diagnostics) {
+func FirewallRuleSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.FirewallRuleSource) (*model.FirewallRuleSourceRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.FirewallRuleSourceRequest
+	var am model.FirewallRuleSourceRequest
 
 	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
 		specPlan := tfmodel.FirewallRuleSourceSpec{}
@@ -70,7 +70,7 @@ func FirewallRuleSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Fi
 	return &am, diags
 }
 
-func FirewallRuleSourceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.FirewallRuleSource) (*apimodel.UpdateFirewallRuleSourceRequest, tfdiag.Diagnostics) {
+func FirewallRuleSourceTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.FirewallRuleSource) (*model.UpdateFirewallRuleSourceRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -79,7 +79,7 @@ func FirewallRuleSourceTFToAPIUpdateRequestModel(ctx context.Context, plan, stat
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateFirewallRuleSourceRequest
+	var am model.UpdateFirewallRuleSourceRequest
 
 	if !plan.Spec.Equal(state.Spec) {
 		if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {

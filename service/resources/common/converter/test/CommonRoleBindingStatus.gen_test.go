@@ -8,37 +8,37 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
 func TestCommonRoleBindingStatusAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.CommonRoleBindingStatus{}
+	emptyApiModel := commonmodel.CommonRoleBindingStatus{}
 	_, diags := commonconv.CommonRoleBindingStatusAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestCommonRoleBindingStatusAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.CommonRoleBindingStatusResponse{}
+	emptyApiModel := commonmodel.CommonRoleBindingStatusResponse{}
 	_, diags := commonconv.CommonRoleBindingStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestCommonRoleBindingStatusAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.CommonRoleBindingStatusOptionalResponse{}
+	emptyApiModel := commonmodel.CommonRoleBindingStatusOptionalResponse{}
 	_, diags := commonconv.CommonRoleBindingStatusAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestCommonRoleBindingStatusConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.CommonRoleBindingStatus{
-		ResourceStatus: commonapimodel.ResourceStatus{
-			Ready: commonapimodel.ResourceStatusReady{
+	emptyApiModel := commonmodel.CommonRoleBindingStatus{
+		ResourceStatus: commonmodel.ResourceStatus{
+			Ready: commonmodel.ResourceStatusReady{
 				State: "",
 			},
 		},
@@ -55,15 +55,15 @@ func TestCommonRoleBindingStatusConverters(t *testing.T) {
 
 func TestCommonRoleBindingStatusResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonapimodel.CommonRoleBindingStatusRequest{
-		ResourceStatusRequest: commonapimodel.ResourceStatusRequest{
-			Ready: commonapimodel.ResourceStatusReadyRequest{
+	emptyApiModelRequest := commonmodel.CommonRoleBindingStatusRequest{
+		ResourceStatusRequest: commonmodel.ResourceStatusRequest{
+			Ready: commonmodel.ResourceStatusReadyRequest{
 				State: "",
 			},
 		},
 	}
 
-	emptyApiModelResponse, err := commonapimodel.CommonRoleBindingStatusRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonmodel.CommonRoleBindingStatusRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.CommonRoleBindingStatusAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -72,7 +72,7 @@ func TestCommonRoleBindingStatusResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := commonconv.CommonRoleBindingStatusTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := commonapimodel.CommonRoleBindingStatusRequestToResponse(filledApiModelRequest)
+	result, err := commonmodel.CommonRoleBindingStatusRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -80,15 +80,15 @@ func TestCommonRoleBindingStatusResponseConverters(t *testing.T) {
 
 func TestCommonRoleBindingStatusOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonapimodel.CommonRoleBindingStatusRequest{
-		ResourceStatusRequest: commonapimodel.ResourceStatusRequest{
-			Ready: commonapimodel.ResourceStatusReadyRequest{
+	emptyApiModelRequest := commonmodel.CommonRoleBindingStatusRequest{
+		ResourceStatusRequest: commonmodel.ResourceStatusRequest{
+			Ready: commonmodel.ResourceStatusReadyRequest{
 				State: "",
 			},
 		},
 	}
 
-	emptyApiModelResponse, err := commonapimodel.CommonRoleBindingStatusRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonmodel.CommonRoleBindingStatusRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.CommonRoleBindingStatusAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -97,7 +97,7 @@ func TestCommonRoleBindingStatusOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := commonconv.CommonRoleBindingStatusTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := commonapimodel.CommonRoleBindingStatusRequestToOptionalResponse(filledApiModelRequest)
+	result, err := commonmodel.CommonRoleBindingStatusRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -109,7 +109,7 @@ func TestUpdateCommonRoleBindingStatusConverters(t *testing.T) {
 	var nullPlanTfModel tfcommon.CommonRoleBindingStatus
 	var stateTfModel tfcommon.CommonRoleBindingStatus
 
-	expectedUpdateModel := &commonapimodel.UpdateCommonRoleBindingStatus{}
+	expectedUpdateModel := &commonmodel.UpdateCommonRoleBindingStatus{}
 
 	result, diags := commonconv.CommonRoleBindingStatusTFToAPIUpdateModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())
@@ -123,7 +123,7 @@ func TestUpdateCommonRoleBindingStatusRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfcommon.CommonRoleBindingStatus
 	var stateTfModel tfcommon.CommonRoleBindingStatus
 
-	expectedUpdateModel := &commonapimodel.UpdateCommonRoleBindingStatusRequest{}
+	expectedUpdateModel := &commonmodel.UpdateCommonRoleBindingStatusRequest{}
 
 	result, diags := commonconv.CommonRoleBindingStatusTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

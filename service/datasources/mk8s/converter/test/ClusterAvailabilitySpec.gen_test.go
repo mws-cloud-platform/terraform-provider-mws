@@ -8,88 +8,34 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/converter"
 )
 
 func TestClusterAvailabilitySpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClusterAvailabilitySpecOptionalResponse{}
+	emptyApiModel := model.ClusterAvailabilitySpecOptionalResponse{}
 	_, diags := conv.ClusterAvailabilitySpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestClusterAvailabilitySpecOptionalResponseConverters(t *testing.T) {
+func TestClusterAvailabilitySpecRegionalAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.ClusterAvailabilitySpecRequest{}
-
-	emptyApiModelResponse, err := apimodel.ClusterAvailabilitySpecRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.ClusterAvailabilitySpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	emptyApiModel := model.ClusterAvailabilitySpecRegionalOptionalResponse{}
+	_, diags := conv.ClusterAvailabilitySpecRegionalAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.ClusterAvailabilitySpecTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.ClusterAvailabilitySpecRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }
 
 func TestClusterAvailabilitySpecStandaloneAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClusterAvailabilitySpecStandaloneOptionalResponse{}
+	emptyApiModel := model.ClusterAvailabilitySpecStandaloneOptionalResponse{}
 	_, diags := conv.ClusterAvailabilitySpecStandaloneAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestClusterAvailabilitySpecStandaloneOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.ClusterAvailabilitySpecStandaloneRequest{
-		Zone: "zone",
-	}
-
-	emptyApiModelResponse, err := apimodel.ClusterAvailabilitySpecStandaloneRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.ClusterAvailabilitySpecStandaloneAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.ClusterAvailabilitySpecStandaloneTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.ClusterAvailabilitySpecStandaloneRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
 func TestClusterAvailabilitySpecZonalHaAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClusterAvailabilitySpecZonalHaOptionalResponse{}
+	emptyApiModel := model.ClusterAvailabilitySpecZonalHaOptionalResponse{}
 	_, diags := conv.ClusterAvailabilitySpecZonalHaAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestClusterAvailabilitySpecZonalHaOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.ClusterAvailabilitySpecZonalHaRequest{
-		Zone: "zone",
-	}
-
-	emptyApiModelResponse, err := apimodel.ClusterAvailabilitySpecZonalHaRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.ClusterAvailabilitySpecZonalHaAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.ClusterAvailabilitySpecZonalHaTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.ClusterAvailabilitySpecZonalHaRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

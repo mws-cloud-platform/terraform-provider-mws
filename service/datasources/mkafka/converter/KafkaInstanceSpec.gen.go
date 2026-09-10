@@ -7,15 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
-	"go.mws.cloud/go-sdk/service/resources/references/compute"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/model"
 )
 
-func KafkaInstanceSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaInstanceSpecResponse) (*tfmodel.KafkaInstanceSpec, tfdiag.Diagnostics) {
+func KafkaInstanceSpecAPIResponseToTFModel(ctx context.Context, am *model.KafkaInstanceSpecResponse) (*tfmodel.KafkaInstanceSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -67,60 +65,4 @@ func KafkaInstanceSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.Kaf
 	}
 
 	return &t, diags
-}
-
-func KafkaInstanceSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaInstanceSpec) (*apimodel.KafkaInstanceSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaInstanceSpecRequest
-
-	if !plan.VmType.IsNull() && !plan.VmType.IsUnknown() {
-		vmTypeRef, err := compute.ParseVmTypeRef(ctx, plan.VmType.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.VmType = vmTypeRef
-	}
-
-	if !plan.Disk.IsNull() && !plan.Disk.IsUnknown() {
-		diskPlan := tfmodel.KafkaDataDiskSpec{}
-		diskPlanDiag := plan.Disk.As(ctx, &diskPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, diskPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		diskTmp, diskDiag := KafkaDataDiskSpecTFToAPIRequestModel(ctx, &diskPlan)
-		diags = append(diags, diskDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Disk = *diskTmp
-	}
-
-	if !plan.Allocation.IsNull() && !plan.Allocation.IsUnknown() {
-		allocation := make([]tfmodel.KafkaAllocation, 0)
-		dAllocation := plan.Allocation.ElementsAs(ctx, &allocation, false)
-		diags = append(diags, dAllocation...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Allocation = make([]apimodel.KafkaAllocationRequest, 0, len(allocation))
-
-		for _, entity := range allocation {
-			tmp, d := KafkaAllocationTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.Allocation = append(am.Allocation, *tmp)
-		}
-	}
-
-	return &am, diags
 }

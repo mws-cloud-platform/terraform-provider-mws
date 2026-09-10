@@ -15,7 +15,7 @@ type NlbListenerExternal struct {
 
 func (s *NlbListenerExternal) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Конфигурация IP-адреса внутреннего балансировщика.`,
+		MarkdownDescription: `Конфигурация адреса внешнего балансировщика`,
 		Attributes: map[string]schema.Attribute{
 			"address": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.ResourceExternalAddressSpecOrRef).GetSchema().Attributes,

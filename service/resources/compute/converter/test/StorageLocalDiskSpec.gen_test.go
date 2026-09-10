@@ -9,26 +9,26 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
 func TestStorageLocalDiskSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.StorageLocalDiskSpecOptionalResponse{}
+	emptyApiModel := model.StorageLocalDiskSpecOptionalResponse{}
 	_, diags := conv.StorageLocalDiskSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestStorageLocalDiskSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.StorageLocalDiskSpecRequest{
+	emptyApiModelRequest := model.StorageLocalDiskSpecRequest{
 		Name: "name",
 		Size: bytesize.MustParseString("0 B"),
 	}
 
-	emptyApiModelResponse, err := apimodel.StorageLocalDiskSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.StorageLocalDiskSpecRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.StorageLocalDiskSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -37,7 +37,7 @@ func TestStorageLocalDiskSpecOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.StorageLocalDiskSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.StorageLocalDiskSpecRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.StorageLocalDiskSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -49,7 +49,7 @@ func TestUpdateStorageLocalDiskSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.StorageLocalDiskSpec
 	var stateTfModel tfmodel.StorageLocalDiskSpec
 
-	expectedUpdateModel := &apimodel.UpdateStorageLocalDiskSpecRequest{}
+	expectedUpdateModel := &model.UpdateStorageLocalDiskSpecRequest{}
 
 	result, diags := conv.StorageLocalDiskSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

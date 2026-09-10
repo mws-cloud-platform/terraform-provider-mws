@@ -14,8 +14,7 @@ type Dns01Challenge struct {
 
 func (s *Dns01Challenge) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Данные для прохождения проверки типа dns-01.
-`,
+		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"delegated": schema.BoolAttribute{
 				MarkdownDescription: `Указывает, настроена ли делегация корректно`,

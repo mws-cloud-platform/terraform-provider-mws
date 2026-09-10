@@ -8,12 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/model"
 )
 
-func EgressNatSpecInternalAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.EgressNatSpecInternalOptionalResponse) (*tfmodel.EgressNatSpecInternal, tfdiag.Diagnostics) {
+func EgressNatSpecInternalAPIOptionalResponseToTFModel(ctx context.Context, am *model.EgressNatSpecInternalOptionalResponse) (*tfmodel.EgressNatSpecInternal, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -40,35 +39,4 @@ func EgressNatSpecInternalAPIOptionalResponseToTFModel(ctx context.Context, am *
 	}
 
 	return &t, diags
-}
-
-func EgressNatSpecInternalTFToAPIRequestModel(ctx context.Context, plan *tfmodel.EgressNatSpecInternal) (*apimodel.EgressNatSpecInternalRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.EgressNatSpecInternalRequest
-
-	if !plan.Subnets.IsNull() && !plan.Subnets.IsUnknown() {
-		subnets := make([]types.String, 0)
-		dSubnets := plan.Subnets.ElementsAs(ctx, &subnets, false)
-		diags = append(diags, dSubnets...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Subnets = make([]vpc.SubnetRef, 0, len(subnets))
-
-		for _, entity := range subnets {
-			ref, err := vpc.ParseSubnetRef(ctx, entity.ValueString())
-			if err != nil {
-				diags.AddError("reference parsing", err.Error())
-				return nil, diags
-			}
-			am.Subnets = append(am.Subnets, ref)
-		}
-	}
-
-	return &am, diags
 }

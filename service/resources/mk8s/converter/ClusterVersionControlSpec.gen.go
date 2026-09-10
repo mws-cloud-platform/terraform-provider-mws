@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
-func ClusterVersionControlSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClusterVersionControlSpecOptionalResponse) (*tfmodel.ClusterVersionControlSpec, tfdiag.Diagnostics) {
+func ClusterVersionControlSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClusterVersionControlSpecOptionalResponse) (*tfmodel.ClusterVersionControlSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -53,13 +53,13 @@ func ClusterVersionControlSpecAPIOptionalResponseToTFModel(ctx context.Context, 
 	return &t, diags
 }
 
-func ClusterVersionControlSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterVersionControlSpec) (*apimodel.ClusterVersionControlSpecRequest, tfdiag.Diagnostics) {
+func ClusterVersionControlSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterVersionControlSpec) (*model.ClusterVersionControlSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClusterVersionControlSpecRequest
+	var am model.ClusterVersionControlSpecRequest
 
 	if !plan.ReleaseChannel.IsNull() && !plan.ReleaseChannel.IsUnknown() {
 		am.ReleaseChannel = plan.ReleaseChannel.ValueString()
@@ -88,7 +88,7 @@ func ClusterVersionControlSpecTFToAPIRequestModel(ctx context.Context, plan *tfm
 	return &am, diags
 }
 
-func ClusterVersionControlSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClusterVersionControlSpec) (*apimodel.UpdateClusterVersionControlSpecRequest, tfdiag.Diagnostics) {
+func ClusterVersionControlSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClusterVersionControlSpec) (*model.UpdateClusterVersionControlSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -97,7 +97,7 @@ func ClusterVersionControlSpecTFToAPIUpdateRequestModel(ctx context.Context, pla
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateClusterVersionControlSpecRequest
+	var am model.UpdateClusterVersionControlSpecRequest
 
 	if !plan.ReleaseChannel.Equal(state.ReleaseChannel) {
 		if !plan.ReleaseChannel.IsNull() && !plan.ReleaseChannel.IsUnknown() {
@@ -108,8 +108,6 @@ func ClusterVersionControlSpecTFToAPIUpdateRequestModel(ctx context.Context, pla
 	if !plan.Version.Equal(state.Version) {
 		if !plan.Version.IsNull() && !plan.Version.IsUnknown() {
 			am.Version.SetTo(plan.Version.ValueString())
-		} else if plan.Version.IsNull() {
-			am.Version.SetToNull()
 		}
 	}
 

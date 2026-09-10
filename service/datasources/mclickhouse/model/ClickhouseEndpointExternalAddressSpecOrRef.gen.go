@@ -21,20 +21,10 @@ func (s *ClickhouseEndpointExternalAddressSpecOrRef) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"spec": schema.SingleNestedAttribute{
-				Attributes:          new(ClickhouseEndpointExternalAddressSpecOrRefSpec).GetSchema().Attributes,
+				Attributes:          new(ClickhouseEndpointExternalAddressSpec).GetSchema().Attributes,
 				MarkdownDescription: `Описание шаблона внешнего адреса, который будет использоваться при выделении адресов`,
 				Computed:            true,
 			},
 		},
-	}
-}
-
-type ClickhouseEndpointExternalAddressSpecOrRefSpec struct {
-}
-
-func (s *ClickhouseEndpointExternalAddressSpecOrRefSpec) GetSchema() schema.Schema {
-	return schema.Schema{
-		MarkdownDescription: `Представление поля Spec анонимного типа структуры ClickhouseEndpointExternalAddressSpecOrRef`,
-		Attributes:          map[string]schema.Attribute{},
 	}
 }

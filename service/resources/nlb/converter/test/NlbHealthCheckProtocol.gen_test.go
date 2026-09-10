@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/nlb/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/nlb/model"
@@ -17,16 +17,16 @@ import (
 
 func TestNlbHealthCheckProtocolAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NlbHealthCheckProtocolOptionalResponse{}
+	emptyApiModel := model.NlbHealthCheckProtocolOptionalResponse{}
 	_, diags := conv.NlbHealthCheckProtocolAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestNlbHealthCheckProtocolOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.NlbHealthCheckProtocolRequest{}
+	emptyApiModelRequest := model.NlbHealthCheckProtocolRequest{}
 
-	emptyApiModelResponse, err := apimodel.NlbHealthCheckProtocolRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.NlbHealthCheckProtocolRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.NlbHealthCheckProtocolAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -35,7 +35,7 @@ func TestNlbHealthCheckProtocolOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.NlbHealthCheckProtocolTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.NlbHealthCheckProtocolRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.NlbHealthCheckProtocolRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -50,16 +50,16 @@ func TestUpdateNlbHealthCheckProtocolRequestConverters(t *testing.T) {
 	stateTfModel.Https = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.NlbHealthCheckHttps).GetSchema().Attributes))
 	stateTfModel.Tcp = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.NlbHealthCheckTcp).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateNlbHealthCheckProtocolRequest{
-		Http: optional.OptionalNil[apimodel.UpdateNlbHealthCheckHttpRequest]{
+	expectedUpdateModel := &model.UpdateNlbHealthCheckProtocolRequest{
+		Http: optional.OptionalNil[model.UpdateNlbHealthCheckHttpRequest]{
 			Set:  true,
 			Null: true,
 		},
-		Https: optional.OptionalNil[apimodel.UpdateNlbHealthCheckHttpsRequest]{
+		Https: optional.OptionalNil[model.UpdateNlbHealthCheckHttpsRequest]{
 			Set:  true,
 			Null: true,
 		},
-		Tcp: optional.OptionalNil[apimodel.UpdateNlbHealthCheckTcpRequest]{
+		Tcp: optional.OptionalNil[model.UpdateNlbHealthCheckTcpRequest]{
 			Set:  true,
 			Null: true,
 		},

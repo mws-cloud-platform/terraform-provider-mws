@@ -7,11 +7,11 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func KafkaClusterRoleAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaClusterRoleResponse) (*tfmodel.KafkaClusterRole, tfdiag.Diagnostics) {
+func KafkaClusterRoleAPIResponseToTFModel(ctx context.Context, am *model.KafkaClusterRoleResponse) (*tfmodel.KafkaClusterRole, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -29,13 +29,13 @@ func KafkaClusterRoleAPIResponseToTFModel(ctx context.Context, am *apimodel.Kafk
 	return &t, diags
 }
 
-func KafkaClusterRoleTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaClusterRole) (*apimodel.KafkaClusterRoleRequest, tfdiag.Diagnostics) {
+func KafkaClusterRoleTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaClusterRole) (*model.KafkaClusterRoleRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaClusterRoleRequest
+	var am model.KafkaClusterRoleRequest
 
 	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
 		nameTmp, nameDiag := KafkaClusterRoleNameTFToAPIModel(ctx, plan.Name)
@@ -49,7 +49,7 @@ func KafkaClusterRoleTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Kafk
 	return &am, diags
 }
 
-func KafkaClusterRoleTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaClusterRole) (*apimodel.UpdateKafkaClusterRoleRequest, tfdiag.Diagnostics) {
+func KafkaClusterRoleTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaClusterRole) (*model.UpdateKafkaClusterRoleRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -58,7 +58,7 @@ func KafkaClusterRoleTFToAPIUpdateRequestModel(ctx context.Context, plan, state 
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateKafkaClusterRoleRequest
+	var am model.UpdateKafkaClusterRoleRequest
 
 	if !plan.Name.Equal(state.Name) {
 		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {

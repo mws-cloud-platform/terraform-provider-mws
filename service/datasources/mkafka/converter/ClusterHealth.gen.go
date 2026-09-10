@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/model"
 )
 
-func ClusterHealthAPIToTFModel(ctx context.Context, am *apimodel.ClusterHealth) (tfmodel.ClusterHealth, tfdiag.Diagnostics) {
+func ClusterHealthAPIToTFModel(ctx context.Context, am *model.ClusterHealth) (tfmodel.ClusterHealth, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.ClusterHealth{}, nil
 	}
@@ -23,17 +23,4 @@ func ClusterHealthAPIToTFModel(ctx context.Context, am *apimodel.ClusterHealth) 
 	t = tfmodel.ClusterHealth(types.StringValue(string(*am)))
 
 	return t, diags
-}
-
-func ClusterHealthTFToAPIModel(ctx context.Context, plan tfmodel.ClusterHealth) (*apimodel.ClusterHealth, tfdiag.Diagnostics) {
-	var diags tfdiag.Diagnostics
-	var am apimodel.ClusterHealth
-
-	var tmp = types.String(plan)
-	if tmp.IsNull() {
-		return nil, diags
-	}
-	am = apimodel.ClusterHealth(tmp.ValueString())
-
-	return &am, diags
 }

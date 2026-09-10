@@ -9,11 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func ClickhouseClusterBackupAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseClusterBackupOptionalResponse) (*tfmodel.ClickhouseClusterBackup, tfdiag.Diagnostics) {
+func ClickhouseClusterBackupAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseClusterBackupOptionalResponse) (*tfmodel.ClickhouseClusterBackup, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -36,13 +36,13 @@ func ClickhouseClusterBackupAPIOptionalResponseToTFModel(ctx context.Context, am
 	return &t, diags
 }
 
-func ClickhouseClusterBackupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterBackup) (*apimodel.ClickhouseClusterBackupRequest, tfdiag.Diagnostics) {
+func ClickhouseClusterBackupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterBackup) (*model.ClickhouseClusterBackupRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseClusterBackupRequest
+	var am model.ClickhouseClusterBackupRequest
 
 	if !plan.Hour.IsNull() && !plan.Hour.IsUnknown() {
 		am.Hour = ptr.Get(int(plan.Hour.ValueInt64()))
@@ -55,7 +55,7 @@ func ClickhouseClusterBackupTFToAPIRequestModel(ctx context.Context, plan *tfmod
 	return &am, diags
 }
 
-func ClickhouseClusterBackupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseClusterBackup) (*apimodel.UpdateClickhouseClusterBackupRequest, tfdiag.Diagnostics) {
+func ClickhouseClusterBackupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseClusterBackup) (*model.UpdateClickhouseClusterBackupRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -64,7 +64,7 @@ func ClickhouseClusterBackupTFToAPIUpdateRequestModel(ctx context.Context, plan,
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateClickhouseClusterBackupRequest
+	var am model.UpdateClickhouseClusterBackupRequest
 
 	if !plan.Hour.Equal(state.Hour) {
 		if !plan.Hour.IsNull() && !plan.Hour.IsUnknown() {

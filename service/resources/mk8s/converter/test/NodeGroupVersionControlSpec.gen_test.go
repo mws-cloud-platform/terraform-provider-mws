@@ -6,12 +6,11 @@ import (
 	"context"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
@@ -20,16 +19,16 @@ import (
 
 func TestNodeGroupVersionControlSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NodeGroupVersionControlSpecOptionalResponse{}
+	emptyApiModel := model.NodeGroupVersionControlSpecOptionalResponse{}
 	_, diags := conv.NodeGroupVersionControlSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestNodeGroupVersionControlSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.NodeGroupVersionControlSpecRequest{}
+	emptyApiModelRequest := model.NodeGroupVersionControlSpecRequest{}
 
-	emptyApiModelResponse, err := apimodel.NodeGroupVersionControlSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.NodeGroupVersionControlSpecRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.NodeGroupVersionControlSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -38,7 +37,7 @@ func TestNodeGroupVersionControlSpecOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.NodeGroupVersionControlSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.NodeGroupVersionControlSpecRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.NodeGroupVersionControlSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -49,15 +48,10 @@ func TestUpdateNodeGroupVersionControlSpecRequestConverters(t *testing.T) {
 
 	var nullPlanTfModel tfmodel.NodeGroupVersionControlSpec
 	var stateTfModel tfmodel.NodeGroupVersionControlSpec
-	stateTfModel.Version = types.StringValue("")
 	stateTfModel.MaintenanceWindow = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.MaintenanceWindow).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateNodeGroupVersionControlSpecRequest{
-		Version: optional.OptionalNil[string]{
-			Set:  true,
-			Null: true,
-		},
-		MaintenanceWindow: optional.OptionalNil[commonapimodel.UpdateMaintenanceWindowRequest]{
+	expectedUpdateModel := &model.UpdateNodeGroupVersionControlSpecRequest{
+		MaintenanceWindow: optional.OptionalNil[commonmodel.UpdateMaintenanceWindowRequest]{
 			Set:  true,
 			Null: true,
 		},

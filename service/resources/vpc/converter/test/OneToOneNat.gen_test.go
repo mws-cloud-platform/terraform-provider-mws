@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
@@ -19,25 +19,25 @@ import (
 
 func TestOneToOneNatAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.OneToOneNatOptionalResponse{}
+	emptyApiModel := model.OneToOneNatOptionalResponse{}
 	_, diags := conv.OneToOneNatAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestOneToOneNatOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.OneToOneNatRequest{
-		Spec: apimodel.OneToOneNatSpecRequest{
-			Internal: apimodel.OneToOneNatSpecInternalRequest{
-				Address: commonapimodel.ResourceAddressSpecOrRefRequest{},
+	emptyApiModelRequest := model.OneToOneNatRequest{
+		Spec: model.OneToOneNatSpecRequest{
+			Internal: model.OneToOneNatSpecInternalRequest{
+				Address: commonmodel.ResourceAddressSpecOrRefRequest{},
 			},
-			External: apimodel.OneToOneNatSpecExternalRequest{
-				Address: commonapimodel.ResourceExternalAddressSpecOrRefRequest{},
+			External: model.OneToOneNatSpecExternalRequest{
+				Address: commonmodel.ResourceExternalAddressSpecOrRefRequest{},
 			},
 		},
 	}
 
-	emptyApiModelResponse, err := apimodel.OneToOneNatRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.OneToOneNatRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.OneToOneNatAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -46,7 +46,7 @@ func TestOneToOneNatOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.OneToOneNatTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.OneToOneNatRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.OneToOneNatRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -59,8 +59,8 @@ func TestUpdateOneToOneNatRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.OneToOneNat
 	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateOneToOneNatRequest{
-		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+	expectedUpdateModel := &model.UpdateOneToOneNatRequest{
+		Metadata: optional.OptionalNil[commonmodel.UpdateCommonTypedResourceMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},

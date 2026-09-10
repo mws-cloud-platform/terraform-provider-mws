@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func PostgresInstanceRoleAPIToTFModel(ctx context.Context, am *apimodel.PostgresInstanceRole) (tfmodel.PostgresInstanceRole, tfdiag.Diagnostics) {
+func PostgresInstanceRoleAPIToTFModel(ctx context.Context, am *model.PostgresInstanceRole) (tfmodel.PostgresInstanceRole, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.PostgresInstanceRole{}, nil
 	}
@@ -25,15 +25,15 @@ func PostgresInstanceRoleAPIToTFModel(ctx context.Context, am *apimodel.Postgres
 	return t, diags
 }
 
-func PostgresInstanceRoleTFToAPIModel(ctx context.Context, plan tfmodel.PostgresInstanceRole) (*apimodel.PostgresInstanceRole, tfdiag.Diagnostics) {
+func PostgresInstanceRoleTFToAPIModel(ctx context.Context, plan tfmodel.PostgresInstanceRole) (*model.PostgresInstanceRole, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresInstanceRole
+	var am model.PostgresInstanceRole
 
 	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}
-	am = apimodel.PostgresInstanceRole(tmp.ValueString())
+	am = model.PostgresInstanceRole(tmp.ValueString())
 
 	return &am, diags
 }

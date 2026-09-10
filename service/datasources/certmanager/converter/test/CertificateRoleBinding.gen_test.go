@@ -8,39 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	"go.mws.cloud/go-sdk/service/resources/references/iam"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/certmanager/converter"
 )
 
 func TestCertificateRoleBindingAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.CertificateRoleBindingOptionalResponse{}
+	emptyApiModel := model.CertificateRoleBindingOptionalResponse{}
 	_, diags := conv.CertificateRoleBindingAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestCertificateRoleBindingOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.CertificateRoleBindingRequest{
-		Spec: commonapimodel.CommonRoleBindingSpecRequest{
-			Subject: commonapimodel.CommonRoleBindingSpecSubjectRequest{},
-			Role:    iam.NewMustRoleRef("roleID"),
-		},
-	}
-
-	emptyApiModelResponse, err := apimodel.CertificateRoleBindingRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.CertificateRoleBindingAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.CertificateRoleBindingTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.CertificateRoleBindingRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

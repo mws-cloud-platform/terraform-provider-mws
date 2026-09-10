@@ -8,23 +8,23 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
 func TestClusterPublicEndpointSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClusterPublicEndpointSpecOptionalResponse{}
+	emptyApiModel := model.ClusterPublicEndpointSpecOptionalResponse{}
 	_, diags := conv.ClusterPublicEndpointSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClusterPublicEndpointSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.ClusterPublicEndpointSpecRequest{}
+	emptyApiModelRequest := model.ClusterPublicEndpointSpecRequest{}
 
-	emptyApiModelResponse, err := apimodel.ClusterPublicEndpointSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.ClusterPublicEndpointSpecRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.ClusterPublicEndpointSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -33,7 +33,7 @@ func TestClusterPublicEndpointSpecOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.ClusterPublicEndpointSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.ClusterPublicEndpointSpecRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.ClusterPublicEndpointSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -45,7 +45,7 @@ func TestUpdateClusterPublicEndpointSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.ClusterPublicEndpointSpec
 	var stateTfModel tfmodel.ClusterPublicEndpointSpec
 
-	expectedUpdateModel := &apimodel.UpdateClusterPublicEndpointSpecRequest{}
+	expectedUpdateModel := &model.UpdateClusterPublicEndpointSpecRequest{}
 
 	result, diags := conv.ClusterPublicEndpointSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

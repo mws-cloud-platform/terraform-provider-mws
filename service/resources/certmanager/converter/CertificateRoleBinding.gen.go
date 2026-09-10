@@ -10,8 +10,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/iam"
 	"go.mws.cloud/go-sdk/service/resources/references/support"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -20,7 +20,7 @@ import (
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
-func CertificateRoleBindingAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.CertificateRoleBindingOptionalResponse) (*tfmodel.CertificateRoleBinding, tfdiag.Diagnostics) {
+func CertificateRoleBindingAPIOptionalResponseToTFModel(ctx context.Context, am *model.CertificateRoleBindingOptionalResponse) (*tfmodel.CertificateRoleBinding, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -91,13 +91,13 @@ func CertificateRoleBindingAPIOptionalResponseToTFModel(ctx context.Context, am 
 	return &t, diags
 }
 
-func CertificateRoleBindingTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CertificateRoleBinding) (*apimodel.CertificateRoleBindingRequest, tfdiag.Diagnostics) {
+func CertificateRoleBindingTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CertificateRoleBinding) (*model.CertificateRoleBindingRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.CertificateRoleBindingRequest
+	var am model.CertificateRoleBindingRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
@@ -152,7 +152,7 @@ func CertificateRoleBindingTFToAPIRequestModel(ctx context.Context, plan *tfmode
 	return &am, diags
 }
 
-func CertificateRoleBindingTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.CertificateRoleBinding) (*apimodel.UpdateCertificateRoleBindingRequest, tfdiag.Diagnostics) {
+func CertificateRoleBindingTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.CertificateRoleBinding) (*model.UpdateCertificateRoleBindingRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -161,7 +161,7 @@ func CertificateRoleBindingTFToAPIUpdateRequestModel(ctx context.Context, plan, 
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateCertificateRoleBindingRequest
+	var am model.UpdateCertificateRoleBindingRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -195,7 +195,7 @@ func CertificateRoleBindingTFToAPIUpdateRequestModel(ctx context.Context, plan, 
 	if !plan.Subject.Equal(state.Subject) {
 		if !plan.Subject.IsNull() && !plan.Subject.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(commonapimodel.UpdateCommonRoleBindingSpecRequest{})
+				am.Spec.SetTo(commonmodel.UpdateCommonRoleBindingSpecRequest{})
 			}
 			subjectPlan := tfcommon.CommonRoleBindingSpecSubject{}
 			subjectPlanDiag := plan.Subject.As(ctx, &subjectPlan, basetypes.ObjectAsOptions{})
@@ -225,7 +225,7 @@ func CertificateRoleBindingTFToAPIUpdateRequestModel(ctx context.Context, plan, 
 	if !plan.Role.Equal(state.Role) {
 		if !plan.Role.IsNull() && !plan.Role.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(commonapimodel.UpdateCommonRoleBindingSpecRequest{})
+				am.Spec.SetTo(commonmodel.UpdateCommonRoleBindingSpecRequest{})
 			}
 			roleRef, err := iam.ParseRoleRef(ctx, plan.Role.ValueString())
 			if err != nil {
@@ -239,7 +239,7 @@ func CertificateRoleBindingTFToAPIUpdateRequestModel(ctx context.Context, plan, 
 	if !plan.SupportRequestId.Equal(state.SupportRequestId) {
 		if !plan.SupportRequestId.IsNull() && !plan.SupportRequestId.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(commonapimodel.UpdateCommonRoleBindingSpecRequest{})
+				am.Spec.SetTo(commonmodel.UpdateCommonRoleBindingSpecRequest{})
 			}
 			supportRequestIdRef, err := support.ParseRequestIDRef(ctx, plan.SupportRequestId.ValueString())
 			if err != nil {

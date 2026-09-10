@@ -8,10 +8,10 @@ import (
 
 	"go.mws.cloud/go-sdk/mws"
 	commonerrors "go.mws.cloud/go-sdk/mws/errors"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	vpcref "go.mws.cloud/go-sdk/service/resources/references/vpc"
 	"go.mws.cloud/go-sdk/service/vpc/client"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	resourcesdk "go.mws.cloud/go-sdk/service/vpc/sdk"
 	"go.mws.cloud/terraform-provider-mws/internal/acctest"
 )
@@ -34,7 +34,7 @@ func ExternalAddressTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleR
 				return fmt.Errorf("invalid resource state")
 			}
 			state := r.Status.Ready.State
-			if string(state) != string(commonapimodel.ResourceStatusState_OK) {
+			if string(state) != string(commonmodel.ResourceStatusState_OK) {
 				return fmt.Errorf("invalid resource state: %s", state)
 			}
 			return nil
@@ -52,7 +52,7 @@ func ExternalAddressTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleR
 	}, nil
 }
 
-func GetExternalAddress(ctx context.Context, sdk *resourcesdk.ExternalAddress, id string) (*apimodel.ExternalAddressOptionalResponse, error) {
+func GetExternalAddress(ctx context.Context, sdk *resourcesdk.ExternalAddress, id string) (*model.ExternalAddressOptionalResponse, error) {
 	ref, err := vpcref.ParseExternalAddressRef(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("parse reference: %w", err)

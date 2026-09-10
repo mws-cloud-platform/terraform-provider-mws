@@ -7,13 +7,12 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/nlb/model"
 )
 
-func NlbHealthCheckHttpsAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NlbHealthCheckHttpsOptionalResponse) (*tfmodel.NlbHealthCheckHttps, tfdiag.Diagnostics) {
+func NlbHealthCheckHttpsAPIOptionalResponseToTFModel(ctx context.Context, am *model.NlbHealthCheckHttpsOptionalResponse) (*tfmodel.NlbHealthCheckHttps, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -32,27 +31,4 @@ func NlbHealthCheckHttpsAPIOptionalResponseToTFModel(ctx context.Context, am *ap
 	}
 
 	return &t, diags
-}
-
-func NlbHealthCheckHttpsTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbHealthCheckHttps) (*apimodel.NlbHealthCheckHttpsRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.NlbHealthCheckHttpsRequest
-
-	if !plan.Port.IsNull() && !plan.Port.IsUnknown() {
-		am.Port = int(plan.Port.ValueInt64())
-	}
-
-	if !plan.Path.IsNull() && !plan.Path.IsUnknown() {
-		am.Path = plan.Path.ValueString()
-	}
-
-	if !plan.ExpectedCode.IsNull() && !plan.ExpectedCode.IsUnknown() {
-		am.ExpectedCode = ptr.Get(int(plan.ExpectedCode.ValueInt64()))
-	}
-
-	return &am, diags
 }

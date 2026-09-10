@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/gpt/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/gpt/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/gpt/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/gpt/model"
@@ -18,18 +18,18 @@ import (
 
 func TestDeploymentAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.DeploymentResponse{}
+	emptyApiModel := model.DeploymentResponse{}
 	_, diags := conv.DeploymentAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestDeploymentResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.DeploymentRequest{
-		Spec: apimodel.DeploymentSpecRequest{},
+	emptyApiModelRequest := model.DeploymentRequest{
+		Spec: model.DeploymentSpecRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.DeploymentRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.DeploymentRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.DeploymentAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -38,7 +38,7 @@ func TestDeploymentResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.DeploymentTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.DeploymentRequestToResponse(filledApiModelRequest)
+	result, err := model.DeploymentRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -51,8 +51,8 @@ func TestUpdateDeploymentRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.Deployment
 	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.DeploymentMetadata).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateDeploymentRequest{
-		Metadata: optional.OptionalNil[apimodel.UpdateDeploymentMetadataRequest]{
+	expectedUpdateModel := &model.UpdateDeploymentRequest{
+		Metadata: optional.OptionalNil[model.UpdateDeploymentMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},
@@ -66,18 +66,18 @@ func TestUpdateDeploymentRequestConverters(t *testing.T) {
 
 func TestDeploymentMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.DeploymentMetadataResponse{}
+	emptyApiModel := model.DeploymentMetadataResponse{}
 	_, diags := conv.DeploymentMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestDeploymentMetadataResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.DeploymentMetadataRequest{
-		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
+	emptyApiModelRequest := model.DeploymentMetadataRequest{
+		TypedResourceMetadataRequest: commonmodel.TypedResourceMetadataRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.DeploymentMetadataRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.DeploymentMetadataRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.DeploymentMetadataAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -86,7 +86,7 @@ func TestDeploymentMetadataResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.DeploymentMetadataTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.DeploymentMetadataRequestToResponse(filledApiModelRequest)
+	result, err := model.DeploymentMetadataRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -98,7 +98,7 @@ func TestUpdateDeploymentMetadataRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.DeploymentMetadata
 	var stateTfModel tfmodel.DeploymentMetadata
 
-	expectedUpdateModel := &apimodel.UpdateDeploymentMetadataRequest{}
+	expectedUpdateModel := &model.UpdateDeploymentMetadataRequest{}
 
 	result, diags := conv.DeploymentMetadataTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

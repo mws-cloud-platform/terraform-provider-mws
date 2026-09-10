@@ -9,35 +9,35 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.mws.cloud/go-sdk/pkg/apimodels/ipaddress"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 )
 
 func TestResourceExternalAddressStatusAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceExternalAddressStatus{}
+	emptyApiModel := commonmodel.ResourceExternalAddressStatus{}
 	_, diags := commonconv.ResourceExternalAddressStatusAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestResourceExternalAddressStatusAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceExternalAddressStatusResponse{}
+	emptyApiModel := commonmodel.ResourceExternalAddressStatusResponse{}
 	_, diags := commonconv.ResourceExternalAddressStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestResourceExternalAddressStatusAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceExternalAddressStatusOptionalResponse{}
+	emptyApiModel := commonmodel.ResourceExternalAddressStatusOptionalResponse{}
 	_, diags := commonconv.ResourceExternalAddressStatusAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestResourceExternalAddressStatusConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceExternalAddressStatus{
+	emptyApiModel := commonmodel.ResourceExternalAddressStatus{
 		Ref:       vpc.NewMustExternalAddressRef("projectID", "externalAddressID"),
 		IpAddress: ipaddress.MustParseIPAddressString("192.168.1.1"),
 	}
@@ -53,12 +53,12 @@ func TestResourceExternalAddressStatusConverters(t *testing.T) {
 
 func TestResourceExternalAddressStatusResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonapimodel.ResourceExternalAddressStatusRequest{
+	emptyApiModelRequest := commonmodel.ResourceExternalAddressStatusRequest{
 		Ref:       vpc.NewMustExternalAddressRef("projectID", "externalAddressID"),
 		IpAddress: ipaddress.MustParseIPAddressString("192.168.1.1"),
 	}
 
-	emptyApiModelResponse, err := commonapimodel.ResourceExternalAddressStatusRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonmodel.ResourceExternalAddressStatusRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.ResourceExternalAddressStatusAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -67,7 +67,7 @@ func TestResourceExternalAddressStatusResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := commonconv.ResourceExternalAddressStatusTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := commonapimodel.ResourceExternalAddressStatusRequestToResponse(filledApiModelRequest)
+	result, err := commonmodel.ResourceExternalAddressStatusRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -75,12 +75,12 @@ func TestResourceExternalAddressStatusResponseConverters(t *testing.T) {
 
 func TestResourceExternalAddressStatusOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonapimodel.ResourceExternalAddressStatusRequest{
+	emptyApiModelRequest := commonmodel.ResourceExternalAddressStatusRequest{
 		Ref:       vpc.NewMustExternalAddressRef("projectID", "externalAddressID"),
 		IpAddress: ipaddress.MustParseIPAddressString("192.168.1.1"),
 	}
 
-	emptyApiModelResponse, err := commonapimodel.ResourceExternalAddressStatusRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonmodel.ResourceExternalAddressStatusRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.ResourceExternalAddressStatusAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -89,7 +89,7 @@ func TestResourceExternalAddressStatusOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := commonconv.ResourceExternalAddressStatusTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := commonapimodel.ResourceExternalAddressStatusRequestToOptionalResponse(filledApiModelRequest)
+	result, err := commonmodel.ResourceExternalAddressStatusRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)

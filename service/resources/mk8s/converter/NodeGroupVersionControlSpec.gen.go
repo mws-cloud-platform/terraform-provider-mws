@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
-func NodeGroupVersionControlSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NodeGroupVersionControlSpecOptionalResponse) (*tfmodel.NodeGroupVersionControlSpec, tfdiag.Diagnostics) {
+func NodeGroupVersionControlSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.NodeGroupVersionControlSpecOptionalResponse) (*tfmodel.NodeGroupVersionControlSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -57,13 +57,13 @@ func NodeGroupVersionControlSpecAPIOptionalResponseToTFModel(ctx context.Context
 	return &t, diags
 }
 
-func NodeGroupVersionControlSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroupVersionControlSpec) (*apimodel.NodeGroupVersionControlSpecRequest, tfdiag.Diagnostics) {
+func NodeGroupVersionControlSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroupVersionControlSpec) (*model.NodeGroupVersionControlSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.NodeGroupVersionControlSpecRequest
+	var am model.NodeGroupVersionControlSpecRequest
 
 	if !plan.Version.IsNull() && !plan.Version.IsUnknown() {
 		am.Version = plan.Version.ValueStringPointer()
@@ -92,7 +92,7 @@ func NodeGroupVersionControlSpecTFToAPIRequestModel(ctx context.Context, plan *t
 	return &am, diags
 }
 
-func NodeGroupVersionControlSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NodeGroupVersionControlSpec) (*apimodel.UpdateNodeGroupVersionControlSpecRequest, tfdiag.Diagnostics) {
+func NodeGroupVersionControlSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NodeGroupVersionControlSpec) (*model.UpdateNodeGroupVersionControlSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -101,13 +101,11 @@ func NodeGroupVersionControlSpecTFToAPIUpdateRequestModel(ctx context.Context, p
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateNodeGroupVersionControlSpecRequest
+	var am model.UpdateNodeGroupVersionControlSpecRequest
 
 	if !plan.Version.Equal(state.Version) {
 		if !plan.Version.IsNull() && !plan.Version.IsUnknown() {
 			am.Version.SetTo(plan.Version.ValueString())
-		} else if plan.Version.IsNull() {
-			am.Version.SetToNull()
 		}
 	}
 

@@ -4,19 +4,17 @@ package converter
 
 import (
 	"context"
-	"encoding/json"
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/model"
 )
 
-func PluginsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.PluginsSpecOptionalResponse) (*tfmodel.PluginsSpec, tfdiag.Diagnostics) {
+func PluginsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.PluginsSpecOptionalResponse) (*tfmodel.PluginsSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -45,34 +43,7 @@ func PluginsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.P
 	return &t, diags
 }
 
-func PluginsSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PluginsSpec) (*apimodel.PluginsSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.PluginsSpecRequest
-
-	if !plan.Cni.IsNull() && !plan.Cni.IsUnknown() {
-		cniPlan := tfmodel.PluginsSpecCni{}
-		cniPlanDiag := plan.Cni.As(ctx, &cniPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, cniPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		cniTmp, cniDiag := PluginsSpecCniTFToAPIRequestModel(ctx, &cniPlan)
-		diags = append(diags, cniDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Cni = cniTmp
-	}
-
-	return &am, diags
-}
-
-func PluginsSpecCniAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.PluginsSpecCniOptionalResponse) (*tfmodel.PluginsSpecCni, tfdiag.Diagnostics) {
+func PluginsSpecCniAPIOptionalResponseToTFModel(ctx context.Context, am *model.PluginsSpecCniOptionalResponse) (*tfmodel.PluginsSpecCni, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -93,23 +64,4 @@ func PluginsSpecCniAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	}
 
 	return &t, diags
-}
-
-func PluginsSpecCniTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PluginsSpecCni) (*apimodel.PluginsSpecCniRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.PluginsSpecCniRequest
-
-	if !plan.Calico.IsNull() && !plan.Calico.IsUnknown() {
-		am.Calico = json.RawMessage(plan.Calico.ValueString())
-	}
-
-	if !plan.Cilium.IsNull() && !plan.Cilium.IsUnknown() {
-		am.Cilium = json.RawMessage(plan.Cilium.ValueString())
-	}
-
-	return &am, diags
 }

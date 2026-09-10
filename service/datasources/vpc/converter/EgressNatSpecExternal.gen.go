@@ -8,15 +8,14 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/model"
 )
 
-func EgressNatSpecExternalAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.EgressNatSpecExternalOptionalResponse) (*tfmodel.EgressNatSpecExternal, tfdiag.Diagnostics) {
+func EgressNatSpecExternalAPIOptionalResponseToTFModel(ctx context.Context, am *model.EgressNatSpecExternalOptionalResponse) (*tfmodel.EgressNatSpecExternal, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -52,35 +51,4 @@ func EgressNatSpecExternalAPIOptionalResponseToTFModel(ctx context.Context, am *
 	}
 
 	return &t, diags
-}
-
-func EgressNatSpecExternalTFToAPIRequestModel(ctx context.Context, plan *tfmodel.EgressNatSpecExternal) (*apimodel.EgressNatSpecExternalRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.EgressNatSpecExternalRequest
-
-	if !plan.Addresses.IsNull() && !plan.Addresses.IsUnknown() {
-		addresses := make([]tfcommon.ResourceExternalAddressSpecOrRef, 0)
-		dAddresses := plan.Addresses.ElementsAs(ctx, &addresses, false)
-		diags = append(diags, dAddresses...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Addresses = make([]commonapimodel.ResourceExternalAddressSpecOrRefRequest, 0, len(addresses))
-
-		for _, entity := range addresses {
-			tmp, d := commonconv.ResourceExternalAddressSpecOrRefTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.Addresses = append(am.Addresses, *tmp)
-		}
-	}
-
-	return &am, diags
 }

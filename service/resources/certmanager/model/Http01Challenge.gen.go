@@ -15,8 +15,7 @@ type Http01Challenge struct {
 
 func (s *Http01Challenge) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Данные для прохождения проверки типа http-01.
-`,
+		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"source_url": schema.StringAttribute{
 				MarkdownDescription: `Исходный URL, по которому должен быть доступен HTTP-01 challenge.

@@ -8,25 +8,25 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
 func TestPostgresExtensionSpecAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.PostgresExtensionSpecResponse{}
+	emptyApiModel := model.PostgresExtensionSpecResponse{}
 	_, diags := conv.PostgresExtensionSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestPostgresExtensionSpecResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.PostgresExtensionSpecRequest{
+	emptyApiModelRequest := model.PostgresExtensionSpecRequest{
 		Name: "name",
 	}
 
-	emptyApiModelResponse, err := apimodel.PostgresExtensionSpecRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.PostgresExtensionSpecRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.PostgresExtensionSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -35,7 +35,7 @@ func TestPostgresExtensionSpecResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.PostgresExtensionSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.PostgresExtensionSpecRequestToResponse(filledApiModelRequest)
+	result, err := model.PostgresExtensionSpecRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -47,7 +47,7 @@ func TestUpdatePostgresExtensionSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.PostgresExtensionSpec
 	var stateTfModel tfmodel.PostgresExtensionSpec
 
-	expectedUpdateModel := &apimodel.UpdatePostgresExtensionSpecRequest{}
+	expectedUpdateModel := &model.UpdatePostgresExtensionSpecRequest{}
 
 	result, diags := conv.PostgresExtensionSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

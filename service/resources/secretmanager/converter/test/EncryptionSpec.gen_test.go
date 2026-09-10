@@ -9,25 +9,25 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/service/resources/references/kms"
-	apimodel "go.mws.cloud/go-sdk/service/secretmanager/model"
+	"go.mws.cloud/go-sdk/service/secretmanager/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager/model"
 )
 
 func TestEncryptionSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.EncryptionSpecOptionalResponse{}
+	emptyApiModel := model.EncryptionSpecOptionalResponse{}
 	_, diags := conv.EncryptionSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestEncryptionSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.EncryptionSpecRequest{
+	emptyApiModelRequest := model.EncryptionSpecRequest{
 		CryptoKeyId: kms.NewMustCryptoKeyRef("projectID", "keyID"),
 	}
 
-	emptyApiModelResponse, err := apimodel.EncryptionSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.EncryptionSpecRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.EncryptionSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -36,7 +36,7 @@ func TestEncryptionSpecOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.EncryptionSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.EncryptionSpecRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.EncryptionSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -48,7 +48,7 @@ func TestUpdateEncryptionSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.EncryptionSpec
 	var stateTfModel tfmodel.EncryptionSpec
 
-	expectedUpdateModel := &apimodel.UpdateEncryptionSpecRequest{}
+	expectedUpdateModel := &model.UpdateEncryptionSpecRequest{}
 
 	result, diags := conv.EncryptionSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

@@ -8,18 +8,16 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/model"
 )
 
-func KafkaUserAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaUserResponse) (*tfmodel.KafkaUser, tfdiag.Diagnostics) {
+func KafkaUserAPIResponseToTFModel(ctx context.Context, am *model.KafkaUserResponse) (*tfmodel.KafkaUser, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -99,54 +97,7 @@ func KafkaUserAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaUserRe
 	return &t, diags
 }
 
-func KafkaUserTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaUser) (*apimodel.KafkaUserRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaUserRequest
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfmodel.KafkaUserMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := KafkaUserMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.Roles.IsNull() && !plan.Roles.IsUnknown() {
-		roles := make([]tfmodel.KafkaClusterRole, 0)
-		dRoles := plan.Roles.ElementsAs(ctx, &roles, false)
-		diags = append(diags, dRoles...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Spec.Roles = make([]apimodel.KafkaClusterRoleRequest, 0, len(roles))
-
-		for _, entity := range roles {
-			tmp, d := KafkaClusterRoleTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.Spec.Roles = append(am.Spec.Roles, *tmp)
-		}
-	}
-
-	return &am, diags
-}
-
-func KafkaUserMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaUserMetadataResponse) (*tfmodel.KafkaUserMetadata, tfdiag.Diagnostics) {
+func KafkaUserMetadataAPIResponseToTFModel(ctx context.Context, am *model.KafkaUserMetadataResponse) (*tfmodel.KafkaUserMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -218,43 +169,4 @@ func KafkaUserMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.Kaf
 	}
 
 	return &t, diags
-}
-
-func KafkaUserMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaUserMetadata) (*apimodel.KafkaUserMetadataRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaUserMetadataRequest
-
-	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
-		am.DisplayName = plan.DisplayName.ValueStringPointer()
-	}
-
-	if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
-		usages := make([]tfcommon.TypedUsage, 0)
-		dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
-		diags = append(diags, dUsages...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
-
-		for _, entity := range usages {
-			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.Usages = append(am.Usages, *tmp)
-		}
-	}
-
-	if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
-		am.Description = plan.Description.ValueStringPointer()
-	}
-
-	return &am, diags
 }

@@ -7,16 +7,15 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/model"
 )
 
-func OneToOneNatSpecExternalAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.OneToOneNatSpecExternalOptionalResponse) (*tfmodel.OneToOneNatSpecExternal, tfdiag.Diagnostics) {
+func OneToOneNatSpecExternalAPIOptionalResponseToTFModel(ctx context.Context, am *model.OneToOneNatSpecExternalOptionalResponse) (*tfmodel.OneToOneNatSpecExternal, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -39,31 +38,4 @@ func OneToOneNatSpecExternalAPIOptionalResponseToTFModel(ctx context.Context, am
 	t.Address = addressTfObject
 
 	return &t, diags
-}
-
-func OneToOneNatSpecExternalTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OneToOneNatSpecExternal) (*apimodel.OneToOneNatSpecExternalRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.OneToOneNatSpecExternalRequest
-
-	if !plan.Address.IsNull() && !plan.Address.IsUnknown() {
-		addressPlan := tfcommon.ResourceExternalAddressSpecOrRef{}
-		addressPlanDiag := plan.Address.As(ctx, &addressPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, addressPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		addressTmp, addressDiag := commonconv.ResourceExternalAddressSpecOrRefTFToAPIRequestModel(ctx, &addressPlan)
-		diags = append(diags, addressDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Address = *addressTmp
-	}
-
-	return &am, diags
 }

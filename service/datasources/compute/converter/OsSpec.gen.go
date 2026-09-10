@@ -7,14 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func OsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.OsSpecOptionalResponse) (*tfmodel.OsSpec, tfdiag.Diagnostics) {
+func OsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.OsSpecOptionalResponse) (*tfmodel.OsSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -61,46 +60,7 @@ func OsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.OsSpec
 	return &t, diags
 }
 
-func OsSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OsSpec) (*apimodel.OsSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.OsSpecRequest
-
-	if !plan.Hostname.IsNull() && !plan.Hostname.IsUnknown() {
-		am.Hostname = plan.Hostname.ValueStringPointer()
-	}
-
-	if !plan.LocalDomain.IsNull() && !plan.LocalDomain.IsUnknown() {
-		am.LocalDomain = plan.LocalDomain.ValueStringPointer()
-	}
-
-	if !plan.StandardDnsRecords.IsNull() && !plan.StandardDnsRecords.IsUnknown() {
-		am.StandardDnsRecords = plan.StandardDnsRecords.ValueBoolPointer()
-	}
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfmodel.OsSpecMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := OsSpecMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	return &am, diags
-}
-
-func OsSpecMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.OsSpecMetadataOptionalResponse) (*tfmodel.OsSpecMetadata, tfdiag.Diagnostics) {
+func OsSpecMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *model.OsSpecMetadataOptionalResponse) (*tfmodel.OsSpecMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -127,30 +87,4 @@ func OsSpecMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	}
 
 	return &t, diags
-}
-
-func OsSpecMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.OsSpecMetadata) (*apimodel.OsSpecMetadataRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.OsSpecMetadataRequest
-
-	if !plan.Attributes.IsNull() && !plan.Attributes.IsUnknown() {
-		attributes := make(map[string]types.String)
-		dAttributes := plan.Attributes.ElementsAs(ctx, &attributes, false)
-		diags = append(diags, dAttributes...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Attributes = make(map[string]string, len(attributes))
-
-		for k, entity := range attributes {
-			am.Attributes[k] = entity.ValueString()
-		}
-	}
-
-	return &am, diags
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/nlb/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/nlb/model"
@@ -17,16 +17,16 @@ import (
 
 func TestNlbListenerAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NlbListenerOptionalResponse{}
+	emptyApiModel := model.NlbListenerOptionalResponse{}
 	_, diags := conv.NlbListenerAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestNlbListenerOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.NlbListenerRequest{}
+	emptyApiModelRequest := model.NlbListenerRequest{}
 
-	emptyApiModelResponse, err := apimodel.NlbListenerRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.NlbListenerRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.NlbListenerAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -35,7 +35,7 @@ func TestNlbListenerOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.NlbListenerTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.NlbListenerRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.NlbListenerRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -49,12 +49,12 @@ func TestUpdateNlbListenerRequestConverters(t *testing.T) {
 	stateTfModel.Internal = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.NlbListenerInternal).GetSchema().Attributes))
 	stateTfModel.External = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.NlbListenerExternal).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateNlbListenerRequest{
-		Internal: optional.OptionalNil[apimodel.UpdateNlbListenerInternalRequest]{
+	expectedUpdateModel := &model.UpdateNlbListenerRequest{
+		Internal: optional.OptionalNil[model.UpdateNlbListenerInternalRequest]{
 			Set:  true,
 			Null: true,
 		},
-		External: optional.OptionalNil[apimodel.UpdateNlbListenerExternalRequest]{
+		External: optional.OptionalNil[model.UpdateNlbListenerExternalRequest]{
 			Set:  true,
 			Null: true,
 		},

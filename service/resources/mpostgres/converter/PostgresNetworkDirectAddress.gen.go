@@ -10,14 +10,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	"go.mws.cloud/go-sdk/service/resources/references/rm"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func PostgresNetworkDirectAddressAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresNetworkDirectAddressResponse) (*tfmodel.PostgresNetworkDirectAddress, tfdiag.Diagnostics) {
+func PostgresNetworkDirectAddressAPIResponseToTFModel(ctx context.Context, am *model.PostgresNetworkDirectAddressResponse) (*tfmodel.PostgresNetworkDirectAddress, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -76,13 +76,13 @@ func PostgresNetworkDirectAddressAPIResponseToTFModel(ctx context.Context, am *a
 	return &t, diags
 }
 
-func PostgresNetworkDirectAddressTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresNetworkDirectAddress) (*apimodel.PostgresNetworkDirectAddressRequest, tfdiag.Diagnostics) {
+func PostgresNetworkDirectAddressTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresNetworkDirectAddress) (*model.PostgresNetworkDirectAddressRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresNetworkDirectAddressRequest
+	var am model.PostgresNetworkDirectAddressRequest
 
 	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
 		refRef, err := vpc.ParseAddressRef(ctx, plan.Ref.ValueString())
@@ -137,7 +137,7 @@ func PostgresNetworkDirectAddressTFToAPIRequestModel(ctx context.Context, plan *
 	return &am, diags
 }
 
-func PostgresNetworkDirectAddressTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresNetworkDirectAddress) (*apimodel.UpdatePostgresNetworkDirectAddressRequest, tfdiag.Diagnostics) {
+func PostgresNetworkDirectAddressTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresNetworkDirectAddress) (*model.UpdatePostgresNetworkDirectAddressRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -146,7 +146,7 @@ func PostgresNetworkDirectAddressTFToAPIUpdateRequestModel(ctx context.Context, 
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdatePostgresNetworkDirectAddressRequest
+	var am model.UpdatePostgresNetworkDirectAddressRequest
 
 	if !plan.Ref.Equal(state.Ref) {
 		if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {

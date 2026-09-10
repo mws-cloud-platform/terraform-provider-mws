@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func PostgresStatusAddressAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresStatusAddressResponse) (*tfmodel.PostgresStatusAddress, tfdiag.Diagnostics) {
+func PostgresStatusAddressAPIResponseToTFModel(ctx context.Context, am *model.PostgresStatusAddressResponse) (*tfmodel.PostgresStatusAddress, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

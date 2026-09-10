@@ -10,13 +10,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
-func VpcAddressGroupSpecOrRefAPIToTFModel(ctx context.Context, am *commonapimodel.VpcAddressGroupSpecOrRef) (*tfcommon.VpcAddressGroupSpecOrRef, tfdiag.Diagnostics) {
+func VpcAddressGroupSpecOrRefAPIToTFModel(ctx context.Context, am *commonmodel.VpcAddressGroupSpecOrRef) (*tfcommon.VpcAddressGroupSpecOrRef, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -51,7 +51,7 @@ func VpcAddressGroupSpecOrRefAPIToTFModel(ctx context.Context, am *commonapimode
 	return &t, diags
 }
 
-func VpcAddressGroupSpecOrRefAPIResponseToTFModel(ctx context.Context, am *commonapimodel.VpcAddressGroupSpecOrRefResponse) (*tfcommon.VpcAddressGroupSpecOrRef, tfdiag.Diagnostics) {
+func VpcAddressGroupSpecOrRefAPIResponseToTFModel(ctx context.Context, am *commonmodel.VpcAddressGroupSpecOrRefResponse) (*tfcommon.VpcAddressGroupSpecOrRef, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -86,7 +86,7 @@ func VpcAddressGroupSpecOrRefAPIResponseToTFModel(ctx context.Context, am *commo
 	return &t, diags
 }
 
-func VpcAddressGroupSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.VpcAddressGroupSpecOrRefOptionalResponse) (*tfcommon.VpcAddressGroupSpecOrRef, tfdiag.Diagnostics) {
+func VpcAddressGroupSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *commonmodel.VpcAddressGroupSpecOrRefOptionalResponse) (*tfcommon.VpcAddressGroupSpecOrRef, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -121,13 +121,13 @@ func VpcAddressGroupSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, a
 	return &t, diags
 }
 
-func VpcAddressGroupSpecOrRefTFToAPIModel(ctx context.Context, plan *tfcommon.VpcAddressGroupSpecOrRef) (*commonapimodel.VpcAddressGroupSpecOrRef, tfdiag.Diagnostics) {
+func VpcAddressGroupSpecOrRefTFToAPIModel(ctx context.Context, plan *tfcommon.VpcAddressGroupSpecOrRef) (*commonmodel.VpcAddressGroupSpecOrRef, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.VpcAddressGroupSpecOrRef
+	var am commonmodel.VpcAddressGroupSpecOrRef
 
 	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
 		refRef, err := vpc.ParseAddressGroupRef(ctx, plan.Ref.ValueString())
@@ -157,13 +157,13 @@ func VpcAddressGroupSpecOrRefTFToAPIModel(ctx context.Context, plan *tfcommon.Vp
 	return &am, diags
 }
 
-func VpcAddressGroupSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfcommon.VpcAddressGroupSpecOrRef) (*commonapimodel.VpcAddressGroupSpecOrRefRequest, tfdiag.Diagnostics) {
+func VpcAddressGroupSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfcommon.VpcAddressGroupSpecOrRef) (*commonmodel.VpcAddressGroupSpecOrRefRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.VpcAddressGroupSpecOrRefRequest
+	var am commonmodel.VpcAddressGroupSpecOrRefRequest
 
 	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
 		refRef, err := vpc.ParseAddressGroupRef(ctx, plan.Ref.ValueString())
@@ -193,7 +193,7 @@ func VpcAddressGroupSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfco
 	return &am, diags
 }
 
-func VpcAddressGroupSpecOrRefTFToAPIUpdateModel(ctx context.Context, plan, state *tfcommon.VpcAddressGroupSpecOrRef) (*commonapimodel.UpdateVpcAddressGroupSpecOrRef, tfdiag.Diagnostics) {
+func VpcAddressGroupSpecOrRefTFToAPIUpdateModel(ctx context.Context, plan, state *tfcommon.VpcAddressGroupSpecOrRef) (*commonmodel.UpdateVpcAddressGroupSpecOrRef, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -202,7 +202,7 @@ func VpcAddressGroupSpecOrRefTFToAPIUpdateModel(ctx context.Context, plan, state
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.UpdateVpcAddressGroupSpecOrRef
+	var am commonmodel.UpdateVpcAddressGroupSpecOrRef
 
 	if !plan.Ref.Equal(state.Ref) {
 		if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
@@ -249,7 +249,7 @@ func VpcAddressGroupSpecOrRefTFToAPIUpdateModel(ctx context.Context, plan, state
 	return &am, diags
 }
 
-func VpcAddressGroupSpecOrRefTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfcommon.VpcAddressGroupSpecOrRef) (*commonapimodel.UpdateVpcAddressGroupSpecOrRefRequest, tfdiag.Diagnostics) {
+func VpcAddressGroupSpecOrRefTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfcommon.VpcAddressGroupSpecOrRef) (*commonmodel.UpdateVpcAddressGroupSpecOrRefRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -258,7 +258,7 @@ func VpcAddressGroupSpecOrRefTFToAPIUpdateRequestModel(ctx context.Context, plan
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.UpdateVpcAddressGroupSpecOrRefRequest
+	var am commonmodel.UpdateVpcAddressGroupSpecOrRefRequest
 
 	if !plan.Ref.Equal(state.Ref) {
 		if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {

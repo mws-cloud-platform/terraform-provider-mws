@@ -8,55 +8,55 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
 )
 
 func TestNodeGroupStatusAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NodeGroupStatusResponse{}
+	emptyApiModel := model.NodeGroupStatusResponse{}
 	_, diags := conv.NodeGroupStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestNodeGroupStatusNodeGroupStatusAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NodeGroupStatusNodeGroupStatusResponse{}
+	emptyApiModel := model.NodeGroupStatusNodeGroupStatusResponse{}
 	_, diags := conv.NodeGroupStatusNodeGroupStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestNodeGroupStatusRolloutStrategyAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NodeGroupStatusRolloutStrategyResponse{}
+	emptyApiModel := model.NodeGroupStatusRolloutStrategyResponse{}
 	_, diags := conv.NodeGroupStatusRolloutStrategyAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestNodeGroupStatusScaleAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NodeGroupStatusScaleResponse{}
+	emptyApiModel := model.NodeGroupStatusScaleResponse{}
 	_, diags := conv.NodeGroupStatusScaleAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestNodeGroupStatusScaleAutoscalingAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NodeGroupStatusScaleAutoscalingResponse{}
+	emptyApiModel := model.NodeGroupStatusScaleAutoscalingResponse{}
 	_, diags := conv.NodeGroupStatusScaleAutoscalingAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestNodeGroupStatusServiceAccountAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NodeGroupStatusServiceAccountResponse{}
+	emptyApiModel := model.NodeGroupStatusServiceAccountResponse{}
 	_, diags := conv.NodeGroupStatusServiceAccountAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestNodeGroupStatusVmTypeAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NodeGroupStatusVmTypeResponse{}
+	emptyApiModel := model.NodeGroupStatusVmTypeResponse{}
 	_, diags := conv.NodeGroupStatusVmTypeAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }

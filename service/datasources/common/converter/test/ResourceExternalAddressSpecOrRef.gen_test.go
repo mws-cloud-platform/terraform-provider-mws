@@ -8,78 +8,27 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
 func TestResourceExternalAddressSpecOrRefAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceExternalAddressSpecOrRef{}
+	emptyApiModel := commonmodel.ResourceExternalAddressSpecOrRef{}
 	_, diags := commonconv.ResourceExternalAddressSpecOrRefAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestResourceExternalAddressSpecOrRefAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceExternalAddressSpecOrRefResponse{}
+	emptyApiModel := commonmodel.ResourceExternalAddressSpecOrRefResponse{}
 	_, diags := commonconv.ResourceExternalAddressSpecOrRefAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestResourceExternalAddressSpecOrRefAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceExternalAddressSpecOrRefOptionalResponse{}
+	emptyApiModel := commonmodel.ResourceExternalAddressSpecOrRefOptionalResponse{}
 	_, diags := commonconv.ResourceExternalAddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestResourceExternalAddressSpecOrRefConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonapimodel.ResourceExternalAddressSpecOrRef{}
-
-	tfModel, diags := commonconv.ResourceExternalAddressSpecOrRefAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-
-	result, diags := commonconv.ResourceExternalAddressSpecOrRefTFToAPIModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	require.Equal(t, emptyApiModel, *result)
-}
-
-func TestResourceExternalAddressSpecOrRefResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := commonapimodel.ResourceExternalAddressSpecOrRefRequest{}
-
-	emptyApiModelResponse, err := commonapimodel.ResourceExternalAddressSpecOrRefRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := commonconv.ResourceExternalAddressSpecOrRefAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := commonconv.ResourceExternalAddressSpecOrRefTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := commonapimodel.ResourceExternalAddressSpecOrRefRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
-func TestResourceExternalAddressSpecOrRefOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := commonapimodel.ResourceExternalAddressSpecOrRefRequest{}
-
-	emptyApiModelResponse, err := commonapimodel.ResourceExternalAddressSpecOrRefRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := commonconv.ResourceExternalAddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := commonconv.ResourceExternalAddressSpecOrRefTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := commonapimodel.ResourceExternalAddressSpecOrRefRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

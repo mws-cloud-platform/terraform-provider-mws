@@ -7,18 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
-	"go.mws.cloud/go-sdk/service/resources/references/compute"
-	"go.mws.cloud/go-sdk/service/resources/references/iam"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/model"
 )
 
-func NodeGroupSpecRolloutStrategyAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NodeGroupSpecRolloutStrategyOptionalResponse) (*tfmodel.NodeGroupSpecRolloutStrategy, tfdiag.Diagnostics) {
+func NodeGroupSpecRolloutStrategyAPIOptionalResponseToTFModel(ctx context.Context, am *model.NodeGroupSpecRolloutStrategyOptionalResponse) (*tfmodel.NodeGroupSpecRolloutStrategy, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -41,26 +36,7 @@ func NodeGroupSpecRolloutStrategyAPIOptionalResponseToTFModel(ctx context.Contex
 	return &t, diags
 }
 
-func NodeGroupSpecRolloutStrategyTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroupSpecRolloutStrategy) (*apimodel.NodeGroupSpecRolloutStrategyRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.NodeGroupSpecRolloutStrategyRequest
-
-	if !plan.MaxSurge.IsNull() && !plan.MaxSurge.IsUnknown() {
-		am.MaxSurge = ptr.Get(int(plan.MaxSurge.ValueInt64()))
-	}
-
-	if !plan.MaxUnavailable.IsNull() && !plan.MaxUnavailable.IsUnknown() {
-		am.MaxUnavailable = ptr.Get(int(plan.MaxUnavailable.ValueInt64()))
-	}
-
-	return &am, diags
-}
-
-func NodeGroupSpecScaleAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NodeGroupSpecScaleOptionalResponse) (*tfmodel.NodeGroupSpecScale, tfdiag.Diagnostics) {
+func NodeGroupSpecScaleAPIOptionalResponseToTFModel(ctx context.Context, am *model.NodeGroupSpecScaleOptionalResponse) (*tfmodel.NodeGroupSpecScale, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -95,38 +71,7 @@ func NodeGroupSpecScaleAPIOptionalResponseToTFModel(ctx context.Context, am *api
 	return &t, diags
 }
 
-func NodeGroupSpecScaleTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroupSpecScale) (*apimodel.NodeGroupSpecScaleRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.NodeGroupSpecScaleRequest
-
-	if !plan.Fixed.IsNull() && !plan.Fixed.IsUnknown() {
-		am.Fixed = ptr.Get(int(plan.Fixed.ValueInt64()))
-	}
-
-	if !plan.Autoscaling.IsNull() && !plan.Autoscaling.IsUnknown() {
-		autoscalingPlan := tfmodel.NodeGroupSpecScaleAutoscaling{}
-		autoscalingPlanDiag := plan.Autoscaling.As(ctx, &autoscalingPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, autoscalingPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		autoscalingTmp, autoscalingDiag := NodeGroupSpecScaleAutoscalingTFToAPIRequestModel(ctx, &autoscalingPlan)
-		diags = append(diags, autoscalingDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Autoscaling = autoscalingTmp
-	}
-
-	return &am, diags
-}
-
-func NodeGroupSpecScaleAutoscalingAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NodeGroupSpecScaleAutoscalingOptionalResponse) (*tfmodel.NodeGroupSpecScaleAutoscaling, tfdiag.Diagnostics) {
+func NodeGroupSpecScaleAutoscalingAPIOptionalResponseToTFModel(ctx context.Context, am *model.NodeGroupSpecScaleAutoscalingOptionalResponse) (*tfmodel.NodeGroupSpecScaleAutoscaling, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -141,26 +86,7 @@ func NodeGroupSpecScaleAutoscalingAPIOptionalResponseToTFModel(ctx context.Conte
 	return &t, diags
 }
 
-func NodeGroupSpecScaleAutoscalingTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroupSpecScaleAutoscaling) (*apimodel.NodeGroupSpecScaleAutoscalingRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.NodeGroupSpecScaleAutoscalingRequest
-
-	if !plan.Min.IsNull() && !plan.Min.IsUnknown() {
-		am.Min = int(plan.Min.ValueInt64())
-	}
-
-	if !plan.Max.IsNull() && !plan.Max.IsUnknown() {
-		am.Max = int(plan.Max.ValueInt64())
-	}
-
-	return &am, diags
-}
-
-func NodeGroupSpecServiceAccountAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NodeGroupSpecServiceAccountOptionalResponse) (*tfmodel.NodeGroupSpecServiceAccount, tfdiag.Diagnostics) {
+func NodeGroupSpecServiceAccountAPIOptionalResponseToTFModel(ctx context.Context, am *model.NodeGroupSpecServiceAccountOptionalResponse) (*tfmodel.NodeGroupSpecServiceAccount, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -173,27 +99,7 @@ func NodeGroupSpecServiceAccountAPIOptionalResponseToTFModel(ctx context.Context
 	return &t, diags
 }
 
-func NodeGroupSpecServiceAccountTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroupSpecServiceAccount) (*apimodel.NodeGroupSpecServiceAccountRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.NodeGroupSpecServiceAccountRequest
-
-	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
-		refRef, err := iam.ParseServiceAccountRef(ctx, plan.Ref.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Ref = refRef
-	}
-
-	return &am, diags
-}
-
-func NodeGroupSpecSubnetAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NodeGroupSpecSubnetOptionalResponse) (*tfmodel.NodeGroupSpecSubnet, tfdiag.Diagnostics) {
+func NodeGroupSpecSubnetAPIOptionalResponseToTFModel(ctx context.Context, am *model.NodeGroupSpecSubnetOptionalResponse) (*tfmodel.NodeGroupSpecSubnet, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -206,27 +112,7 @@ func NodeGroupSpecSubnetAPIOptionalResponseToTFModel(ctx context.Context, am *ap
 	return &t, diags
 }
 
-func NodeGroupSpecSubnetTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroupSpecSubnet) (*apimodel.NodeGroupSpecSubnetRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.NodeGroupSpecSubnetRequest
-
-	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
-		refRef, err := vpc.ParseSubnetRef(ctx, plan.Ref.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Ref = refRef
-	}
-
-	return &am, diags
-}
-
-func NodeGroupSpecVmTypeAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NodeGroupSpecVmTypeOptionalResponse) (*tfmodel.NodeGroupSpecVmType, tfdiag.Diagnostics) {
+func NodeGroupSpecVmTypeAPIOptionalResponseToTFModel(ctx context.Context, am *model.NodeGroupSpecVmTypeOptionalResponse) (*tfmodel.NodeGroupSpecVmType, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -237,24 +123,4 @@ func NodeGroupSpecVmTypeAPIOptionalResponseToTFModel(ctx context.Context, am *ap
 	t.Ref = types.StringValue(am.Ref.Path())
 
 	return &t, diags
-}
-
-func NodeGroupSpecVmTypeTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroupSpecVmType) (*apimodel.NodeGroupSpecVmTypeRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.NodeGroupSpecVmTypeRequest
-
-	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
-		refRef, err := compute.ParseVmTypeRef(ctx, plan.Ref.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Ref = refRef
-	}
-
-	return &am, diags
 }

@@ -10,16 +10,16 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/rm"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func VpcAddressGroupAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.VpcAddressGroupOptionalResponse) (*tfmodel.VpcAddressGroup, tfdiag.Diagnostics) {
+func VpcAddressGroupAPIOptionalResponseToTFModel(ctx context.Context, am *model.VpcAddressGroupOptionalResponse) (*tfmodel.VpcAddressGroup, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -105,13 +105,13 @@ func VpcAddressGroupAPIOptionalResponseToTFModel(ctx context.Context, am *apimod
 	return &t, diags
 }
 
-func VpcAddressGroupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.VpcAddressGroup) (*apimodel.VpcAddressGroupRequest, tfdiag.Diagnostics) {
+func VpcAddressGroupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.VpcAddressGroup) (*model.VpcAddressGroupRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.VpcAddressGroupRequest
+	var am model.VpcAddressGroupRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
@@ -146,7 +146,7 @@ func VpcAddressGroupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.VpcAd
 			return nil, diags
 		}
 
-		am.Spec.Addresses = make([]commonapimodel.ResourceAddressSpecOrRefRequest, 0, len(addresses))
+		am.Spec.Addresses = make([]commonmodel.ResourceAddressSpecOrRefRequest, 0, len(addresses))
 
 		for _, entity := range addresses {
 			tmp, d := commonconv.ResourceAddressSpecOrRefTFToAPIRequestModel(ctx, &entity)
@@ -161,7 +161,7 @@ func VpcAddressGroupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.VpcAd
 	return &am, diags
 }
 
-func VpcAddressGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.VpcAddressGroup) (*apimodel.UpdateVpcAddressGroupRequest, tfdiag.Diagnostics) {
+func VpcAddressGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.VpcAddressGroup) (*model.UpdateVpcAddressGroupRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -170,7 +170,7 @@ func VpcAddressGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateVpcAddressGroupRequest
+	var am model.UpdateVpcAddressGroupRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -204,7 +204,7 @@ func VpcAddressGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *
 	if !plan.Region.Equal(state.Region) {
 		if !plan.Region.IsNull() && !plan.Region.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(commonapimodel.UpdateVpcAddressGroupSpecRequest{})
+				am.Spec.SetTo(commonmodel.UpdateVpcAddressGroupSpecRequest{})
 			}
 			regionRef, err := rm.ParseRegionRef(ctx, plan.Region.ValueString())
 			if err != nil {
@@ -218,7 +218,7 @@ func VpcAddressGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *
 	if !plan.Addresses.Equal(state.Addresses) {
 		if !plan.Addresses.IsNull() && !plan.Addresses.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(commonapimodel.UpdateVpcAddressGroupSpecRequest{})
+				am.Spec.SetTo(commonmodel.UpdateVpcAddressGroupSpecRequest{})
 			}
 			addresses := make([]tfcommon.ResourceAddressSpecOrRef, 0)
 			dAddresses := plan.Addresses.ElementsAs(ctx, &addresses, false)
@@ -227,7 +227,7 @@ func VpcAddressGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *
 				return nil, diags
 			}
 
-			addressesTmp := make([]commonapimodel.UpdateResourceAddressSpecOrRefRequest, 0, len(addresses))
+			addressesTmp := make([]commonmodel.UpdateResourceAddressSpecOrRefRequest, 0, len(addresses))
 
 			for _, entity := range addresses {
 				stateEntity := tfcommon.ResourceAddressSpecOrRef{}

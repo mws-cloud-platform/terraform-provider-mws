@@ -8,39 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/kms/model"
-	"go.mws.cloud/go-sdk/service/resources/references/iam"
+	"go.mws.cloud/go-sdk/service/kms/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/kms/converter"
 )
 
 func TestCryptoKeyRoleBindingAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.CryptoKeyRoleBindingOptionalResponse{}
+	emptyApiModel := model.CryptoKeyRoleBindingOptionalResponse{}
 	_, diags := conv.CryptoKeyRoleBindingAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestCryptoKeyRoleBindingOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.CryptoKeyRoleBindingRequest{
-		Spec: commonapimodel.CommonRoleBindingSpecRequest{
-			Subject: commonapimodel.CommonRoleBindingSpecSubjectRequest{},
-			Role:    iam.NewMustRoleRef("roleID"),
-		},
-	}
-
-	emptyApiModelResponse, err := apimodel.CryptoKeyRoleBindingRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.CryptoKeyRoleBindingAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.CryptoKeyRoleBindingTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.CryptoKeyRoleBindingRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

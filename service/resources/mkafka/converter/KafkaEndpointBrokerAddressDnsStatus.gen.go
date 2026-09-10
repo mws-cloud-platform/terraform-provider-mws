@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func KafkaEndpointBrokerAddressDnsStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaEndpointBrokerAddressDnsStatusResponse) (*tfmodel.KafkaEndpointBrokerAddressDnsStatus, tfdiag.Diagnostics) {
+func KafkaEndpointBrokerAddressDnsStatusAPIResponseToTFModel(ctx context.Context, am *model.KafkaEndpointBrokerAddressDnsStatusResponse) (*tfmodel.KafkaEndpointBrokerAddressDnsStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

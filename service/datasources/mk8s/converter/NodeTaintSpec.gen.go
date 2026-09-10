@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/model"
 )
 
-func NodeTaintSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NodeTaintSpecOptionalResponse) (*tfmodel.NodeTaintSpec, tfdiag.Diagnostics) {
+func NodeTaintSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.NodeTaintSpecOptionalResponse) (*tfmodel.NodeTaintSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -29,7 +29,7 @@ func NodeTaintSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel
 	return &t, diags
 }
 
-func NodeTaintSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.NodeTaintSpecResponse) (*tfmodel.NodeTaintSpec, tfdiag.Diagnostics) {
+func NodeTaintSpecAPIResponseToTFModel(ctx context.Context, am *model.NodeTaintSpecResponse) (*tfmodel.NodeTaintSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -44,27 +44,4 @@ func NodeTaintSpecAPIResponseToTFModel(ctx context.Context, am *apimodel.NodeTai
 	t.Effect = types.StringValue(string(am.Effect))
 
 	return &t, diags
-}
-
-func NodeTaintSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeTaintSpec) (*apimodel.NodeTaintSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.NodeTaintSpecRequest
-
-	if !plan.Key.IsNull() && !plan.Key.IsUnknown() {
-		am.Key = plan.Key.ValueString()
-	}
-
-	if !plan.Value.IsNull() && !plan.Value.IsUnknown() {
-		am.Value = plan.Value.ValueString()
-	}
-
-	if !plan.Effect.IsNull() && !plan.Effect.IsUnknown() {
-		am.Effect = apimodel.NodeTaintSpecEffectRequest(plan.Effect.ValueString())
-	}
-
-	return &am, diags
 }

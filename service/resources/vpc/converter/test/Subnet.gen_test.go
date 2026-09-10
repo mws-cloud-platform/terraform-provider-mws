@@ -10,8 +10,8 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
@@ -20,20 +20,20 @@ import (
 
 func TestSubnetAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.SubnetOptionalResponse{}
+	emptyApiModel := model.SubnetOptionalResponse{}
 	_, diags := conv.SubnetAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestSubnetOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.SubnetRequest{
-		Spec: apimodel.SubnetSpecRequest{
+	emptyApiModelRequest := model.SubnetRequest{
+		Spec: model.SubnetSpecRequest{
 			Cidr: cidraddress.MustParseCIDR4AddressString("192.168.1.0/24"),
 		},
 	}
 
-	emptyApiModelResponse, err := apimodel.SubnetRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.SubnetRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.SubnetAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -42,7 +42,7 @@ func TestSubnetOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.SubnetTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.SubnetRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.SubnetRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -56,13 +56,13 @@ func TestUpdateSubnetRequestConverters(t *testing.T) {
 	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
 	stateTfModel.DhcpOptions = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.SubnetDhcpOptions).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateSubnetRequest{
-		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+	expectedUpdateModel := &model.UpdateSubnetRequest{
+		Metadata: optional.OptionalNil[commonmodel.UpdateCommonTypedResourceMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},
-		Spec: optional.NewOptional(apimodel.UpdateSubnetSpecRequest{
-			DhcpOptions: optional.OptionalNil[apimodel.UpdateSubnetDhcpOptionsRequest]{
+		Spec: optional.NewOptional(model.UpdateSubnetSpecRequest{
+			DhcpOptions: optional.OptionalNil[model.UpdateSubnetDhcpOptionsRequest]{
 				Set:  true,
 				Null: true,
 			},

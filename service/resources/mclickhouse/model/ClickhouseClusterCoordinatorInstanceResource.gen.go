@@ -17,10 +17,10 @@ type ClickhouseClusterCoordinatorInstanceResource struct {
 
 func (s *ClickhouseClusterCoordinatorInstanceResource) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Описание инстанса координатора.`,
+		MarkdownDescription: `Описание узла координатора.`,
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
-				MarkdownDescription: `Идентификатор инстанса координатора`,
+				MarkdownDescription: `Идентификатор узла координатора`,
 				Computed:            true,
 			},
 			"zone": schema.StringAttribute{

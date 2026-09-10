@@ -17,7 +17,7 @@ type ClickhouseBackup struct {
 
 func (s *ClickhouseBackup) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Резервное копирование в Managed Clickhouse позволяет автоматизировать создание резервных копий кластера и его восстановление.  С помощью резервных копий можно восстановить данные в новый кластер в случае повреждения, потери данных или совершения ошибочных операций.
+		MarkdownDescription: `Резервное копирование в Managed ClickHouse позволяет автоматизировать создание резервных копий кластера и его восстановление. С помощью резервных копий можно восстановить данные в новый кластер в случае повреждения, потери данных или совершения ошибочных операций.
 `,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
@@ -82,15 +82,5 @@ func (s *ClickhouseBackupMetadata) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 		},
-	}
-}
-
-type ClickhouseBackupSpec struct {
-}
-
-func (s *ClickhouseBackupSpec) GetSchema() schema.Schema {
-	return schema.Schema{
-		MarkdownDescription: `Представление поля Spec анонимного типа структуры ClickhouseBackup`,
-		Attributes:          map[string]schema.Attribute{},
 	}
 }

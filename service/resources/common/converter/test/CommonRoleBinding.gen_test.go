@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/iam"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
@@ -18,30 +18,30 @@ import (
 
 func TestCommonRoleBindingAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.CommonRoleBinding{}
+	emptyApiModel := commonmodel.CommonRoleBinding{}
 	_, diags := commonconv.CommonRoleBindingAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestCommonRoleBindingAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.CommonRoleBindingResponse{}
+	emptyApiModel := commonmodel.CommonRoleBindingResponse{}
 	_, diags := commonconv.CommonRoleBindingAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestCommonRoleBindingAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.CommonRoleBindingOptionalResponse{}
+	emptyApiModel := commonmodel.CommonRoleBindingOptionalResponse{}
 	_, diags := commonconv.CommonRoleBindingAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestCommonRoleBindingConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.CommonRoleBinding{
-		Spec: commonapimodel.CommonRoleBindingSpec{
-			Subject: commonapimodel.CommonRoleBindingSpecSubject{},
+	emptyApiModel := commonmodel.CommonRoleBinding{
+		Spec: commonmodel.CommonRoleBindingSpec{
+			Subject: commonmodel.CommonRoleBindingSpecSubject{},
 			Role:    iam.NewMustRoleRef("roleID"),
 		},
 	}
@@ -57,14 +57,14 @@ func TestCommonRoleBindingConverters(t *testing.T) {
 
 func TestCommonRoleBindingResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonapimodel.CommonRoleBindingRequest{
-		Spec: commonapimodel.CommonRoleBindingSpecRequest{
-			Subject: commonapimodel.CommonRoleBindingSpecSubjectRequest{},
+	emptyApiModelRequest := commonmodel.CommonRoleBindingRequest{
+		Spec: commonmodel.CommonRoleBindingSpecRequest{
+			Subject: commonmodel.CommonRoleBindingSpecSubjectRequest{},
 			Role:    iam.NewMustRoleRef("roleID"),
 		},
 	}
 
-	emptyApiModelResponse, err := commonapimodel.CommonRoleBindingRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonmodel.CommonRoleBindingRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.CommonRoleBindingAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -73,7 +73,7 @@ func TestCommonRoleBindingResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := commonconv.CommonRoleBindingTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := commonapimodel.CommonRoleBindingRequestToResponse(filledApiModelRequest)
+	result, err := commonmodel.CommonRoleBindingRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -81,14 +81,14 @@ func TestCommonRoleBindingResponseConverters(t *testing.T) {
 
 func TestCommonRoleBindingOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonapimodel.CommonRoleBindingRequest{
-		Spec: commonapimodel.CommonRoleBindingSpecRequest{
-			Subject: commonapimodel.CommonRoleBindingSpecSubjectRequest{},
+	emptyApiModelRequest := commonmodel.CommonRoleBindingRequest{
+		Spec: commonmodel.CommonRoleBindingSpecRequest{
+			Subject: commonmodel.CommonRoleBindingSpecSubjectRequest{},
 			Role:    iam.NewMustRoleRef("roleID"),
 		},
 	}
 
-	emptyApiModelResponse, err := commonapimodel.CommonRoleBindingRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonmodel.CommonRoleBindingRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.CommonRoleBindingAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -97,7 +97,7 @@ func TestCommonRoleBindingOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := commonconv.CommonRoleBindingTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := commonapimodel.CommonRoleBindingRequestToOptionalResponse(filledApiModelRequest)
+	result, err := commonmodel.CommonRoleBindingRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -111,12 +111,12 @@ func TestUpdateCommonRoleBindingConverters(t *testing.T) {
 	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingMetadata).GetSchema().Attributes))
 	stateTfModel.Status = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingStatus).GetSchema().Attributes))
 
-	expectedUpdateModel := &commonapimodel.UpdateCommonRoleBinding{
-		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonRoleBindingMetadata]{
+	expectedUpdateModel := &commonmodel.UpdateCommonRoleBinding{
+		Metadata: optional.OptionalNil[commonmodel.UpdateCommonRoleBindingMetadata]{
 			Set:  true,
 			Null: true,
 		},
-		Status: optional.OptionalNil[commonapimodel.UpdateCommonRoleBindingStatus]{
+		Status: optional.OptionalNil[commonmodel.UpdateCommonRoleBindingStatus]{
 			Set:  true,
 			Null: true,
 		},
@@ -135,8 +135,8 @@ func TestUpdateCommonRoleBindingRequestConverters(t *testing.T) {
 	var stateTfModel tfcommon.CommonRoleBinding
 	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingMetadata).GetSchema().Attributes))
 
-	expectedUpdateModel := &commonapimodel.UpdateCommonRoleBindingRequest{
-		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonRoleBindingMetadataRequest]{
+	expectedUpdateModel := &commonmodel.UpdateCommonRoleBindingRequest{
+		Metadata: optional.OptionalNil[commonmodel.UpdateCommonRoleBindingMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},
@@ -150,29 +150,29 @@ func TestUpdateCommonRoleBindingRequestConverters(t *testing.T) {
 
 func TestCommonRoleBindingMetadataAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.CommonRoleBindingMetadata{}
+	emptyApiModel := commonmodel.CommonRoleBindingMetadata{}
 	_, diags := commonconv.CommonRoleBindingMetadataAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestCommonRoleBindingMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.CommonRoleBindingMetadataResponse{}
+	emptyApiModel := commonmodel.CommonRoleBindingMetadataResponse{}
 	_, diags := commonconv.CommonRoleBindingMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestCommonRoleBindingMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.CommonRoleBindingMetadataOptionalResponse{}
+	emptyApiModel := commonmodel.CommonRoleBindingMetadataOptionalResponse{}
 	_, diags := commonconv.CommonRoleBindingMetadataAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestCommonRoleBindingMetadataConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonapimodel.CommonRoleBindingMetadata{
-		TypedResourceMetadata: commonapimodel.TypedResourceMetadata{},
+	emptyApiModel := commonmodel.CommonRoleBindingMetadata{
+		TypedResourceMetadata: commonmodel.TypedResourceMetadata{},
 	}
 
 	tfModel, diags := commonconv.CommonRoleBindingMetadataAPIToTFModel(context.Background(), &emptyApiModel)
@@ -186,11 +186,11 @@ func TestCommonRoleBindingMetadataConverters(t *testing.T) {
 
 func TestCommonRoleBindingMetadataResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonapimodel.CommonRoleBindingMetadataRequest{
-		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
+	emptyApiModelRequest := commonmodel.CommonRoleBindingMetadataRequest{
+		TypedResourceMetadataRequest: commonmodel.TypedResourceMetadataRequest{},
 	}
 
-	emptyApiModelResponse, err := commonapimodel.CommonRoleBindingMetadataRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonmodel.CommonRoleBindingMetadataRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.CommonRoleBindingMetadataAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -199,7 +199,7 @@ func TestCommonRoleBindingMetadataResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := commonconv.CommonRoleBindingMetadataTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := commonapimodel.CommonRoleBindingMetadataRequestToResponse(filledApiModelRequest)
+	result, err := commonmodel.CommonRoleBindingMetadataRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -207,11 +207,11 @@ func TestCommonRoleBindingMetadataResponseConverters(t *testing.T) {
 
 func TestCommonRoleBindingMetadataOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonapimodel.CommonRoleBindingMetadataRequest{
-		TypedResourceMetadataRequest: commonapimodel.TypedResourceMetadataRequest{},
+	emptyApiModelRequest := commonmodel.CommonRoleBindingMetadataRequest{
+		TypedResourceMetadataRequest: commonmodel.TypedResourceMetadataRequest{},
 	}
 
-	emptyApiModelResponse, err := commonapimodel.CommonRoleBindingMetadataRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := commonmodel.CommonRoleBindingMetadataRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := commonconv.CommonRoleBindingMetadataAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -220,7 +220,7 @@ func TestCommonRoleBindingMetadataOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := commonconv.CommonRoleBindingMetadataTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := commonapimodel.CommonRoleBindingMetadataRequestToOptionalResponse(filledApiModelRequest)
+	result, err := commonmodel.CommonRoleBindingMetadataRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -232,7 +232,7 @@ func TestUpdateCommonRoleBindingMetadataConverters(t *testing.T) {
 	var nullPlanTfModel tfcommon.CommonRoleBindingMetadata
 	var stateTfModel tfcommon.CommonRoleBindingMetadata
 
-	expectedUpdateModel := &commonapimodel.UpdateCommonRoleBindingMetadata{}
+	expectedUpdateModel := &commonmodel.UpdateCommonRoleBindingMetadata{}
 
 	result, diags := commonconv.CommonRoleBindingMetadataTFToAPIUpdateModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())
@@ -246,7 +246,7 @@ func TestUpdateCommonRoleBindingMetadataRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfcommon.CommonRoleBindingMetadata
 	var stateTfModel tfcommon.CommonRoleBindingMetadata
 
-	expectedUpdateModel := &commonapimodel.UpdateCommonRoleBindingMetadataRequest{}
+	expectedUpdateModel := &commonmodel.UpdateCommonRoleBindingMetadataRequest{}
 
 	result, diags := commonconv.CommonRoleBindingMetadataTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

@@ -11,8 +11,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	"go.mws.cloud/go-sdk/service/resources/references/mpostgres"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
@@ -20,7 +20,7 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func PostgresClusterDatabaseAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresClusterDatabaseResponse) (*tfmodel.PostgresClusterDatabase, tfdiag.Diagnostics) {
+func PostgresClusterDatabaseAPIResponseToTFModel(ctx context.Context, am *model.PostgresClusterDatabaseResponse) (*tfmodel.PostgresClusterDatabase, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -126,13 +126,13 @@ func PostgresClusterDatabaseAPIResponseToTFModel(ctx context.Context, am *apimod
 	return &t, diags
 }
 
-func PostgresClusterDatabaseTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresClusterDatabase) (*apimodel.PostgresClusterDatabaseRequest, tfdiag.Diagnostics) {
+func PostgresClusterDatabaseTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresClusterDatabase) (*model.PostgresClusterDatabaseRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresClusterDatabaseRequest
+	var am model.PostgresClusterDatabaseRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfmodel.PostgresClusterDatabaseMetadata{}
@@ -188,7 +188,7 @@ func PostgresClusterDatabaseTFToAPIRequestModel(ctx context.Context, plan *tfmod
 			return nil, diags
 		}
 
-		am.Spec.Extensions = make([]apimodel.PostgresExtensionSpecRequest, 0, len(extensions))
+		am.Spec.Extensions = make([]model.PostgresExtensionSpecRequest, 0, len(extensions))
 
 		for _, entity := range extensions {
 			tmp, d := PostgresExtensionSpecTFToAPIRequestModel(ctx, &entity)
@@ -203,7 +203,7 @@ func PostgresClusterDatabaseTFToAPIRequestModel(ctx context.Context, plan *tfmod
 	return &am, diags
 }
 
-func PostgresClusterDatabaseTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresClusterDatabase) (*apimodel.UpdatePostgresClusterDatabaseRequest, tfdiag.Diagnostics) {
+func PostgresClusterDatabaseTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresClusterDatabase) (*model.UpdatePostgresClusterDatabaseRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -212,7 +212,7 @@ func PostgresClusterDatabaseTFToAPIUpdateRequestModel(ctx context.Context, plan,
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdatePostgresClusterDatabaseRequest
+	var am model.UpdatePostgresClusterDatabaseRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -246,7 +246,7 @@ func PostgresClusterDatabaseTFToAPIUpdateRequestModel(ctx context.Context, plan,
 	if !plan.Owner.Equal(state.Owner) {
 		if !plan.Owner.IsNull() && !plan.Owner.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdatePostgresClusterDatabaseSpecRequest{})
+				am.Spec.SetTo(model.UpdatePostgresClusterDatabaseSpecRequest{})
 			}
 			ownerRef, err := mpostgres.ParsePostgresClusterUserRef(ctx, plan.Owner.ValueString())
 			if err != nil {
@@ -260,7 +260,7 @@ func PostgresClusterDatabaseTFToAPIUpdateRequestModel(ctx context.Context, plan,
 	if !plan.LcCollate.Equal(state.LcCollate) {
 		if !plan.LcCollate.IsNull() && !plan.LcCollate.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdatePostgresClusterDatabaseSpecRequest{})
+				am.Spec.SetTo(model.UpdatePostgresClusterDatabaseSpecRequest{})
 			}
 			am.Spec.Value.LcCollate.SetTo(plan.LcCollate.ValueString())
 		}
@@ -269,7 +269,7 @@ func PostgresClusterDatabaseTFToAPIUpdateRequestModel(ctx context.Context, plan,
 	if !plan.LcCtype.Equal(state.LcCtype) {
 		if !plan.LcCtype.IsNull() && !plan.LcCtype.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdatePostgresClusterDatabaseSpecRequest{})
+				am.Spec.SetTo(model.UpdatePostgresClusterDatabaseSpecRequest{})
 			}
 			am.Spec.Value.LcCtype.SetTo(plan.LcCtype.ValueString())
 		}
@@ -278,7 +278,7 @@ func PostgresClusterDatabaseTFToAPIUpdateRequestModel(ctx context.Context, plan,
 	if !plan.Template.Equal(state.Template) {
 		if !plan.Template.IsNull() && !plan.Template.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdatePostgresClusterDatabaseSpecRequest{})
+				am.Spec.SetTo(model.UpdatePostgresClusterDatabaseSpecRequest{})
 			}
 			templateRef, err := mpostgres.ParsePostgresClusterDatabaseRef(ctx, plan.Template.ValueString())
 			if err != nil {
@@ -292,7 +292,7 @@ func PostgresClusterDatabaseTFToAPIUpdateRequestModel(ctx context.Context, plan,
 	if !plan.DeletionProtection.Equal(state.DeletionProtection) {
 		if !plan.DeletionProtection.IsNull() && !plan.DeletionProtection.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdatePostgresClusterDatabaseSpecRequest{})
+				am.Spec.SetTo(model.UpdatePostgresClusterDatabaseSpecRequest{})
 			}
 			am.Spec.Value.DeletionProtection.SetTo(plan.DeletionProtection.ValueBool())
 		}
@@ -301,7 +301,7 @@ func PostgresClusterDatabaseTFToAPIUpdateRequestModel(ctx context.Context, plan,
 	if !plan.Extensions.Equal(state.Extensions) {
 		if !plan.Extensions.IsNull() && !plan.Extensions.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdatePostgresClusterDatabaseSpecRequest{})
+				am.Spec.SetTo(model.UpdatePostgresClusterDatabaseSpecRequest{})
 			}
 			extensions := make([]tfmodel.PostgresExtensionSpec, 0)
 			dExtensions := plan.Extensions.ElementsAs(ctx, &extensions, false)
@@ -310,7 +310,7 @@ func PostgresClusterDatabaseTFToAPIUpdateRequestModel(ctx context.Context, plan,
 				return nil, diags
 			}
 
-			extensionsTmp := make([]apimodel.UpdatePostgresExtensionSpecRequest, 0, len(extensions))
+			extensionsTmp := make([]model.UpdatePostgresExtensionSpecRequest, 0, len(extensions))
 
 			for _, entity := range extensions {
 				stateEntity := tfmodel.PostgresExtensionSpec{}
@@ -328,7 +328,7 @@ func PostgresClusterDatabaseTFToAPIUpdateRequestModel(ctx context.Context, plan,
 	return &am, diags
 }
 
-func PostgresClusterDatabaseMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresClusterDatabaseMetadataResponse) (*tfmodel.PostgresClusterDatabaseMetadata, tfdiag.Diagnostics) {
+func PostgresClusterDatabaseMetadataAPIResponseToTFModel(ctx context.Context, am *model.PostgresClusterDatabaseMetadataResponse) (*tfmodel.PostgresClusterDatabaseMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -402,13 +402,13 @@ func PostgresClusterDatabaseMetadataAPIResponseToTFModel(ctx context.Context, am
 	return &t, diags
 }
 
-func PostgresClusterDatabaseMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresClusterDatabaseMetadata) (*apimodel.PostgresClusterDatabaseMetadataRequest, tfdiag.Diagnostics) {
+func PostgresClusterDatabaseMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresClusterDatabaseMetadata) (*model.PostgresClusterDatabaseMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresClusterDatabaseMetadataRequest
+	var am model.PostgresClusterDatabaseMetadataRequest
 
 	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
 		am.DisplayName = plan.DisplayName.ValueStringPointer()
@@ -422,7 +422,7 @@ func PostgresClusterDatabaseMetadataTFToAPIRequestModel(ctx context.Context, pla
 			return nil, diags
 		}
 
-		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
+		am.Usages = make([]commonmodel.TypedUsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
@@ -441,7 +441,7 @@ func PostgresClusterDatabaseMetadataTFToAPIRequestModel(ctx context.Context, pla
 	return &am, diags
 }
 
-func PostgresClusterDatabaseMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresClusterDatabaseMetadata) (*apimodel.UpdatePostgresClusterDatabaseMetadataRequest, tfdiag.Diagnostics) {
+func PostgresClusterDatabaseMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresClusterDatabaseMetadata) (*model.UpdatePostgresClusterDatabaseMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -450,7 +450,7 @@ func PostgresClusterDatabaseMetadataTFToAPIUpdateRequestModel(ctx context.Contex
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdatePostgresClusterDatabaseMetadataRequest
+	var am model.UpdatePostgresClusterDatabaseMetadataRequest
 
 	if !plan.DisplayName.Equal(state.DisplayName) {
 		if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
@@ -467,7 +467,7 @@ func PostgresClusterDatabaseMetadataTFToAPIUpdateRequestModel(ctx context.Contex
 				return nil, diags
 			}
 
-			usagesTmp := make([]commonapimodel.UpdateTypedUsageRequest, 0, len(usages))
+			usagesTmp := make([]commonmodel.UpdateTypedUsageRequest, 0, len(usages))
 
 			for _, entity := range usages {
 				stateEntity := tfcommon.TypedUsage{}

@@ -9,11 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"go.mws.cloud/go-sdk/pkg/apimodels/sensitive"
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func ClickhouseClusterBootstrapAdminSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseClusterBootstrapAdminSpecOptionalResponse) (*tfmodel.ClickhouseClusterBootstrapAdminSpec, tfdiag.Diagnostics) {
+func ClickhouseClusterBootstrapAdminSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseClusterBootstrapAdminSpecOptionalResponse) (*tfmodel.ClickhouseClusterBootstrapAdminSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -30,13 +30,13 @@ func ClickhouseClusterBootstrapAdminSpecAPIOptionalResponseToTFModel(ctx context
 	return &t, diags
 }
 
-func ClickhouseClusterBootstrapAdminSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterBootstrapAdminSpec) (*apimodel.ClickhouseClusterBootstrapAdminSpecRequest, tfdiag.Diagnostics) {
+func ClickhouseClusterBootstrapAdminSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterBootstrapAdminSpec) (*model.ClickhouseClusterBootstrapAdminSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseClusterBootstrapAdminSpecRequest
+	var am model.ClickhouseClusterBootstrapAdminSpecRequest
 
 	if !plan.Username.IsNull() && !plan.Username.IsUnknown() {
 		am.Username = plan.Username.ValueString()
@@ -49,7 +49,7 @@ func ClickhouseClusterBootstrapAdminSpecTFToAPIRequestModel(ctx context.Context,
 	return &am, diags
 }
 
-func ClickhouseClusterBootstrapAdminSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseClusterBootstrapAdminSpec) (*apimodel.UpdateClickhouseClusterBootstrapAdminSpecRequest, tfdiag.Diagnostics) {
+func ClickhouseClusterBootstrapAdminSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ClickhouseClusterBootstrapAdminSpec) (*model.UpdateClickhouseClusterBootstrapAdminSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -58,7 +58,7 @@ func ClickhouseClusterBootstrapAdminSpecTFToAPIUpdateRequestModel(ctx context.Co
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateClickhouseClusterBootstrapAdminSpecRequest
+	var am model.UpdateClickhouseClusterBootstrapAdminSpecRequest
 
 	if !plan.Username.Equal(state.Username) {
 		if !plan.Username.IsNull() && !plan.Username.IsUnknown() {

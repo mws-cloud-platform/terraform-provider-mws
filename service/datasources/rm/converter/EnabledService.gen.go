@@ -10,14 +10,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/rm/model"
+	"go.mws.cloud/go-sdk/service/rm/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/rm/model"
 )
 
-func EnabledServiceAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.EnabledServiceOptionalResponse) (*tfmodel.EnabledService, tfdiag.Diagnostics) {
+func EnabledServiceAPIOptionalResponseToTFModel(ctx context.Context, am *model.EnabledServiceOptionalResponse) (*tfmodel.EnabledService, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -76,7 +76,7 @@ func EnabledServiceAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func EnabledServiceMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.EnabledServiceMetadataOptionalResponse) (*tfmodel.EnabledServiceMetadata, tfdiag.Diagnostics) {
+func EnabledServiceMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *model.EnabledServiceMetadataOptionalResponse) (*tfmodel.EnabledServiceMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

@@ -8,51 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
-	"go.mws.cloud/go-sdk/service/resources/references/compute"
-	"go.mws.cloud/go-sdk/service/resources/references/iam"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/converter"
 )
 
 func TestNodeGroupAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NodeGroupOptionalResponse{}
+	emptyApiModel := model.NodeGroupOptionalResponse{}
 	_, diags := conv.NodeGroupAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
-}
-
-func TestNodeGroupOptionalResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.NodeGroupRequest{
-		Spec: apimodel.NodeGroupSpecRequest{
-			Zone: "zone",
-			Subnet: apimodel.NodeGroupSpecSubnetRequest{
-				Ref: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
-			},
-			VmType: apimodel.NodeGroupSpecVmTypeRequest{
-				Ref: compute.NewMustVmTypeRef("vmTypeID"),
-			},
-			Scale:           apimodel.NodeGroupSpecScaleRequest{},
-			VersionControl:  apimodel.NodeGroupVersionControlSpecRequest{},
-			RolloutStrategy: apimodel.NodeGroupSpecRolloutStrategyRequest{},
-			ServiceAccount: apimodel.NodeGroupSpecServiceAccountRequest{
-				Ref: iam.NewMustServiceAccountRef("projectID", "serviceAccountID"),
-			},
-		},
-	}
-
-	emptyApiModelResponse, err := apimodel.NodeGroupRequestToOptionalResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.NodeGroupAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.NodeGroupTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.NodeGroupRequestToOptionalResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
 }

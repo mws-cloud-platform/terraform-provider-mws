@@ -29,7 +29,7 @@ type ModelSuite struct {
 
 func (s *ModelSuite) TestModel() {
 	project := s.SDK.DefaultProject()
-	model := "glm-5.2"
+	model := "glm-5.3"
 	metadataID := gpt.NewMustModelID(project, model)
 
 	steps := []resource.TestStep{

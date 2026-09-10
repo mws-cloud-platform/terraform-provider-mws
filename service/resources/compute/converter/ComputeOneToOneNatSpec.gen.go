@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func ComputeOneToOneNatSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ComputeOneToOneNatSpecOptionalResponse) (*tfmodel.ComputeOneToOneNatSpec, tfdiag.Diagnostics) {
+func ComputeOneToOneNatSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.ComputeOneToOneNatSpecOptionalResponse) (*tfmodel.ComputeOneToOneNatSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -39,13 +39,13 @@ func ComputeOneToOneNatSpecAPIOptionalResponseToTFModel(ctx context.Context, am 
 	return &t, diags
 }
 
-func ComputeOneToOneNatSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ComputeOneToOneNatSpec) (*apimodel.ComputeOneToOneNatSpecRequest, tfdiag.Diagnostics) {
+func ComputeOneToOneNatSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ComputeOneToOneNatSpec) (*model.ComputeOneToOneNatSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ComputeOneToOneNatSpecRequest
+	var am model.ComputeOneToOneNatSpecRequest
 
 	if !plan.External.IsNull() && !plan.External.IsUnknown() {
 		externalPlan := tfmodel.ComputeOneToOneNatSpecExternal{}
@@ -66,7 +66,7 @@ func ComputeOneToOneNatSpecTFToAPIRequestModel(ctx context.Context, plan *tfmode
 	return &am, diags
 }
 
-func ComputeOneToOneNatSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ComputeOneToOneNatSpec) (*apimodel.UpdateComputeOneToOneNatSpecRequest, tfdiag.Diagnostics) {
+func ComputeOneToOneNatSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ComputeOneToOneNatSpec) (*model.UpdateComputeOneToOneNatSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -75,7 +75,7 @@ func ComputeOneToOneNatSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, 
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateComputeOneToOneNatSpecRequest
+	var am model.UpdateComputeOneToOneNatSpecRequest
 
 	if !plan.External.Equal(state.External) {
 		if !plan.External.IsNull() && !plan.External.IsUnknown() {
@@ -107,7 +107,7 @@ func ComputeOneToOneNatSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, 
 	return &am, diags
 }
 
-func ComputeOneToOneNatSpecExternalAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ComputeOneToOneNatSpecExternalOptionalResponse) (*tfmodel.ComputeOneToOneNatSpecExternal, tfdiag.Diagnostics) {
+func ComputeOneToOneNatSpecExternalAPIOptionalResponseToTFModel(ctx context.Context, am *model.ComputeOneToOneNatSpecExternalOptionalResponse) (*tfmodel.ComputeOneToOneNatSpecExternal, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -132,13 +132,13 @@ func ComputeOneToOneNatSpecExternalAPIOptionalResponseToTFModel(ctx context.Cont
 	return &t, diags
 }
 
-func ComputeOneToOneNatSpecExternalTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ComputeOneToOneNatSpecExternal) (*apimodel.ComputeOneToOneNatSpecExternalRequest, tfdiag.Diagnostics) {
+func ComputeOneToOneNatSpecExternalTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ComputeOneToOneNatSpecExternal) (*model.ComputeOneToOneNatSpecExternalRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.ComputeOneToOneNatSpecExternalRequest
+	var am model.ComputeOneToOneNatSpecExternalRequest
 
 	if !plan.Address.IsNull() && !plan.Address.IsUnknown() {
 		addressPlan := tfmodel.OneToOneNatAddressSpecOrRef{}
@@ -159,7 +159,7 @@ func ComputeOneToOneNatSpecExternalTFToAPIRequestModel(ctx context.Context, plan
 	return &am, diags
 }
 
-func ComputeOneToOneNatSpecExternalTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ComputeOneToOneNatSpecExternal) (*apimodel.UpdateComputeOneToOneNatSpecExternalRequest, tfdiag.Diagnostics) {
+func ComputeOneToOneNatSpecExternalTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.ComputeOneToOneNatSpecExternal) (*model.UpdateComputeOneToOneNatSpecExternalRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -168,7 +168,7 @@ func ComputeOneToOneNatSpecExternalTFToAPIUpdateRequestModel(ctx context.Context
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateComputeOneToOneNatSpecExternalRequest
+	var am model.UpdateComputeOneToOneNatSpecExternalRequest
 
 	if !plan.Address.Equal(state.Address) {
 		if !plan.Address.IsNull() && !plan.Address.IsUnknown() {

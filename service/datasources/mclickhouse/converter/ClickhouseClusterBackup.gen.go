@@ -7,13 +7,12 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/model"
 )
 
-func ClickhouseClusterBackupAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseClusterBackupOptionalResponse) (*tfmodel.ClickhouseClusterBackup, tfdiag.Diagnostics) {
+func ClickhouseClusterBackupAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseClusterBackupOptionalResponse) (*tfmodel.ClickhouseClusterBackup, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -34,23 +33,4 @@ func ClickhouseClusterBackupAPIOptionalResponseToTFModel(ctx context.Context, am
 	}
 
 	return &t, diags
-}
-
-func ClickhouseClusterBackupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterBackup) (*apimodel.ClickhouseClusterBackupRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseClusterBackupRequest
-
-	if !plan.Hour.IsNull() && !plan.Hour.IsUnknown() {
-		am.Hour = ptr.Get(int(plan.Hour.ValueInt64()))
-	}
-
-	if !plan.RetainPeriodDays.IsNull() && !plan.RetainPeriodDays.IsUnknown() {
-		am.RetainPeriodDays = ptr.Get(int(plan.RetainPeriodDays.ValueInt64()))
-	}
-
-	return &am, diags
 }

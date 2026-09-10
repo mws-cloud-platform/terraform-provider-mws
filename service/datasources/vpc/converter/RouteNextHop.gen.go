@@ -7,16 +7,14 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/model"
 )
 
-func RouteNextHopAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.RouteNextHopOptionalResponse) (*tfmodel.RouteNextHop, tfdiag.Diagnostics) {
+func RouteNextHopAPIOptionalResponseToTFModel(ctx context.Context, am *model.RouteNextHopOptionalResponse) (*tfmodel.RouteNextHop, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -57,43 +55,7 @@ func RouteNextHopAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.
 	return &t, diags
 }
 
-func RouteNextHopTFToAPIRequestModel(ctx context.Context, plan *tfmodel.RouteNextHop) (*apimodel.RouteNextHopRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.RouteNextHopRequest
-
-	if !plan.NatGateway.IsNull() && !plan.NatGateway.IsUnknown() {
-		natGatewayRef, err := vpc.ParseNatGatewayRef(ctx, plan.NatGateway.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.NatGateway = &natGatewayRef
-	}
-
-	if !plan.Address.IsNull() && !plan.Address.IsUnknown() {
-		addressPlan := tfmodel.RouteNextHopAddress{}
-		addressPlanDiag := plan.Address.As(ctx, &addressPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, addressPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		addressTmp, addressDiag := RouteNextHopAddressTFToAPIRequestModel(ctx, &addressPlan)
-		diags = append(diags, addressDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Address = addressTmp
-	}
-
-	return &am, diags
-}
-
-func RouteNextHopAddressAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.RouteNextHopAddressOptionalResponse) (*tfmodel.RouteNextHopAddress, tfdiag.Diagnostics) {
+func RouteNextHopAddressAPIOptionalResponseToTFModel(ctx context.Context, am *model.RouteNextHopAddressOptionalResponse) (*tfmodel.RouteNextHopAddress, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -104,24 +66,4 @@ func RouteNextHopAddressAPIOptionalResponseToTFModel(ctx context.Context, am *ap
 	t.Ref = types.StringValue(am.Ref.Path())
 
 	return &t, diags
-}
-
-func RouteNextHopAddressTFToAPIRequestModel(ctx context.Context, plan *tfmodel.RouteNextHopAddress) (*apimodel.RouteNextHopAddressRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.RouteNextHopAddressRequest
-
-	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
-		refRef, err := vpc.ParseAddressRef(ctx, plan.Ref.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Ref = refRef
-	}
-
-	return &am, diags
 }

@@ -7,11 +7,11 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func DiskStatusIopsAPIResponseToTFModel(ctx context.Context, am *apimodel.DiskStatusIopsResponse) (*tfmodel.DiskStatusIops, tfdiag.Diagnostics) {
+func DiskStatusIopsAPIResponseToTFModel(ctx context.Context, am *model.DiskStatusIopsResponse) (*tfmodel.DiskStatusIops, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

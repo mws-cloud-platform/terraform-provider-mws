@@ -66,12 +66,9 @@ variable "private_key_file_path" {
 <a id="nestedatt--managed"></a>
 ### Nested Schema for `managed`
 
-Required:
-
-- `domains` (List of String) Список доменов, для которых будет выдан сертификат
-
 Optional:
 
+- `domains` (List of String) Список доменов, для которых будет выдан сертификат
 - `issuer` (Attributes) Конфигурация провайдера выпуска сертификата (see [below for nested schema](#nestedatt--managed--issuer))
 - `preferred_challenge_type` (String) Предпочтительный тип проверки домена (challenge).
 Возможные значения: DNS01 или HTTP01. По умолчанию используется DNS01

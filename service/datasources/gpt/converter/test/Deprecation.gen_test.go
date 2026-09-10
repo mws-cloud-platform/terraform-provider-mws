@@ -8,13 +8,13 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/gpt/model"
+	"go.mws.cloud/go-sdk/service/gpt/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/gpt/converter"
 )
 
 func TestDeprecationAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.DeprecationResponse{}
+	emptyApiModel := model.DeprecationResponse{}
 	_, diags := conv.DeprecationAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }

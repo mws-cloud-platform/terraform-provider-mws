@@ -11,9 +11,9 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
@@ -22,20 +22,20 @@ import (
 
 func TestAddressAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.AddressOptionalResponse{}
+	emptyApiModel := model.AddressOptionalResponse{}
 	_, diags := conv.AddressAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestAddressOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.AddressRequest{
-		Spec: apimodel.VpcAddressSpecRequest{
+	emptyApiModelRequest := model.AddressRequest{
+		Spec: model.VpcAddressSpecRequest{
 			Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
 		},
 	}
 
-	emptyApiModelResponse, err := apimodel.AddressRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.AddressRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.AddressAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -44,7 +44,7 @@ func TestAddressOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.AddressTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.AddressRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.AddressRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -60,13 +60,13 @@ func TestUpdateAddressRequestConverters(t *testing.T) {
 		AttrTypes: tfconv.GetAttributesTypes(new(tfcommon.VpcAddressDnsSpec).GetSchema().Attributes),
 	}, []tfattr.Value{})
 
-	expectedUpdateModel := &apimodel.UpdateAddressRequest{
-		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+	expectedUpdateModel := &model.UpdateAddressRequest{
+		Metadata: optional.OptionalNil[commonmodel.UpdateCommonTypedResourceMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},
-		Spec: optional.NewOptional(apimodel.UpdateVpcAddressSpecRequest{
-			Dns: optional.OptionalNil[[]commonapimodel.UpdateVpcAddressDnsSpecRequest]{
+		Spec: optional.NewOptional(model.UpdateVpcAddressSpecRequest{
+			Dns: optional.OptionalNil[[]commonmodel.UpdateVpcAddressDnsSpecRequest]{
 				Set:  true,
 				Null: true,
 			},

@@ -14,7 +14,7 @@ type ClusterPrimaryEndpointSpec struct {
 
 func (s *ClusterPrimaryEndpointSpec) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Описание subnet пользователя, из которого будет выделен ip-адрес`,
+		MarkdownDescription: `Идентификатор подсети, из которой будет выделен IP-адрес`,
 		Attributes: map[string]schema.Attribute{
 			"ip_address": schema.StringAttribute{
 				MarkdownDescription: `Желаемый IP адрес. Если не указан, то будет выделен из пула адресов подсети

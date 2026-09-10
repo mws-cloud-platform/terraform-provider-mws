@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/model"
 )
 
-func KafkaClusterRoleNameAPIToTFModel(ctx context.Context, am *apimodel.KafkaClusterRoleName) (tfmodel.KafkaClusterRoleName, tfdiag.Diagnostics) {
+func KafkaClusterRoleNameAPIToTFModel(ctx context.Context, am *model.KafkaClusterRoleName) (tfmodel.KafkaClusterRoleName, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.KafkaClusterRoleName{}, nil
 	}
@@ -23,17 +23,4 @@ func KafkaClusterRoleNameAPIToTFModel(ctx context.Context, am *apimodel.KafkaClu
 	t = tfmodel.KafkaClusterRoleName(types.StringValue(string(*am)))
 
 	return t, diags
-}
-
-func KafkaClusterRoleNameTFToAPIModel(ctx context.Context, plan tfmodel.KafkaClusterRoleName) (*apimodel.KafkaClusterRoleName, tfdiag.Diagnostics) {
-	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaClusterRoleName
-
-	var tmp = types.String(plan)
-	if tmp.IsNull() {
-		return nil, diags
-	}
-	am = apimodel.KafkaClusterRoleName(tmp.ValueString())
-
-	return &am, diags
 }

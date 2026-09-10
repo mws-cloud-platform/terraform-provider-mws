@@ -11,12 +11,12 @@ import (
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func RouteNextHopAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.RouteNextHopOptionalResponse) (*tfmodel.RouteNextHop, tfdiag.Diagnostics) {
+func RouteNextHopAPIOptionalResponseToTFModel(ctx context.Context, am *model.RouteNextHopOptionalResponse) (*tfmodel.RouteNextHop, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -57,13 +57,13 @@ func RouteNextHopAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.
 	return &t, diags
 }
 
-func RouteNextHopTFToAPIRequestModel(ctx context.Context, plan *tfmodel.RouteNextHop) (*apimodel.RouteNextHopRequest, tfdiag.Diagnostics) {
+func RouteNextHopTFToAPIRequestModel(ctx context.Context, plan *tfmodel.RouteNextHop) (*model.RouteNextHopRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.RouteNextHopRequest
+	var am model.RouteNextHopRequest
 
 	if !plan.NatGateway.IsNull() && !plan.NatGateway.IsUnknown() {
 		natGatewayRef, err := vpc.ParseNatGatewayRef(ctx, plan.NatGateway.ValueString())
@@ -93,7 +93,7 @@ func RouteNextHopTFToAPIRequestModel(ctx context.Context, plan *tfmodel.RouteNex
 	return &am, diags
 }
 
-func RouteNextHopTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.RouteNextHop) (*apimodel.UpdateRouteNextHopRequest, tfdiag.Diagnostics) {
+func RouteNextHopTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.RouteNextHop) (*model.UpdateRouteNextHopRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -102,7 +102,7 @@ func RouteNextHopTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfm
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateRouteNextHopRequest
+	var am model.UpdateRouteNextHopRequest
 
 	if !plan.NatGateway.Equal(state.NatGateway) {
 		if !plan.NatGateway.IsNull() && !plan.NatGateway.IsUnknown() {
@@ -149,7 +149,7 @@ func RouteNextHopTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfm
 	return &am, diags
 }
 
-func RouteNextHopAddressAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.RouteNextHopAddressOptionalResponse) (*tfmodel.RouteNextHopAddress, tfdiag.Diagnostics) {
+func RouteNextHopAddressAPIOptionalResponseToTFModel(ctx context.Context, am *model.RouteNextHopAddressOptionalResponse) (*tfmodel.RouteNextHopAddress, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -162,13 +162,13 @@ func RouteNextHopAddressAPIOptionalResponseToTFModel(ctx context.Context, am *ap
 	return &t, diags
 }
 
-func RouteNextHopAddressTFToAPIRequestModel(ctx context.Context, plan *tfmodel.RouteNextHopAddress) (*apimodel.RouteNextHopAddressRequest, tfdiag.Diagnostics) {
+func RouteNextHopAddressTFToAPIRequestModel(ctx context.Context, plan *tfmodel.RouteNextHopAddress) (*model.RouteNextHopAddressRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.RouteNextHopAddressRequest
+	var am model.RouteNextHopAddressRequest
 
 	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
 		refRef, err := vpc.ParseAddressRef(ctx, plan.Ref.ValueString())
@@ -182,7 +182,7 @@ func RouteNextHopAddressTFToAPIRequestModel(ctx context.Context, plan *tfmodel.R
 	return &am, diags
 }
 
-func RouteNextHopAddressTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.RouteNextHopAddress) (*apimodel.UpdateRouteNextHopAddressRequest, tfdiag.Diagnostics) {
+func RouteNextHopAddressTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.RouteNextHopAddress) (*model.UpdateRouteNextHopAddressRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -191,7 +191,7 @@ func RouteNextHopAddressTFToAPIUpdateRequestModel(ctx context.Context, plan, sta
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateRouteNextHopAddressRequest
+	var am model.UpdateRouteNextHopAddressRequest
 
 	if !plan.Ref.Equal(state.Ref) {
 		if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {

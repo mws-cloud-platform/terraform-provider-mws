@@ -10,11 +10,11 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/throughput"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func ThroughputAPIToTFModel(ctx context.Context, am *apimodel.Throughput) (tfmodel.Throughput, tfdiag.Diagnostics) {
+func ThroughputAPIToTFModel(ctx context.Context, am *model.Throughput) (tfmodel.Throughput, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.Throughput{}, nil
 	}
@@ -27,9 +27,9 @@ func ThroughputAPIToTFModel(ctx context.Context, am *apimodel.Throughput) (tfmod
 	return t, diags
 }
 
-func ThroughputTFToAPIModel(ctx context.Context, plan tfmodel.Throughput) (*apimodel.Throughput, tfdiag.Diagnostics) {
+func ThroughputTFToAPIModel(ctx context.Context, plan tfmodel.Throughput) (*model.Throughput, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
-	var am apimodel.Throughput
+	var am model.Throughput
 
 	var tmp = types.String(plan)
 	t, err := throughput.ParseString(tmp.ValueString())
@@ -38,7 +38,7 @@ func ThroughputTFToAPIModel(ctx context.Context, plan tfmodel.Throughput) (*apim
 		return nil, diags
 	}
 
-	am = apimodel.Throughput(t)
+	am = model.Throughput(t)
 
 	return &am, diags
 }

@@ -12,15 +12,15 @@ import (
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/pkg/apimodels/sensitive"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func PostgresClusterUserAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresClusterUserResponse) (*tfmodel.PostgresClusterUser, tfdiag.Diagnostics) {
+func PostgresClusterUserAPIResponseToTFModel(ctx context.Context, am *model.PostgresClusterUserResponse) (*tfmodel.PostgresClusterUser, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -126,13 +126,13 @@ func PostgresClusterUserAPIResponseToTFModel(ctx context.Context, am *apimodel.P
 	return &t, diags
 }
 
-func PostgresClusterUserTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresClusterUser) (*apimodel.PostgresClusterUserRequest, tfdiag.Diagnostics) {
+func PostgresClusterUserTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresClusterUser) (*model.PostgresClusterUserRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresClusterUserRequest
+	var am model.PostgresClusterUserRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfmodel.PostgresClusterUserMetadata{}
@@ -171,7 +171,7 @@ func PostgresClusterUserTFToAPIRequestModel(ctx context.Context, plan *tfmodel.P
 			return nil, diags
 		}
 
-		am.Spec.AdditionalRoles = make([]apimodel.PostgresUserAdditionalRoleRequest, 0, len(additionalRoles))
+		am.Spec.AdditionalRoles = make([]model.PostgresUserAdditionalRoleRequest, 0, len(additionalRoles))
 
 		for _, entity := range additionalRoles {
 			tmp, d := PostgresUserAdditionalRoleTFToAPIRequestModel(ctx, &entity)
@@ -195,7 +195,7 @@ func PostgresClusterUserTFToAPIRequestModel(ctx context.Context, plan *tfmodel.P
 	return &am, diags
 }
 
-func PostgresClusterUserTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresClusterUser) (*apimodel.UpdatePostgresClusterUserRequest, tfdiag.Diagnostics) {
+func PostgresClusterUserTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresClusterUser) (*model.UpdatePostgresClusterUserRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -204,7 +204,7 @@ func PostgresClusterUserTFToAPIUpdateRequestModel(ctx context.Context, plan, sta
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdatePostgresClusterUserRequest
+	var am model.UpdatePostgresClusterUserRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -238,7 +238,7 @@ func PostgresClusterUserTFToAPIUpdateRequestModel(ctx context.Context, plan, sta
 	if !plan.Password.Equal(state.Password) {
 		if !plan.Password.IsNull() && !plan.Password.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdatePostgresClusterUserSpecRequest{})
+				am.Spec.SetTo(model.UpdatePostgresClusterUserSpecRequest{})
 			}
 			am.Spec.Value.Password.SetTo(sensitive.New(plan.Password.ValueString()))
 		}
@@ -247,7 +247,7 @@ func PostgresClusterUserTFToAPIUpdateRequestModel(ctx context.Context, plan, sta
 	if !plan.Role.Equal(state.Role) {
 		if !plan.Role.IsNull() && !plan.Role.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdatePostgresClusterUserSpecRequest{})
+				am.Spec.SetTo(model.UpdatePostgresClusterUserSpecRequest{})
 			}
 			roleTmp, roleDiag := PostgresUserRoleTFToAPIModel(ctx, plan.Role)
 			diags = append(diags, roleDiag...)
@@ -257,7 +257,7 @@ func PostgresClusterUserTFToAPIUpdateRequestModel(ctx context.Context, plan, sta
 			am.Spec.Value.Role.SetTo(*roleTmp)
 		} else if plan.Role.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdatePostgresClusterUserSpecRequest{})
+				am.Spec.SetTo(model.UpdatePostgresClusterUserSpecRequest{})
 			}
 			am.Spec.Value.Role.SetToNull()
 		}
@@ -266,7 +266,7 @@ func PostgresClusterUserTFToAPIUpdateRequestModel(ctx context.Context, plan, sta
 	if !plan.AdditionalRoles.Equal(state.AdditionalRoles) {
 		if !plan.AdditionalRoles.IsNull() && !plan.AdditionalRoles.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdatePostgresClusterUserSpecRequest{})
+				am.Spec.SetTo(model.UpdatePostgresClusterUserSpecRequest{})
 			}
 			additionalRoles := make([]tfmodel.PostgresUserAdditionalRole, 0)
 			dAdditionalRoles := plan.AdditionalRoles.ElementsAs(ctx, &additionalRoles, false)
@@ -275,7 +275,7 @@ func PostgresClusterUserTFToAPIUpdateRequestModel(ctx context.Context, plan, sta
 				return nil, diags
 			}
 
-			additionalRolesTmp := make([]apimodel.UpdatePostgresUserAdditionalRoleRequest, 0, len(additionalRoles))
+			additionalRolesTmp := make([]model.UpdatePostgresUserAdditionalRoleRequest, 0, len(additionalRoles))
 
 			for _, entity := range additionalRoles {
 				stateEntity := tfmodel.PostgresUserAdditionalRole{}
@@ -293,7 +293,7 @@ func PostgresClusterUserTFToAPIUpdateRequestModel(ctx context.Context, plan, sta
 	if !plan.AccessControlPolicy.Equal(state.AccessControlPolicy) {
 		if !plan.AccessControlPolicy.IsNull() && !plan.AccessControlPolicy.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdatePostgresClusterUserSpecRequest{})
+				am.Spec.SetTo(model.UpdatePostgresClusterUserSpecRequest{})
 			}
 			accessControlPolicyTmp, accessControlPolicyDiag := PostgresUserAccessControlPolicyTFToAPIModel(ctx, plan.AccessControlPolicy)
 			diags = append(diags, accessControlPolicyDiag...)
@@ -307,7 +307,7 @@ func PostgresClusterUserTFToAPIUpdateRequestModel(ctx context.Context, plan, sta
 	return &am, diags
 }
 
-func PostgresClusterUserMetadataAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresClusterUserMetadataResponse) (*tfmodel.PostgresClusterUserMetadata, tfdiag.Diagnostics) {
+func PostgresClusterUserMetadataAPIResponseToTFModel(ctx context.Context, am *model.PostgresClusterUserMetadataResponse) (*tfmodel.PostgresClusterUserMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -381,13 +381,13 @@ func PostgresClusterUserMetadataAPIResponseToTFModel(ctx context.Context, am *ap
 	return &t, diags
 }
 
-func PostgresClusterUserMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresClusterUserMetadata) (*apimodel.PostgresClusterUserMetadataRequest, tfdiag.Diagnostics) {
+func PostgresClusterUserMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.PostgresClusterUserMetadata) (*model.PostgresClusterUserMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresClusterUserMetadataRequest
+	var am model.PostgresClusterUserMetadataRequest
 
 	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
 		am.DisplayName = plan.DisplayName.ValueStringPointer()
@@ -401,7 +401,7 @@ func PostgresClusterUserMetadataTFToAPIRequestModel(ctx context.Context, plan *t
 			return nil, diags
 		}
 
-		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
+		am.Usages = make([]commonmodel.TypedUsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
@@ -420,7 +420,7 @@ func PostgresClusterUserMetadataTFToAPIRequestModel(ctx context.Context, plan *t
 	return &am, diags
 }
 
-func PostgresClusterUserMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresClusterUserMetadata) (*apimodel.UpdatePostgresClusterUserMetadataRequest, tfdiag.Diagnostics) {
+func PostgresClusterUserMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.PostgresClusterUserMetadata) (*model.UpdatePostgresClusterUserMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -429,7 +429,7 @@ func PostgresClusterUserMetadataTFToAPIUpdateRequestModel(ctx context.Context, p
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdatePostgresClusterUserMetadataRequest
+	var am model.UpdatePostgresClusterUserMetadataRequest
 
 	if !plan.DisplayName.Equal(state.DisplayName) {
 		if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
@@ -446,7 +446,7 @@ func PostgresClusterUserMetadataTFToAPIUpdateRequestModel(ctx context.Context, p
 				return nil, diags
 			}
 
-			usagesTmp := make([]commonapimodel.UpdateTypedUsageRequest, 0, len(usages))
+			usagesTmp := make([]commonmodel.UpdateTypedUsageRequest, 0, len(usages))
 
 			for _, entity := range usages {
 				stateEntity := tfcommon.TypedUsage{}

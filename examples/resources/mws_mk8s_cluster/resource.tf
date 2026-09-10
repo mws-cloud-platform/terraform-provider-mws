@@ -53,7 +53,7 @@ resource "mws_mk8s_cluster" "example" {
         hour = 3
       }
     }
-    version = "v1.35.6-mws.4" // or actual
+    version = "v1.35.6-mws.12" // or actual
   }
 }
 

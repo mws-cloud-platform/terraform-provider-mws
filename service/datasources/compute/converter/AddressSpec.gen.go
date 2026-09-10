@@ -7,16 +7,14 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/go-sdk/pkg/apimodels/ipaddress"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func AddressSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.AddressSpecOptionalResponse) (*tfmodel.AddressSpec, tfdiag.Diagnostics) {
+func AddressSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.AddressSpecOptionalResponse) (*tfmodel.AddressSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -60,53 +58,4 @@ func AddressSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.A
 	}
 
 	return &t, diags
-}
-
-func AddressSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.AddressSpec) (*apimodel.AddressSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.AddressSpecRequest
-
-	if !plan.Subnet.IsNull() && !plan.Subnet.IsUnknown() {
-		subnetRef, err := vpc.ParseSubnetRef(ctx, plan.Subnet.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Subnet = subnetRef
-	}
-
-	if !plan.IpAddress.IsNull() && !plan.IpAddress.IsUnknown() {
-		tmpIpAddress, err := ipaddress.ParseIPAddressString(plan.IpAddress.ValueString())
-		if err != nil {
-			diags.AddError("IPAddress string parsing", err.Error())
-			return nil, diags
-		}
-		am.IpAddress = &tmpIpAddress
-	}
-
-	if !plan.Dns.IsNull() && !plan.Dns.IsUnknown() {
-		dns := make([]tfmodel.AddressDnsSpec, 0)
-		dDns := plan.Dns.ElementsAs(ctx, &dns, false)
-		diags = append(diags, dDns...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Dns = make([]apimodel.AddressDnsSpecRequest, 0, len(dns))
-
-		for _, entity := range dns {
-			tmp, d := AddressDnsSpecTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.Dns = append(am.Dns, *tmp)
-		}
-	}
-
-	return &am, diags
 }

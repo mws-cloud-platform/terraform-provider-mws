@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
-func SecurityPostureStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.SecurityPostureStatusResponse) (*tfmodel.SecurityPostureStatus, tfdiag.Diagnostics) {
+func SecurityPostureStatusAPIResponseToTFModel(ctx context.Context, am *model.SecurityPostureStatusResponse) (*tfmodel.SecurityPostureStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

@@ -7,16 +7,14 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/model"
 )
 
-func ClusterSpecNetworkAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClusterSpecNetworkOptionalResponse) (*tfmodel.ClusterSpecNetwork, tfdiag.Diagnostics) {
+func ClusterSpecNetworkAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClusterSpecNetworkOptionalResponse) (*tfmodel.ClusterSpecNetwork, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -61,65 +59,4 @@ func ClusterSpecNetworkAPIOptionalResponseToTFModel(ctx context.Context, am *api
 	t.ServicesCidr = types.StringValue(ptr.Value(am.ServicesCidr.RawValue()))
 
 	return &t, diags
-}
-
-func ClusterSpecNetworkTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClusterSpecNetwork) (*apimodel.ClusterSpecNetworkRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ClusterSpecNetworkRequest
-
-	if !plan.PrimaryEndpoint.IsNull() && !plan.PrimaryEndpoint.IsUnknown() {
-		primaryEndpointPlan := tfmodel.ClusterPrimaryEndpointSpecOrRef{}
-		primaryEndpointPlanDiag := plan.PrimaryEndpoint.As(ctx, &primaryEndpointPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, primaryEndpointPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		primaryEndpointTmp, primaryEndpointDiag := ClusterPrimaryEndpointSpecOrRefTFToAPIRequestModel(ctx, &primaryEndpointPlan)
-		diags = append(diags, primaryEndpointDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.PrimaryEndpoint = *primaryEndpointTmp
-	}
-
-	if !plan.PublicEndpoint.IsNull() && !plan.PublicEndpoint.IsUnknown() {
-		publicEndpointPlan := tfmodel.ClusterPublicEndpointSpecOrRef{}
-		publicEndpointPlanDiag := plan.PublicEndpoint.As(ctx, &publicEndpointPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, publicEndpointPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		publicEndpointTmp, publicEndpointDiag := ClusterPublicEndpointSpecOrRefTFToAPIRequestModel(ctx, &publicEndpointPlan)
-		diags = append(diags, publicEndpointDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.PublicEndpoint = publicEndpointTmp
-	}
-
-	if !plan.PodsCidr.IsNull() && !plan.PodsCidr.IsUnknown() {
-		tmpPodsCidr, err := cidraddress.ParseCIDR4AddressString(plan.PodsCidr.ValueString())
-		if err != nil {
-			diags.AddError("CIDR4Address string parsing", err.Error())
-			return nil, diags
-		}
-		am.PodsCidr = tmpPodsCidr
-	}
-
-	if !plan.ServicesCidr.IsNull() && !plan.ServicesCidr.IsUnknown() {
-		tmpServicesCidr, err := cidraddress.ParseCIDR4AddressString(plan.ServicesCidr.ValueString())
-		if err != nil {
-			diags.AddError("CIDR4Address string parsing", err.Error())
-			return nil, diags
-		}
-		am.ServicesCidr = tmpServicesCidr
-	}
-
-	return &am, diags
 }

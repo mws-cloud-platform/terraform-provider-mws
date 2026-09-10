@@ -8,26 +8,26 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
 func TestStorageDiskSpecOrRefWithAttachmentsAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.StorageDiskSpecOrRefWithAttachmentsOptionalResponse{}
+	emptyApiModel := model.StorageDiskSpecOrRefWithAttachmentsOptionalResponse{}
 	_, diags := conv.StorageDiskSpecOrRefWithAttachmentsAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestStorageDiskSpecOrRefWithAttachmentsOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.StorageDiskSpecOrRefWithAttachmentsRequest{
+	emptyApiModelRequest := model.StorageDiskSpecOrRefWithAttachmentsRequest{
 		Name: "name",
-		Disk: apimodel.StorageDiskSpecOrRefRequest{},
+		Disk: model.StorageDiskSpecOrRefRequest{},
 	}
 
-	emptyApiModelResponse, err := apimodel.StorageDiskSpecOrRefWithAttachmentsRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.StorageDiskSpecOrRefWithAttachmentsRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.StorageDiskSpecOrRefWithAttachmentsAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -36,7 +36,7 @@ func TestStorageDiskSpecOrRefWithAttachmentsOptionalResponseConverters(t *testin
 	filledApiModelRequest, diags := conv.StorageDiskSpecOrRefWithAttachmentsTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.StorageDiskSpecOrRefWithAttachmentsRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.StorageDiskSpecOrRefWithAttachmentsRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -48,7 +48,7 @@ func TestUpdateStorageDiskSpecOrRefWithAttachmentsRequestConverters(t *testing.T
 	var nullPlanTfModel tfmodel.StorageDiskSpecOrRefWithAttachments
 	var stateTfModel tfmodel.StorageDiskSpecOrRefWithAttachments
 
-	expectedUpdateModel := &apimodel.UpdateStorageDiskSpecOrRefWithAttachmentsRequest{}
+	expectedUpdateModel := &model.UpdateStorageDiskSpecOrRefWithAttachmentsRequest{}
 
 	result, diags := conv.StorageDiskSpecOrRefWithAttachmentsTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

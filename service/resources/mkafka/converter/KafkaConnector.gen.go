@@ -11,15 +11,15 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func KafkaConnectorAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.KafkaConnectorOptionalResponse) (*tfmodel.KafkaConnector, tfdiag.Diagnostics) {
+func KafkaConnectorAPIOptionalResponseToTFModel(ctx context.Context, am *model.KafkaConnectorOptionalResponse) (*tfmodel.KafkaConnector, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -96,13 +96,13 @@ func KafkaConnectorAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func KafkaConnectorTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaConnector) (*apimodel.KafkaConnectorRequest, tfdiag.Diagnostics) {
+func KafkaConnectorTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaConnector) (*model.KafkaConnectorRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaConnectorRequest
+	var am model.KafkaConnectorRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfmodel.KafkaConnectorMetadata{}
@@ -143,7 +143,7 @@ func KafkaConnectorTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaC
 	return &am, diags
 }
 
-func KafkaConnectorTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaConnector) (*apimodel.UpdateKafkaConnectorRequest, tfdiag.Diagnostics) {
+func KafkaConnectorTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaConnector) (*model.UpdateKafkaConnectorRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -152,7 +152,7 @@ func KafkaConnectorTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateKafkaConnectorRequest
+	var am model.UpdateKafkaConnectorRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -186,7 +186,7 @@ func KafkaConnectorTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 	if !plan.Active.Equal(state.Active) {
 		if !plan.Active.IsNull() && !plan.Active.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateKafkaConnectorSpecRequest{})
+				am.Spec.SetTo(model.UpdateKafkaConnectorSpecRequest{})
 			}
 			am.Spec.Value.Active.SetTo(plan.Active.ValueBool())
 		}
@@ -195,7 +195,7 @@ func KafkaConnectorTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 	if !plan.S3SinkConnector.Equal(state.S3SinkConnector) {
 		if !plan.S3SinkConnector.IsNull() && !plan.S3SinkConnector.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateKafkaConnectorSpecRequest{})
+				am.Spec.SetTo(model.UpdateKafkaConnectorSpecRequest{})
 			}
 			s3SinkConnectorPlan := tfmodel.KafkaS3SinkConnector{}
 			s3SinkConnectorPlanDiag := plan.S3SinkConnector.As(ctx, &s3SinkConnectorPlan, basetypes.ObjectAsOptions{})
@@ -221,7 +221,7 @@ func KafkaConnectorTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 			am.Spec.Value.S3SinkConnector.SetTo(*s3SinkConnectorTmp)
 		} else if plan.S3SinkConnector.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateKafkaConnectorSpecRequest{})
+				am.Spec.SetTo(model.UpdateKafkaConnectorSpecRequest{})
 			}
 			am.Spec.Value.S3SinkConnector.SetToNull()
 		}
@@ -230,7 +230,7 @@ func KafkaConnectorTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 	return &am, diags
 }
 
-func KafkaConnectorMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.KafkaConnectorMetadataOptionalResponse) (*tfmodel.KafkaConnectorMetadata, tfdiag.Diagnostics) {
+func KafkaConnectorMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *model.KafkaConnectorMetadataOptionalResponse) (*tfmodel.KafkaConnectorMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -304,13 +304,13 @@ func KafkaConnectorMetadataAPIOptionalResponseToTFModel(ctx context.Context, am 
 	return &t, diags
 }
 
-func KafkaConnectorMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaConnectorMetadata) (*apimodel.KafkaConnectorMetadataRequest, tfdiag.Diagnostics) {
+func KafkaConnectorMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaConnectorMetadata) (*model.KafkaConnectorMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaConnectorMetadataRequest
+	var am model.KafkaConnectorMetadataRequest
 
 	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
 		am.DisplayName = plan.DisplayName.ValueStringPointer()
@@ -324,7 +324,7 @@ func KafkaConnectorMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmode
 			return nil, diags
 		}
 
-		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
+		am.Usages = make([]commonmodel.TypedUsageRequest, 0, len(usages))
 
 		for _, entity := range usages {
 			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
@@ -343,7 +343,7 @@ func KafkaConnectorMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmode
 	return &am, diags
 }
 
-func KafkaConnectorMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaConnectorMetadata) (*apimodel.UpdateKafkaConnectorMetadataRequest, tfdiag.Diagnostics) {
+func KafkaConnectorMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaConnectorMetadata) (*model.UpdateKafkaConnectorMetadataRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -352,7 +352,7 @@ func KafkaConnectorMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, 
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateKafkaConnectorMetadataRequest
+	var am model.UpdateKafkaConnectorMetadataRequest
 
 	if !plan.DisplayName.Equal(state.DisplayName) {
 		if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
@@ -369,7 +369,7 @@ func KafkaConnectorMetadataTFToAPIUpdateRequestModel(ctx context.Context, plan, 
 				return nil, diags
 			}
 
-			usagesTmp := make([]commonapimodel.UpdateTypedUsageRequest, 0, len(usages))
+			usagesTmp := make([]commonmodel.UpdateTypedUsageRequest, 0, len(usages))
 
 			for _, entity := range usages {
 				stateEntity := tfcommon.TypedUsage{}

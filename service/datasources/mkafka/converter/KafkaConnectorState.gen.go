@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/model"
 )
 
-func KafkaConnectorStateAPIToTFModel(ctx context.Context, am *apimodel.KafkaConnectorState) (tfmodel.KafkaConnectorState, tfdiag.Diagnostics) {
+func KafkaConnectorStateAPIToTFModel(ctx context.Context, am *model.KafkaConnectorState) (tfmodel.KafkaConnectorState, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.KafkaConnectorState{}, nil
 	}
@@ -23,17 +23,4 @@ func KafkaConnectorStateAPIToTFModel(ctx context.Context, am *apimodel.KafkaConn
 	t = tfmodel.KafkaConnectorState(types.StringValue(string(*am)))
 
 	return t, diags
-}
-
-func KafkaConnectorStateTFToAPIModel(ctx context.Context, plan tfmodel.KafkaConnectorState) (*apimodel.KafkaConnectorState, tfdiag.Diagnostics) {
-	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaConnectorState
-
-	var tmp = types.String(plan)
-	if tmp.IsNull() {
-		return nil, diags
-	}
-	am = apimodel.KafkaConnectorState(tmp.ValueString())
-
-	return &am, diags
 }

@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/nlb/converter"
@@ -19,21 +19,21 @@ import (
 
 func TestNlbAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.NlbOptionalResponse{}
+	emptyApiModel := model.NlbOptionalResponse{}
 	_, diags := conv.NlbAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestNlbOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.NlbRequest{
-		Spec: apimodel.NlbSpecRequest{
-			Listener: apimodel.NlbListenerRequest{},
-			Rules:    []apimodel.NlbRuleRequest{},
+	emptyApiModelRequest := model.NlbRequest{
+		Spec: model.NlbSpecRequest{
+			Listener: model.NlbListenerRequest{},
+			Rules:    []model.NlbRuleRequest{},
 		},
 	}
 
-	emptyApiModelResponse, err := apimodel.NlbRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.NlbRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.NlbAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -42,7 +42,7 @@ func TestNlbOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.NlbTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.NlbRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.NlbRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -55,8 +55,8 @@ func TestUpdateNlbRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.Nlb
 	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateNlbRequest{
-		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+	expectedUpdateModel := &model.UpdateNlbRequest{
+		Metadata: optional.OptionalNil[commonmodel.UpdateCommonTypedResourceMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},

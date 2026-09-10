@@ -7,17 +7,14 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
-	"go.mws.cloud/go-sdk/service/resources/references/compute"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func StorageDiskSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.StorageDiskSpecOptionalResponse) (*tfmodel.StorageDiskSpec, tfdiag.Diagnostics) {
+func StorageDiskSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.StorageDiskSpecOptionalResponse) (*tfmodel.StorageDiskSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -69,61 +66,7 @@ func StorageDiskSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimod
 	return &t, diags
 }
 
-func StorageDiskSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.StorageDiskSpec) (*apimodel.StorageDiskSpecRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.StorageDiskSpecRequest
-
-	if !plan.Size.IsNull() && !plan.Size.IsUnknown() {
-		tmpSize, err := bytesize.ParseString(plan.Size.ValueString())
-		if err != nil {
-			diags.AddError("ByteSize string parsing", err.Error())
-			return nil, diags
-		}
-		am.Size = &tmpSize
-	}
-
-	if !plan.Source.IsNull() && !plan.Source.IsUnknown() {
-		sourcePlan := tfmodel.StorageDiskSpecSource{}
-		sourcePlanDiag := plan.Source.As(ctx, &sourcePlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, sourcePlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		sourceTmp, sourceDiag := StorageDiskSpecSourceTFToAPIRequestModel(ctx, &sourcePlan)
-		diags = append(diags, sourceDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Source = sourceTmp
-	}
-
-	if !plan.DiskType.IsNull() && !plan.DiskType.IsUnknown() {
-		diskTypeRef, err := compute.ParseDiskTypeRef(ctx, plan.DiskType.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.DiskType = &diskTypeRef
-	}
-
-	if !plan.Iops.IsNull() && !plan.Iops.IsUnknown() {
-		iopsTmp, iopsDiag := IopsTFToAPIModel(ctx, plan.Iops)
-		diags = append(diags, iopsDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Iops = iopsTmp
-	}
-
-	return &am, diags
-}
-
-func StorageDiskSpecSourceAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.StorageDiskSpecSourceOptionalResponse) (*tfmodel.StorageDiskSpecSource, tfdiag.Diagnostics) {
+func StorageDiskSpecSourceAPIOptionalResponseToTFModel(ctx context.Context, am *model.StorageDiskSpecSourceOptionalResponse) (*tfmodel.StorageDiskSpecSource, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -144,33 +87,4 @@ func StorageDiskSpecSourceAPIOptionalResponseToTFModel(ctx context.Context, am *
 	}
 
 	return &t, diags
-}
-
-func StorageDiskSpecSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.StorageDiskSpecSource) (*apimodel.StorageDiskSpecSourceRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.StorageDiskSpecSourceRequest
-
-	if !plan.Image.IsNull() && !plan.Image.IsUnknown() {
-		imageRef, err := compute.ParseImageRef(ctx, plan.Image.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Image = &imageRef
-	}
-
-	if !plan.DiskBackup.IsNull() && !plan.DiskBackup.IsUnknown() {
-		diskBackupRef, err := compute.ParseDiskBackupRef(ctx, plan.DiskBackup.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.DiskBackup = &diskBackupRef
-	}
-
-	return &am, diags
 }

@@ -1,6 +1,6 @@
 resource "mws_gpt_deployment" "deployment" {
   deployment_name = var.deployment_name
-  model           = "glm-5.2"
+  model           = "glm-5.3"
   is_active       = true
 
   metadata = {

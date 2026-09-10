@@ -7,17 +7,15 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/model"
 )
 
-func FirewallRuleAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.FirewallRuleOptionalResponse) (*tfmodel.FirewallRule, tfdiag.Diagnostics) {
+func FirewallRuleAPIOptionalResponseToTFModel(ctx context.Context, am *model.FirewallRuleOptionalResponse) (*tfmodel.FirewallRule, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -130,94 +128,4 @@ func FirewallRuleAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.
 	}
 
 	return &t, diags
-}
-
-func FirewallRuleTFToAPIRequestModel(ctx context.Context, plan *tfmodel.FirewallRule) (*apimodel.FirewallRuleRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.FirewallRuleRequest
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.Direction.IsNull() && !plan.Direction.IsUnknown() {
-		am.Spec.Direction = apimodel.FirewallRuleSpecDirectionRequest(plan.Direction.ValueString())
-	}
-
-	if !plan.Priority.IsNull() && !plan.Priority.IsUnknown() {
-		am.Spec.Priority = ptr.Get(int32(plan.Priority.ValueInt64()))
-	}
-
-	if !plan.Action.IsNull() && !plan.Action.IsUnknown() {
-		am.Spec.Action = apimodel.FirewallRuleSpecActionRequest(plan.Action.ValueString())
-	}
-
-	if !plan.Active.IsNull() && !plan.Active.IsUnknown() {
-		am.Spec.Active = plan.Active.ValueBoolPointer()
-	}
-
-	if !plan.Source.IsNull() && !plan.Source.IsUnknown() {
-		sourcePlan := tfmodel.FirewallRuleSource{}
-		sourcePlanDiag := plan.Source.As(ctx, &sourcePlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, sourcePlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		sourceTmp, sourceDiag := FirewallRuleSourceTFToAPIRequestModel(ctx, &sourcePlan)
-		diags = append(diags, sourceDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Source = *sourceTmp
-	}
-
-	if !plan.Destination.IsNull() && !plan.Destination.IsUnknown() {
-		destinationPlan := tfmodel.FirewallRuleDestination{}
-		destinationPlanDiag := plan.Destination.As(ctx, &destinationPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, destinationPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		destinationTmp, destinationDiag := FirewallRuleDestinationTFToAPIRequestModel(ctx, &destinationPlan)
-		diags = append(diags, destinationDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Destination = *destinationTmp
-	}
-
-	if !plan.ProtoPorts.IsNull() && !plan.ProtoPorts.IsUnknown() {
-		protoPorts := make([]types.String, 0)
-		dProtoPorts := plan.ProtoPorts.ElementsAs(ctx, &protoPorts, false)
-		diags = append(diags, dProtoPorts...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Spec.ProtoPorts = make([]string, 0, len(protoPorts))
-
-		for _, entity := range protoPorts {
-			am.Spec.ProtoPorts = append(am.Spec.ProtoPorts, entity.ValueString())
-		}
-	}
-
-	return &am, diags
 }

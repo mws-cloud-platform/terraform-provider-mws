@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/nlb/model"
 )
 
-func NlbAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NlbOptionalResponse) (*tfmodel.Nlb, tfdiag.Diagnostics) {
+func NlbAPIOptionalResponseToTFModel(ctx context.Context, am *model.NlbOptionalResponse) (*tfmodel.Nlb, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -110,13 +110,13 @@ func NlbAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NlbOption
 	return &t, diags
 }
 
-func NlbTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Nlb) (*apimodel.NlbRequest, tfdiag.Diagnostics) {
+func NlbTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Nlb) (*model.NlbRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.NlbRequest
+	var am model.NlbRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
@@ -158,7 +158,7 @@ func NlbTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Nlb) (*apimodel.N
 			return nil, diags
 		}
 
-		am.Spec.Rules = make([]apimodel.NlbRuleRequest, 0, len(rules))
+		am.Spec.Rules = make([]model.NlbRuleRequest, 0, len(rules))
 
 		for _, entity := range rules {
 			tmp, d := NlbRuleTFToAPIRequestModel(ctx, &entity)
@@ -173,7 +173,7 @@ func NlbTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Nlb) (*apimodel.N
 	return &am, diags
 }
 
-func NlbTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Nlb) (*apimodel.UpdateNlbRequest, tfdiag.Diagnostics) {
+func NlbTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Nlb) (*model.UpdateNlbRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -182,7 +182,7 @@ func NlbTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Nlb)
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateNlbRequest
+	var am model.UpdateNlbRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -216,7 +216,7 @@ func NlbTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Nlb)
 	if !plan.Listener.Equal(state.Listener) {
 		if !plan.Listener.IsNull() && !plan.Listener.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateNlbSpecRequest{})
+				am.Spec.SetTo(model.UpdateNlbSpecRequest{})
 			}
 			listenerPlan := tfmodel.NlbListener{}
 			listenerPlanDiag := plan.Listener.As(ctx, &listenerPlan, basetypes.ObjectAsOptions{})
@@ -246,7 +246,7 @@ func NlbTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Nlb)
 	if !plan.Rules.Equal(state.Rules) {
 		if !plan.Rules.IsNull() && !plan.Rules.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateNlbSpecRequest{})
+				am.Spec.SetTo(model.UpdateNlbSpecRequest{})
 			}
 			rules := make([]tfmodel.NlbRule, 0)
 			dRules := plan.Rules.ElementsAs(ctx, &rules, false)
@@ -255,7 +255,7 @@ func NlbTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Nlb)
 				return nil, diags
 			}
 
-			rulesTmp := make([]apimodel.UpdateNlbRuleRequest, 0, len(rules))
+			rulesTmp := make([]model.UpdateNlbRuleRequest, 0, len(rules))
 
 			for _, entity := range rules {
 				stateEntity := tfmodel.NlbRule{}

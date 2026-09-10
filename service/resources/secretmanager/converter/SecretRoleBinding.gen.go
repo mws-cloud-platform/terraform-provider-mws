@@ -10,17 +10,17 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/iam"
 	"go.mws.cloud/go-sdk/service/resources/references/support"
-	apimodel "go.mws.cloud/go-sdk/service/secretmanager/model"
+	"go.mws.cloud/go-sdk/service/secretmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager/model"
 )
 
-func SecretRoleBindingAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.SecretRoleBindingOptionalResponse) (*tfmodel.SecretRoleBinding, tfdiag.Diagnostics) {
+func SecretRoleBindingAPIOptionalResponseToTFModel(ctx context.Context, am *model.SecretRoleBindingOptionalResponse) (*tfmodel.SecretRoleBinding, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -91,13 +91,13 @@ func SecretRoleBindingAPIOptionalResponseToTFModel(ctx context.Context, am *apim
 	return &t, diags
 }
 
-func SecretRoleBindingTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SecretRoleBinding) (*apimodel.SecretRoleBindingRequest, tfdiag.Diagnostics) {
+func SecretRoleBindingTFToAPIRequestModel(ctx context.Context, plan *tfmodel.SecretRoleBinding) (*model.SecretRoleBindingRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.SecretRoleBindingRequest
+	var am model.SecretRoleBindingRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
@@ -152,7 +152,7 @@ func SecretRoleBindingTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Sec
 	return &am, diags
 }
 
-func SecretRoleBindingTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.SecretRoleBinding) (*apimodel.UpdateSecretRoleBindingRequest, tfdiag.Diagnostics) {
+func SecretRoleBindingTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.SecretRoleBinding) (*model.UpdateSecretRoleBindingRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -161,7 +161,7 @@ func SecretRoleBindingTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateSecretRoleBindingRequest
+	var am model.UpdateSecretRoleBindingRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -195,7 +195,7 @@ func SecretRoleBindingTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 	if !plan.Subject.Equal(state.Subject) {
 		if !plan.Subject.IsNull() && !plan.Subject.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(commonapimodel.UpdateCommonRoleBindingSpecRequest{})
+				am.Spec.SetTo(commonmodel.UpdateCommonRoleBindingSpecRequest{})
 			}
 			subjectPlan := tfcommon.CommonRoleBindingSpecSubject{}
 			subjectPlanDiag := plan.Subject.As(ctx, &subjectPlan, basetypes.ObjectAsOptions{})
@@ -225,7 +225,7 @@ func SecretRoleBindingTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 	if !plan.Role.Equal(state.Role) {
 		if !plan.Role.IsNull() && !plan.Role.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(commonapimodel.UpdateCommonRoleBindingSpecRequest{})
+				am.Spec.SetTo(commonmodel.UpdateCommonRoleBindingSpecRequest{})
 			}
 			roleRef, err := iam.ParseRoleRef(ctx, plan.Role.ValueString())
 			if err != nil {
@@ -239,7 +239,7 @@ func SecretRoleBindingTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 	if !plan.SupportRequestId.Equal(state.SupportRequestId) {
 		if !plan.SupportRequestId.IsNull() && !plan.SupportRequestId.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(commonapimodel.UpdateCommonRoleBindingSpecRequest{})
+				am.Spec.SetTo(commonmodel.UpdateCommonRoleBindingSpecRequest{})
 			}
 			supportRequestIdRef, err := support.ParseRequestIDRef(ctx, plan.SupportRequestId.ValueString())
 			if err != nil {

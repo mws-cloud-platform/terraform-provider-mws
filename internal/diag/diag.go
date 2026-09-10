@@ -11,13 +11,20 @@ import (
 func FormatError(err error) string {
 	var sb strings.Builder
 
-	sb.WriteString("Error: " + err.Error())
+	sb.WriteString("Error: ")
+	sb.WriteString(err.Error())
 
-	var apiErr *mwserrors.APIError
-	if errors.As(err, &apiErr) {
+	if apiErr, ok := errors.AsType[*mwserrors.APIError](err); ok {
 		if apiErr.Details != nil {
 			sb.WriteString("\nDetails: ")
 			sb.WriteString(apiErr.Details.String())
+		}
+	}
+
+	if unexpectedStatusCodeErr, ok := errors.AsType[*mwserrors.UnexpectedStatusCodeError](err); ok {
+		if len(unexpectedStatusCodeErr.Data) > 0 {
+			sb.WriteString("\nData: ")
+			sb.Write(unexpectedStatusCodeErr.Data)
 		}
 	}
 

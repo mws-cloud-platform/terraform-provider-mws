@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
@@ -19,20 +19,20 @@ import (
 
 func TestImageAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ImageOptionalResponse{}
+	emptyApiModel := model.ImageOptionalResponse{}
 	_, diags := conv.ImageAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestImageOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.ImageRequest{
-		Spec: apimodel.ImageSpecRequest{
-			Source: apimodel.ImageSpecSourceRequest{},
+	emptyApiModelRequest := model.ImageRequest{
+		Spec: model.ImageSpecRequest{
+			Source: model.ImageSpecSourceRequest{},
 		},
 	}
 
-	emptyApiModelResponse, err := apimodel.ImageRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.ImageRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.ImageAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -41,7 +41,7 @@ func TestImageOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.ImageTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.ImageRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.ImageRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -55,13 +55,13 @@ func TestUpdateImageRequestConverters(t *testing.T) {
 	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
 	stateTfModel.Encryption = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.EncryptionSpec).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateImageRequest{
-		Metadata: optional.OptionalNil[commonapimodel.UpdateCommonTypedResourceMetadataRequest]{
+	expectedUpdateModel := &model.UpdateImageRequest{
+		Metadata: optional.OptionalNil[commonmodel.UpdateCommonTypedResourceMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},
-		Spec: optional.NewOptional(apimodel.UpdateImageSpecRequest{
-			Encryption: optional.OptionalNil[apimodel.UpdateEncryptionSpecRequest]{
+		Spec: optional.NewOptional(model.UpdateImageSpecRequest{
+			Encryption: optional.OptionalNil[model.UpdateEncryptionSpecRequest]{
 				Set:  true,
 				Null: true,
 			},

@@ -8,12 +8,12 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func StorageStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.StorageStatusResponse) (*tfmodel.StorageStatus, tfdiag.Diagnostics) {
+func StorageStatusAPIResponseToTFModel(ctx context.Context, am *model.StorageStatusResponse) (*tfmodel.StorageStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

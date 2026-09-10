@@ -8,20 +8,20 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 )
 
 func TestClusterHealthAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClusterHealth("")
+	emptyApiModel := model.ClusterHealth("")
 	_, diags := conv.ClusterHealthAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClusterHealthConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClusterHealth("")
+	emptyApiModel := model.ClusterHealth("")
 
 	tfModel, diags := conv.ClusterHealthAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())

@@ -9,11 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/nlb/model"
 )
 
-func NlbHealthCheckHttpsAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NlbHealthCheckHttpsOptionalResponse) (*tfmodel.NlbHealthCheckHttps, tfdiag.Diagnostics) {
+func NlbHealthCheckHttpsAPIOptionalResponseToTFModel(ctx context.Context, am *model.NlbHealthCheckHttpsOptionalResponse) (*tfmodel.NlbHealthCheckHttps, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -34,13 +34,13 @@ func NlbHealthCheckHttpsAPIOptionalResponseToTFModel(ctx context.Context, am *ap
 	return &t, diags
 }
 
-func NlbHealthCheckHttpsTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbHealthCheckHttps) (*apimodel.NlbHealthCheckHttpsRequest, tfdiag.Diagnostics) {
+func NlbHealthCheckHttpsTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbHealthCheckHttps) (*model.NlbHealthCheckHttpsRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.NlbHealthCheckHttpsRequest
+	var am model.NlbHealthCheckHttpsRequest
 
 	if !plan.Port.IsNull() && !plan.Port.IsUnknown() {
 		am.Port = int(plan.Port.ValueInt64())
@@ -57,7 +57,7 @@ func NlbHealthCheckHttpsTFToAPIRequestModel(ctx context.Context, plan *tfmodel.N
 	return &am, diags
 }
 
-func NlbHealthCheckHttpsTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NlbHealthCheckHttps) (*apimodel.UpdateNlbHealthCheckHttpsRequest, tfdiag.Diagnostics) {
+func NlbHealthCheckHttpsTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NlbHealthCheckHttps) (*model.UpdateNlbHealthCheckHttpsRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -66,7 +66,7 @@ func NlbHealthCheckHttpsTFToAPIUpdateRequestModel(ctx context.Context, plan, sta
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateNlbHealthCheckHttpsRequest
+	var am model.UpdateNlbHealthCheckHttpsRequest
 
 	if !plan.Port.Equal(state.Port) {
 		if !plan.Port.IsNull() && !plan.Port.IsUnknown() {

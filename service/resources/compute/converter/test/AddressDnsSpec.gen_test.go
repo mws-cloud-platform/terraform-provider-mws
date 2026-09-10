@@ -9,27 +9,27 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/duration"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
 func TestAddressDnsSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.AddressDnsSpecOptionalResponse{}
+	emptyApiModel := model.AddressDnsSpecOptionalResponse{}
 	_, diags := conv.AddressDnsSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestAddressDnsSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.AddressDnsSpecRequest{
+	emptyApiModelRequest := model.AddressDnsSpecRequest{
 		Name: "name",
 		Ttl:  duration.MustParseString("PT0S"),
 		Ptr:  false,
 	}
 
-	emptyApiModelResponse, err := apimodel.AddressDnsSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.AddressDnsSpecRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.AddressDnsSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -38,7 +38,7 @@ func TestAddressDnsSpecOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.AddressDnsSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.AddressDnsSpecRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.AddressDnsSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -50,7 +50,7 @@ func TestUpdateAddressDnsSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.AddressDnsSpec
 	var stateTfModel tfmodel.AddressDnsSpec
 
-	expectedUpdateModel := &apimodel.UpdateAddressDnsSpecRequest{}
+	expectedUpdateModel := &model.UpdateAddressDnsSpecRequest{}
 
 	result, diags := conv.AddressDnsSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

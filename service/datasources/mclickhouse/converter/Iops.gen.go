@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/model"
 )
 
-func IopsAPIToTFModel(ctx context.Context, am *apimodel.Iops) (tfmodel.Iops, tfdiag.Diagnostics) {
+func IopsAPIToTFModel(ctx context.Context, am *model.Iops) (tfmodel.Iops, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.Iops{}, nil
 	}
@@ -23,17 +23,4 @@ func IopsAPIToTFModel(ctx context.Context, am *apimodel.Iops) (tfmodel.Iops, tfd
 	t = tfmodel.Iops(types.Int64Value(int64(*am)))
 
 	return t, diags
-}
-
-func IopsTFToAPIModel(ctx context.Context, plan tfmodel.Iops) (*apimodel.Iops, tfdiag.Diagnostics) {
-	var diags tfdiag.Diagnostics
-	var am apimodel.Iops
-
-	var tmp = types.Int64(plan)
-	if tmp.IsNull() {
-		return nil, diags
-	}
-	am = apimodel.Iops(tmp.ValueInt64())
-
-	return &am, diags
 }

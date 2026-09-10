@@ -7,18 +7,16 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	"go.mws.cloud/go-sdk/service/resources/references/secretmanager"
-	apimodel "go.mws.cloud/go-sdk/service/secretmanager/model"
+	"go.mws.cloud/go-sdk/service/secretmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/secretmanager/model"
 )
 
-func SecretAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.SecretOptionalResponse) (*tfmodel.Secret, tfdiag.Diagnostics) {
+func SecretAPIOptionalResponseToTFModel(ctx context.Context, am *model.SecretOptionalResponse) (*tfmodel.Secret, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -87,60 +85,4 @@ func SecretAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.Secret
 	}
 
 	return &t, diags
-}
-
-func SecretTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Secret) (*apimodel.SecretRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.SecretRequest
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.Active.IsNull() && !plan.Active.IsUnknown() {
-		am.Spec.Active = plan.Active.ValueBoolPointer()
-	}
-
-	if !plan.CurrentSecretVersion.IsNull() && !plan.CurrentSecretVersion.IsUnknown() {
-		currentSecretVersionRef, err := secretmanager.ParseSecretVersionRef(ctx, plan.CurrentSecretVersion.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Spec.CurrentSecretVersion = &currentSecretVersionRef
-	}
-
-	if !plan.Encryption.IsNull() && !plan.Encryption.IsUnknown() {
-		encryptionPlan := tfmodel.EncryptionSpec{}
-		encryptionPlanDiag := plan.Encryption.As(ctx, &encryptionPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, encryptionPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		encryptionTmp, encryptionDiag := EncryptionSpecTFToAPIRequestModel(ctx, &encryptionPlan)
-		diags = append(diags, encryptionDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Encryption = encryptionTmp
-	}
-
-	return &am, diags
 }

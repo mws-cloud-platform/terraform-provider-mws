@@ -8,23 +8,23 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
 func TestKafkaBalancerSpecAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaBalancerSpecResponse{}
+	emptyApiModel := model.KafkaBalancerSpecResponse{}
 	_, diags := conv.KafkaBalancerSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestKafkaBalancerSpecResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaBalancerSpecRequest{}
+	emptyApiModelRequest := model.KafkaBalancerSpecRequest{}
 
-	emptyApiModelResponse, err := apimodel.KafkaBalancerSpecRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.KafkaBalancerSpecRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.KafkaBalancerSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -33,7 +33,7 @@ func TestKafkaBalancerSpecResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.KafkaBalancerSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.KafkaBalancerSpecRequestToResponse(filledApiModelRequest)
+	result, err := model.KafkaBalancerSpecRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -45,7 +45,7 @@ func TestUpdateKafkaBalancerSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.KafkaBalancerSpec
 	var stateTfModel tfmodel.KafkaBalancerSpec
 
-	expectedUpdateModel := &apimodel.UpdateKafkaBalancerSpecRequest{}
+	expectedUpdateModel := &model.UpdateKafkaBalancerSpecRequest{}
 
 	result, diags := conv.KafkaBalancerSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

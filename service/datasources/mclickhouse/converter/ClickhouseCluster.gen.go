@@ -8,20 +8,16 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	jsonapimodels "go.mws.cloud/go-sdk/pkg/apimodels/json"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
-	"go.mws.cloud/go-sdk/service/resources/references/rm"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/model"
 )
 
-func ClickhouseClusterAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseClusterOptionalResponse) (*tfmodel.ClickhouseCluster, tfdiag.Diagnostics) {
+func ClickhouseClusterAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseClusterOptionalResponse) (*tfmodel.ClickhouseCluster, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -246,186 +242,7 @@ func ClickhouseClusterAPIOptionalResponseToTFModel(ctx context.Context, am *apim
 	return &t, diags
 }
 
-func ClickhouseClusterTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseCluster) (*apimodel.ClickhouseClusterRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseClusterRequest
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfmodel.ClickhouseClusterMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := ClickhouseClusterMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.Active.IsNull() && !plan.Active.IsUnknown() {
-		am.Spec.Active = plan.Active.ValueBoolPointer()
-	}
-
-	if !plan.Version.IsNull() && !plan.Version.IsUnknown() {
-		am.Spec.Version = plan.Version.ValueString()
-	}
-
-	if !plan.Region.IsNull() && !plan.Region.IsUnknown() {
-		regionRef, err := rm.ParseRegionRef(ctx, plan.Region.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Spec.Region = &regionRef
-	}
-
-	if !plan.Endpoints.IsNull() && !plan.Endpoints.IsUnknown() {
-		endpoints := make([]tfmodel.ClickhouseEndpoint, 0)
-		dEndpoints := plan.Endpoints.ElementsAs(ctx, &endpoints, false)
-		diags = append(diags, dEndpoints...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Spec.Endpoints = make([]apimodel.ClickhouseEndpointRequest, 0, len(endpoints))
-
-		for _, entity := range endpoints {
-			tmp, d := ClickhouseEndpointTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.Spec.Endpoints = append(am.Spec.Endpoints, *tmp)
-		}
-	}
-
-	if !plan.Coordinator.IsNull() && !plan.Coordinator.IsUnknown() {
-		coordinatorPlan := tfmodel.ClickhouseClusterCoordinator{}
-		coordinatorPlanDiag := plan.Coordinator.As(ctx, &coordinatorPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, coordinatorPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		coordinatorTmp, coordinatorDiag := ClickhouseClusterCoordinatorTFToAPIRequestModel(ctx, &coordinatorPlan)
-		diags = append(diags, coordinatorDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Coordinator = coordinatorTmp
-	}
-
-	if !plan.Shards.IsNull() && !plan.Shards.IsUnknown() {
-		shards := make([]tfmodel.ClickhouseClusterShard, 0)
-		dShards := plan.Shards.ElementsAs(ctx, &shards, false)
-		diags = append(diags, dShards...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Spec.Shards = make([]apimodel.ClickhouseClusterShardRequest, 0, len(shards))
-
-		for _, entity := range shards {
-			tmp, d := ClickhouseClusterShardTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.Spec.Shards = append(am.Spec.Shards, *tmp)
-		}
-	}
-
-	if !plan.Config.IsNull() && !plan.Config.IsUnknown() {
-		config := make(map[string]types.String)
-		dConfig := plan.Config.ElementsAs(ctx, &config, false)
-		diags = append(diags, dConfig...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Spec.Config = make(map[string]jsonapimodels.RawMessageNotNull, len(config))
-
-		for k, entity := range config {
-			am.Spec.Config[k] = jsonapimodels.RawMessageNotNull(entity.ValueString())
-		}
-	}
-
-	if !plan.Storage.IsNull() && !plan.Storage.IsUnknown() {
-		storagePlan := tfmodel.ClickhouseStorageConfiguration{}
-		storagePlanDiag := plan.Storage.As(ctx, &storagePlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, storagePlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		storageTmp, storageDiag := ClickhouseStorageConfigurationTFToAPIRequestModel(ctx, &storagePlan)
-		diags = append(diags, storageDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Storage = storageTmp
-	}
-
-	if !plan.BootstrapAdmin.IsNull() && !plan.BootstrapAdmin.IsUnknown() {
-		bootstrapAdminPlan := tfmodel.ClickhouseClusterBootstrapAdminSpec{}
-		bootstrapAdminPlanDiag := plan.BootstrapAdmin.As(ctx, &bootstrapAdminPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, bootstrapAdminPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		bootstrapAdminTmp, bootstrapAdminDiag := ClickhouseClusterBootstrapAdminSpecTFToAPIRequestModel(ctx, &bootstrapAdminPlan)
-		diags = append(diags, bootstrapAdminDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.BootstrapAdmin = *bootstrapAdminTmp
-	}
-
-	if !plan.Backup.IsNull() && !plan.Backup.IsUnknown() {
-		backupPlan := tfmodel.ClickhouseClusterBackup{}
-		backupPlanDiag := plan.Backup.As(ctx, &backupPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, backupPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		backupTmp, backupDiag := ClickhouseClusterBackupTFToAPIRequestModel(ctx, &backupPlan)
-		diags = append(diags, backupDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.Backup = backupTmp
-	}
-
-	if !plan.MaintenanceWindow.IsNull() && !plan.MaintenanceWindow.IsUnknown() {
-		maintenanceWindowPlan := tfcommon.MaintenanceWindow{}
-		maintenanceWindowPlanDiag := plan.MaintenanceWindow.As(ctx, &maintenanceWindowPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, maintenanceWindowPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		maintenanceWindowTmp, maintenanceWindowDiag := commonconv.MaintenanceWindowTFToAPIRequestModel(ctx, &maintenanceWindowPlan)
-		diags = append(diags, maintenanceWindowDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.MaintenanceWindow = maintenanceWindowTmp
-	}
-
-	return &am, diags
-}
-
-func ClickhouseClusterMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseClusterMetadataOptionalResponse) (*tfmodel.ClickhouseClusterMetadata, tfdiag.Diagnostics) {
+func ClickhouseClusterMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseClusterMetadataOptionalResponse) (*tfmodel.ClickhouseClusterMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -497,43 +314,4 @@ func ClickhouseClusterMetadataAPIOptionalResponseToTFModel(ctx context.Context, 
 	}
 
 	return &t, diags
-}
-
-func ClickhouseClusterMetadataTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterMetadata) (*apimodel.ClickhouseClusterMetadataRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseClusterMetadataRequest
-
-	if !plan.DisplayName.IsNull() && !plan.DisplayName.IsUnknown() {
-		am.DisplayName = plan.DisplayName.ValueStringPointer()
-	}
-
-	if !plan.Usages.IsNull() && !plan.Usages.IsUnknown() {
-		usages := make([]tfcommon.TypedUsage, 0)
-		dUsages := plan.Usages.ElementsAs(ctx, &usages, false)
-		diags = append(diags, dUsages...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		am.Usages = make([]commonapimodel.TypedUsageRequest, 0, len(usages))
-
-		for _, entity := range usages {
-			tmp, d := commonconv.TypedUsageTFToAPIRequestModel(ctx, &entity)
-			diags = append(diags, d...)
-			if diags.HasError() {
-				return nil, diags
-			}
-			am.Usages = append(am.Usages, *tmp)
-		}
-	}
-
-	if !plan.Description.IsNull() && !plan.Description.IsUnknown() {
-		am.Description = plan.Description.ValueStringPointer()
-	}
-
-	return &am, diags
 }

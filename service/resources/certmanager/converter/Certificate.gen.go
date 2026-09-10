@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/model"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
-func CertificateAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.CertificateOptionalResponse) (*tfmodel.Certificate, tfdiag.Diagnostics) {
+func CertificateAPIOptionalResponseToTFModel(ctx context.Context, am *model.CertificateOptionalResponse) (*tfmodel.Certificate, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -79,13 +79,13 @@ func CertificateAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.C
 	return &t, diags
 }
 
-func CertificateTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Certificate) (*apimodel.CertificateRequest, tfdiag.Diagnostics) {
+func CertificateTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Certificate) (*model.CertificateRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.CertificateRequest
+	var am model.CertificateRequest
 
 	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
 		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
@@ -138,7 +138,7 @@ func CertificateTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Certifica
 	return &am, diags
 }
 
-func CertificateTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Certificate) (*apimodel.UpdateCertificateRequest, tfdiag.Diagnostics) {
+func CertificateTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.Certificate) (*model.UpdateCertificateRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -147,7 +147,7 @@ func CertificateTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmo
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateCertificateRequest
+	var am model.UpdateCertificateRequest
 
 	if !plan.Metadata.Equal(state.Metadata) {
 		if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
@@ -181,7 +181,7 @@ func CertificateTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmo
 	if !plan.SelfManaged.Equal(state.SelfManaged) {
 		if !plan.SelfManaged.IsNull() && !plan.SelfManaged.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateCertificateSpecRequest{})
+				am.Spec.SetTo(model.UpdateCertificateSpecRequest{})
 			}
 			selfManagedPlan := tfmodel.SelfManagedSpec{}
 			selfManagedPlanDiag := plan.SelfManaged.As(ctx, &selfManagedPlan, basetypes.ObjectAsOptions{})
@@ -207,7 +207,7 @@ func CertificateTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmo
 			am.Spec.Value.SelfManaged.SetTo(*selfManagedTmp)
 		} else if plan.SelfManaged.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateCertificateSpecRequest{})
+				am.Spec.SetTo(model.UpdateCertificateSpecRequest{})
 			}
 			am.Spec.Value.SelfManaged.SetToNull()
 		}
@@ -216,7 +216,7 @@ func CertificateTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmo
 	if !plan.Managed.Equal(state.Managed) {
 		if !plan.Managed.IsNull() && !plan.Managed.IsUnknown() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateCertificateSpecRequest{})
+				am.Spec.SetTo(model.UpdateCertificateSpecRequest{})
 			}
 			managedPlan := tfmodel.CertificateManagedSpec{}
 			managedPlanDiag := plan.Managed.As(ctx, &managedPlan, basetypes.ObjectAsOptions{})
@@ -242,7 +242,7 @@ func CertificateTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmo
 			am.Spec.Value.Managed.SetTo(*managedTmp)
 		} else if plan.Managed.IsNull() {
 			if !am.Spec.IsSet() {
-				am.Spec.SetTo(apimodel.UpdateCertificateSpecRequest{})
+				am.Spec.SetTo(model.UpdateCertificateSpecRequest{})
 			}
 			am.Spec.Value.Managed.SetToNull()
 		}

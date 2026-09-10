@@ -10,11 +10,11 @@ import (
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/duration"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func AddressDnsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.AddressDnsSpecOptionalResponse) (*tfmodel.AddressDnsSpec, tfdiag.Diagnostics) {
+func AddressDnsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.AddressDnsSpecOptionalResponse) (*tfmodel.AddressDnsSpec, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -31,13 +31,13 @@ func AddressDnsSpecAPIOptionalResponseToTFModel(ctx context.Context, am *apimode
 	return &t, diags
 }
 
-func AddressDnsSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.AddressDnsSpec) (*apimodel.AddressDnsSpecRequest, tfdiag.Diagnostics) {
+func AddressDnsSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.AddressDnsSpec) (*model.AddressDnsSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.AddressDnsSpecRequest
+	var am model.AddressDnsSpecRequest
 
 	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
 		am.Name = plan.Name.ValueString()
@@ -59,7 +59,7 @@ func AddressDnsSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Addres
 	return &am, diags
 }
 
-func AddressDnsSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.AddressDnsSpec) (*apimodel.UpdateAddressDnsSpecRequest, tfdiag.Diagnostics) {
+func AddressDnsSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.AddressDnsSpec) (*model.UpdateAddressDnsSpecRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -68,7 +68,7 @@ func AddressDnsSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateAddressDnsSpecRequest
+	var am model.UpdateAddressDnsSpecRequest
 
 	if !plan.Name.Equal(state.Name) {
 		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {

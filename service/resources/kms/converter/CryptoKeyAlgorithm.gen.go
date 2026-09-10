@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/kms/model"
+	"go.mws.cloud/go-sdk/service/kms/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/kms/model"
 )
 
-func CryptoKeyAlgorithmAPIToTFModel(ctx context.Context, am *apimodel.CryptoKeyAlgorithm) (tfmodel.CryptoKeyAlgorithm, tfdiag.Diagnostics) {
+func CryptoKeyAlgorithmAPIToTFModel(ctx context.Context, am *model.CryptoKeyAlgorithm) (tfmodel.CryptoKeyAlgorithm, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.CryptoKeyAlgorithm{}, nil
 	}
@@ -25,15 +25,15 @@ func CryptoKeyAlgorithmAPIToTFModel(ctx context.Context, am *apimodel.CryptoKeyA
 	return t, diags
 }
 
-func CryptoKeyAlgorithmTFToAPIModel(ctx context.Context, plan tfmodel.CryptoKeyAlgorithm) (*apimodel.CryptoKeyAlgorithm, tfdiag.Diagnostics) {
+func CryptoKeyAlgorithmTFToAPIModel(ctx context.Context, plan tfmodel.CryptoKeyAlgorithm) (*model.CryptoKeyAlgorithm, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
-	var am apimodel.CryptoKeyAlgorithm
+	var am model.CryptoKeyAlgorithm
 
 	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}
-	am = apimodel.CryptoKeyAlgorithm(tmp.ValueString())
+	am = model.CryptoKeyAlgorithm(tmp.ValueString())
 
 	return &am, diags
 }

@@ -20,22 +20,22 @@ func (s *ClusterSpecNetwork) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"primary_endpoint": schema.SingleNestedAttribute{
 				Attributes:          new(ClusterPrimaryEndpointSpecOrRef).GetSchema().Attributes,
-				MarkdownDescription: `Ip-адрес внутри vpc`,
+				MarkdownDescription: `IP-адрес внутри VPC`,
 				Required:            true,
 			},
 			"public_endpoint": schema.SingleNestedAttribute{
 				Attributes:          new(ClusterPublicEndpointSpecOrRef).GetSchema().Attributes,
-				MarkdownDescription: `Внешний ip-адрес`,
+				MarkdownDescription: `Внешний IP-адрес`,
 				Optional:            true,
 			},
 			"pods_cidr": schema.StringAttribute{
-				MarkdownDescription: `Необходим ip-range v4
+				MarkdownDescription: `CIDR IPv4-адресов
 
 IPv4 подсеть в CIDR нотации`,
 				Required: true,
 			},
 			"services_cidr": schema.StringAttribute{
-				MarkdownDescription: `Необходим ip-range v4
+				MarkdownDescription: `CIDR IPv4-адресов
 
 IPv4 подсеть в CIDR нотации`,
 				Required: true,

@@ -8,23 +8,23 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
 func TestPostgresUserAdditionalRoleAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.PostgresUserAdditionalRoleResponse{}
+	emptyApiModel := model.PostgresUserAdditionalRoleResponse{}
 	_, diags := conv.PostgresUserAdditionalRoleAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestPostgresUserAdditionalRoleResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.PostgresUserAdditionalRoleRequest{}
+	emptyApiModelRequest := model.PostgresUserAdditionalRoleRequest{}
 
-	emptyApiModelResponse, err := apimodel.PostgresUserAdditionalRoleRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.PostgresUserAdditionalRoleRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.PostgresUserAdditionalRoleAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -33,7 +33,7 @@ func TestPostgresUserAdditionalRoleResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.PostgresUserAdditionalRoleTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.PostgresUserAdditionalRoleRequestToResponse(filledApiModelRequest)
+	result, err := model.PostgresUserAdditionalRoleRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -45,7 +45,7 @@ func TestUpdatePostgresUserAdditionalRoleRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.PostgresUserAdditionalRole
 	var stateTfModel tfmodel.PostgresUserAdditionalRole
 
-	expectedUpdateModel := &apimodel.UpdatePostgresUserAdditionalRoleRequest{}
+	expectedUpdateModel := &model.UpdatePostgresUserAdditionalRoleRequest{}
 
 	result, diags := conv.PostgresUserAdditionalRoleTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

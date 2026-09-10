@@ -33,8 +33,8 @@ data "mws_mclickhouse_cluster" "mclickhouse_cluster_name" {
 
 - `active` (Boolean) Состояние кластера — включен или выключен
 - `backup` (Attributes) Спецификация работы автоматического резервного копирования (see [below for nested schema](#nestedatt--backup))
-- `bootstrap_admin` (Attributes) Добавление пользователей при создании кластера Clickhouse (see [below for nested schema](#nestedatt--bootstrap_admin))
-- `config` (Map of String) Настройки Clickhouse. Если не указаны, будут использованы настройки по умолчанию
+- `bootstrap_admin` (Attributes) Добавление пользователей при создании кластера ClickHouse (see [below for nested schema](#nestedatt--bootstrap_admin))
+- `config` (Map of String) Настройки ClickHouse. Если не указаны, будут использованы настройки по умолчанию
 - `coordinator` (Attributes) Описание координатора кластера (see [below for nested schema](#nestedatt--coordinator))
 - `endpoints` (Attributes List) Описание эндпоинтов кластера (see [below for nested schema](#nestedatt--endpoints))
 - `kind` (String)
@@ -69,15 +69,15 @@ Read-Only:
 Read-Only:
 
 - `instances` (Attributes List) (see [below for nested schema](#nestedatt--coordinator--instances))
-- `resources` (Attributes) Параметры виртуальной машины, где будет работать Clickhouse Keeper/Zookeeper. Необязательный параметр в standalone-конфигурации (see [below for nested schema](#nestedatt--coordinator--resources))
-- `type` (String) Тип координатора. Если не указано, то при наличии более одного хоста, используется Clickhouse Keeper
+- `resources` (Attributes) Параметры виртуальной машины, на которой будет работать ClickHouse Keeper. Необязательный параметр в standalone-конфигурации (see [below for nested schema](#nestedatt--coordinator--resources))
+- `type` (String) Тип координатора. Если не указано, то при наличии более одного узла, используется ClickHouse Keeper
 
 <a id="nestedatt--coordinator--instances"></a>
 ### Nested Schema for `coordinator.instances`
 
 Read-Only:
 
-- `count` (Number) Количество инстансов в зоне доступности
+- `count` (Number) Количество узлов в зоне доступности
 - `zone` (String) Зона доступности
 
 
@@ -113,7 +113,7 @@ Read-Only:
 
 Read-Only:
 
-- `address` (Attributes) Описание адреса эндпоинта. Если указан "ref", будет использован существующий внутренний адрес VPC. Если указан "spec", будут созданы внутренние адреса в указанной подсети: для эндпоинта кластера или шарда — по одному адресу на эндпоинт, для эндпоинтов инстансов — по одному адресу на каждый эндпоинт каждого созданного инстанса (see [below for nested schema](#nestedatt--endpoints--address))
+- `address` (Attributes) Описание адреса эндпоинта. Если указан "ref", будет использован существующий внутренний адрес VPC. Если указан "spec", будут созданы внутренние адреса в указанной подсети: для эндпоинта кластера или шарда — по одному адресу на эндпоинт, для эндпоинтов узлов — по одному адресу на каждый эндпоинт каждого созданного узла (see [below for nested schema](#nestedatt--endpoints--address))
 - `external_address` (Attributes) Описание шаблона внешнего адреса/адресов, которые будут выделены. Для "ref" будет выделен только один адрес, для "spec" будет выделено необходимое количество адресов в зависимости от сущности, для которой выделяются адреса (see [below for nested schema](#nestedatt--endpoints--external_address))
 
 <a id="nestedatt--endpoints--address"></a>
@@ -210,10 +210,10 @@ Read-Only:
 Read-Only:
 
 - `count` (Number) Количество шардов, которые будут созданы
-- `endpoints` (Attributes List) Описание эдпойнтов шардов (see [below for nested schema](#nestedatt--shards--endpoints))
+- `endpoints` (Attributes List) Описание эндпоинтов шардов (see [below for nested schema](#nestedatt--shards--endpoints))
 - `instances` (Attributes List) (see [below for nested schema](#nestedatt--shards--instances))
-- `name` (String) -> Имя шарда, которому будут принадлежать инстансы. В случае с несколькими шардами имя формируется как "name-{shardIndex}"
-- `resources` (Attributes) Ресурсы одной ноды Clickhouse (see [below for nested schema](#nestedatt--shards--resources))
+- `name` (String) -> Имя шарда, которому будут принадлежать узлы. В случае с несколькими шардами имя формируется как "name-{shardIndex}"
+- `resources` (Attributes) Ресурсы одного узла ClickHouse (see [below for nested schema](#nestedatt--shards--resources))
 - `weight` (Number) Вес шарда
 
 <a id="nestedatt--shards--endpoints"></a>
@@ -221,7 +221,7 @@ Read-Only:
 
 Read-Only:
 
-- `address` (Attributes) Описание адреса эндпоинта. Если указан "ref", будет использован существующий внутренний адрес VPC. Если указан "spec", будут созданы внутренние адреса в указанной подсети: для эндпоинта кластера или шарда — по одному адресу на эндпоинт, для эндпоинтов инстансов — по одному адресу на каждый эндпоинт каждого созданного инстанса (see [below for nested schema](#nestedatt--shards--endpoints--address))
+- `address` (Attributes) Описание адреса эндпоинта. Если указан "ref", будет использован существующий внутренний адрес VPC. Если указан "spec", будут созданы внутренние адреса в указанной подсети: для эндпоинта кластера или шарда — по одному адресу на эндпоинт, для эндпоинтов узлов — по одному адресу на каждый эндпоинт каждого созданного узла (see [below for nested schema](#nestedatt--shards--endpoints--address))
 - `external_address` (Attributes) Описание шаблона внешнего адреса/адресов, которые будут выделены. Для "ref" будет выделен только один адрес, для "spec" будет выделено необходимое количество адресов в зависимости от сущности, для которой выделяются адреса (see [below for nested schema](#nestedatt--shards--endpoints--external_address))
 
 <a id="nestedatt--shards--endpoints--address"></a>
@@ -260,9 +260,9 @@ Read-Only:
 
 Read-Only:
 
-- `count` (Number) Количество инстансов в зоне доступности
-- `endpoints` (Attributes List) Описание эдпойнтов инстансов (see [below for nested schema](#nestedatt--shards--instances--endpoints))
-- `name` (String) -> Имя инстанса в шарде. В случае count>1, имя формируется как name{replicaIndex}, где replicaIndex имеет сквозную нумерацию в рамках имени инстанса
+- `count` (Number) Количество узлов в зоне доступности
+- `endpoints` (Attributes List) Описание эндпоинтов узлов (see [below for nested schema](#nestedatt--shards--instances--endpoints))
+- `name` (String) -> Имя узла или узлов в шарде. В случае count>1, имя формируется как name{replicaIndex}, где replicaIndex имеет сквозную нумерацию в рамках указанного имени
 - `zone` (String) Зона доступности
 
 <a id="nestedatt--shards--instances--endpoints"></a>
@@ -270,7 +270,7 @@ Read-Only:
 
 Read-Only:
 
-- `address` (Attributes) Описание адреса эндпоинта. Если указан "ref", будет использован существующий внутренний адрес VPC. Если указан "spec", будут созданы внутренние адреса в указанной подсети: для эндпоинта кластера или шарда — по одному адресу на эндпоинт, для эндпоинтов инстансов — по одному адресу на каждый эндпоинт каждого созданного инстанса (see [below for nested schema](#nestedatt--shards--instances--endpoints--address))
+- `address` (Attributes) Описание адреса эндпоинта. Если указан "ref", будет использован существующий внутренний адрес VPC. Если указан "spec", будут созданы внутренние адреса в указанной подсети: для эндпоинта кластера или шарда — по одному адресу на эндпоинт, для эндпоинтов узлов — по одному адресу на каждый эндпоинт каждого созданного узла (see [below for nested schema](#nestedatt--shards--instances--endpoints--address))
 - `external_address` (Attributes) Описание шаблона внешнего адреса/адресов, которые будут выделены. Для "ref" будет выделен только один адрес, для "spec" будет выделено необходимое количество адресов в зависимости от сущности, для которой выделяются адреса (see [below for nested schema](#nestedatt--shards--instances--endpoints--external_address))
 
 <a id="nestedatt--shards--instances--endpoints--address"></a>
@@ -340,7 +340,7 @@ Read-Only:
 - `cluster` (Attributes) Параметры объекта кластера (see [below for nested schema](#nestedatt--status--cluster))
 - `health` (String) Работоспособность кластера:
   * "ALIVE"    - Полностью работоспособен;
-  * "DEGRADED" - Деградирует (некоторые, но не все, экземпляры неработоспособны);
+  * "DEGRADED" - Деградирует (некоторые, но не все, узлы неработоспособны);
   * "FAILED"   - Неработоспособен;
   * "UNKNOWN"  - Не удаётся определить состояние (на этапе создания)
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
@@ -364,7 +364,7 @@ Read-Only:
 
 - `active` (Boolean) Состояние кластера — включен или выключен
 - `backup` (Attributes) Спецификация работы автоматического резервного копирования (see [below for nested schema](#nestedatt--status--cluster--backup))
-- `config` (Map of String) Настройки Clickhouse
+- `config` (Map of String) Настройки ClickHouse
 - `coordinator` (Attributes) Описание координаторов кластера (see [below for nested schema](#nestedatt--status--cluster--coordinator))
 - `endpoints` (Attributes List) Список эндпойнтов для подключения к кластеру (see [below for nested schema](#nestedatt--status--cluster--endpoints))
 - `maintenance_window` (Attributes) (see [below for nested schema](#nestedatt--status--cluster--maintenance_window))
@@ -387,9 +387,9 @@ Read-Only:
 
 Read-Only:
 
-- `instances` (Attributes List) Описание инстансов координатора (see [below for nested schema](#nestedatt--status--cluster--coordinator--instances))
-- `resources` (Attributes) Параметры виртуальной машины, где будет работать Clickhouse Keeper/Zookeeper. Необязательный параметр в standalone-конфигурации (see [below for nested schema](#nestedatt--status--cluster--coordinator--resources))
-- `type` (String) Тип координатора. Если не указано, то при наличии более одного хоста, используется Clickhouse Keeper
+- `instances` (Attributes List) Описание узлов координатора (see [below for nested schema](#nestedatt--status--cluster--coordinator--instances))
+- `resources` (Attributes) Параметры виртуальной машины, на которой будет работать ClickHouse Keeper. Необязательный параметр в standalone-конфигурации (see [below for nested schema](#nestedatt--status--cluster--coordinator--resources))
+- `type` (String) Тип координатора. Если не указано, то при наличии более одного узла, используется ClickHouse Keeper
 
 <a id="nestedatt--status--cluster--coordinator--instances"></a>
 ### Nested Schema for `status.cluster.coordinator.instances`
@@ -397,7 +397,7 @@ Read-Only:
 Read-Only:
 
 - `health` (String)
-- `id` (String) Идентификатор инстанса координатора
+- `id` (String) Идентификатор узла координатора
 - `zone` (String) Зона доступности
 
 
@@ -503,10 +503,10 @@ Read-Only:
 
 - `endpoints` (Attributes List) Список эндпойнтов для подключения к шарду (see [below for nested schema](#nestedatt--status--cluster--shards--endpoints))
 - `id` (String) Идентификатор шарда
-- `index` (Number) Индекс шарда в кластере Clickhouse, который будет указан в настройках кластера в макросе "shard".  Влияет на очередность исполнения распределенных запросов в кластере
-- `instances` (Attributes List) Описание инстансов шарда (see [below for nested schema](#nestedatt--status--cluster--shards--instances))
-- `name` (String) Имя шарда, которому будут принадлежать инстансы
-- `resources` (Attributes) Параметры виртуальной машины, где будут работать инстансы Clickhouse данного шарда (see [below for nested schema](#nestedatt--status--cluster--shards--resources))
+- `index` (Number) Индекс шарда в кластере ClickHouse, который будет указан в настройках кластера в макросе "shard". Влияет на очередность исполнения распределенных запросов в кластере
+- `instances` (Attributes List) Описание узлов шарда (see [below for nested schema](#nestedatt--status--cluster--shards--instances))
+- `name` (String) Имя шарда, которому будут принадлежать узлы
+- `resources` (Attributes) Параметры виртуальной машины, где будут работать узлы ClickHouse данного шарда (see [below for nested schema](#nestedatt--status--cluster--shards--resources))
 - `weight` (Number) Вес шарда
 
 <a id="nestedatt--status--cluster--shards--endpoints"></a>
@@ -555,10 +555,10 @@ IPv4- или IPv6-адрес
 
 Read-Only:
 
-- `endpoints` (Attributes List) Список эндпойнтов для подключения к инстансу (see [below for nested schema](#nestedatt--status--cluster--shards--instances--endpoints))
+- `endpoints` (Attributes List) Список эндпойнтов для подключения к узлу (see [below for nested schema](#nestedatt--status--cluster--shards--instances--endpoints))
 - `health` (String)
-- `id` (String) Идентификатор инстанса шарда
-- `index` (Number) Индекс реплики в шарде в кластере Clickhouse, который будет указан в настройках кластера в макросе "replica". Влияет на очередность исполнения распределенных запросов в кластере
+- `id` (String) Идентификатор узла шарда
+- `index` (Number) Индекс реплики в шарде в кластере ClickHouse, который будет указан в настройках кластера в макросе "replica". Влияет на очередность исполнения распределенных запросов в кластере
 - `zone` (String) Зона доступности
 
 <a id="nestedatt--status--cluster--shards--instances--endpoints"></a>

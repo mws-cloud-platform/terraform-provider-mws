@@ -9,11 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func OneToOneNatExternalAddressStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.OneToOneNatExternalAddressStatusResponse) (*tfmodel.OneToOneNatExternalAddressStatus, tfdiag.Diagnostics) {
+func OneToOneNatExternalAddressStatusAPIResponseToTFModel(ctx context.Context, am *model.OneToOneNatExternalAddressStatusResponse) (*tfmodel.OneToOneNatExternalAddressStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/model"
 )
 
-func PostgresUserRoleAPIToTFModel(ctx context.Context, am *apimodel.PostgresUserRole) (tfmodel.PostgresUserRole, tfdiag.Diagnostics) {
+func PostgresUserRoleAPIToTFModel(ctx context.Context, am *model.PostgresUserRole) (tfmodel.PostgresUserRole, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.PostgresUserRole{}, nil
 	}
@@ -23,17 +23,4 @@ func PostgresUserRoleAPIToTFModel(ctx context.Context, am *apimodel.PostgresUser
 	t = tfmodel.PostgresUserRole(types.StringValue(string(*am)))
 
 	return t, diags
-}
-
-func PostgresUserRoleTFToAPIModel(ctx context.Context, plan tfmodel.PostgresUserRole) (*apimodel.PostgresUserRole, tfdiag.Diagnostics) {
-	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresUserRole
-
-	var tmp = types.String(plan)
-	if tmp.IsNull() {
-		return nil, diags
-	}
-	am = apimodel.PostgresUserRole(tmp.ValueString())
-
-	return &am, diags
 }

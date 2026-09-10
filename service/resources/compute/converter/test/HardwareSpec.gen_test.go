@@ -8,23 +8,23 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
 func TestHardwareSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.HardwareSpecOptionalResponse{}
+	emptyApiModel := model.HardwareSpecOptionalResponse{}
 	_, diags := conv.HardwareSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestHardwareSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.HardwareSpecRequest{}
+	emptyApiModelRequest := model.HardwareSpecRequest{}
 
-	emptyApiModelResponse, err := apimodel.HardwareSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.HardwareSpecRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.HardwareSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -33,7 +33,7 @@ func TestHardwareSpecOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.HardwareSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.HardwareSpecRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.HardwareSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -45,7 +45,7 @@ func TestUpdateHardwareSpecRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.HardwareSpec
 	var stateTfModel tfmodel.HardwareSpec
 
-	expectedUpdateModel := &apimodel.UpdateHardwareSpecRequest{}
+	expectedUpdateModel := &model.UpdateHardwareSpecRequest{}
 
 	result, diags := conv.HardwareSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

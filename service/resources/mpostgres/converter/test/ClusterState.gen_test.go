@@ -8,20 +8,20 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
 )
 
 func TestClusterStateAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClusterState("")
+	emptyApiModel := model.ClusterState("")
 	_, diags := conv.ClusterStateAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClusterStateConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClusterState("")
+	emptyApiModel := model.ClusterState("")
 
 	tfModel, diags := conv.ClusterStateAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())

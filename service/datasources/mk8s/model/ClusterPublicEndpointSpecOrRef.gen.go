@@ -14,15 +14,16 @@ type ClusterPublicEndpointSpecOrRef struct {
 
 func (s *ClusterPublicEndpointSpecOrRef) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `внешний ip-адрес`,
+		MarkdownDescription: `Конфигурация публичного эндпоинта кластера — подсеть или идентификатор внешнего IP-адреса`,
 		Attributes: map[string]schema.Attribute{
 			"ref": schema.StringAttribute{
 				Computed: true,
 			},
 			"spec": schema.SingleNestedAttribute{
-				Attributes:          new(ClusterPublicEndpointSpec).GetSchema().Attributes,
-				MarkdownDescription: `Ожидаем пустой объект в случае автоматического выделения внешнего ip-адреса`,
-				Computed:            true,
+				Attributes: new(ClusterPublicEndpointSpec).GetSchema().Attributes,
+				MarkdownDescription: `Конфигурация публичного эндпоинта кластера.
+При автоматическом выделении внешнего IP-адреса ожидается пустой объект`,
+				Computed: true,
 			},
 		},
 	}

@@ -7,14 +7,12 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
-	"go.mws.cloud/go-sdk/service/resources/references/rm"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/model"
 )
 
-func ClickhouseClusterCoordinatorInstanceAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseClusterCoordinatorInstanceOptionalResponse) (*tfmodel.ClickhouseClusterCoordinatorInstance, tfdiag.Diagnostics) {
+func ClickhouseClusterCoordinatorInstanceAPIOptionalResponseToTFModel(ctx context.Context, am *model.ClickhouseClusterCoordinatorInstanceOptionalResponse) (*tfmodel.ClickhouseClusterCoordinatorInstance, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -31,28 +29,4 @@ func ClickhouseClusterCoordinatorInstanceAPIOptionalResponseToTFModel(ctx contex
 	t.Zone = types.StringValue(am.Zone.Path())
 
 	return &t, diags
-}
-
-func ClickhouseClusterCoordinatorInstanceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.ClickhouseClusterCoordinatorInstance) (*apimodel.ClickhouseClusterCoordinatorInstanceRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.ClickhouseClusterCoordinatorInstanceRequest
-
-	if !plan.Count.IsNull() && !plan.Count.IsUnknown() {
-		am.Count = ptr.Get(int(plan.Count.ValueInt64()))
-	}
-
-	if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {
-		zoneRef, err := rm.ParseZoneRef(ctx, plan.Zone.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Zone = zoneRef
-	}
-
-	return &am, diags
 }

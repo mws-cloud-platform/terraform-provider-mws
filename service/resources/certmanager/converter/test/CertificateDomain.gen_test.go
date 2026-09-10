@@ -8,20 +8,20 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/converter"
 )
 
 func TestCertificateDomainAPIToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.CertificateDomain("")
+	emptyApiModel := model.CertificateDomain("")
 	_, diags := conv.CertificateDomainAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestCertificateDomainConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.CertificateDomain("hello")
+	emptyApiModel := model.CertificateDomain("hello")
 
 	tfModel, diags := conv.CertificateDomainAPIToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())

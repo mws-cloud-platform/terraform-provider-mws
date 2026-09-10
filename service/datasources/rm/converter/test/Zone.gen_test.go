@@ -8,20 +8,20 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/rm/model"
+	"go.mws.cloud/go-sdk/service/rm/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/rm/converter"
 )
 
 func TestZoneAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ZoneResponse{}
+	emptyApiModel := model.ZoneResponse{}
 	_, diags := conv.ZoneAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestZoneMetadataAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ZoneMetadataResponse{}
+	emptyApiModel := model.ZoneMetadataResponse{}
 	_, diags := conv.ZoneMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }

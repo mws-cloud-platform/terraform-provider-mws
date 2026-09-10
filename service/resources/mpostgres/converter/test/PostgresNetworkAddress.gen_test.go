@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
@@ -17,16 +17,16 @@ import (
 
 func TestPostgresNetworkAddressAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.PostgresNetworkAddressResponse{}
+	emptyApiModel := model.PostgresNetworkAddressResponse{}
 	_, diags := conv.PostgresNetworkAddressAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestPostgresNetworkAddressResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.PostgresNetworkAddressRequest{}
+	emptyApiModelRequest := model.PostgresNetworkAddressRequest{}
 
-	emptyApiModelResponse, err := apimodel.PostgresNetworkAddressRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.PostgresNetworkAddressRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.PostgresNetworkAddressAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -35,7 +35,7 @@ func TestPostgresNetworkAddressResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.PostgresNetworkAddressTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.PostgresNetworkAddressRequestToResponse(filledApiModelRequest)
+	result, err := model.PostgresNetworkAddressRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -49,12 +49,12 @@ func TestUpdatePostgresNetworkAddressRequestConverters(t *testing.T) {
 	stateTfModel.Spec = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.PostgresNetworkAddressSpec).GetSchema().Attributes))
 	stateTfModel.ExternalAccess = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.PostgresExternalAccessSpec).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdatePostgresNetworkAddressRequest{
-		Spec: optional.OptionalNil[apimodel.UpdatePostgresNetworkAddressSpecRequest]{
+	expectedUpdateModel := &model.UpdatePostgresNetworkAddressRequest{
+		Spec: optional.OptionalNil[model.UpdatePostgresNetworkAddressSpecRequest]{
 			Set:  true,
 			Null: true,
 		},
-		ExternalAccess: optional.OptionalNil[apimodel.UpdatePostgresExternalAccessSpecRequest]{
+		ExternalAccess: optional.OptionalNil[model.UpdatePostgresExternalAccessSpecRequest]{
 			Set:  true,
 			Null: true,
 		},

@@ -7,15 +7,13 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
-	"go.mws.cloud/go-sdk/service/resources/references/compute"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
 )
 
-func DiskBackupSourceAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.DiskBackupSourceOptionalResponse) (*tfmodel.DiskBackupSource, tfdiag.Diagnostics) {
+func DiskBackupSourceAPIOptionalResponseToTFModel(ctx context.Context, am *model.DiskBackupSourceOptionalResponse) (*tfmodel.DiskBackupSource, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -44,34 +42,7 @@ func DiskBackupSourceAPIOptionalResponseToTFModel(ctx context.Context, am *apimo
 	return &t, diags
 }
 
-func DiskBackupSourceTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DiskBackupSource) (*apimodel.DiskBackupSourceRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.DiskBackupSourceRequest
-
-	if !plan.Disk.IsNull() && !plan.Disk.IsUnknown() {
-		diskPlan := tfmodel.DiskBackupSourceDisk{}
-		diskPlanDiag := plan.Disk.As(ctx, &diskPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, diskPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		diskTmp, diskDiag := DiskBackupSourceDiskTFToAPIRequestModel(ctx, &diskPlan)
-		diags = append(diags, diskDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Disk = diskTmp
-	}
-
-	return &am, diags
-}
-
-func DiskBackupSourceDiskAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.DiskBackupSourceDiskOptionalResponse) (*tfmodel.DiskBackupSourceDisk, tfdiag.Diagnostics) {
+func DiskBackupSourceDiskAPIOptionalResponseToTFModel(ctx context.Context, am *model.DiskBackupSourceDiskOptionalResponse) (*tfmodel.DiskBackupSourceDisk, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -82,24 +53,4 @@ func DiskBackupSourceDiskAPIOptionalResponseToTFModel(ctx context.Context, am *a
 	t.Id = types.StringValue(am.Id.Path())
 
 	return &t, diags
-}
-
-func DiskBackupSourceDiskTFToAPIRequestModel(ctx context.Context, plan *tfmodel.DiskBackupSourceDisk) (*apimodel.DiskBackupSourceDiskRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.DiskBackupSourceDiskRequest
-
-	if !plan.Id.IsNull() && !plan.Id.IsUnknown() {
-		idRef, err := compute.ParseDiskRef(ctx, plan.Id.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Id = idRef
-	}
-
-	return &am, diags
 }

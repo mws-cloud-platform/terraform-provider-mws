@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/model"
 )
 
-func KafkaDataDiskIopsAPIToTFModel(ctx context.Context, am *apimodel.KafkaDataDiskIops) (tfmodel.KafkaDataDiskIops, tfdiag.Diagnostics) {
+func KafkaDataDiskIopsAPIToTFModel(ctx context.Context, am *model.KafkaDataDiskIops) (tfmodel.KafkaDataDiskIops, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.KafkaDataDiskIops{}, nil
 	}
@@ -23,17 +23,4 @@ func KafkaDataDiskIopsAPIToTFModel(ctx context.Context, am *apimodel.KafkaDataDi
 	t = tfmodel.KafkaDataDiskIops(types.Int64Value(int64(*am)))
 
 	return t, diags
-}
-
-func KafkaDataDiskIopsTFToAPIModel(ctx context.Context, plan tfmodel.KafkaDataDiskIops) (*apimodel.KafkaDataDiskIops, tfdiag.Diagnostics) {
-	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaDataDiskIops
-
-	var tmp = types.Int64(plan)
-	if tmp.IsNull() {
-		return nil, diags
-	}
-	am = apimodel.KafkaDataDiskIops(tmp.ValueInt64())
-
-	return &am, diags
 }

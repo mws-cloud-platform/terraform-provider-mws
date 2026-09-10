@@ -7,16 +7,15 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/kms/model"
+	"go.mws.cloud/go-sdk/service/kms/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/kms/model"
 )
 
-func CryptoKeyVersionAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.CryptoKeyVersionOptionalResponse) (*tfmodel.CryptoKeyVersion, tfdiag.Diagnostics) {
+func CryptoKeyVersionAPIOptionalResponseToTFModel(ctx context.Context, am *model.CryptoKeyVersionOptionalResponse) (*tfmodel.CryptoKeyVersion, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -72,82 +71,5 @@ func CryptoKeyVersionAPIOptionalResponseToTFModel(ctx context.Context, am *apimo
 		t.UsagePolicy = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.CryptoKeyVersionSpecUsagePolicy).GetSchema().Attributes))
 	}
 
-	if val, ok := am.Spec.DestructionPolicy.Get(); ok {
-		destructionPolicyTmp, d := CryptoKeyVersionSpecDestructionPolicyAPIOptionalResponseToTFModel(ctx, &val)
-		diags = append(diags, d...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		destructionPolicyTfObject, d := types.ObjectValueFrom(ctx,
-			tfconv.GetAttributesTypes(new(tfmodel.CryptoKeyVersionSpecDestructionPolicy).GetSchema().Attributes),
-			*destructionPolicyTmp)
-		diags = append(diags, d...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		t.DestructionPolicy = destructionPolicyTfObject
-	} else {
-		t.DestructionPolicy = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.CryptoKeyVersionSpecDestructionPolicy).GetSchema().Attributes))
-	}
-
 	return &t, diags
-}
-
-func CryptoKeyVersionTFToAPIRequestModel(ctx context.Context, plan *tfmodel.CryptoKeyVersion) (*apimodel.CryptoKeyVersionRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am apimodel.CryptoKeyVersionRequest
-
-	if !plan.Metadata.IsNull() && !plan.Metadata.IsUnknown() {
-		metadataPlan := tfcommon.CommonTypedResourceMetadata{}
-		metadataPlanDiag := plan.Metadata.As(ctx, &metadataPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, metadataPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		metadataTmp, metadataDiag := commonconv.CommonTypedResourceMetadataTFToAPIRequestModel(ctx, &metadataPlan)
-		diags = append(diags, metadataDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Metadata = metadataTmp
-	}
-
-	if !plan.UsagePolicy.IsNull() && !plan.UsagePolicy.IsUnknown() {
-		usagePolicyPlan := tfmodel.CryptoKeyVersionSpecUsagePolicy{}
-		usagePolicyPlanDiag := plan.UsagePolicy.As(ctx, &usagePolicyPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, usagePolicyPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		usagePolicyTmp, usagePolicyDiag := CryptoKeyVersionSpecUsagePolicyTFToAPIRequestModel(ctx, &usagePolicyPlan)
-		diags = append(diags, usagePolicyDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.UsagePolicy = usagePolicyTmp
-	}
-
-	if !plan.DestructionPolicy.IsNull() && !plan.DestructionPolicy.IsUnknown() {
-		destructionPolicyPlan := tfmodel.CryptoKeyVersionSpecDestructionPolicy{}
-		destructionPolicyPlanDiag := plan.DestructionPolicy.As(ctx, &destructionPolicyPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, destructionPolicyPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		destructionPolicyTmp, destructionPolicyDiag := CryptoKeyVersionSpecDestructionPolicyTFToAPIRequestModel(ctx, &destructionPolicyPlan)
-		diags = append(diags, destructionPolicyDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec.DestructionPolicy = destructionPolicyTmp
-	}
-
-	return &am, diags
 }

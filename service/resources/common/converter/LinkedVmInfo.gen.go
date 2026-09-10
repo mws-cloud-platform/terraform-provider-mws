@@ -8,12 +8,12 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
-func LinkedVmInfoAPIToTFModel(ctx context.Context, am *commonapimodel.LinkedVmInfo) (*tfcommon.LinkedVmInfo, tfdiag.Diagnostics) {
+func LinkedVmInfoAPIToTFModel(ctx context.Context, am *commonmodel.LinkedVmInfo) (*tfcommon.LinkedVmInfo, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -28,7 +28,7 @@ func LinkedVmInfoAPIToTFModel(ctx context.Context, am *commonapimodel.LinkedVmIn
 	return &t, diags
 }
 
-func LinkedVmInfoAPIResponseToTFModel(ctx context.Context, am *commonapimodel.LinkedVmInfoResponse) (*tfcommon.LinkedVmInfo, tfdiag.Diagnostics) {
+func LinkedVmInfoAPIResponseToTFModel(ctx context.Context, am *commonmodel.LinkedVmInfoResponse) (*tfcommon.LinkedVmInfo, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -43,7 +43,7 @@ func LinkedVmInfoAPIResponseToTFModel(ctx context.Context, am *commonapimodel.Li
 	return &t, diags
 }
 
-func LinkedVmInfoAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.LinkedVmInfoOptionalResponse) (*tfcommon.LinkedVmInfo, tfdiag.Diagnostics) {
+func LinkedVmInfoAPIOptionalResponseToTFModel(ctx context.Context, am *commonmodel.LinkedVmInfoOptionalResponse) (*tfcommon.LinkedVmInfo, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -58,13 +58,13 @@ func LinkedVmInfoAPIOptionalResponseToTFModel(ctx context.Context, am *commonapi
 	return &t, diags
 }
 
-func LinkedVmInfoTFToAPIModel(ctx context.Context, plan *tfcommon.LinkedVmInfo) (*commonapimodel.LinkedVmInfo, tfdiag.Diagnostics) {
+func LinkedVmInfoTFToAPIModel(ctx context.Context, plan *tfcommon.LinkedVmInfo) (*commonmodel.LinkedVmInfo, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.LinkedVmInfo
+	var am commonmodel.LinkedVmInfo
 
 	if !plan.Id.IsNull() && !plan.Id.IsUnknown() {
 		idRef, err := compute.ParseVirtualMachineRef(ctx, plan.Id.ValueString())
@@ -82,13 +82,13 @@ func LinkedVmInfoTFToAPIModel(ctx context.Context, plan *tfcommon.LinkedVmInfo) 
 	return &am, diags
 }
 
-func LinkedVmInfoTFToAPIRequestModel(ctx context.Context, plan *tfcommon.LinkedVmInfo) (*commonapimodel.LinkedVmInfoRequest, tfdiag.Diagnostics) {
+func LinkedVmInfoTFToAPIRequestModel(ctx context.Context, plan *tfcommon.LinkedVmInfo) (*commonmodel.LinkedVmInfoRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am commonapimodel.LinkedVmInfoRequest
+	var am commonmodel.LinkedVmInfoRequest
 
 	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
 		am.Name = plan.Name.ValueString()

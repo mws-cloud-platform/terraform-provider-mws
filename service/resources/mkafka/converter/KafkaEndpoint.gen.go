@@ -9,13 +9,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func KafkaEndpointAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaEndpointResponse) (*tfmodel.KafkaEndpoint, tfdiag.Diagnostics) {
+func KafkaEndpointAPIResponseToTFModel(ctx context.Context, am *model.KafkaEndpointResponse) (*tfmodel.KafkaEndpoint, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -75,13 +75,13 @@ func KafkaEndpointAPIResponseToTFModel(ctx context.Context, am *apimodel.KafkaEn
 	return &t, diags
 }
 
-func KafkaEndpointTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaEndpoint) (*apimodel.KafkaEndpointRequest, tfdiag.Diagnostics) {
+func KafkaEndpointTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaEndpoint) (*model.KafkaEndpointRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaEndpointRequest
+	var am model.KafkaEndpointRequest
 
 	if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
 		am.Name = plan.Name.ValueString()
@@ -104,7 +104,7 @@ func KafkaEndpointTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaEn
 			return nil, diags
 		}
 
-		am.BrokerAddresses = make([]apimodel.KafkaEndpointBrokerAddressRequest, 0, len(brokerAddresses))
+		am.BrokerAddresses = make([]model.KafkaEndpointBrokerAddressRequest, 0, len(brokerAddresses))
 
 		for _, entity := range brokerAddresses {
 			tmp, d := KafkaEndpointBrokerAddressTFToAPIRequestModel(ctx, &entity)
@@ -135,7 +135,7 @@ func KafkaEndpointTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaEn
 	return &am, diags
 }
 
-func KafkaEndpointTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaEndpoint) (*apimodel.UpdateKafkaEndpointRequest, tfdiag.Diagnostics) {
+func KafkaEndpointTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaEndpoint) (*model.UpdateKafkaEndpointRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -144,7 +144,7 @@ func KafkaEndpointTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tf
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateKafkaEndpointRequest
+	var am model.UpdateKafkaEndpointRequest
 
 	if !plan.Name.Equal(state.Name) {
 		if !plan.Name.IsNull() && !plan.Name.IsUnknown() {
@@ -172,7 +172,7 @@ func KafkaEndpointTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tf
 				return nil, diags
 			}
 
-			brokerAddressesTmp := make([]apimodel.UpdateKafkaEndpointBrokerAddressRequest, 0, len(brokerAddresses))
+			brokerAddressesTmp := make([]model.UpdateKafkaEndpointBrokerAddressRequest, 0, len(brokerAddresses))
 
 			for _, entity := range brokerAddresses {
 				stateEntity := tfmodel.KafkaEndpointBrokerAddress{}

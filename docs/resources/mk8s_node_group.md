@@ -71,7 +71,7 @@ resource "mws_mk8s_cluster" "example" {
         hour = 3
       }
     }
-    version = "v1.35.6-mws.4"
+    version = "v1.35.6-mws.12"
   }
 }
 
@@ -105,7 +105,7 @@ resource "mws_mk8s_node_group" "example" {
 
   version_control = {
     auto_update = true
-    version     = "v1.35.6-mws.4"
+    version     = "v1.35.6-mws.12"
     maintenance_window = {
       weekly = {
         days     = ["MONDAY", "WEDNESDAY"]
@@ -187,16 +187,16 @@ variable "services_cidr" {
 
 ### Required
 
-- `cluster_name` (String) Имя Cluster
-- `node_group_name` (String) Имя Node-группы
+- `cluster_name` (String) Имя кластера
+- `node_group_name` (String) Имя группы узлов
 - `rollout_strategy` (Attributes) Стратегия обновления (rollout) узлов в группе узлов (see [below for nested schema](#nestedatt--rollout_strategy))
-- `scale` (Attributes) Необходимо заполнить одно из полей — "fixed" или "autoscaling" (see [below for nested schema](#nestedatt--scale))
+- `scale` (Attributes) Режим скалирования группы узлов. Необходимо заполнить одно из полей — "fixed" или "autoscaling" (see [below for nested schema](#nestedatt--scale))
 - `service_account` (Attributes) Сервисный аккаунт для выполнения функций:
 - скачивание образов из Artifact Registry (требуются права на чтение образов);
 - сбор системных метрик с узлов (требуются права на чтение статусов узлов) (see [below for nested schema](#nestedatt--service_account))
 - `subnet` (Attributes) (see [below for nested schema](#nestedatt--subnet))
 - `version_control` (Attributes) (see [below for nested schema](#nestedatt--version_control))
-- `vm_type` (Attributes) Тип VM (see [below for nested schema](#nestedatt--vm_type))
+- `vm_type` (Attributes) Тип ВМ (see [below for nested schema](#nestedatt--vm_type))
 
 ### Optional
 
@@ -245,7 +245,7 @@ Optional:
 Required:
 
 - `max` (Number) Максимальное количество узлов в группе узлов
-- `min` (Number) Минимально количество узлов в группе узлов
+- `min` (Number) Минимальное количество узлов в группе узлов
 
 
 
@@ -270,9 +270,9 @@ Required:
 
 Optional:
 
-- `auto_update` (Boolean) Авто обновление версии нод группы в рамках релизного канала и окна обслуживания
-- `maintenance_window` (Attributes) Если окно обслуживания не заполнено, то время проведения работ не ограничено. Duration можно указывать. Если отсутствует, то не ограничено по времени (see [below for nested schema](#nestedatt--version_control--maintenance_window))
-- `version` (String) Минимальная версия NodeGroup. Не может быть выше версии кластера.  Автоматически обновляется до default-версии в окно обслуживания. Если указанная версия выше текущей, обновление запустится немедленно. Во время автоматического обновления это поле не изменяется, а актуальная версия указывается в статусе NodeGroup
+- `auto_update` (Boolean) Автоматическое обновление версии группы узлов в рамках релизного канала и окна обслуживания
+- `maintenance_window` (Attributes) Конфигурация окна обслуживания. Если не заполнено, то время проведения работ не ограничено. Можно указать продолжительность (duration). Если продолжительность не указана, то не ограничено по времени (see [below for nested schema](#nestedatt--version_control--maintenance_window))
+- `version` (String) Минимальная версия группы узлов. Не может быть выше версии кластера.  Автоматически обновляется до default-версии в окно обслуживания. Если указанная версия выше текущей, обновление запустится немедленно. Во время автоматического обновления это поле не изменяется, а актуальная версия указывается в статусе группы узлов
 
 <a id="nestedatt--version_control--maintenance_window"></a>
 ### Nested Schema for `version_control.maintenance_window`
@@ -382,11 +382,11 @@ Read-Only:
 
 Required:
 
-- `effect` (String) Эффект taint на node, влияющий на pod scheduling, которые под него попадают
+- `effect` (String) Эффект taint на узле, влияющий на планирование подов, которые под него попадают
 - `key` (String) Ключ может состоять из двух частей: необязательный префикс и ключ, разделенные "/".
 Максимальная длина префикса 253 символа.
 Максимальная длина ключа 63 символа
-- `value` (String) Значение taint на node. Если строка пустая, то value нет
+- `value` (String) Значение taint на узле
 
 
 <a id="nestedatt--timeouts"></a>
@@ -515,11 +515,11 @@ Read-Only:
 
 Required:
 
-- `effect` (String) Эффект taint на node, влияющий на pod scheduling, которые под него попадают
+- `effect` (String) Эффект taint на узле, влияющий на планирование подов, которые под него попадают
 - `key` (String) Ключ может состоять из двух частей: необязательный префикс и ключ, разделенные "/".
 Максимальная длина префикса 253 символа.
 Максимальная длина ключа 63 символа
-- `value` (String) Значение taint на node. Если строка пустая, то value нет
+- `value` (String) Значение taint на узле
 
 
 <a id="nestedatt--status--version_control"></a>
@@ -529,7 +529,7 @@ Read-Only:
 
 - `auto_update` (Boolean)
 - `maintenance_window` (Attributes) (see [below for nested schema](#nestedatt--status--version_control--maintenance_window))
-- `version` (String) Текущая версия NodeGroup
+- `version` (String) Текущая версия группы узлов
 
 <a id="nestedatt--status--version_control--maintenance_window"></a>
 ### Nested Schema for `status.version_control.maintenance_window`

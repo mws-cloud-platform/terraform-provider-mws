@@ -7,16 +7,14 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
-	"go.mws.cloud/go-sdk/service/resources/references/vpc"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 )
 
-func ResourceAddressSpecOrRefAPIToTFModel(ctx context.Context, am *commonapimodel.ResourceAddressSpecOrRef) (*tfcommon.ResourceAddressSpecOrRef, tfdiag.Diagnostics) {
+func ResourceAddressSpecOrRefAPIToTFModel(ctx context.Context, am *commonmodel.ResourceAddressSpecOrRef) (*tfcommon.ResourceAddressSpecOrRef, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -51,7 +49,7 @@ func ResourceAddressSpecOrRefAPIToTFModel(ctx context.Context, am *commonapimode
 	return &t, diags
 }
 
-func ResourceAddressSpecOrRefAPIResponseToTFModel(ctx context.Context, am *commonapimodel.ResourceAddressSpecOrRefResponse) (*tfcommon.ResourceAddressSpecOrRef, tfdiag.Diagnostics) {
+func ResourceAddressSpecOrRefAPIResponseToTFModel(ctx context.Context, am *commonmodel.ResourceAddressSpecOrRefResponse) (*tfcommon.ResourceAddressSpecOrRef, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -86,7 +84,7 @@ func ResourceAddressSpecOrRefAPIResponseToTFModel(ctx context.Context, am *commo
 	return &t, diags
 }
 
-func ResourceAddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *commonapimodel.ResourceAddressSpecOrRefOptionalResponse) (*tfcommon.ResourceAddressSpecOrRef, tfdiag.Diagnostics) {
+func ResourceAddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *commonmodel.ResourceAddressSpecOrRefOptionalResponse) (*tfcommon.ResourceAddressSpecOrRef, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -119,76 +117,4 @@ func ResourceAddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, a
 	}
 
 	return &t, diags
-}
-
-func ResourceAddressSpecOrRefTFToAPIModel(ctx context.Context, plan *tfcommon.ResourceAddressSpecOrRef) (*commonapimodel.ResourceAddressSpecOrRef, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am commonapimodel.ResourceAddressSpecOrRef
-
-	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
-		refRef, err := vpc.ParseAddressRef(ctx, plan.Ref.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Ref = &refRef
-	}
-
-	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
-		specPlan := tfcommon.ResourceAddressSpec{}
-		specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, specPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		specTmp, specDiag := ResourceAddressSpecTFToAPIModel(ctx, &specPlan)
-		diags = append(diags, specDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec = specTmp
-	}
-
-	return &am, diags
-}
-
-func ResourceAddressSpecOrRefTFToAPIRequestModel(ctx context.Context, plan *tfcommon.ResourceAddressSpecOrRef) (*commonapimodel.ResourceAddressSpecOrRefRequest, tfdiag.Diagnostics) {
-	if plan == nil {
-		return nil, nil
-	}
-
-	var diags tfdiag.Diagnostics
-	var am commonapimodel.ResourceAddressSpecOrRefRequest
-
-	if !plan.Ref.IsNull() && !plan.Ref.IsUnknown() {
-		refRef, err := vpc.ParseAddressRef(ctx, plan.Ref.ValueString())
-		if err != nil {
-			diags.AddError("reference parsing", err.Error())
-			return nil, diags
-		}
-		am.Ref = &refRef
-	}
-
-	if !plan.Spec.IsNull() && !plan.Spec.IsUnknown() {
-		specPlan := tfcommon.ResourceAddressSpec{}
-		specPlanDiag := plan.Spec.As(ctx, &specPlan, basetypes.ObjectAsOptions{})
-		diags = append(diags, specPlanDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-
-		specTmp, specDiag := ResourceAddressSpecTFToAPIRequestModel(ctx, &specPlan)
-		diags = append(diags, specDiag...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		am.Spec = specTmp
-	}
-
-	return &am, diags
 }

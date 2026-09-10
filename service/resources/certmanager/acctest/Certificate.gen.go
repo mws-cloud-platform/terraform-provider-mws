@@ -9,9 +9,9 @@ import (
 	"go.mws.cloud/go-sdk/mws"
 	commonerrors "go.mws.cloud/go-sdk/mws/errors"
 	"go.mws.cloud/go-sdk/service/certmanager/client"
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
 	resourcesdk "go.mws.cloud/go-sdk/service/certmanager/sdk"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	certmanagerref "go.mws.cloud/go-sdk/service/resources/references/certmanager"
 	"go.mws.cloud/terraform-provider-mws/internal/acctest"
 )
@@ -34,7 +34,7 @@ func CertificateTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleResou
 				return fmt.Errorf("invalid resource state")
 			}
 			state := r.Status.Ready.State
-			if string(state) != string(commonapimodel.ResourceStatusState_OK) {
+			if string(state) != string(commonmodel.ResourceStatusState_OK) {
 				return fmt.Errorf("invalid resource state: %s", state)
 			}
 			return nil
@@ -52,7 +52,7 @@ func CertificateTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleResou
 	}, nil
 }
 
-func GetCertificate(ctx context.Context, sdk *resourcesdk.Certificate, id string) (*apimodel.CertificateOptionalResponse, error) {
+func GetCertificate(ctx context.Context, sdk *resourcesdk.Certificate, id string) (*model.CertificateOptionalResponse, error) {
 	ref, err := certmanagerref.ParseCertificateRef(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("parse reference: %w", err)

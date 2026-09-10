@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func StorageDiskStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.StorageDiskStatusResponse) (*tfmodel.StorageDiskStatus, tfdiag.Diagnostics) {
+func StorageDiskStatusAPIResponseToTFModel(ctx context.Context, am *model.StorageDiskStatusResponse) (*tfmodel.StorageDiskStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

@@ -20,14 +20,14 @@ func (s *NodeGroupVersionControlStatus) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"version": schema.StringAttribute{
-				MarkdownDescription: `Текущая версия NodeGroup`,
+				MarkdownDescription: `Текущая версия группы узлов`,
 				Computed:            true,
 			},
 			"auto_update": schema.BoolAttribute{
 				Computed: true,
 			},
 			"maintenance_window": schema.SingleNestedAttribute{
-				Attributes: new(tfcommon.MaintenanceWindow2).GetSchema().Attributes,
+				Attributes: new(tfcommon.MaintenanceWindow).GetSchema().Attributes,
 				Computed:   true,
 			},
 		},

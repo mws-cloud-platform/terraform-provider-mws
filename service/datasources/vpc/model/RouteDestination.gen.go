@@ -13,7 +13,7 @@ type RouteDestination struct {
 
 func (s *RouteDestination) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Назначение`,
+		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"spec": schema.SingleNestedAttribute{
 				Attributes: new(RouteDestinationSpec).GetSchema().Attributes,

@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/model"
 )
 
-func PostgresClusterStatusAPIResponseToTFModel(ctx context.Context, am *apimodel.PostgresClusterStatusResponse) (*tfmodel.PostgresClusterStatus, tfdiag.Diagnostics) {
+func PostgresClusterStatusAPIResponseToTFModel(ctx context.Context, am *model.PostgresClusterStatusResponse) (*tfmodel.PostgresClusterStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -118,13 +118,13 @@ func PostgresClusterStatusAPIResponseToTFModel(ctx context.Context, am *apimodel
 	}
 
 	if am.MaintenanceWindow != nil {
-		maintenanceWindowTmp, d := commonconv.MaintenanceWindow2APIResponseToTFModel(ctx, am.MaintenanceWindow)
+		maintenanceWindowTmp, d := commonconv.MaintenanceWindowAPIResponseToTFModel(ctx, am.MaintenanceWindow)
 		diags = append(diags, d...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		maintenanceWindowTfObject, d := types.ObjectValueFrom(ctx,
-			tfconv.GetAttributesTypes(new(tfcommon.MaintenanceWindow2).GetSchema().Attributes),
+			tfconv.GetAttributesTypes(new(tfcommon.MaintenanceWindow).GetSchema().Attributes),
 			*maintenanceWindowTmp)
 		diags = append(diags, d...)
 		if diags.HasError() {
@@ -132,7 +132,7 @@ func PostgresClusterStatusAPIResponseToTFModel(ctx context.Context, am *apimodel
 		}
 		t.MaintenanceWindow = maintenanceWindowTfObject
 	} else {
-		t.MaintenanceWindow = types.ObjectNull(tfconv.GetAttributesTypes(new(tfcommon.MaintenanceWindow2).GetSchema().Attributes))
+		t.MaintenanceWindow = types.ObjectNull(tfconv.GetAttributesTypes(new(tfcommon.MaintenanceWindow).GetSchema().Attributes))
 	}
 
 	if am.Backup != nil {

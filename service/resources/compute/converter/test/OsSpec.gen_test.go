@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	apimodel "go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
@@ -17,16 +17,16 @@ import (
 
 func TestOsSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.OsSpecOptionalResponse{}
+	emptyApiModel := model.OsSpecOptionalResponse{}
 	_, diags := conv.OsSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestOsSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.OsSpecRequest{}
+	emptyApiModelRequest := model.OsSpecRequest{}
 
-	emptyApiModelResponse, err := apimodel.OsSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.OsSpecRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.OsSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -35,7 +35,7 @@ func TestOsSpecOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.OsSpecTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.OsSpecRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.OsSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -48,8 +48,8 @@ func TestUpdateOsSpecRequestConverters(t *testing.T) {
 	var stateTfModel tfmodel.OsSpec
 	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.OsSpecMetadata).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateOsSpecRequest{
-		Metadata: optional.OptionalNil[apimodel.UpdateOsSpecMetadataRequest]{
+	expectedUpdateModel := &model.UpdateOsSpecRequest{
+		Metadata: optional.OptionalNil[model.UpdateOsSpecMetadataRequest]{
 			Set:  true,
 			Null: true,
 		},
@@ -63,16 +63,16 @@ func TestUpdateOsSpecRequestConverters(t *testing.T) {
 
 func TestOsSpecMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.OsSpecMetadataOptionalResponse{}
+	emptyApiModel := model.OsSpecMetadataOptionalResponse{}
 	_, diags := conv.OsSpecMetadataAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestOsSpecMetadataOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.OsSpecMetadataRequest{}
+	emptyApiModelRequest := model.OsSpecMetadataRequest{}
 
-	emptyApiModelResponse, err := apimodel.OsSpecMetadataRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.OsSpecMetadataRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.OsSpecMetadataAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -81,7 +81,7 @@ func TestOsSpecMetadataOptionalResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.OsSpecMetadataTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.OsSpecMetadataRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.OsSpecMetadataRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -93,7 +93,7 @@ func TestUpdateOsSpecMetadataRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.OsSpecMetadata
 	var stateTfModel tfmodel.OsSpecMetadata
 
-	expectedUpdateModel := &apimodel.UpdateOsSpecMetadataRequest{}
+	expectedUpdateModel := &model.UpdateOsSpecMetadataRequest{}
 
 	result, diags := conv.OsSpecMetadataTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/nlb/model"
 )
 
-func NlbHealthCheckProtocolAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.NlbHealthCheckProtocolOptionalResponse) (*tfmodel.NlbHealthCheckProtocol, tfdiag.Diagnostics) {
+func NlbHealthCheckProtocolAPIOptionalResponseToTFModel(ctx context.Context, am *model.NlbHealthCheckProtocolOptionalResponse) (*tfmodel.NlbHealthCheckProtocol, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -79,13 +79,13 @@ func NlbHealthCheckProtocolAPIOptionalResponseToTFModel(ctx context.Context, am 
 	return &t, diags
 }
 
-func NlbHealthCheckProtocolTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbHealthCheckProtocol) (*apimodel.NlbHealthCheckProtocolRequest, tfdiag.Diagnostics) {
+func NlbHealthCheckProtocolTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbHealthCheckProtocol) (*model.NlbHealthCheckProtocolRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.NlbHealthCheckProtocolRequest
+	var am model.NlbHealthCheckProtocolRequest
 
 	if !plan.Http.IsNull() && !plan.Http.IsUnknown() {
 		httpPlan := tfmodel.NlbHealthCheckHttp{}
@@ -138,7 +138,7 @@ func NlbHealthCheckProtocolTFToAPIRequestModel(ctx context.Context, plan *tfmode
 	return &am, diags
 }
 
-func NlbHealthCheckProtocolTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NlbHealthCheckProtocol) (*apimodel.UpdateNlbHealthCheckProtocolRequest, tfdiag.Diagnostics) {
+func NlbHealthCheckProtocolTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NlbHealthCheckProtocol) (*model.UpdateNlbHealthCheckProtocolRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -147,7 +147,7 @@ func NlbHealthCheckProtocolTFToAPIUpdateRequestModel(ctx context.Context, plan, 
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateNlbHealthCheckProtocolRequest
+	var am model.UpdateNlbHealthCheckProtocolRequest
 
 	if !plan.Http.Equal(state.Http) {
 		if !plan.Http.IsNull() && !plan.Http.IsUnknown() {

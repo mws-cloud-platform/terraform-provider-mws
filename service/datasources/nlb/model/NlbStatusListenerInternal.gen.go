@@ -15,7 +15,7 @@ type NlbStatusListenerInternal struct {
 
 func (s *NlbStatusListenerInternal) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Статус IP-адреса внутреннего балансировщика.`,
+		MarkdownDescription: `Описывает статус адреса внутреннего балансировщика.`,
 		Attributes: map[string]schema.Attribute{
 			"address": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.ResourceAddressStatus).GetSchema().Attributes,

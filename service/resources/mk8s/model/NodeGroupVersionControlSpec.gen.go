@@ -20,16 +20,16 @@ func (s *NodeGroupVersionControlSpec) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"version": schema.StringAttribute{
-				MarkdownDescription: `Минимальная версия NodeGroup. Не может быть выше версии кластера.  Автоматически обновляется до default-версии в окно обслуживания. Если указанная версия выше текущей, обновление запустится немедленно. Во время автоматического обновления это поле не изменяется, а актуальная версия указывается в статусе NodeGroup`,
+				MarkdownDescription: `Минимальная версия группы узлов. Не может быть выше версии кластера.  Автоматически обновляется до default-версии в окно обслуживания. Если указанная версия выше текущей, обновление запустится немедленно. Во время автоматического обновления это поле не изменяется, а актуальная версия указывается в статусе группы узлов`,
 				Optional:            true,
 			},
 			"auto_update": schema.BoolAttribute{
-				MarkdownDescription: `Авто обновление версии нод группы в рамках релизного канала и окна обслуживания`,
+				MarkdownDescription: `Автоматическое обновление версии группы узлов в рамках релизного канала и окна обслуживания`,
 				Optional:            true,
 			},
 			"maintenance_window": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.MaintenanceWindow).GetSchema().Attributes,
-				MarkdownDescription: `Если окно обслуживания не заполнено, то время проведения работ не ограничено. Duration можно указывать. Если отсутствует, то не ограничено по времени`,
+				MarkdownDescription: `Конфигурация окна обслуживания. Если не заполнено, то время проведения работ не ограничено. Можно указать продолжительность (duration). Если продолжительность не указана, то не ограничено по времени`,
 				Optional:            true,
 			},
 		},

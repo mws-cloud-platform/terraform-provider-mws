@@ -8,27 +8,27 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/kms/model"
+	"go.mws.cloud/go-sdk/service/kms/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/kms/converter"
 )
 
 func TestCryptoKeyStatusAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.CryptoKeyStatusResponse{}
+	emptyApiModel := model.CryptoKeyStatusResponse{}
 	_, diags := conv.CryptoKeyStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestCryptoKeyStatusDestructionAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.CryptoKeyStatusDestructionResponse{}
+	emptyApiModel := model.CryptoKeyStatusDestructionResponse{}
 	_, diags := conv.CryptoKeyStatusDestructionAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestCryptoKeyStatusRotationAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.CryptoKeyStatusRotationResponse{}
+	emptyApiModel := model.CryptoKeyStatusRotationResponse{}
 	_, diags := conv.CryptoKeyStatusRotationAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }

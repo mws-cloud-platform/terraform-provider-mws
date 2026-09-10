@@ -8,10 +8,10 @@ import (
 
 	"go.mws.cloud/go-sdk/mws"
 	commonerrors "go.mws.cloud/go-sdk/mws/errors"
-	commonapimodel "go.mws.cloud/go-sdk/service/common/model"
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	vpcref "go.mws.cloud/go-sdk/service/resources/references/vpc"
 	"go.mws.cloud/go-sdk/service/vpc/client"
-	apimodel "go.mws.cloud/go-sdk/service/vpc/model"
+	"go.mws.cloud/go-sdk/service/vpc/model"
 	resourcesdk "go.mws.cloud/go-sdk/service/vpc/sdk"
 	"go.mws.cloud/terraform-provider-mws/internal/acctest"
 )
@@ -34,7 +34,7 @@ func EgressNatTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleResourc
 				return fmt.Errorf("invalid resource state")
 			}
 			state := r.Status.Ready.State
-			if string(state) != string(commonapimodel.ResourceStatusState_OK) {
+			if string(state) != string(commonmodel.ResourceStatusState_OK) {
 				return fmt.Errorf("invalid resource state: %s", state)
 			}
 			return nil
@@ -52,7 +52,7 @@ func EgressNatTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleResourc
 	}, nil
 }
 
-func GetEgressNat(ctx context.Context, sdk *resourcesdk.EgressNat, id string) (*apimodel.EgressNatOptionalResponse, error) {
+func GetEgressNat(ctx context.Context, sdk *resourcesdk.EgressNat, id string) (*model.EgressNatOptionalResponse, error) {
 	ref, err := vpcref.ParseEgressNatRef(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("parse reference: %w", err)

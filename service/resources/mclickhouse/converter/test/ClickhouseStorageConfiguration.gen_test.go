@@ -8,23 +8,23 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
 func TestClickhouseStorageConfigurationAPIOptionalResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClickhouseStorageConfigurationOptionalResponse{}
+	emptyApiModel := model.ClickhouseStorageConfigurationOptionalResponse{}
 	_, diags := conv.ClickhouseStorageConfigurationAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClickhouseStorageConfigurationOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.ClickhouseStorageConfigurationRequest{}
+	emptyApiModelRequest := model.ClickhouseStorageConfigurationRequest{}
 
-	emptyApiModelResponse, err := apimodel.ClickhouseStorageConfigurationRequestToOptionalResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.ClickhouseStorageConfigurationRequestToOptionalResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.ClickhouseStorageConfigurationAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -33,7 +33,7 @@ func TestClickhouseStorageConfigurationOptionalResponseConverters(t *testing.T) 
 	filledApiModelRequest, diags := conv.ClickhouseStorageConfigurationTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.ClickhouseStorageConfigurationRequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.ClickhouseStorageConfigurationRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -41,16 +41,16 @@ func TestClickhouseStorageConfigurationOptionalResponseConverters(t *testing.T) 
 
 func TestClickhouseStorageConfigurationAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.ClickhouseStorageConfigurationResponse{}
+	emptyApiModel := model.ClickhouseStorageConfigurationResponse{}
 	_, diags := conv.ClickhouseStorageConfigurationAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestClickhouseStorageConfigurationResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.ClickhouseStorageConfigurationRequest{}
+	emptyApiModelRequest := model.ClickhouseStorageConfigurationRequest{}
 
-	emptyApiModelResponse, err := apimodel.ClickhouseStorageConfigurationRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.ClickhouseStorageConfigurationRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.ClickhouseStorageConfigurationAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -59,7 +59,7 @@ func TestClickhouseStorageConfigurationResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.ClickhouseStorageConfigurationTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.ClickhouseStorageConfigurationRequestToResponse(filledApiModelRequest)
+	result, err := model.ClickhouseStorageConfigurationRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -71,7 +71,7 @@ func TestUpdateClickhouseStorageConfigurationRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.ClickhouseStorageConfiguration
 	var stateTfModel tfmodel.ClickhouseStorageConfiguration
 
-	expectedUpdateModel := &apimodel.UpdateClickhouseStorageConfigurationRequest{}
+	expectedUpdateModel := &model.UpdateClickhouseStorageConfigurationRequest{}
 
 	result, diags := conv.ClickhouseStorageConfigurationTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

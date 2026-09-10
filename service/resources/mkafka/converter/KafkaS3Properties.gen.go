@@ -9,11 +9,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"go.mws.cloud/go-sdk/pkg/apimodels/sensitive"
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func KafkaS3PropertiesAPIOptionalResponseToTFModel(ctx context.Context, am *apimodel.KafkaS3PropertiesOptionalResponse) (*tfmodel.KafkaS3Properties, tfdiag.Diagnostics) {
+func KafkaS3PropertiesAPIOptionalResponseToTFModel(ctx context.Context, am *model.KafkaS3PropertiesOptionalResponse) (*tfmodel.KafkaS3Properties, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
@@ -34,13 +34,13 @@ func KafkaS3PropertiesAPIOptionalResponseToTFModel(ctx context.Context, am *apim
 	return &t, diags
 }
 
-func KafkaS3PropertiesTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaS3Properties) (*apimodel.KafkaS3PropertiesRequest, tfdiag.Diagnostics) {
+func KafkaS3PropertiesTFToAPIRequestModel(ctx context.Context, plan *tfmodel.KafkaS3Properties) (*model.KafkaS3PropertiesRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.KafkaS3PropertiesRequest
+	var am model.KafkaS3PropertiesRequest
 
 	if !plan.BucketName.IsNull() && !plan.BucketName.IsUnknown() {
 		am.BucketName = plan.BucketName.ValueString()
@@ -61,7 +61,7 @@ func KafkaS3PropertiesTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Kaf
 	return &am, diags
 }
 
-func KafkaS3PropertiesTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaS3Properties) (*apimodel.UpdateKafkaS3PropertiesRequest, tfdiag.Diagnostics) {
+func KafkaS3PropertiesTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.KafkaS3Properties) (*model.UpdateKafkaS3PropertiesRequest, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
@@ -70,7 +70,7 @@ func KafkaS3PropertiesTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 	}
 
 	var diags tfdiag.Diagnostics
-	var am apimodel.UpdateKafkaS3PropertiesRequest
+	var am model.UpdateKafkaS3PropertiesRequest
 
 	if !plan.BucketName.Equal(state.BucketName) {
 		if !plan.BucketName.IsNull() && !plan.BucketName.IsUnknown() {

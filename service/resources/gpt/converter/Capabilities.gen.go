@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/gpt/model"
+	"go.mws.cloud/go-sdk/service/gpt/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/gpt/model"
 )
 
-func CapabilitiesAPIResponseToTFModel(ctx context.Context, am *apimodel.CapabilitiesResponse) (*tfmodel.Capabilities, tfdiag.Diagnostics) {
+func CapabilitiesAPIResponseToTFModel(ctx context.Context, am *model.CapabilitiesResponse) (*tfmodel.Capabilities, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

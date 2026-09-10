@@ -8,25 +8,25 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
 func TestKafkaEndpointExternalAccessesAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaEndpointExternalAccessesResponse{}
+	emptyApiModel := model.KafkaEndpointExternalAccessesResponse{}
 	_, diags := conv.KafkaEndpointExternalAccessesAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestKafkaEndpointExternalAccessesResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaEndpointExternalAccessesRequest{
+	emptyApiModelRequest := model.KafkaEndpointExternalAccessesRequest{
 		Allowed: false,
 	}
 
-	emptyApiModelResponse, err := apimodel.KafkaEndpointExternalAccessesRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.KafkaEndpointExternalAccessesRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.KafkaEndpointExternalAccessesAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -35,7 +35,7 @@ func TestKafkaEndpointExternalAccessesResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.KafkaEndpointExternalAccessesTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.KafkaEndpointExternalAccessesRequestToResponse(filledApiModelRequest)
+	result, err := model.KafkaEndpointExternalAccessesRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -47,7 +47,7 @@ func TestUpdateKafkaEndpointExternalAccessesRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.KafkaEndpointExternalAccesses
 	var stateTfModel tfmodel.KafkaEndpointExternalAccesses
 
-	expectedUpdateModel := &apimodel.UpdateKafkaEndpointExternalAccessesRequest{}
+	expectedUpdateModel := &model.UpdateKafkaEndpointExternalAccessesRequest{}
 
 	result, diags := conv.KafkaEndpointExternalAccessesTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

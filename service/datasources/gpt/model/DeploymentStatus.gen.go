@@ -23,7 +23,7 @@ type DeploymentStatus struct {
 
 func (s *DeploymentStatus) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Текущее наблюдаемое состояние деплоймента.`,
+		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"ready": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.ResourceStatusReady).GetSchema().Attributes,
@@ -43,8 +43,9 @@ func (s *DeploymentStatus) GetSchema() schema.Schema {
 				Computed:   true,
 			},
 			"modalities": schema.SingleNestedAttribute{
-				Attributes: new(Modalities).GetSchema().Attributes,
-				Computed:   true,
+				Attributes:         new(Modalities).GetSchema().Attributes,
+				Computed:           true,
+				DeprecationMessage: `Отказываемся из-за разделения на input и output модальности`,
 			},
 			"capabilities": schema.SingleNestedAttribute{
 				Attributes: new(Capabilities).GetSchema().Attributes,

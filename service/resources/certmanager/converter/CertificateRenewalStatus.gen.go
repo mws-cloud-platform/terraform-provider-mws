@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/certmanager/model"
+	"go.mws.cloud/go-sdk/service/certmanager/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/model"
 )
 
-func CertificateRenewalStatusAPIToTFModel(ctx context.Context, am *apimodel.CertificateRenewalStatus) (tfmodel.CertificateRenewalStatus, tfdiag.Diagnostics) {
+func CertificateRenewalStatusAPIToTFModel(ctx context.Context, am *model.CertificateRenewalStatus) (tfmodel.CertificateRenewalStatus, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.CertificateRenewalStatus{}, nil
 	}
@@ -25,15 +25,15 @@ func CertificateRenewalStatusAPIToTFModel(ctx context.Context, am *apimodel.Cert
 	return t, diags
 }
 
-func CertificateRenewalStatusTFToAPIModel(ctx context.Context, plan tfmodel.CertificateRenewalStatus) (*apimodel.CertificateRenewalStatus, tfdiag.Diagnostics) {
+func CertificateRenewalStatusTFToAPIModel(ctx context.Context, plan tfmodel.CertificateRenewalStatus) (*model.CertificateRenewalStatus, tfdiag.Diagnostics) {
 	var diags tfdiag.Diagnostics
-	var am apimodel.CertificateRenewalStatus
+	var am model.CertificateRenewalStatus
 
 	var tmp = types.String(plan)
 	if tmp.IsNull() {
 		return nil, diags
 	}
-	am = apimodel.CertificateRenewalStatus(tmp.ValueString())
+	am = model.CertificateRenewalStatus(tmp.ValueString())
 
 	return &am, diags
 }

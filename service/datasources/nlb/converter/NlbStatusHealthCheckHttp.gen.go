@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/nlb/model"
 )
 
-func NlbStatusHealthCheckHttpAPIResponseToTFModel(ctx context.Context, am *apimodel.NlbStatusHealthCheckHttpResponse) (*tfmodel.NlbStatusHealthCheckHttp, tfdiag.Diagnostics) {
+func NlbStatusHealthCheckHttpAPIResponseToTFModel(ctx context.Context, am *model.NlbStatusHealthCheckHttpResponse) (*tfmodel.NlbStatusHealthCheckHttp, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}

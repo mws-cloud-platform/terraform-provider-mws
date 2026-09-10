@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/pkg/optional"
-	apimodel "go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
@@ -17,16 +17,16 @@ import (
 
 func TestKafkaEndpointExternalAddressSpecOrRefAPIResponseToTFModelEmpty(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := apimodel.KafkaEndpointExternalAddressSpecOrRefResponse{}
+	emptyApiModel := model.KafkaEndpointExternalAddressSpecOrRefResponse{}
 	_, diags := conv.KafkaEndpointExternalAddressSpecOrRefAPIResponseToTFModel(context.Background(), &emptyApiModel)
 	require.False(t, diags.HasError())
 }
 
 func TestKafkaEndpointExternalAddressSpecOrRefResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaEndpointExternalAddressSpecOrRefRequest{}
+	emptyApiModelRequest := model.KafkaEndpointExternalAddressSpecOrRefRequest{}
 
-	emptyApiModelResponse, err := apimodel.KafkaEndpointExternalAddressSpecOrRefRequestToResponse(&emptyApiModelRequest)
+	emptyApiModelResponse, err := model.KafkaEndpointExternalAddressSpecOrRefRequestToResponse(&emptyApiModelRequest)
 	require.NoError(t, err)
 
 	tfModel, diags := conv.KafkaEndpointExternalAddressSpecOrRefAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
@@ -35,7 +35,7 @@ func TestKafkaEndpointExternalAddressSpecOrRefResponseConverters(t *testing.T) {
 	filledApiModelRequest, diags := conv.KafkaEndpointExternalAddressSpecOrRefTFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := apimodel.KafkaEndpointExternalAddressSpecOrRefRequestToResponse(filledApiModelRequest)
+	result, err := model.KafkaEndpointExternalAddressSpecOrRefRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *emptyApiModelResponse, *result)
@@ -46,56 +46,16 @@ func TestUpdateKafkaEndpointExternalAddressSpecOrRefRequestConverters(t *testing
 
 	var nullPlanTfModel tfmodel.KafkaEndpointExternalAddressSpecOrRef
 	var stateTfModel tfmodel.KafkaEndpointExternalAddressSpecOrRef
-	stateTfModel.Spec = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.KafkaEndpointExternalAddressSpecOrRefSpec).GetSchema().Attributes))
+	stateTfModel.Spec = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.KafkaEndpointExternalAddressSpec).GetSchema().Attributes))
 
-	expectedUpdateModel := &apimodel.UpdateKafkaEndpointExternalAddressSpecOrRefRequest{
-		Spec: optional.OptionalNil[apimodel.UpdateKafkaEndpointExternalAddressSpecOrRefSpecRequest]{
+	expectedUpdateModel := &model.UpdateKafkaEndpointExternalAddressSpecOrRefRequest{
+		Spec: optional.OptionalNil[model.UpdateKafkaEndpointExternalAddressSpecRequest]{
 			Set:  true,
 			Null: true,
 		},
 	}
 
 	result, diags := conv.KafkaEndpointExternalAddressSpecOrRefTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
-	require.False(t, diags.HasError())
-
-	require.Equal(t, expectedUpdateModel, result)
-}
-
-func TestKafkaEndpointExternalAddressSpecOrRefSpecAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := apimodel.KafkaEndpointExternalAddressSpecOrRefSpecResponse{}
-	_, diags := conv.KafkaEndpointExternalAddressSpecOrRefSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
-func TestKafkaEndpointExternalAddressSpecOrRefSpecResponseConverters(t *testing.T) {
-	t.Parallel()
-	emptyApiModelRequest := apimodel.KafkaEndpointExternalAddressSpecOrRefSpecRequest{}
-
-	emptyApiModelResponse, err := apimodel.KafkaEndpointExternalAddressSpecOrRefSpecRequestToResponse(&emptyApiModelRequest)
-	require.NoError(t, err)
-
-	tfModel, diags := conv.KafkaEndpointExternalAddressSpecOrRefSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
-	require.False(t, diags.HasError())
-
-	filledApiModelRequest, diags := conv.KafkaEndpointExternalAddressSpecOrRefSpecTFToAPIRequestModel(context.Background(), tfModel)
-	require.False(t, diags.HasError())
-
-	result, err := apimodel.KafkaEndpointExternalAddressSpecOrRefSpecRequestToResponse(filledApiModelRequest)
-	require.NoError(t, err)
-
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
-func TestUpdateKafkaEndpointExternalAddressSpecOrRefSpecRequestConverters(t *testing.T) {
-	t.Parallel()
-
-	var nullPlanTfModel tfmodel.KafkaEndpointExternalAddressSpecOrRefSpec
-	var stateTfModel tfmodel.KafkaEndpointExternalAddressSpecOrRefSpec
-
-	expectedUpdateModel := &apimodel.UpdateKafkaEndpointExternalAddressSpecOrRefSpecRequest{}
-
-	result, diags := conv.KafkaEndpointExternalAddressSpecOrRefSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())
 
 	require.Equal(t, expectedUpdateModel, result)

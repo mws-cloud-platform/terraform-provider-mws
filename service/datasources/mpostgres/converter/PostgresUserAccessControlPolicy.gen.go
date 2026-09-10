@@ -8,11 +8,11 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/model"
 )
 
-func PostgresUserAccessControlPolicyAPIToTFModel(ctx context.Context, am *apimodel.PostgresUserAccessControlPolicy) (tfmodel.PostgresUserAccessControlPolicy, tfdiag.Diagnostics) {
+func PostgresUserAccessControlPolicyAPIToTFModel(ctx context.Context, am *model.PostgresUserAccessControlPolicy) (tfmodel.PostgresUserAccessControlPolicy, tfdiag.Diagnostics) {
 	if am == nil {
 		return tfmodel.PostgresUserAccessControlPolicy{}, nil
 	}
@@ -23,17 +23,4 @@ func PostgresUserAccessControlPolicyAPIToTFModel(ctx context.Context, am *apimod
 	t = tfmodel.PostgresUserAccessControlPolicy(types.StringValue(string(*am)))
 
 	return t, diags
-}
-
-func PostgresUserAccessControlPolicyTFToAPIModel(ctx context.Context, plan tfmodel.PostgresUserAccessControlPolicy) (*apimodel.PostgresUserAccessControlPolicy, tfdiag.Diagnostics) {
-	var diags tfdiag.Diagnostics
-	var am apimodel.PostgresUserAccessControlPolicy
-
-	var tmp = types.String(plan)
-	if tmp.IsNull() {
-		return nil, diags
-	}
-	am = apimodel.PostgresUserAccessControlPolicy(tmp.ValueString())
-
-	return &am, diags
 }

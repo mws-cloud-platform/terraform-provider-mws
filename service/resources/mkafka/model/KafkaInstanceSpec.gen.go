@@ -15,7 +15,7 @@ type KafkaInstanceSpec struct {
 
 func (s *KafkaInstanceSpec) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Параметры виртуальной машины, где будет работать брокер Кафки.`,
+		MarkdownDescription: `Параметры ноды брокера.`,
 		Attributes: map[string]schema.Attribute{
 			"vm_type": schema.StringAttribute{
 				MarkdownDescription: `Тип виртуальной машины, описывающий ресурсы (vCPU, memory)`,

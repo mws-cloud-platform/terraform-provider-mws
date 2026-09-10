@@ -8,12 +8,12 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	apimodel "go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func ClickhouseEndpointResourceAPIResponseToTFModel(ctx context.Context, am *apimodel.ClickhouseEndpointResourceResponse) (*tfmodel.ClickhouseEndpointResource, tfdiag.Diagnostics) {
+func ClickhouseEndpointResourceAPIResponseToTFModel(ctx context.Context, am *model.ClickhouseEndpointResourceResponse) (*tfmodel.ClickhouseEndpointResource, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
