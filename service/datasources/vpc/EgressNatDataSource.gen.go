@@ -40,18 +40,18 @@ func (m *EgressNatDataSource) Metadata(ctx context.Context, req datasource.Metad
 func (m *EgressNatDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "EgressNatDataSource.Schema")
 	resp.Schema = new(tfmodel.EgressNat).GetSchema()
-	resp.Schema.Attributes["egress_nat"] = schema.StringAttribute{
-		MarkdownDescription: `Имя Egress NAT`,
-		Required:            true,
+	resp.Schema.Attributes["project"] = schema.StringAttribute{
+		MarkdownDescription: `Путь к проекту.`,
+		Optional:            true,
+		Computed:            true,
 	}
 	resp.Schema.Attributes["network"] = schema.StringAttribute{
 		MarkdownDescription: `Имя сети`,
 		Required:            true,
 	}
-	resp.Schema.Attributes["project"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к проекту.`,
-		Optional:            true,
-		Computed:            true,
+	resp.Schema.Attributes["egress_nat"] = schema.StringAttribute{
+		MarkdownDescription: `Имя Egress NAT`,
+		Required:            true,
 	}
 }
 

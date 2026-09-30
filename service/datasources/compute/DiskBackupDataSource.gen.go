@@ -40,14 +40,14 @@ func (m *DiskBackupDataSource) Metadata(ctx context.Context, req datasource.Meta
 func (m *DiskBackupDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "DiskBackupDataSource.Schema")
 	resp.Schema = new(tfmodel.DiskBackup).GetSchema()
-	resp.Schema.Attributes["disk_backup"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к резервной копии диска`,
-		Required:            true,
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
+	}
+	resp.Schema.Attributes["disk_backup"] = schema.StringAttribute{
+		MarkdownDescription: `Путь к резервной копии диска`,
+		Required:            true,
 	}
 }
 

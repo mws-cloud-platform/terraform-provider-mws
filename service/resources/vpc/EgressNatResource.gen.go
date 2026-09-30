@@ -49,10 +49,12 @@ func (m *EgressNatResource) Metadata(ctx context.Context, req resource.MetadataR
 func (m *EgressNatResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	tflog.Info(ctx, "EgressNatResource.Schema")
 	resp.Schema = new(tfmodel.EgressNat).GetSchema()
-	resp.Schema.Attributes["egress_nat"] = schema.StringAttribute{
-		MarkdownDescription: `Имя Egress NAT`,
-		Required:            true,
+	resp.Schema.Attributes["project"] = schema.StringAttribute{
+		MarkdownDescription: `Путь к проекту.`,
+		Optional:            true,
+		Computed:            true,
 		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.UseStateForUnknown(),
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}
@@ -63,12 +65,10 @@ func (m *EgressNatResource) Schema(ctx context.Context, req resource.SchemaReque
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}
-	resp.Schema.Attributes["project"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к проекту.`,
-		Optional:            true,
-		Computed:            true,
+	resp.Schema.Attributes["egress_nat"] = schema.StringAttribute{
+		MarkdownDescription: `Имя Egress NAT`,
+		Required:            true,
 		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.UseStateForUnknown(),
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}

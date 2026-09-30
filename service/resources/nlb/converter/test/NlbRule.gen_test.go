@@ -17,24 +17,17 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/nlb/model"
 )
 
-func TestNlbRuleAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.NlbRuleOptionalResponse{}
-	_, diags := conv.NlbRuleAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestNlbRuleOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.NlbRuleRequest{
+	apiModelRequest := model.NlbRuleRequest{
 		ProtoPort:           "protoPort",
 		TargetAddressGroups: []commonmodel.VpcAddressGroupSpecOrRefRequest{},
 	}
 
-	emptyApiModelResponse, err := model.NlbRuleRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.NlbRuleRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.NlbRuleAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.NlbRuleAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.NlbRuleTFToAPIRequestModel(context.Background(), tfModel)
@@ -43,7 +36,7 @@ func TestNlbRuleOptionalResponseConverters(t *testing.T) {
 	result, err := model.NlbRuleRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateNlbRuleRequestConverters(t *testing.T) {

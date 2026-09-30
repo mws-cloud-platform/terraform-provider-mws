@@ -12,9 +12,11 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 )
 
-func TestKafkaSchemaRegistryUrlsAPIResponseToTFModelEmpty(t *testing.T) {
+func TestKafkaSchemaRegistryUrlsAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.KafkaSchemaRegistryUrlsResponse{}
-	_, diags := conv.KafkaSchemaRegistryUrlsAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.KafkaSchemaRegistryUrlsResponse{
+		Urls: []string{},
+	}
+	_, diags := conv.KafkaSchemaRegistryUrlsAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

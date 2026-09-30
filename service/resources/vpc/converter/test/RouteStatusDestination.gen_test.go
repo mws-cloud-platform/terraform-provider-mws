@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
 )
 
-func TestRouteStatusDestinationAPIResponseToTFModelEmpty(t *testing.T) {
+func TestRouteStatusDestinationAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.RouteStatusDestinationResponse{}
-	_, diags := conv.RouteStatusDestinationAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.RouteStatusDestinationResponse{}
+	_, diags := conv.RouteStatusDestinationAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

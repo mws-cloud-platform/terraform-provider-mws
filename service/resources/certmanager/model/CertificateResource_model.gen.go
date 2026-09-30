@@ -8,8 +8,8 @@ import (
 )
 
 type CertificateModel struct {
-	NameParam    types.String   `tfsdk:"name"`
 	ProjectParam types.String   `tfsdk:"project"`
+	NameParam    types.String   `tfsdk:"name"`
 	Timeouts     timeouts.Value `tfsdk:"timeouts"`
 	ID           types.String   `tfsdk:"id"`
 	Certificate

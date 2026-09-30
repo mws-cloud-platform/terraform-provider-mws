@@ -15,21 +15,14 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func TestClickhouseEndpointExternalAddressSpecOrRefAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ClickhouseEndpointExternalAddressSpecOrRefOptionalResponse{}
-	_, diags := conv.ClickhouseEndpointExternalAddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestClickhouseEndpointExternalAddressSpecOrRefOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ClickhouseEndpointExternalAddressSpecOrRefRequest{}
+	apiModelRequest := model.ClickhouseEndpointExternalAddressSpecOrRefRequest{}
 
-	emptyApiModelResponse, err := model.ClickhouseEndpointExternalAddressSpecOrRefRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ClickhouseEndpointExternalAddressSpecOrRefRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ClickhouseEndpointExternalAddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ClickhouseEndpointExternalAddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ClickhouseEndpointExternalAddressSpecOrRefTFToAPIRequestModel(context.Background(), tfModel)
@@ -38,7 +31,7 @@ func TestClickhouseEndpointExternalAddressSpecOrRefOptionalResponseConverters(t 
 	result, err := model.ClickhouseEndpointExternalAddressSpecOrRefRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateClickhouseEndpointExternalAddressSpecOrRefRequestConverters(t *testing.T) {

@@ -23,12 +23,6 @@ func ClickhouseClusterShardAPIOptionalResponseToTFModel(ctx context.Context, am 
 
 	t.Name = types.StringValue(am.Name)
 
-	if val, ok := am.Count.Get(); ok {
-		t.Count = types.Int64Value(int64(val))
-	} else {
-		t.Count = types.Int64Null()
-	}
-
 	resourcesTmp, d := ClickhouseInstanceHWResourcesAPIOptionalResponseToTFModel(ctx, &am.Resources)
 	diags = append(diags, d...)
 	if diags.HasError() {

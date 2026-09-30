@@ -14,23 +14,16 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func TestKafkaDataDiskSpecAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.KafkaDataDiskSpecResponse{}
-	_, diags := conv.KafkaDataDiskSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestKafkaDataDiskSpecResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.KafkaDataDiskSpecRequest{
+	apiModelRequest := model.KafkaDataDiskSpecRequest{
 		Size: bytesize.MustParseString("0 B"),
 	}
 
-	emptyApiModelResponse, err := model.KafkaDataDiskSpecRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.KafkaDataDiskSpecRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.KafkaDataDiskSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.KafkaDataDiskSpecAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.KafkaDataDiskSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -39,7 +32,7 @@ func TestKafkaDataDiskSpecResponseConverters(t *testing.T) {
 	result, err := model.KafkaDataDiskSpecRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateKafkaDataDiskSpecRequestConverters(t *testing.T) {

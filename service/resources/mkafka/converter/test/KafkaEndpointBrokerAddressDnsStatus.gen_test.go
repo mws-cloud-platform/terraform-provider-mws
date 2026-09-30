@@ -12,9 +12,11 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 )
 
-func TestKafkaEndpointBrokerAddressDnsStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestKafkaEndpointBrokerAddressDnsStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.KafkaEndpointBrokerAddressDnsStatusResponse{}
-	_, diags := conv.KafkaEndpointBrokerAddressDnsStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.KafkaEndpointBrokerAddressDnsStatusResponse{
+		Name: "name",
+	}
+	_, diags := conv.KafkaEndpointBrokerAddressDnsStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

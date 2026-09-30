@@ -8,20 +8,30 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/converter"
 )
 
-func TestClickhouseBackupStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestClickhouseBackupStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClickhouseBackupStatusResponse{}
-	_, diags := conv.ClickhouseBackupStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClickhouseBackupStatusResponse{
+		ResourceStatusResponse: commonmodel.ResourceStatusResponse{
+			Ready: commonmodel.ResourceStatusReadyResponse{
+				State: "",
+			},
+		},
+	}
+	_, diags := conv.ClickhouseBackupStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestClickhouseBackupStatusBackupAPIResponseToTFModelEmpty(t *testing.T) {
+func TestClickhouseBackupStatusBackupAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClickhouseBackupStatusBackupResponse{}
-	_, diags := conv.ClickhouseBackupStatusBackupAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClickhouseBackupStatusBackupResponse{
+		Trigger: "",
+		Type:    "",
+	}
+	_, diags := conv.ClickhouseBackupStatusBackupAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

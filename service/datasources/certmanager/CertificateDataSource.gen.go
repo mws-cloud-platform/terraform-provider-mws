@@ -40,14 +40,14 @@ func (m *CertificateDataSource) Metadata(ctx context.Context, req datasource.Met
 func (m *CertificateDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "CertificateDataSource.Schema")
 	resp.Schema = new(tfmodel.Certificate).GetSchema()
-	resp.Schema.Attributes["name"] = schema.StringAttribute{
-		MarkdownDescription: `Имя сертификата`,
-		Required:            true,
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
+	}
+	resp.Schema.Attributes["name"] = schema.StringAttribute{
+		MarkdownDescription: `Имя сертификата`,
+		Required:            true,
 	}
 }
 

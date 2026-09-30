@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
+	localboolplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/boolplanmodifier"
 	localint64planmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/int64planmodifier"
 	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
@@ -23,6 +24,7 @@ type NodeGroup struct {
 	ImageStorageSize types.String `tfsdk:"image_storage_size"`
 	ImageStorageIops types.Int64  `tfsdk:"image_storage_iops"`
 	LocalDisks       types.List   `tfsdk:"local_disks"`
+	DataCache        types.Bool   `tfsdk:"data_cache"`
 	Scale            types.Object `tfsdk:"scale"`
 	Labels           types.List   `tfsdk:"labels"`
 	Taints           types.List   `tfsdk:"taints"`
@@ -95,6 +97,13 @@ Compute, на которых запускаются контейнеры с пр
 				},
 				MarkdownDescription: `Параметры локальных дисков для каждого узла в группе узлов`,
 				Optional:            true,
+			},
+			"data_cache": schema.BoolAttribute{
+				MarkdownDescription: `Признак того, что группа узлов предназначена для кэширования данных. При значении true оператор устанавливает метку csi.mws.ru/data-cache=true на узлы группы (дополнительно требуется заполнение поля localDisks)`,
+				Optional:            true,
+				PlanModifiers: []planmodifier.Bool{
+					localboolplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"scale": schema.SingleNestedAttribute{
 				Attributes:          new(NodeGroupSpecScale).GetSchema().Attributes,

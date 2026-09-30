@@ -7,8 +7,8 @@ import (
 )
 
 type AddressModel struct {
-	AddressParam types.String `tfsdk:"address"`
-	NetworkParam types.String `tfsdk:"network"`
 	ProjectParam types.String `tfsdk:"project"`
+	NetworkParam types.String `tfsdk:"network"`
+	AddressParam types.String `tfsdk:"address"`
 	Address
 }

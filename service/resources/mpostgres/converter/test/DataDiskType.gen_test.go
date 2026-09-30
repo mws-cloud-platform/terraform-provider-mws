@@ -12,22 +12,15 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
 )
 
-func TestDataDiskTypeAPIToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.DataDiskType("")
-	_, diags := conv.DataDiskTypeAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestDataDiskTypeConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.DataDiskType("")
+	apiModel := model.DataDiskType("")
 
-	tfModel, diags := conv.DataDiskTypeAPIToTFModel(context.Background(), &emptyApiModel)
+	tfModel, diags := conv.DataDiskTypeAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 
 	result, diags := conv.DataDiskTypeTFToAPIModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	require.Equal(t, emptyApiModel, *result)
+	require.Equal(t, apiModel, *result)
 }

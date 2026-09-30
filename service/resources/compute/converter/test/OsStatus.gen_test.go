@@ -12,9 +12,11 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
 )
 
-func TestOsStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestOsStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.OsStatusResponse{}
-	_, diags := conv.OsStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.OsStatusResponse{
+		Fqdn: "fqdn",
+	}
+	_, diags := conv.OsStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

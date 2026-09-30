@@ -8,13 +8,16 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
 )
 
-func TestEgressNatStatusExternalAPIResponseToTFModelEmpty(t *testing.T) {
+func TestEgressNatStatusExternalAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.EgressNatStatusExternalResponse{}
-	_, diags := conv.EgressNatStatusExternalAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.EgressNatStatusExternalResponse{
+		Addresses: []commonmodel.ResourceExternalAddressStatusResponse{},
+	}
+	_, diags := conv.EgressNatStatusExternalAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

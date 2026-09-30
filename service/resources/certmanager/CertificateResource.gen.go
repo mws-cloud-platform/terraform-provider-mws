@@ -51,19 +51,19 @@ func (m *CertificateResource) Metadata(ctx context.Context, req resource.Metadat
 func (m *CertificateResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	tflog.Info(ctx, "CertificateResource.Schema")
 	resp.Schema = new(tfmodel.Certificate).GetSchema()
-	resp.Schema.Attributes["name"] = schema.StringAttribute{
-		MarkdownDescription: `Имя сертификата`,
-		Required:            true,
-		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.RequiresReplaceIfConfigured(),
-		},
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
+	}
+	resp.Schema.Attributes["name"] = schema.StringAttribute{
+		MarkdownDescription: `Имя сертификата`,
+		Required:            true,
+		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}

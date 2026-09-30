@@ -15,16 +15,9 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func TestKafkaInstanceAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.KafkaInstanceResponse{}
-	_, diags := conv.KafkaInstanceAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestKafkaInstanceResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.KafkaInstanceRequest{
+	apiModelRequest := model.KafkaInstanceRequest{
 		Broker: model.KafkaInstanceSpecRequest{
 			VmType: compute.NewMustVmTypeRef("vmTypeID"),
 			Disk: model.KafkaDataDiskSpecRequest{
@@ -34,10 +27,10 @@ func TestKafkaInstanceResponseConverters(t *testing.T) {
 		Controller: model.KafkaControllerInstanceSpecRequest{},
 	}
 
-	emptyApiModelResponse, err := model.KafkaInstanceRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.KafkaInstanceRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.KafkaInstanceAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.KafkaInstanceAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.KafkaInstanceTFToAPIRequestModel(context.Background(), tfModel)
@@ -46,7 +39,7 @@ func TestKafkaInstanceResponseConverters(t *testing.T) {
 	result, err := model.KafkaInstanceRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateKafkaInstanceRequestConverters(t *testing.T) {

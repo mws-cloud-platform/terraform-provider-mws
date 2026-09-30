@@ -13,23 +13,16 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func TestKafkaEndpointExternalAccessesAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.KafkaEndpointExternalAccessesResponse{}
-	_, diags := conv.KafkaEndpointExternalAccessesAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestKafkaEndpointExternalAccessesResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.KafkaEndpointExternalAccessesRequest{
+	apiModelRequest := model.KafkaEndpointExternalAccessesRequest{
 		Allowed: false,
 	}
 
-	emptyApiModelResponse, err := model.KafkaEndpointExternalAccessesRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.KafkaEndpointExternalAccessesRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.KafkaEndpointExternalAccessesAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.KafkaEndpointExternalAccessesAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.KafkaEndpointExternalAccessesTFToAPIRequestModel(context.Background(), tfModel)
@@ -38,7 +31,7 @@ func TestKafkaEndpointExternalAccessesResponseConverters(t *testing.T) {
 	result, err := model.KafkaEndpointExternalAccessesRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateKafkaEndpointExternalAccessesRequestConverters(t *testing.T) {

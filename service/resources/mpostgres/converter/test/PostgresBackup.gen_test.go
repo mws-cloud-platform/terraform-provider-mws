@@ -16,21 +16,14 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func TestPostgresBackupAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.PostgresBackupResponse{}
-	_, diags := conv.PostgresBackupAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestPostgresBackupResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.PostgresBackupRequest{}
+	apiModelRequest := model.PostgresBackupRequest{}
 
-	emptyApiModelResponse, err := model.PostgresBackupRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.PostgresBackupRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.PostgresBackupAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.PostgresBackupAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.PostgresBackupTFToAPIRequestModel(context.Background(), tfModel)
@@ -39,7 +32,7 @@ func TestPostgresBackupResponseConverters(t *testing.T) {
 	result, err := model.PostgresBackupRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdatePostgresBackupRequestConverters(t *testing.T) {
@@ -62,23 +55,16 @@ func TestUpdatePostgresBackupRequestConverters(t *testing.T) {
 	require.Equal(t, expectedUpdateModel, result)
 }
 
-func TestPostgresBackupMetadataAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.PostgresBackupMetadataResponse{}
-	_, diags := conv.PostgresBackupMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestPostgresBackupMetadataResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.PostgresBackupMetadataRequest{
+	apiModelRequest := model.PostgresBackupMetadataRequest{
 		TypedResourceMetadataRequest: commonmodel.TypedResourceMetadataRequest{},
 	}
 
-	emptyApiModelResponse, err := model.PostgresBackupMetadataRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.PostgresBackupMetadataRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.PostgresBackupMetadataAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.PostgresBackupMetadataAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.PostgresBackupMetadataTFToAPIRequestModel(context.Background(), tfModel)
@@ -87,7 +73,7 @@ func TestPostgresBackupMetadataResponseConverters(t *testing.T) {
 	result, err := model.PostgresBackupMetadataRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdatePostgresBackupMetadataRequestConverters(t *testing.T) {

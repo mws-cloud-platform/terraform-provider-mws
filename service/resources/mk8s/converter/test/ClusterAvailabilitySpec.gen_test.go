@@ -15,21 +15,14 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
-func TestClusterAvailabilitySpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ClusterAvailabilitySpecOptionalResponse{}
-	_, diags := conv.ClusterAvailabilitySpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestClusterAvailabilitySpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ClusterAvailabilitySpecRequest{}
+	apiModelRequest := model.ClusterAvailabilitySpecRequest{}
 
-	emptyApiModelResponse, err := model.ClusterAvailabilitySpecRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ClusterAvailabilitySpecRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ClusterAvailabilitySpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ClusterAvailabilitySpecAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ClusterAvailabilitySpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -38,7 +31,7 @@ func TestClusterAvailabilitySpecOptionalResponseConverters(t *testing.T) {
 	result, err := model.ClusterAvailabilitySpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateClusterAvailabilitySpecRequestConverters(t *testing.T) {
@@ -71,23 +64,16 @@ func TestUpdateClusterAvailabilitySpecRequestConverters(t *testing.T) {
 	require.Equal(t, expectedUpdateModel, result)
 }
 
-func TestClusterAvailabilitySpecRegionalAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ClusterAvailabilitySpecRegionalOptionalResponse{}
-	_, diags := conv.ClusterAvailabilitySpecRegionalAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestClusterAvailabilitySpecRegionalOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ClusterAvailabilitySpecRegionalRequest{
+	apiModelRequest := model.ClusterAvailabilitySpecRegionalRequest{
 		Zones: []string{},
 	}
 
-	emptyApiModelResponse, err := model.ClusterAvailabilitySpecRegionalRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ClusterAvailabilitySpecRegionalRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ClusterAvailabilitySpecRegionalAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ClusterAvailabilitySpecRegionalAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ClusterAvailabilitySpecRegionalTFToAPIRequestModel(context.Background(), tfModel)
@@ -96,7 +82,7 @@ func TestClusterAvailabilitySpecRegionalOptionalResponseConverters(t *testing.T)
 	result, err := model.ClusterAvailabilitySpecRegionalRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateClusterAvailabilitySpecRegionalRequestConverters(t *testing.T) {
@@ -113,23 +99,16 @@ func TestUpdateClusterAvailabilitySpecRegionalRequestConverters(t *testing.T) {
 	require.Equal(t, expectedUpdateModel, result)
 }
 
-func TestClusterAvailabilitySpecStandaloneAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ClusterAvailabilitySpecStandaloneOptionalResponse{}
-	_, diags := conv.ClusterAvailabilitySpecStandaloneAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestClusterAvailabilitySpecStandaloneOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ClusterAvailabilitySpecStandaloneRequest{
+	apiModelRequest := model.ClusterAvailabilitySpecStandaloneRequest{
 		Zone: "zone",
 	}
 
-	emptyApiModelResponse, err := model.ClusterAvailabilitySpecStandaloneRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ClusterAvailabilitySpecStandaloneRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ClusterAvailabilitySpecStandaloneAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ClusterAvailabilitySpecStandaloneAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ClusterAvailabilitySpecStandaloneTFToAPIRequestModel(context.Background(), tfModel)
@@ -138,7 +117,7 @@ func TestClusterAvailabilitySpecStandaloneOptionalResponseConverters(t *testing.
 	result, err := model.ClusterAvailabilitySpecStandaloneRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateClusterAvailabilitySpecStandaloneRequestConverters(t *testing.T) {
@@ -155,23 +134,16 @@ func TestUpdateClusterAvailabilitySpecStandaloneRequestConverters(t *testing.T) 
 	require.Equal(t, expectedUpdateModel, result)
 }
 
-func TestClusterAvailabilitySpecZonalHaAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ClusterAvailabilitySpecZonalHaOptionalResponse{}
-	_, diags := conv.ClusterAvailabilitySpecZonalHaAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestClusterAvailabilitySpecZonalHaOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ClusterAvailabilitySpecZonalHaRequest{
+	apiModelRequest := model.ClusterAvailabilitySpecZonalHaRequest{
 		Zone: "zone",
 	}
 
-	emptyApiModelResponse, err := model.ClusterAvailabilitySpecZonalHaRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ClusterAvailabilitySpecZonalHaRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ClusterAvailabilitySpecZonalHaAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ClusterAvailabilitySpecZonalHaAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ClusterAvailabilitySpecZonalHaTFToAPIRequestModel(context.Background(), tfModel)
@@ -180,7 +152,7 @@ func TestClusterAvailabilitySpecZonalHaOptionalResponseConverters(t *testing.T) 
 	result, err := model.ClusterAvailabilitySpecZonalHaRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateClusterAvailabilitySpecZonalHaRequestConverters(t *testing.T) {

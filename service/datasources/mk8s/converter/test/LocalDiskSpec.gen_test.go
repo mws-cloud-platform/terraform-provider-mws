@@ -7,14 +7,18 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
 	"go.mws.cloud/go-sdk/service/mk8s/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/converter"
 )
 
-func TestLocalDiskSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestLocalDiskSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.LocalDiskSpecOptionalResponse{}
-	_, diags := conv.LocalDiskSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.LocalDiskSpecOptionalResponse{
+		Name: "name",
+		Size: bytesize.MustParseString("0 B"),
+	}
+	_, diags := conv.LocalDiskSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestSingleLocalDiskSizeLimitsSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestSingleLocalDiskSizeLimitsSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.SingleLocalDiskSizeLimitsSpecOptionalResponse{}
-	_, diags := conv.SingleLocalDiskSizeLimitsSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.SingleLocalDiskSizeLimitsSpecOptionalResponse{}
+	_, diags := conv.SingleLocalDiskSizeLimitsSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

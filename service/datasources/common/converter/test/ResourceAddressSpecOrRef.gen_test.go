@@ -12,23 +12,23 @@ import (
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
-func TestResourceAddressSpecOrRefAPIToTFModelEmpty(t *testing.T) {
+func TestResourceAddressSpecOrRefAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.ResourceAddressSpecOrRef{}
-	_, diags := commonconv.ResourceAddressSpecOrRefAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.ResourceAddressSpecOrRef{}
+	_, diags := commonconv.ResourceAddressSpecOrRefAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestResourceAddressSpecOrRefAPIResponseToTFModelEmpty(t *testing.T) {
+func TestResourceAddressSpecOrRefAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.ResourceAddressSpecOrRefResponse{}
-	_, diags := commonconv.ResourceAddressSpecOrRefAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.ResourceAddressSpecOrRefResponse{}
+	_, diags := commonconv.ResourceAddressSpecOrRefAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestResourceAddressSpecOrRefAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestResourceAddressSpecOrRefAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.ResourceAddressSpecOrRefOptionalResponse{}
-	_, diags := commonconv.ResourceAddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.ResourceAddressSpecOrRefOptionalResponse{}
+	_, diags := commonconv.ResourceAddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

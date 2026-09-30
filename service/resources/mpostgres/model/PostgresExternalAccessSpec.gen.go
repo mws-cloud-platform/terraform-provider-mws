@@ -4,7 +4,10 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 )
 
 type PostgresExternalAccessSpec struct {
@@ -23,6 +26,9 @@ func (s *PostgresExternalAccessSpec) GetSchema() schema.Schema {
 			"ref": schema.StringAttribute{
 				MarkdownDescription: `Идентификатор внешнего адреса`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

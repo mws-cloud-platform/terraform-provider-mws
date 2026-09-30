@@ -3,6 +3,7 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -91,7 +92,7 @@ func (s *ClickhouseCluster) GetSchema() schema.Schema {
 				Required:            true,
 			},
 			"config": schema.MapAttribute{
-				ElementType:         types.StringType,
+				ElementType:         jsontypes.NormalizedType{},
 				MarkdownDescription: `Настройки ClickHouse. Если не указаны, будут использованы настройки по умолчанию`,
 				Optional:            true,
 				PlanModifiers: []planmodifier.Map{

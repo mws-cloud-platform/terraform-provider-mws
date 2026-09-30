@@ -8,13 +8,25 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/kms/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/kms/converter"
 )
 
-func TestCryptoKeyVersionAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestCryptoKeyVersionAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.CryptoKeyVersionOptionalResponse{}
-	_, diags := conv.CryptoKeyVersionAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.CryptoKeyVersionOptionalResponse{
+		Kind:     "kind",
+		Metadata: commonmodel.CommonTypedResourceMetadataOptionalResponse{},
+		Spec:     model.CryptoKeyVersionSpecOptionalResponse{},
+		Status: model.CryptoKeyVersionStatusResponse{
+			ResourceStatusResponse: commonmodel.ResourceStatusResponse{
+				Ready: commonmodel.ResourceStatusReadyResponse{
+					State: "",
+				},
+			},
+		},
+	}
+	_, diags := conv.CryptoKeyVersionAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

@@ -49,10 +49,12 @@ func (m *BackupResource) Metadata(ctx context.Context, req resource.MetadataRequ
 func (m *BackupResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	tflog.Info(ctx, "BackupResource.Schema")
 	resp.Schema = new(tfmodel.PostgresBackup).GetSchema()
-	resp.Schema.Attributes["backup"] = schema.StringAttribute{
-		MarkdownDescription: `Backup базы данных.`,
-		Required:            true,
+	resp.Schema.Attributes["project"] = schema.StringAttribute{
+		MarkdownDescription: `Путь к проекту.`,
+		Optional:            true,
+		Computed:            true,
 		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.UseStateForUnknown(),
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}
@@ -63,12 +65,10 @@ func (m *BackupResource) Schema(ctx context.Context, req resource.SchemaRequest,
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}
-	resp.Schema.Attributes["project"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к проекту.`,
-		Optional:            true,
-		Computed:            true,
+	resp.Schema.Attributes["backup"] = schema.StringAttribute{
+		MarkdownDescription: `Backup базы данных.`,
+		Required:            true,
 		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.UseStateForUnknown(),
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}

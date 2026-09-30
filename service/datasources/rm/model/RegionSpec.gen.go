@@ -3,7 +3,7 @@
 package model
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 )
 
-type RegionSpec = types.String
+type RegionSpec = jsontypes.Normalized

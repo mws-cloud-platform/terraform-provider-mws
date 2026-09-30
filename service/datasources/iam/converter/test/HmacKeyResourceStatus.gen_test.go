@@ -8,13 +8,20 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/iam/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/iam/converter"
 )
 
-func TestHmacKeyResourceStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestHmacKeyResourceStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.HmacKeyResourceStatusResponse{}
-	_, diags := conv.HmacKeyResourceStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.HmacKeyResourceStatusResponse{
+		ResourceStatusResponse: commonmodel.ResourceStatusResponse{
+			Ready: commonmodel.ResourceStatusReadyResponse{
+				State: "",
+			},
+		},
+	}
+	_, diags := conv.HmacKeyResourceStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

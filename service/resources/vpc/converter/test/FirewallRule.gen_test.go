@@ -19,16 +19,9 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func TestFirewallRuleAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.FirewallRuleOptionalResponse{}
-	_, diags := conv.FirewallRuleAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestFirewallRuleOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.FirewallRuleRequest{
+	apiModelRequest := model.FirewallRuleRequest{
 		Spec: model.FirewallRuleSpecRequest{
 			Direction:   "",
 			Action:      "",
@@ -37,10 +30,10 @@ func TestFirewallRuleOptionalResponseConverters(t *testing.T) {
 		},
 	}
 
-	emptyApiModelResponse, err := model.FirewallRuleRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.FirewallRuleRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.FirewallRuleAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.FirewallRuleAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.FirewallRuleTFToAPIRequestModel(context.Background(), tfModel)
@@ -49,7 +42,7 @@ func TestFirewallRuleOptionalResponseConverters(t *testing.T) {
 	result, err := model.FirewallRuleRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateFirewallRuleRequestConverters(t *testing.T) {

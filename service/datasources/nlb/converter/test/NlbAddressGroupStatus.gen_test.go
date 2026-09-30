@@ -9,12 +9,15 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/nlb/converter"
 )
 
-func TestNlbAddressGroupStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestNlbAddressGroupStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NlbAddressGroupStatusResponse{}
-	_, diags := conv.NlbAddressGroupStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NlbAddressGroupStatusResponse{
+		Ref: vpc.NewMustAddressGroupRef("projectID", "networkID", "addressGroupID"),
+	}
+	_, diags := conv.NlbAddressGroupStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

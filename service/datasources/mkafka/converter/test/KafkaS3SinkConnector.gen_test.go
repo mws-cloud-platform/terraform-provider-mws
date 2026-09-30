@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/converter"
 )
 
-func TestKafkaS3SinkConnectorAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestKafkaS3SinkConnectorAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.KafkaS3SinkConnectorOptionalResponse{}
-	_, diags := conv.KafkaS3SinkConnectorAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.KafkaS3SinkConnectorOptionalResponse{}
+	_, diags := conv.KafkaS3SinkConnectorAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

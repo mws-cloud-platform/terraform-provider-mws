@@ -9,19 +9,22 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestSnapshotSourceAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestSnapshotSourceAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.SnapshotSourceOptionalResponse{}
-	_, diags := conv.SnapshotSourceAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.SnapshotSourceOptionalResponse{}
+	_, diags := conv.SnapshotSourceAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestSnapshotSourceDiskAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestSnapshotSourceDiskAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.SnapshotSourceDiskOptionalResponse{}
-	_, diags := conv.SnapshotSourceDiskAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.SnapshotSourceDiskOptionalResponse{
+		Id: compute.NewMustDiskRef("projectID", "diskID"),
+	}
+	_, diags := conv.SnapshotSourceDiskAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

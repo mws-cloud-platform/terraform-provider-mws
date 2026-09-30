@@ -8,8 +8,8 @@ import (
 )
 
 type ClusterModel struct {
-	ClusterParam types.String   `tfsdk:"cluster"`
 	ProjectParam types.String   `tfsdk:"project"`
+	ClusterParam types.String   `tfsdk:"cluster"`
 	Timeouts     timeouts.Value `tfsdk:"timeouts"`
 	ID           types.String   `tfsdk:"id"`
 	ClickhouseCluster

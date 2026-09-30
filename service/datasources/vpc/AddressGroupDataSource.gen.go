@@ -40,18 +40,18 @@ func (m *AddressGroupDataSource) Metadata(ctx context.Context, req datasource.Me
 func (m *AddressGroupDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "AddressGroupDataSource.Schema")
 	resp.Schema = new(tfmodel.VpcAddressGroup).GetSchema()
-	resp.Schema.Attributes["address_group"] = schema.StringAttribute{
-		MarkdownDescription: `Имя группы адресов`,
-		Required:            true,
+	resp.Schema.Attributes["project"] = schema.StringAttribute{
+		MarkdownDescription: `Путь к проекту.`,
+		Optional:            true,
+		Computed:            true,
 	}
 	resp.Schema.Attributes["network"] = schema.StringAttribute{
 		MarkdownDescription: `Имя сети`,
 		Required:            true,
 	}
-	resp.Schema.Attributes["project"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к проекту.`,
-		Optional:            true,
-		Computed:            true,
+	resp.Schema.Attributes["address_group"] = schema.StringAttribute{
+		MarkdownDescription: `Имя группы адресов`,
+		Required:            true,
 	}
 }
 

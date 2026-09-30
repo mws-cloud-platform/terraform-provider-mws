@@ -3,8 +3,12 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 )
 
 type PluginsSpec struct {
@@ -25,8 +29,8 @@ func (s *PluginsSpec) GetSchema() schema.Schema {
 }
 
 type PluginsSpecCni struct {
-	Calico types.String `tfsdk:"calico"`
-	Cilium types.String `tfsdk:"cilium"`
+	Calico jsontypes.Normalized `tfsdk:"calico"`
+	Cilium jsontypes.Normalized `tfsdk:"cilium"`
 }
 
 func (s *PluginsSpecCni) GetSchema() schema.Schema {
@@ -34,12 +38,20 @@ func (s *PluginsSpecCni) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля Cni анонимного типа структуры PluginsSpec`,
 		Attributes: map[string]schema.Attribute{
 			"calico": schema.StringAttribute{
+				CustomType:          jsontypes.NormalizedType{},
 				MarkdownDescription: `Настройка CNI-плагина Calico`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"cilium": schema.StringAttribute{
+				CustomType:          jsontypes.NormalizedType{},
 				MarkdownDescription: `Настройка CNI-плагина Cilium`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

@@ -7,8 +7,8 @@ import (
 )
 
 type CryptoKeyRoleBindingModel struct {
-	KeyParam         types.String `tfsdk:"key"`
 	ProjectParam     types.String `tfsdk:"project"`
+	KeyParam         types.String `tfsdk:"key"`
 	RoleBindingParam types.String `tfsdk:"role_binding"`
 	CryptoKeyRoleBinding
 }

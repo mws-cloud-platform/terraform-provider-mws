@@ -5,8 +5,8 @@ package converter
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"go.mws.cloud/go-sdk/service/rm/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/rm/model"
@@ -20,7 +20,7 @@ func RegionSpecAPIToTFModel(ctx context.Context, am model.RegionSpec) (tfmodel.R
 	var diags tfdiag.Diagnostics
 	var t tfmodel.RegionSpec
 
-	t = tfmodel.RegionSpec(types.StringValue(string(am)))
+	t = tfmodel.RegionSpec(jsontypes.NewNormalizedValue(string(am)))
 
 	return t, diags
 }

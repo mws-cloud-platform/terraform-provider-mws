@@ -8,13 +8,17 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/nlb/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/nlb/converter"
 )
 
-func TestNlbStatusRuleAPIResponseToTFModelEmpty(t *testing.T) {
+func TestNlbStatusRuleAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NlbStatusRuleResponse{}
-	_, diags := conv.NlbStatusRuleAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NlbStatusRuleResponse{
+		ProtoPort:           "protoPort",
+		TargetAddressGroups: []commonmodel.VpcAddressGroupSpecOrRefResponse{},
+	}
+	_, diags := conv.NlbStatusRuleAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

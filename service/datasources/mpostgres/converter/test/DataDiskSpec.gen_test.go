@@ -7,14 +7,18 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
 	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
 )
 
-func TestDataDiskSpecAPIResponseToTFModelEmpty(t *testing.T) {
+func TestDataDiskSpecAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.DataDiskSpecResponse{}
-	_, diags := conv.DataDiskSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.DataDiskSpecResponse{
+		Size: bytesize.MustParseString("0 B"),
+		Type: "",
+	}
+	_, diags := conv.DataDiskSpecAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

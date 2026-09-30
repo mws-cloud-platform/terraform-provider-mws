@@ -40,14 +40,14 @@ func (m *RouteDataSource) Metadata(ctx context.Context, req datasource.MetadataR
 func (m *RouteDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "RouteDataSource.Schema")
 	resp.Schema = new(tfmodel.Route).GetSchema()
-	resp.Schema.Attributes["network"] = schema.StringAttribute{
-		MarkdownDescription: `Имя сети`,
-		Required:            true,
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
+	}
+	resp.Schema.Attributes["network"] = schema.StringAttribute{
+		MarkdownDescription: `Имя сети`,
+		Required:            true,
 	}
 	resp.Schema.Attributes["route"] = schema.StringAttribute{
 		MarkdownDescription: `Имя маршрута`,

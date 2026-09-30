@@ -13,25 +13,18 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func TestKafkaS3PropertiesAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.KafkaS3PropertiesOptionalResponse{}
-	_, diags := conv.KafkaS3PropertiesAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestKafkaS3PropertiesOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.KafkaS3PropertiesRequest{
+	apiModelRequest := model.KafkaS3PropertiesRequest{
 		BucketName:  "bucketName",
 		AccessKeyId: "accessKeyId",
 		Endpoint:    "endpoint",
 	}
 
-	emptyApiModelResponse, err := model.KafkaS3PropertiesRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.KafkaS3PropertiesRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.KafkaS3PropertiesAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.KafkaS3PropertiesAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.KafkaS3PropertiesTFToAPIRequestModel(context.Background(), tfModel)
@@ -40,7 +33,7 @@ func TestKafkaS3PropertiesOptionalResponseConverters(t *testing.T) {
 	result, err := model.KafkaS3PropertiesRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateKafkaS3PropertiesRequestConverters(t *testing.T) {

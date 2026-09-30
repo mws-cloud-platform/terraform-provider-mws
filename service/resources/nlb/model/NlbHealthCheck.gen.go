@@ -4,7 +4,11 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localint64planmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/int64planmodifier"
+	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 )
 
 type NlbHealthCheck struct {
@@ -36,6 +40,9 @@ func (s *NlbHealthCheck) GetSchema() schema.Schema {
 Отрицательные значения обозначаются префиксом "-", в простом формате могут быть ограничены скобками.
 Регистр и пробелы игнорируются`,
 				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"timeout": schema.StringAttribute{
 				MarkdownDescription: `Таймаут запроса
@@ -53,10 +60,16 @@ func (s *NlbHealthCheck) GetSchema() schema.Schema {
 			"unhealthy_threshold": schema.Int64Attribute{
 				MarkdownDescription: `Количество последовательных проваленных проверок, после которого виртуальная машина считается неработоспособной`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.Int64{
+					localint64planmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"healthy_threshold": schema.Int64Attribute{
 				MarkdownDescription: `Количество последовательных успешных проверок, после которого виртуальная машина считается работоспособной`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.Int64{
+					localint64planmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

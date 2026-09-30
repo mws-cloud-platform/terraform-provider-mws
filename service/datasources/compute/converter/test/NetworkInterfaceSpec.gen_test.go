@@ -12,9 +12,12 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestNetworkInterfaceSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestNetworkInterfaceSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NetworkInterfaceSpecOptionalResponse{}
-	_, diags := conv.NetworkInterfaceSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NetworkInterfaceSpecOptionalResponse{
+		Name:      "name",
+		Addresses: []model.AddressSpecOrRefWithAttachmentsOptionalResponse{},
+	}
+	_, diags := conv.NetworkInterfaceSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

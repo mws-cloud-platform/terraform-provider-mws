@@ -4,8 +4,10 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
+	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
@@ -26,6 +28,9 @@ func (s *ClusterVersionControlSpec) GetSchema() schema.Schema {
 			"version": schema.StringAttribute{
 				MarkdownDescription: `Минимальная версия кластера. Автоматически обновляется до версии default в окно обслуживания. При указании версии выше default обновление запускается немедленно. Во время автоматического обновления это поле не изменяется, а актуальная версия указывается в статусе Cluster`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"maintenance_window": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.MaintenanceWindow).GetSchema().Attributes,

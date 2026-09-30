@@ -14,24 +14,17 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager/model"
 )
 
-func TestSecretVersionDataSpecAPIToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.SecretVersionDataSpec(nil)
-	_, diags := conv.SecretVersionDataSpecAPIToTFModel(context.Background(), emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestSecretVersionDataSpecConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.SecretVersionDataSpec(make(map[string]sensitive.Sensitive[string]))
+	apiModel := model.SecretVersionDataSpec(make(map[string]sensitive.Sensitive[string]))
 
-	tfModel, diags := conv.SecretVersionDataSpecAPIToTFModel(context.Background(), emptyApiModel)
+	tfModel, diags := conv.SecretVersionDataSpecAPIToTFModel(context.Background(), apiModel)
 	require.False(t, diags.HasError())
 
 	result, diags := conv.SecretVersionDataSpecTFToAPIModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	require.Equal(t, emptyApiModel, result)
+	require.Equal(t, apiModel, result)
 }
 
 func TestUpdateSecretVersionDataSpecConverters(t *testing.T) {

@@ -8,13 +8,20 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
-func TestSubnetStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestSubnetStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.SubnetStatusResponse{}
-	_, diags := conv.SubnetStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.SubnetStatusResponse{
+		ResourceStatusResponse: commonmodel.ResourceStatusResponse{
+			Ready: commonmodel.ResourceStatusReadyResponse{
+				State: "",
+			},
+		},
+	}
+	_, diags := conv.SubnetStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

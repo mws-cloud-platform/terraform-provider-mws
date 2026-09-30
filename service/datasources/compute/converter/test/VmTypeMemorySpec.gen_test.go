@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestVmTypeMemorySpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestVmTypeMemorySpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.VmTypeMemorySpecOptionalResponse{}
-	_, diags := conv.VmTypeMemorySpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.VmTypeMemorySpecOptionalResponse{}
+	_, diags := conv.VmTypeMemorySpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

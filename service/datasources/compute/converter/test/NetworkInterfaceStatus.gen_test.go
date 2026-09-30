@@ -12,9 +12,12 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestNetworkInterfaceStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestNetworkInterfaceStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NetworkInterfaceStatusResponse{}
-	_, diags := conv.NetworkInterfaceStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NetworkInterfaceStatusResponse{
+		Name:      "name",
+		Addresses: []model.VirtualMachineAddressStatusResponse{},
+	}
+	_, diags := conv.NetworkInterfaceStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

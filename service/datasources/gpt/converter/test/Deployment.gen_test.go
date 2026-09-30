@@ -8,20 +8,25 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/gpt/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/gpt/converter"
 )
 
-func TestDeploymentAPIResponseToTFModelEmpty(t *testing.T) {
+func TestDeploymentAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.DeploymentResponse{}
-	_, diags := conv.DeploymentAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.DeploymentResponse{
+		Spec: model.DeploymentSpecResponse{},
+	}
+	_, diags := conv.DeploymentAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestDeploymentMetadataAPIResponseToTFModelEmpty(t *testing.T) {
+func TestDeploymentMetadataAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.DeploymentMetadataResponse{}
-	_, diags := conv.DeploymentMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.DeploymentMetadataResponse{
+		TypedResourceMetadataResponse: commonmodel.TypedResourceMetadataResponse{},
+	}
+	_, diags := conv.DeploymentMetadataAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

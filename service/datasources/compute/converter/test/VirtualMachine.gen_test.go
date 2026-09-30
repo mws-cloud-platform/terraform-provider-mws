@@ -8,20 +8,36 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestVirtualMachineAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestVirtualMachineAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.VirtualMachineOptionalResponse{}
-	_, diags := conv.VirtualMachineAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.VirtualMachineOptionalResponse{
+		Spec: model.VirtualMachineSpecOptionalResponse{
+			Zone:   "zone",
+			VmType: compute.NewMustVmTypeRef("vmTypeID"),
+			Storage: model.StorageSpecOptionalResponse{
+				Disks: []model.StorageDiskSpecOrRefWithAttachmentsOptionalResponse{},
+			},
+			Network: model.NetworkSpecOptionalResponse{
+				NetworkInterfaces: []model.NetworkInterfaceSpecOptionalResponse{},
+			},
+		},
+	}
+	_, diags := conv.VirtualMachineAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestVirtualMachineMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestVirtualMachineMetadataAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.VirtualMachineMetadataOptionalResponse{}
-	_, diags := conv.VirtualMachineMetadataAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.VirtualMachineMetadataOptionalResponse{
+		TypedResourceMetadataOptionalResponse: commonmodel.TypedResourceMetadataOptionalResponse{},
+		Id:                                    compute.NewMustVirtualMachineID("projectID", "virtualMachineID"),
+	}
+	_, diags := conv.VirtualMachineMetadataAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

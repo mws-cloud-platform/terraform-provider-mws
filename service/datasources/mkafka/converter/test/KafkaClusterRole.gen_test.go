@@ -12,9 +12,11 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/converter"
 )
 
-func TestKafkaClusterRoleAPIResponseToTFModelEmpty(t *testing.T) {
+func TestKafkaClusterRoleAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.KafkaClusterRoleResponse{}
-	_, diags := conv.KafkaClusterRoleAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.KafkaClusterRoleResponse{
+		Name: "",
+	}
+	_, diags := conv.KafkaClusterRoleAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

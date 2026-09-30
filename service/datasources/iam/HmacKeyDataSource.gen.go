@@ -40,15 +40,15 @@ func (m *HmacKeyDataSource) Metadata(ctx context.Context, req datasource.Metadat
 func (m *HmacKeyDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "HmacKeyDataSource.Schema")
 	resp.Schema = new(tfmodel.HmacKey).GetSchema()
-	resp.Schema.Attributes["key_name"] = schema.StringAttribute{
-		Required: true,
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
 	}
 	resp.Schema.Attributes["service_account"] = schema.StringAttribute{
+		Required: true,
+	}
+	resp.Schema.Attributes["key_name"] = schema.StringAttribute{
 		Required: true,
 	}
 }
@@ -101,9 +101,9 @@ func (m *HmacKeyDataSource) Read(ctx context.Context, req datasource.ReadRequest
 	apiRes, err := m.sdk.GetHmacKey(
 		ctx,
 		client.GetHmacKeyRequest{
+			Project:        config.ProjectParam.ValueString(),
 			ServiceAccount: config.ServiceAccountParam.ValueString(),
 			KeyName:        config.KeyNameParam.ValueString(),
-			Project:        config.ProjectParam.ValueString(),
 		},
 	)
 	if err != nil {

@@ -12,23 +12,23 @@ import (
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
-func TestResourceExternalAddressSpecAPIToTFModelEmpty(t *testing.T) {
+func TestResourceExternalAddressSpecAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.ResourceExternalAddressSpec{}
-	_, diags := commonconv.ResourceExternalAddressSpecAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.ResourceExternalAddressSpec{}
+	_, diags := commonconv.ResourceExternalAddressSpecAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestResourceExternalAddressSpecAPIResponseToTFModelEmpty(t *testing.T) {
+func TestResourceExternalAddressSpecAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.ResourceExternalAddressSpecResponse{}
-	_, diags := commonconv.ResourceExternalAddressSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.ResourceExternalAddressSpecResponse{}
+	_, diags := commonconv.ResourceExternalAddressSpecAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestResourceExternalAddressSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestResourceExternalAddressSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.ResourceExternalAddressSpecOptionalResponse{}
-	_, diags := commonconv.ResourceExternalAddressSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.ResourceExternalAddressSpecOptionalResponse{}
+	_, diags := commonconv.ResourceExternalAddressSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

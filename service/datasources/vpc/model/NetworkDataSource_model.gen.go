@@ -7,7 +7,7 @@ import (
 )
 
 type NetworkModel struct {
-	NetworkParam types.String `tfsdk:"network"`
 	ProjectParam types.String `tfsdk:"project"`
+	NetworkParam types.String `tfsdk:"network"`
 	Network
 }

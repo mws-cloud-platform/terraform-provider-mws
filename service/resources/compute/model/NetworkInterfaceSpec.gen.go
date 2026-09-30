@@ -4,7 +4,10 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localboolplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/boolplanmodifier"
 )
 
 type NetworkInterfaceSpec struct {
@@ -27,6 +30,9 @@ func (s *NetworkInterfaceSpec) GetSchema() schema.Schema {
 			},
 			"ip_forwarding_enabled": schema.BoolAttribute{
 				Optional: true,
+				PlanModifiers: []planmodifier.Bool{
+					localboolplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"addresses": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{

@@ -14,23 +14,16 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/nlb/model"
 )
 
-func TestNlbListenerInternalAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.NlbListenerInternalOptionalResponse{}
-	_, diags := conv.NlbListenerInternalAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestNlbListenerInternalOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.NlbListenerInternalRequest{
+	apiModelRequest := model.NlbListenerInternalRequest{
 		Address: commonmodel.ResourceAddressSpecOrRefRequest{},
 	}
 
-	emptyApiModelResponse, err := model.NlbListenerInternalRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.NlbListenerInternalRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.NlbListenerInternalAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.NlbListenerInternalAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.NlbListenerInternalTFToAPIRequestModel(context.Background(), tfModel)
@@ -39,7 +32,7 @@ func TestNlbListenerInternalOptionalResponseConverters(t *testing.T) {
 	result, err := model.NlbListenerInternalRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateNlbListenerInternalRequestConverters(t *testing.T) {

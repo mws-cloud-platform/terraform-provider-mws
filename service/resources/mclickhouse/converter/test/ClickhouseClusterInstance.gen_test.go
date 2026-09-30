@@ -14,24 +14,17 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func TestClickhouseClusterInstanceAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ClickhouseClusterInstanceOptionalResponse{}
-	_, diags := conv.ClickhouseClusterInstanceAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestClickhouseClusterInstanceOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ClickhouseClusterInstanceRequest{
+	apiModelRequest := model.ClickhouseClusterInstanceRequest{
 		Name: "name",
 		Zone: rm.NewMustZoneRef("zoneID"),
 	}
 
-	emptyApiModelResponse, err := model.ClickhouseClusterInstanceRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ClickhouseClusterInstanceRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ClickhouseClusterInstanceAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ClickhouseClusterInstanceAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ClickhouseClusterInstanceTFToAPIRequestModel(context.Background(), tfModel)
@@ -40,7 +33,7 @@ func TestClickhouseClusterInstanceOptionalResponseConverters(t *testing.T) {
 	result, err := model.ClickhouseClusterInstanceRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateClickhouseClusterInstanceRequestConverters(t *testing.T) {

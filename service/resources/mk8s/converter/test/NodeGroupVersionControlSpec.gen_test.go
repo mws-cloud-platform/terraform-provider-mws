@@ -17,21 +17,14 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
-func TestNodeGroupVersionControlSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.NodeGroupVersionControlSpecOptionalResponse{}
-	_, diags := conv.NodeGroupVersionControlSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestNodeGroupVersionControlSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.NodeGroupVersionControlSpecRequest{}
+	apiModelRequest := model.NodeGroupVersionControlSpecRequest{}
 
-	emptyApiModelResponse, err := model.NodeGroupVersionControlSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.NodeGroupVersionControlSpecRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.NodeGroupVersionControlSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.NodeGroupVersionControlSpecAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.NodeGroupVersionControlSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -40,7 +33,7 @@ func TestNodeGroupVersionControlSpecOptionalResponseConverters(t *testing.T) {
 	result, err := model.NodeGroupVersionControlSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateNodeGroupVersionControlSpecRequestConverters(t *testing.T) {

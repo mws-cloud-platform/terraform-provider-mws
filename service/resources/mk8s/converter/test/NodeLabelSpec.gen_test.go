@@ -13,24 +13,17 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
-func TestNodeLabelSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.NodeLabelSpecOptionalResponse{}
-	_, diags := conv.NodeLabelSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestNodeLabelSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.NodeLabelSpecRequest{
+	apiModelRequest := model.NodeLabelSpecRequest{
 		Key:   "key",
 		Value: "value",
 	}
 
-	emptyApiModelResponse, err := model.NodeLabelSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.NodeLabelSpecRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.NodeLabelSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.NodeLabelSpecAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.NodeLabelSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -39,27 +32,20 @@ func TestNodeLabelSpecOptionalResponseConverters(t *testing.T) {
 	result, err := model.NodeLabelSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
-func TestNodeLabelSpecAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.NodeLabelSpecResponse{}
-	_, diags := conv.NodeLabelSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestNodeLabelSpecResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.NodeLabelSpecRequest{
+	apiModelRequest := model.NodeLabelSpecRequest{
 		Key:   "key",
 		Value: "value",
 	}
 
-	emptyApiModelResponse, err := model.NodeLabelSpecRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.NodeLabelSpecRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.NodeLabelSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.NodeLabelSpecAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.NodeLabelSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -68,7 +54,7 @@ func TestNodeLabelSpecResponseConverters(t *testing.T) {
 	result, err := model.NodeLabelSpecRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateNodeLabelSpecRequestConverters(t *testing.T) {

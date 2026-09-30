@@ -9,12 +9,15 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
 )
 
-func TestPostgresNetworkAddressSpecAPIResponseToTFModelEmpty(t *testing.T) {
+func TestPostgresNetworkAddressSpecAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.PostgresNetworkAddressSpecResponse{}
-	_, diags := conv.PostgresNetworkAddressSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.PostgresNetworkAddressSpecResponse{
+		Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
+	}
+	_, diags := conv.PostgresNetworkAddressSpecAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

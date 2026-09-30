@@ -12,9 +12,13 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestDiskStatusIopsAPIResponseToTFModelEmpty(t *testing.T) {
+func TestDiskStatusIopsAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.DiskStatusIopsResponse{}
-	_, diags := conv.DiskStatusIopsAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.DiskStatusIopsResponse{
+		Base:  0,
+		Extra: 0,
+		Total: 0,
+	}
+	_, diags := conv.DiskStatusIopsAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

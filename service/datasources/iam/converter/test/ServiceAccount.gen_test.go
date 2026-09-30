@@ -8,20 +8,25 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/iam/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/iam/converter"
 )
 
-func TestServiceAccountAPIResponseToTFModelEmpty(t *testing.T) {
+func TestServiceAccountAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ServiceAccountResponse{}
-	_, diags := conv.ServiceAccountAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ServiceAccountResponse{
+		Spec: model.ServiceAccountSpecResponse{},
+	}
+	_, diags := conv.ServiceAccountAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestServiceAccountMetadataAPIResponseToTFModelEmpty(t *testing.T) {
+func TestServiceAccountMetadataAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ServiceAccountMetadataResponse{}
-	_, diags := conv.ServiceAccountMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ServiceAccountMetadataResponse{
+		TypedResourceMetadataResponse: commonmodel.TypedResourceMetadataResponse{},
+	}
+	_, diags := conv.ServiceAccountMetadataAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

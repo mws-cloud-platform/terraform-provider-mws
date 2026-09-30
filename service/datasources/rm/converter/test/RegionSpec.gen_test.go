@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/rm/converter"
 )
 
-func TestRegionSpecAPIToTFModelEmpty(t *testing.T) {
+func TestRegionSpecAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.RegionSpec([]byte(`""`))
-	_, diags := conv.RegionSpecAPIToTFModel(context.Background(), emptyApiModel)
+	apiModel := model.RegionSpec([]byte(`""`))
+	_, diags := conv.RegionSpecAPIToTFModel(context.Background(), apiModel)
 	require.False(t, diags.HasError())
 }

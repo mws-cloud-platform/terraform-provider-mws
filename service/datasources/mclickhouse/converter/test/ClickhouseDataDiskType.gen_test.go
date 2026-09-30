@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/converter"
 )
 
-func TestClickhouseDataDiskTypeAPIToTFModelEmpty(t *testing.T) {
+func TestClickhouseDataDiskTypeAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClickhouseDataDiskType("")
-	_, diags := conv.ClickhouseDataDiskTypeAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClickhouseDataDiskType("")
+	_, diags := conv.ClickhouseDataDiskTypeAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

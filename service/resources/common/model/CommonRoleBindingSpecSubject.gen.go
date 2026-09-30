@@ -4,7 +4,10 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 )
 
 type CommonRoleBindingSpecSubject struct {
@@ -23,14 +26,23 @@ func (s *CommonRoleBindingSpecSubject) GetSchema() schema.Schema {
 			"user": schema.StringAttribute{
 				MarkdownDescription: `Идентификатор пользователя`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"service_account": schema.StringAttribute{
 				MarkdownDescription: `Идентификатор сервисного аккаунта, принадлежащего проекту`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"service_agent": schema.StringAttribute{
 				MarkdownDescription: `Идентификатор сервисного агента, связанного с проектом`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"user_federation": schema.SingleNestedAttribute{
 				Attributes:          new(CommonRoleBindingFederation).GetSchema().Attributes,
@@ -40,10 +52,16 @@ func (s *CommonRoleBindingSpecSubject) GetSchema() schema.Schema {
 			"user_group": schema.StringAttribute{
 				MarkdownDescription: `Идентификатор группы пользователей`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"employee": schema.StringAttribute{
 				MarkdownDescription: `Идентификатор пользователя backoffice`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

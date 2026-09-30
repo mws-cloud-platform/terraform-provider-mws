@@ -7,14 +7,19 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 
+	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
-func TestResourceSubnetStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestResourceSubnetStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ResourceSubnetStatusResponse{}
-	_, diags := conv.ResourceSubnetStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ResourceSubnetStatusResponse{
+		Ref:  vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
+		Cidr: cidraddress.MustParseCIDR4AddressString("192.168.1.0/24"),
+	}
+	_, diags := conv.ResourceSubnetStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

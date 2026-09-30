@@ -12,9 +12,12 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/certmanager/converter"
 )
 
-func TestAcmeIssuerAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestAcmeIssuerAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.AcmeIssuerOptionalResponse{}
-	_, diags := conv.AcmeIssuerAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.AcmeIssuerOptionalResponse{
+		Server:        "",
+		ChallengeType: "",
+	}
+	_, diags := conv.AcmeIssuerAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

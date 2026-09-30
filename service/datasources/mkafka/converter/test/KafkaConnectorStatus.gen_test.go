@@ -8,13 +8,20 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/mkafka/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/converter"
 )
 
-func TestKafkaConnectorStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestKafkaConnectorStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.KafkaConnectorStatusResponse{}
-	_, diags := conv.KafkaConnectorStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.KafkaConnectorStatusResponse{
+		ResourceStatusResponse: commonmodel.ResourceStatusResponse{
+			Ready: commonmodel.ResourceStatusReadyResponse{
+				State: "",
+			},
+		},
+	}
+	_, diags := conv.KafkaConnectorStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

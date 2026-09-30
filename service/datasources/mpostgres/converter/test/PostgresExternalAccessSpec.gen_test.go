@@ -12,9 +12,11 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
 )
 
-func TestPostgresExternalAccessSpecAPIResponseToTFModelEmpty(t *testing.T) {
+func TestPostgresExternalAccessSpecAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.PostgresExternalAccessSpecResponse{}
-	_, diags := conv.PostgresExternalAccessSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.PostgresExternalAccessSpecResponse{
+		Allowed: false,
+	}
+	_, diags := conv.PostgresExternalAccessSpecAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

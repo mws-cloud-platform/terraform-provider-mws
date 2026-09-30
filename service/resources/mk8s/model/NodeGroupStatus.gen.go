@@ -19,6 +19,7 @@ type NodeGroupStatus struct {
 	ImageStorageSize types.String `tfsdk:"image_storage_size"`
 	ImageStorageIops types.Int64  `tfsdk:"image_storage_iops"`
 	LocalDisks       types.List   `tfsdk:"local_disks"`
+	DataCache        types.Bool   `tfsdk:"data_cache"`
 	Scale            types.Object `tfsdk:"scale"`
 	NodesReady       types.Int64  `tfsdk:"nodes_ready"`
 	Labels           types.List   `tfsdk:"labels"`
@@ -73,6 +74,10 @@ func (s *NodeGroupStatus) GetSchema() schema.Schema {
 					Attributes: new(LocalDiskStatus).GetSchema().Attributes,
 				},
 				MarkdownDescription: `Параметры локальных дисков для каждого узла в группе узлов`,
+				Computed:            true,
+			},
+			"data_cache": schema.BoolAttribute{
+				MarkdownDescription: `Включено ли кэширование данных для группы узлов. Принимает значение false, если пользователь не задавал значение для кэширования при создании диска в Managed Kubernetes`,
 				Computed:            true,
 			},
 			"scale": schema.SingleNestedAttribute{

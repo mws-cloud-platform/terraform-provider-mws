@@ -8,9 +8,9 @@ import (
 )
 
 type AuthorizedKeyModel struct {
-	AuthorizedKeyParam  types.String   `tfsdk:"authorized_key"`
 	ProjectParam        types.String   `tfsdk:"project"`
 	ServiceAccountParam types.String   `tfsdk:"service_account"`
+	AuthorizedKeyParam  types.String   `tfsdk:"authorized_key"`
 	Timeouts            timeouts.Value `tfsdk:"timeouts"`
 	ID                  types.String   `tfsdk:"id"`
 	AuthorizedKey

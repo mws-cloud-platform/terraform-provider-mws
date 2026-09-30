@@ -14,54 +14,33 @@ import (
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 )
 
-func TestResourceAddressStatusAPIToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonmodel.ResourceAddressStatus{}
-	_, diags := commonconv.ResourceAddressStatusAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
-func TestResourceAddressStatusAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonmodel.ResourceAddressStatusResponse{}
-	_, diags := commonconv.ResourceAddressStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
-func TestResourceAddressStatusAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonmodel.ResourceAddressStatusOptionalResponse{}
-	_, diags := commonconv.ResourceAddressStatusAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestResourceAddressStatusConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.ResourceAddressStatus{
+	apiModel := commonmodel.ResourceAddressStatus{
 		Ref:       vpc.NewMustAddressRef("projectID", "networkID", "addressID"),
 		IpAddress: ipaddress.MustParseIPAddressString("192.168.1.1"),
 	}
 
-	tfModel, diags := commonconv.ResourceAddressStatusAPIToTFModel(context.Background(), &emptyApiModel)
+	tfModel, diags := commonconv.ResourceAddressStatusAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 
 	result, diags := commonconv.ResourceAddressStatusTFToAPIModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	require.Equal(t, emptyApiModel, *result)
+	require.Equal(t, apiModel, *result)
 }
 
 func TestResourceAddressStatusResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonmodel.ResourceAddressStatusRequest{
+	apiModelRequest := commonmodel.ResourceAddressStatusRequest{
 		Ref:       vpc.NewMustAddressRef("projectID", "networkID", "addressID"),
 		IpAddress: ipaddress.MustParseIPAddressString("192.168.1.1"),
 	}
 
-	emptyApiModelResponse, err := commonmodel.ResourceAddressStatusRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := commonmodel.ResourceAddressStatusRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := commonconv.ResourceAddressStatusAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := commonconv.ResourceAddressStatusAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := commonconv.ResourceAddressStatusTFToAPIRequestModel(context.Background(), tfModel)
@@ -70,20 +49,20 @@ func TestResourceAddressStatusResponseConverters(t *testing.T) {
 	result, err := commonmodel.ResourceAddressStatusRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestResourceAddressStatusOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonmodel.ResourceAddressStatusRequest{
+	apiModelRequest := commonmodel.ResourceAddressStatusRequest{
 		Ref:       vpc.NewMustAddressRef("projectID", "networkID", "addressID"),
 		IpAddress: ipaddress.MustParseIPAddressString("192.168.1.1"),
 	}
 
-	emptyApiModelResponse, err := commonmodel.ResourceAddressStatusRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := commonmodel.ResourceAddressStatusRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := commonconv.ResourceAddressStatusAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := commonconv.ResourceAddressStatusAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := commonconv.ResourceAddressStatusTFToAPIRequestModel(context.Background(), tfModel)
@@ -92,5 +71,5 @@ func TestResourceAddressStatusOptionalResponseConverters(t *testing.T) {
 	result, err := commonmodel.ResourceAddressStatusRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }

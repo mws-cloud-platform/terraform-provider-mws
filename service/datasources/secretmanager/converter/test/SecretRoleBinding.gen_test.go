@@ -8,13 +8,21 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/resources/references/iam"
 	"go.mws.cloud/go-sdk/service/secretmanager/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/secretmanager/converter"
 )
 
-func TestSecretRoleBindingAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestSecretRoleBindingAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.SecretRoleBindingOptionalResponse{}
-	_, diags := conv.SecretRoleBindingAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.SecretRoleBindingOptionalResponse{
+		Kind: "kind",
+		Spec: commonmodel.CommonRoleBindingSpecOptionalResponse{
+			Subject: commonmodel.CommonRoleBindingSpecSubjectOptionalResponse{},
+			Role:    iam.NewMustRoleRef("roleID"),
+		},
+	}
+	_, diags := conv.SecretRoleBindingAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

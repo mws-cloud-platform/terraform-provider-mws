@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
 )
 
-func TestClusterHealthAPIToTFModelEmpty(t *testing.T) {
+func TestClusterHealthAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClusterHealth("")
-	_, diags := conv.ClusterHealthAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClusterHealth("")
+	_, diags := conv.ClusterHealthAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

@@ -9,26 +9,36 @@ import (
 	"github.com/stretchr/testify/require"
 
 	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
-func TestLinkedVmInfoAPIToTFModelEmpty(t *testing.T) {
+func TestLinkedVmInfoAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.LinkedVmInfo{}
-	_, diags := commonconv.LinkedVmInfoAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.LinkedVmInfo{
+		Id:   compute.NewMustVirtualMachineRef("projectID", "virtualMachineID"),
+		Name: "name",
+	}
+	_, diags := commonconv.LinkedVmInfoAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestLinkedVmInfoAPIResponseToTFModelEmpty(t *testing.T) {
+func TestLinkedVmInfoAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.LinkedVmInfoResponse{}
-	_, diags := commonconv.LinkedVmInfoAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.LinkedVmInfoResponse{
+		Id:   compute.NewMustVirtualMachineRef("projectID", "virtualMachineID"),
+		Name: "name",
+	}
+	_, diags := commonconv.LinkedVmInfoAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestLinkedVmInfoAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestLinkedVmInfoAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.LinkedVmInfoOptionalResponse{}
-	_, diags := commonconv.LinkedVmInfoAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.LinkedVmInfoOptionalResponse{
+		Id:   compute.NewMustVirtualMachineRef("projectID", "virtualMachineID"),
+		Name: "name",
+	}
+	_, diags := commonconv.LinkedVmInfoAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

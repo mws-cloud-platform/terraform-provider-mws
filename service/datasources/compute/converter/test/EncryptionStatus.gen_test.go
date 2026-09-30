@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestEncryptionStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestEncryptionStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.EncryptionStatusResponse{}
-	_, diags := conv.EncryptionStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.EncryptionStatusResponse{}
+	_, diags := conv.EncryptionStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

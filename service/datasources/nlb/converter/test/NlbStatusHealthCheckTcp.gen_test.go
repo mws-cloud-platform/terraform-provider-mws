@@ -12,9 +12,11 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/nlb/converter"
 )
 
-func TestNlbStatusHealthCheckTcpAPIResponseToTFModelEmpty(t *testing.T) {
+func TestNlbStatusHealthCheckTcpAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NlbStatusHealthCheckTcpResponse{}
-	_, diags := conv.NlbStatusHealthCheckTcpAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NlbStatusHealthCheckTcpResponse{
+		Port: 0,
+	}
+	_, diags := conv.NlbStatusHealthCheckTcpAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

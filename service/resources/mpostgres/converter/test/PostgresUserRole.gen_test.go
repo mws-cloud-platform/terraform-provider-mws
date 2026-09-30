@@ -12,22 +12,15 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
 )
 
-func TestPostgresUserRoleAPIToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.PostgresUserRole("")
-	_, diags := conv.PostgresUserRoleAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestPostgresUserRoleConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.PostgresUserRole("")
+	apiModel := model.PostgresUserRole("")
 
-	tfModel, diags := conv.PostgresUserRoleAPIToTFModel(context.Background(), &emptyApiModel)
+	tfModel, diags := conv.PostgresUserRoleAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 
 	result, diags := conv.PostgresUserRoleTFToAPIModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	require.Equal(t, emptyApiModel, *result)
+	require.Equal(t, apiModel, *result)
 }

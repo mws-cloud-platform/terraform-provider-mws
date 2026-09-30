@@ -40,14 +40,14 @@ func (m *DiskDataSource) Metadata(ctx context.Context, req datasource.MetadataRe
 func (m *DiskDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "DiskDataSource.Schema")
 	resp.Schema = new(tfmodel.Disk).GetSchema()
-	resp.Schema.Attributes["disk"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к диску`,
-		Required:            true,
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
+	}
+	resp.Schema.Attributes["disk"] = schema.StringAttribute{
+		MarkdownDescription: `Путь к диску`,
+		Required:            true,
 	}
 }
 

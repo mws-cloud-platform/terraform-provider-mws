@@ -19,23 +19,16 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager/model"
 )
 
-func TestSecretAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.SecretOptionalResponse{}
-	_, diags := conv.SecretAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestSecretOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.SecretRequest{
+	apiModelRequest := model.SecretRequest{
 		Spec: model.SecretSpecRequest{},
 	}
 
-	emptyApiModelResponse, err := model.SecretRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.SecretRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.SecretAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.SecretAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.SecretTFToAPIRequestModel(context.Background(), tfModel)
@@ -44,7 +37,7 @@ func TestSecretOptionalResponseConverters(t *testing.T) {
 	result, err := model.SecretRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateSecretRequestConverters(t *testing.T) {

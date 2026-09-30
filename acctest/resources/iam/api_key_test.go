@@ -24,19 +24,19 @@ func TestApiKeySuite(t *testing.T) {
 }
 
 type APIKeySuite struct {
-	baseServiceAccountSuite
+	BaseServiceAccountSuite
 }
 
 func (s *APIKeySuite) TestApiKey() {
 	ctx := s.T().Context()
 
-	apiKeyName := utils.RandResourceName(s.serviceAccountName + "-api-key")
+	apiKeyName := utils.RandResourceName(s.ServiceAccountName + "-api-key")
 
 	tc, err := iamtest.ApiKeyTestCase(ctx, s.SDK)
 	s.Require().NoError(err)
 
-	tc.ResourceConfig = fmt.Sprintf(apiKeyTF, apiKeyName, s.serviceAccountName)
-	tc.DataSourceConfig = fmt.Sprintf(apiKeyDataSourceTF, apiKeyName, s.serviceAccountName)
+	tc.ResourceConfig = fmt.Sprintf(apiKeyTF, apiKeyName, s.ServiceAccountName)
+	tc.DataSourceConfig = fmt.Sprintf(apiKeyDataSourceTF, apiKeyName, s.ServiceAccountName)
 
 	s.BuildAndRun(ctx, tc)
 }

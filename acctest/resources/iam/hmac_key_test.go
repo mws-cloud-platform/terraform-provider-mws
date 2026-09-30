@@ -24,19 +24,19 @@ func TestHmacKeySuite(t *testing.T) {
 }
 
 type hmacKeySuite struct {
-	baseServiceAccountSuite
+	BaseServiceAccountSuite
 }
 
 func (s *hmacKeySuite) TestHmacKey() {
 	ctx := s.T().Context()
 
-	hmacKeyName := utils.RandResourceName(s.serviceAccountName + "-hmac-key")
+	hmacKeyName := utils.RandResourceName(s.ServiceAccountName + "-hmac-key")
 
 	tc, err := iamtest.HmacKeyTestCase(ctx, s.SDK)
 	s.Require().NoError(err)
 
-	tc.ResourceConfig = fmt.Sprintf(hmacKeyTF, hmacKeyName, s.serviceAccountName)
-	tc.DataSourceConfig = fmt.Sprintf(hmacKeyDataSourceTF, hmacKeyName, s.serviceAccountName)
+	tc.ResourceConfig = fmt.Sprintf(hmacKeyTF, hmacKeyName, s.ServiceAccountName)
+	tc.DataSourceConfig = fmt.Sprintf(hmacKeyDataSourceTF, hmacKeyName, s.ServiceAccountName)
 
 	s.BuildAndRun(ctx, tc)
 }

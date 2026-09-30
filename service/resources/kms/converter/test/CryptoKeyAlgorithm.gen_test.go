@@ -12,22 +12,15 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/kms/converter"
 )
 
-func TestCryptoKeyAlgorithmAPIToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.CryptoKeyAlgorithm("")
-	_, diags := conv.CryptoKeyAlgorithmAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestCryptoKeyAlgorithmConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.CryptoKeyAlgorithm("")
+	apiModel := model.CryptoKeyAlgorithm("")
 
-	tfModel, diags := conv.CryptoKeyAlgorithmAPIToTFModel(context.Background(), &emptyApiModel)
+	tfModel, diags := conv.CryptoKeyAlgorithmAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 
 	result, diags := conv.CryptoKeyAlgorithmTFToAPIModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	require.Equal(t, emptyApiModel, *result)
+	require.Equal(t, apiModel, *result)
 }

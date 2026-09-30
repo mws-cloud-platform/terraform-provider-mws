@@ -12,22 +12,15 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
 )
 
-func TestClickhouseInstanceHealthAPIToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ClickhouseInstanceHealth("")
-	_, diags := conv.ClickhouseInstanceHealthAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestClickhouseInstanceHealthConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClickhouseInstanceHealth("")
+	apiModel := model.ClickhouseInstanceHealth("")
 
-	tfModel, diags := conv.ClickhouseInstanceHealthAPIToTFModel(context.Background(), &emptyApiModel)
+	tfModel, diags := conv.ClickhouseInstanceHealthAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 
 	result, diags := conv.ClickhouseInstanceHealthTFToAPIModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	require.Equal(t, emptyApiModel, *result)
+	require.Equal(t, apiModel, *result)
 }

@@ -12,9 +12,11 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
 )
 
-func TestPostgresExtensionSpecAPIResponseToTFModelEmpty(t *testing.T) {
+func TestPostgresExtensionSpecAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.PostgresExtensionSpecResponse{}
-	_, diags := conv.PostgresExtensionSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.PostgresExtensionSpecResponse{
+		Name: "name",
+	}
+	_, diags := conv.PostgresExtensionSpecAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

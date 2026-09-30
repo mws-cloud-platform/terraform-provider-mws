@@ -19,6 +19,7 @@ type NodeGroup struct {
 	ImageStorageSize types.String `tfsdk:"image_storage_size"`
 	ImageStorageIops types.Int64  `tfsdk:"image_storage_iops"`
 	LocalDisks       types.List   `tfsdk:"local_disks"`
+	DataCache        types.Bool   `tfsdk:"data_cache"`
 	Scale            types.Object `tfsdk:"scale"`
 	Labels           types.List   `tfsdk:"labels"`
 	Taints           types.List   `tfsdk:"taints"`
@@ -77,6 +78,10 @@ Compute, на которых запускаются контейнеры с пр
 					Attributes: new(LocalDiskSpec).GetSchema().Attributes,
 				},
 				MarkdownDescription: `Параметры локальных дисков для каждого узла в группе узлов`,
+				Computed:            true,
+			},
+			"data_cache": schema.BoolAttribute{
+				MarkdownDescription: `Признак того, что группа узлов предназначена для кэширования данных. При значении true оператор устанавливает метку csi.mws.ru/data-cache=true на узлы группы (дополнительно требуется заполнение поля localDisks)`,
 				Computed:            true,
 			},
 			"scale": schema.SingleNestedAttribute{

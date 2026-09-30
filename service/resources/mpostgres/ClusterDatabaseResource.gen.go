@@ -49,6 +49,15 @@ func (m *ClusterDatabaseResource) Metadata(ctx context.Context, req resource.Met
 func (m *ClusterDatabaseResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	tflog.Info(ctx, "ClusterDatabaseResource.Schema")
 	resp.Schema = new(tfmodel.PostgresClusterDatabase).GetSchema()
+	resp.Schema.Attributes["project"] = schema.StringAttribute{
+		MarkdownDescription: `Путь к проекту.`,
+		Optional:            true,
+		Computed:            true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
+	}
 	resp.Schema.Attributes["cluster"] = schema.StringAttribute{
 		MarkdownDescription: `Название или идентификатор кластера.`,
 		Required:            true,
@@ -60,15 +69,6 @@ func (m *ClusterDatabaseResource) Schema(ctx context.Context, req resource.Schem
 		MarkdownDescription: `Имя базы данных.`,
 		Required:            true,
 		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.RequiresReplaceIfConfigured(),
-		},
-	}
-	resp.Schema.Attributes["project"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к проекту.`,
-		Optional:            true,
-		Computed:            true,
-		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.UseStateForUnknown(),
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}

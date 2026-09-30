@@ -12,16 +12,16 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestOsSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestOsSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.OsSpecOptionalResponse{}
-	_, diags := conv.OsSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.OsSpecOptionalResponse{}
+	_, diags := conv.OsSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestOsSpecMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestOsSpecMetadataAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.OsSpecMetadataOptionalResponse{}
-	_, diags := conv.OsSpecMetadataAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.OsSpecMetadataOptionalResponse{}
+	_, diags := conv.OsSpecMetadataAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

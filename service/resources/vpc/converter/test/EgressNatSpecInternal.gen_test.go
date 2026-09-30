@@ -14,23 +14,16 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func TestEgressNatSpecInternalAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.EgressNatSpecInternalOptionalResponse{}
-	_, diags := conv.EgressNatSpecInternalAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestEgressNatSpecInternalOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.EgressNatSpecInternalRequest{
+	apiModelRequest := model.EgressNatSpecInternalRequest{
 		Subnets: []vpc.SubnetRef{},
 	}
 
-	emptyApiModelResponse, err := model.EgressNatSpecInternalRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.EgressNatSpecInternalRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.EgressNatSpecInternalAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.EgressNatSpecInternalAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.EgressNatSpecInternalTFToAPIRequestModel(context.Background(), tfModel)
@@ -39,7 +32,7 @@ func TestEgressNatSpecInternalOptionalResponseConverters(t *testing.T) {
 	result, err := model.EgressNatSpecInternalRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateEgressNatSpecInternalRequestConverters(t *testing.T) {

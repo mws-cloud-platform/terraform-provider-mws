@@ -50,12 +50,6 @@ func (m *AuthorizedKeyResource) Metadata(ctx context.Context, req resource.Metad
 func (m *AuthorizedKeyResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	tflog.Info(ctx, "AuthorizedKeyResource.Schema")
 	resp.Schema = new(tfmodel.AuthorizedKey).GetSchema()
-	resp.Schema.Attributes["authorized_key"] = schema.StringAttribute{
-		Required: true,
-		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.RequiresReplaceIfConfigured(),
-		},
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
@@ -66,6 +60,12 @@ func (m *AuthorizedKeyResource) Schema(ctx context.Context, req resource.SchemaR
 		},
 	}
 	resp.Schema.Attributes["service_account"] = schema.StringAttribute{
+		Required: true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
+	}
+	resp.Schema.Attributes["authorized_key"] = schema.StringAttribute{
 		Required: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.RequiresReplaceIfConfigured(),
@@ -149,9 +149,9 @@ func (m *AuthorizedKeyResource) Create(ctx context.Context, req resource.CreateR
 	apiRes, err := m.sdk.CreateAuthorizedKeyV2(
 		ctx,
 		client.UpsertAuthorizedKeyV2Request{
+			Project:        plan.ProjectParam.ValueString(),
 			ServiceAccount: plan.ServiceAccountParam.ValueString(),
 			AuthorizedKey:  plan.AuthorizedKeyParam.ValueString(),
-			Project:        plan.ProjectParam.ValueString(),
 			Body:           *body,
 		},
 	)
@@ -182,9 +182,9 @@ func (m *AuthorizedKeyResource) Create(ctx context.Context, req resource.CreateR
 	apiRes, err = m.sdk.GetAuthorizedKeyV2(
 		ctx,
 		client.GetAuthorizedKeyV2Request{
+			Project:        plan.ProjectParam.ValueString(),
 			ServiceAccount: plan.ServiceAccountParam.ValueString(),
 			AuthorizedKey:  plan.AuthorizedKeyParam.ValueString(),
-			Project:        plan.ProjectParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -238,9 +238,9 @@ func (m *AuthorizedKeyResource) Read(ctx context.Context, req resource.ReadReque
 	apiRes, err := m.sdk.GetAuthorizedKeyV2(
 		ctx,
 		client.GetAuthorizedKeyV2Request{
+			Project:        state.ProjectParam.ValueString(),
 			ServiceAccount: state.ServiceAccountParam.ValueString(),
 			AuthorizedKey:  state.AuthorizedKeyParam.ValueString(),
-			Project:        state.ProjectParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -315,9 +315,9 @@ func (m *AuthorizedKeyResource) Update(ctx context.Context, req resource.UpdateR
 	apiRes, err := m.sdk.UpdateAuthorizedKeyV2(
 		ctx,
 		client.UpdateAuthorizedKeyV2Request{
+			Project:        plan.ProjectParam.ValueString(),
 			ServiceAccount: plan.ServiceAccountParam.ValueString(),
 			AuthorizedKey:  plan.AuthorizedKeyParam.ValueString(),
-			Project:        plan.ProjectParam.ValueString(),
 			Body:           *body,
 		},
 	)
@@ -345,9 +345,9 @@ func (m *AuthorizedKeyResource) Update(ctx context.Context, req resource.UpdateR
 	apiRes, err = m.sdk.GetAuthorizedKeyV2(
 		ctx,
 		client.GetAuthorizedKeyV2Request{
+			Project:        plan.ProjectParam.ValueString(),
 			ServiceAccount: plan.ServiceAccountParam.ValueString(),
 			AuthorizedKey:  plan.AuthorizedKeyParam.ValueString(),
-			Project:        plan.ProjectParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -407,9 +407,9 @@ func (m *AuthorizedKeyResource) Delete(ctx context.Context, req resource.DeleteR
 	err := m.sdk.DeleteAuthorizedKeyV2(
 		ctx,
 		client.DeleteAuthorizedKeyV2Request{
+			Project:        state.ProjectParam.ValueString(),
 			ServiceAccount: state.ServiceAccountParam.ValueString(),
 			AuthorizedKey:  state.AuthorizedKeyParam.ValueString(),
-			Project:        state.ProjectParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)

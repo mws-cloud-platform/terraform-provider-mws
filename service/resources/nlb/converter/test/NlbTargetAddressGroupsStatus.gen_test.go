@@ -12,9 +12,13 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/nlb/converter"
 )
 
-func TestNlbTargetAddressGroupsStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestNlbTargetAddressGroupsStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NlbTargetAddressGroupsStatusResponse{}
-	_, diags := conv.NlbTargetAddressGroupsStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NlbTargetAddressGroupsStatusResponse{
+		Preparing:  []model.NlbAddressGroupStatusResponse{},
+		Configured: []model.NlbAddressGroupStatusResponse{},
+		Stale:      []model.NlbAddressGroupStatusResponse{},
+	}
+	_, diags := conv.NlbTargetAddressGroupsStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

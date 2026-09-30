@@ -12,9 +12,11 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
 )
 
-func TestPostgresInstanceAPIResponseToTFModelEmpty(t *testing.T) {
+func TestPostgresInstanceAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.PostgresInstanceResponse{}
-	_, diags := conv.PostgresInstanceAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.PostgresInstanceResponse{
+		Count: 0,
+	}
+	_, diags := conv.PostgresInstanceAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

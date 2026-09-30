@@ -8,27 +8,34 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/kms/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/kms/converter"
 )
 
-func TestCryptoKeyStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestCryptoKeyStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.CryptoKeyStatusResponse{}
-	_, diags := conv.CryptoKeyStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.CryptoKeyStatusResponse{
+		ResourceStatusResponse: commonmodel.ResourceStatusResponse{
+			Ready: commonmodel.ResourceStatusReadyResponse{
+				State: "",
+			},
+		},
+	}
+	_, diags := conv.CryptoKeyStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestCryptoKeyStatusDestructionAPIResponseToTFModelEmpty(t *testing.T) {
+func TestCryptoKeyStatusDestructionAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.CryptoKeyStatusDestructionResponse{}
-	_, diags := conv.CryptoKeyStatusDestructionAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.CryptoKeyStatusDestructionResponse{}
+	_, diags := conv.CryptoKeyStatusDestructionAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestCryptoKeyStatusRotationAPIResponseToTFModelEmpty(t *testing.T) {
+func TestCryptoKeyStatusRotationAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.CryptoKeyStatusRotationResponse{}
-	_, diags := conv.CryptoKeyStatusRotationAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.CryptoKeyStatusRotationResponse{}
+	_, diags := conv.CryptoKeyStatusRotationAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

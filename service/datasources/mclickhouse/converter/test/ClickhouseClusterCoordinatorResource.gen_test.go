@@ -7,14 +7,25 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
 	"go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/resources/references/mclickhouse"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/converter"
 )
 
-func TestClickhouseClusterCoordinatorResourceAPIResponseToTFModelEmpty(t *testing.T) {
+func TestClickhouseClusterCoordinatorResourceAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClickhouseClusterCoordinatorResourceResponse{}
-	_, diags := conv.ClickhouseClusterCoordinatorResourceAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClickhouseClusterCoordinatorResourceResponse{
+		Resources: model.ClickhouseCoordinatorHWResourcesResponse{
+			VmType: mclickhouse.NewMustClickhouseVmTypeRef("vmTypeID"),
+			Disk: model.ClickhouseInstanceDiskSpecResponse{
+				Size: bytesize.MustParseString("0 B"),
+				Type: "",
+			},
+		},
+		Instances: []model.ClickhouseClusterCoordinatorInstanceResourceResponse{},
+	}
+	_, diags := conv.ClickhouseClusterCoordinatorResourceAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

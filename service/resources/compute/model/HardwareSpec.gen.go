@@ -5,8 +5,11 @@ package model
 import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 )
 
 type HardwareSpec struct {
@@ -27,6 +30,9 @@ func (s *HardwareSpec) GetSchema() schema.Schema {
 					),
 				},
 				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"graceful_shutdown_timeout": schema.StringAttribute{
 				MarkdownDescription: `Время ожидания (таймаут) при отключении по ACPI
@@ -46,6 +52,9 @@ func (s *HardwareSpec) GetSchema() schema.Schema {
 Отрицательные значения обозначаются префиксом "-", в простом формате могут быть ограничены скобками.
 Регистр и пробелы игнорируются`,
 				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

@@ -107,6 +107,12 @@ func NodeGroupStatusAPIResponseToTFModel(ctx context.Context, am *model.NodeGrou
 		})
 	}
 
+	if am.DataCache != nil {
+		t.DataCache = types.BoolPointerValue(am.DataCache)
+	} else {
+		t.DataCache = types.BoolNull()
+	}
+
 	if am.Scale != nil {
 		scaleTmp, d := NodeGroupStatusScaleAPIResponseToTFModel(ctx, am.Scale)
 		diags = append(diags, d...)

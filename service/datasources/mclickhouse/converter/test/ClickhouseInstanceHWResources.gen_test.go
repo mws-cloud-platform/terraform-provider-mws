@@ -7,21 +7,35 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
 	"go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/resources/references/mclickhouse"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/converter"
 )
 
-func TestClickhouseInstanceHWResourcesAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestClickhouseInstanceHWResourcesAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClickhouseInstanceHWResourcesOptionalResponse{}
-	_, diags := conv.ClickhouseInstanceHWResourcesAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClickhouseInstanceHWResourcesOptionalResponse{
+		VmType: mclickhouse.NewMustClickhouseVmTypeRef("vmTypeID"),
+		Disk: model.ClickhouseInstanceDiskSpecOptionalResponse{
+			Size: bytesize.MustParseString("0 B"),
+			Type: "",
+		},
+	}
+	_, diags := conv.ClickhouseInstanceHWResourcesAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestClickhouseInstanceHWResourcesAPIResponseToTFModelEmpty(t *testing.T) {
+func TestClickhouseInstanceHWResourcesAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClickhouseInstanceHWResourcesResponse{}
-	_, diags := conv.ClickhouseInstanceHWResourcesAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClickhouseInstanceHWResourcesResponse{
+		VmType: mclickhouse.NewMustClickhouseVmTypeRef("vmTypeID"),
+		Disk: model.ClickhouseInstanceDiskSpecResponse{
+			Size: bytesize.MustParseString("0 B"),
+			Type: "",
+		},
+	}
+	_, diags := conv.ClickhouseInstanceHWResourcesAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

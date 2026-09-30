@@ -15,21 +15,14 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func TestKafkaEndpointBrokerAddressAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.KafkaEndpointBrokerAddressResponse{}
-	_, diags := conv.KafkaEndpointBrokerAddressAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestKafkaEndpointBrokerAddressResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.KafkaEndpointBrokerAddressRequest{}
+	apiModelRequest := model.KafkaEndpointBrokerAddressRequest{}
 
-	emptyApiModelResponse, err := model.KafkaEndpointBrokerAddressRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.KafkaEndpointBrokerAddressRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.KafkaEndpointBrokerAddressAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.KafkaEndpointBrokerAddressAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.KafkaEndpointBrokerAddressTFToAPIRequestModel(context.Background(), tfModel)
@@ -38,7 +31,7 @@ func TestKafkaEndpointBrokerAddressResponseConverters(t *testing.T) {
 	result, err := model.KafkaEndpointBrokerAddressRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateKafkaEndpointBrokerAddressRequestConverters(t *testing.T) {

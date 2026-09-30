@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"fmt"
 	"testing"
+	"time"
 
 	helper "github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/stretchr/testify/suite"
@@ -15,6 +16,8 @@ import (
 var (
 	//go:embed testdata/cluster_user.tf
 	clusterUserTF string
+	//go:embed testdata/cluster_user_without_roles.tf
+	clusterUserWithoutRolesTF string
 	//go:embed testdata/datasource/cluster_user.tf
 	clusterUserDataSourceTF string
 )
@@ -38,6 +41,12 @@ func (s *ClusterUserSuite) TestClusterUser() {
 	s.Require().NoError(err)
 
 	tc.ResourceConfig = fmt.Sprintf(clusterUserTF,
+		s.clusterName,
+		user,
+		password,
+		time.Now().Add(24*time.Hour).UTC().Format(time.RFC3339),
+	)
+	tc.UpdatedResourceConfig = fmt.Sprintf(clusterUserWithoutRolesTF,
 		s.clusterName,
 		user,
 		password,

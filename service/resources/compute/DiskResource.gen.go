@@ -49,19 +49,19 @@ func (m *DiskResource) Metadata(ctx context.Context, req resource.MetadataReques
 func (m *DiskResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	tflog.Info(ctx, "DiskResource.Schema")
 	resp.Schema = new(tfmodel.Disk).GetSchema()
-	resp.Schema.Attributes["disk"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к диску`,
-		Required:            true,
-		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.RequiresReplaceIfConfigured(),
-		},
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
+	}
+	resp.Schema.Attributes["disk"] = schema.StringAttribute{
+		MarkdownDescription: `Путь к диску`,
+		Required:            true,
+		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}

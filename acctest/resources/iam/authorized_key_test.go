@@ -24,19 +24,19 @@ func TestAuthorizedKeySuite(t *testing.T) {
 }
 
 type AuthorizedKeySuite struct {
-	baseServiceAccountSuite
+	BaseServiceAccountSuite
 }
 
 func (s *AuthorizedKeySuite) TestAuthorizedKey() {
 	ctx := s.T().Context()
 
-	authorizedKeyName := utils.RandResourceName(s.serviceAccountName + "-auth-key")
+	authorizedKeyName := utils.RandResourceName(s.ServiceAccountName + "-auth-key")
 
 	tc, err := iamtest.AuthorizedKeyTestCase(ctx, s.SDK)
 	s.Require().NoError(err)
 
-	tc.ResourceConfig = fmt.Sprintf(authorizedKeyTF, authorizedKeyName, s.serviceAccountName)
-	tc.DataSourceConfig = fmt.Sprintf(authorizedKeyDatasourceTF, authorizedKeyName, s.serviceAccountName)
+	tc.ResourceConfig = fmt.Sprintf(authorizedKeyTF, authorizedKeyName, s.ServiceAccountName)
+	tc.DataSourceConfig = fmt.Sprintf(authorizedKeyDatasourceTF, authorizedKeyName, s.ServiceAccountName)
 
 	s.BuildAndRun(ctx, tc)
 }

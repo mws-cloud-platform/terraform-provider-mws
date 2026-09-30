@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestImageActivityAPIToTFModelEmpty(t *testing.T) {
+func TestImageActivityAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ImageActivity("")
-	_, diags := conv.ImageActivityAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ImageActivity("")
+	_, diags := conv.ImageActivityAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

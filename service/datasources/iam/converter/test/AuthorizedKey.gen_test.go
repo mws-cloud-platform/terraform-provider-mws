@@ -8,20 +8,27 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/iam/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/iam/converter"
 )
 
-func TestAuthorizedKeyAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestAuthorizedKeyAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.AuthorizedKeyOptionalResponse{}
-	_, diags := conv.AuthorizedKeyAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.AuthorizedKeyOptionalResponse{
+		Spec: model.AuthorizedKeySpecOptionalResponse{
+			KeyAlgorithm: "keyAlgorithm",
+		},
+	}
+	_, diags := conv.AuthorizedKeyAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestAuthorizedKeyMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestAuthorizedKeyMetadataAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.AuthorizedKeyMetadataOptionalResponse{}
-	_, diags := conv.AuthorizedKeyMetadataAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.AuthorizedKeyMetadataOptionalResponse{
+		TypedResourceMetadataOptionalResponse: commonmodel.TypedResourceMetadataOptionalResponse{},
+	}
+	_, diags := conv.AuthorizedKeyMetadataAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

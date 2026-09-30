@@ -13,21 +13,14 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func TestKafkaSchemaRegistrySpecAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.KafkaSchemaRegistrySpecResponse{}
-	_, diags := conv.KafkaSchemaRegistrySpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestKafkaSchemaRegistrySpecResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.KafkaSchemaRegistrySpecRequest{}
+	apiModelRequest := model.KafkaSchemaRegistrySpecRequest{}
 
-	emptyApiModelResponse, err := model.KafkaSchemaRegistrySpecRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.KafkaSchemaRegistrySpecRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.KafkaSchemaRegistrySpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.KafkaSchemaRegistrySpecAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.KafkaSchemaRegistrySpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -36,7 +29,7 @@ func TestKafkaSchemaRegistrySpecResponseConverters(t *testing.T) {
 	result, err := model.KafkaSchemaRegistrySpecRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateKafkaSchemaRegistrySpecRequestConverters(t *testing.T) {

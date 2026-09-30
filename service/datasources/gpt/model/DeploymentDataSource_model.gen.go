@@ -7,7 +7,7 @@ import (
 )
 
 type DeploymentModel struct {
-	DeploymentNameParam types.String `tfsdk:"deployment_name"`
 	ProjectParam        types.String `tfsdk:"project"`
+	DeploymentNameParam types.String `tfsdk:"deployment_name"`
 	Deployment
 }

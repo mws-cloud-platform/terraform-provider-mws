@@ -71,7 +71,7 @@ resource "mws_mk8s_cluster" "example" {
         hour = 3
       }
     }
-    version = "v1.35.6-mws.12"
+    version = "v1.35.6-mws.13"
   }
 }
 
@@ -105,7 +105,7 @@ resource "mws_mk8s_node_group" "example" {
 
   version_control = {
     auto_update = true
-    version     = "v1.35.6-mws.12"
+    version     = "v1.35.6-mws.13"
     maintenance_window = {
       weekly = {
         days     = ["MONDAY", "WEDNESDAY"]
@@ -200,6 +200,7 @@ variable "services_cidr" {
 
 ### Optional
 
+- `data_cache` (Boolean) Признак того, что группа узлов предназначена для кэширования данных. При значении true оператор устанавливает метку csi.mws.ru/data-cache=true на узлы группы (дополнительно требуется заполнение поля localDisks)
 - `image_storage_iops` (Number) Количество операций ввода-вывода в секунду (IOPS) для хранилища образов и контейнеров
 - `image_storage_size` (String) Размер хранилища для образов и контейнеров, в Gb
 
@@ -405,6 +406,7 @@ Optional:
 Read-Only:
 
 - `cpu` (String) Количество ядер vCPU на узле
+- `data_cache` (Boolean) Включено ли кэширование данных для группы узлов. Принимает значение false, если пользователь не задавал значение для кэширования при создании диска в Managed Kubernetes
 - `image_storage_iops` (Number) Количество операций ввода-вывода в секунду (IOPS) для хранилища образов и контейнеров
 - `image_storage_size` (String) Размер в байтах. Формат: <число> [единица измерения].
 Допустимые единицы измерения: "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", "RB", "QB". По умолчанию: "B".

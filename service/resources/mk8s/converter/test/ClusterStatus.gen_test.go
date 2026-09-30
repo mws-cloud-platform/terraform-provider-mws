@@ -8,55 +8,71 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
 )
 
-func TestClusterStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestClusterStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClusterStatusResponse{}
-	_, diags := conv.ClusterStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClusterStatusResponse{
+		ResourceStatusResponse: commonmodel.ResourceStatusResponse{
+			Ready: commonmodel.ResourceStatusReadyResponse{
+				State: "",
+			},
+		},
+	}
+	_, diags := conv.ClusterStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestClusterStatusClusterStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestClusterStatusClusterStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClusterStatusClusterStatusResponse{}
-	_, diags := conv.ClusterStatusClusterStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClusterStatusClusterStatusResponse{}
+	_, diags := conv.ClusterStatusClusterStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestClusterStatusNetworkAPIResponseToTFModelEmpty(t *testing.T) {
+func TestClusterStatusNetworkAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClusterStatusNetworkResponse{}
-	_, diags := conv.ClusterStatusNetworkAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClusterStatusNetworkResponse{}
+	_, diags := conv.ClusterStatusNetworkAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestClusterStatusNetworkPrimaryEndpointAPIResponseToTFModelEmpty(t *testing.T) {
+func TestClusterStatusNetworkPrimaryEndpointAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClusterStatusNetworkPrimaryEndpointResponse{}
-	_, diags := conv.ClusterStatusNetworkPrimaryEndpointAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClusterStatusNetworkPrimaryEndpointResponse{
+		Ref: vpc.NewMustAddressRef("projectID", "networkID", "addressID"),
+	}
+	_, diags := conv.ClusterStatusNetworkPrimaryEndpointAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestClusterStatusNetworkPublicEndpointAPIResponseToTFModelEmpty(t *testing.T) {
+func TestClusterStatusNetworkPublicEndpointAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClusterStatusNetworkPublicEndpointResponse{}
-	_, diags := conv.ClusterStatusNetworkPublicEndpointAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClusterStatusNetworkPublicEndpointResponse{
+		Ref: vpc.NewMustExternalAddressRef("projectID", "externalAddressID"),
+	}
+	_, diags := conv.ClusterStatusNetworkPublicEndpointAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestClusterStatusNetworkSubnetAPIResponseToTFModelEmpty(t *testing.T) {
+func TestClusterStatusNetworkSubnetAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClusterStatusNetworkSubnetResponse{}
-	_, diags := conv.ClusterStatusNetworkSubnetAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClusterStatusNetworkSubnetResponse{
+		Ref: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
+	}
+	_, diags := conv.ClusterStatusNetworkSubnetAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestClusterStatusNetworkVpcNetworkAPIResponseToTFModelEmpty(t *testing.T) {
+func TestClusterStatusNetworkVpcNetworkAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClusterStatusNetworkVpcNetworkResponse{}
-	_, diags := conv.ClusterStatusNetworkVpcNetworkAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClusterStatusNetworkVpcNetworkResponse{
+		Ref: vpc.NewMustNetworkRef("projectID", "networkID"),
+	}
+	_, diags := conv.ClusterStatusNetworkVpcNetworkAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

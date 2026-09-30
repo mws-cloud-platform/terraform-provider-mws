@@ -12,23 +12,23 @@ import (
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
-func TestCommonTypedResourceMetadataAPIToTFModelEmpty(t *testing.T) {
+func TestCommonTypedResourceMetadataAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.CommonTypedResourceMetadata{}
-	_, diags := commonconv.CommonTypedResourceMetadataAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.CommonTypedResourceMetadata{}
+	_, diags := commonconv.CommonTypedResourceMetadataAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestCommonTypedResourceMetadataAPIResponseToTFModelEmpty(t *testing.T) {
+func TestCommonTypedResourceMetadataAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.CommonTypedResourceMetadataResponse{}
-	_, diags := commonconv.CommonTypedResourceMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.CommonTypedResourceMetadataResponse{}
+	_, diags := commonconv.CommonTypedResourceMetadataAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestCommonTypedResourceMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestCommonTypedResourceMetadataAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.CommonTypedResourceMetadataOptionalResponse{}
-	_, diags := commonconv.CommonTypedResourceMetadataAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.CommonTypedResourceMetadataOptionalResponse{}
+	_, diags := commonconv.CommonTypedResourceMetadataAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

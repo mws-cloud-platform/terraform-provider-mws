@@ -40,10 +40,6 @@ func (m *ApiKeyDataSource) Metadata(ctx context.Context, req datasource.Metadata
 func (m *ApiKeyDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "ApiKeyDataSource.Schema")
 	resp.Schema = new(tfmodel.ApiKey).GetSchema()
-	resp.Schema.Attributes["api_key"] = schema.StringAttribute{
-		MarkdownDescription: `Идентификатор API-ключа`,
-		Required:            true,
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
@@ -51,6 +47,10 @@ func (m *ApiKeyDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 	}
 	resp.Schema.Attributes["service_account"] = schema.StringAttribute{
 		MarkdownDescription: `Идентификатор сервисного аккаунта.`,
+		Required:            true,
+	}
+	resp.Schema.Attributes["api_key"] = schema.StringAttribute{
+		MarkdownDescription: `Идентификатор API-ключа`,
 		Required:            true,
 	}
 }
@@ -103,9 +103,9 @@ func (m *ApiKeyDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 	apiRes, err := m.sdk.GetApiKey(
 		ctx,
 		client.GetApiKeyRequest{
+			Project:        config.ProjectParam.ValueString(),
 			ServiceAccount: config.ServiceAccountParam.ValueString(),
 			ApiKey:         config.ApiKeyParam.ValueString(),
-			Project:        config.ProjectParam.ValueString(),
 		},
 	)
 	if err != nil {

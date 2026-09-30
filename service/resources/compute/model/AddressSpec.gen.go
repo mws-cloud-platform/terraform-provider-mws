@@ -4,7 +4,11 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	locallistplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/listplanmodifier"
+	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 )
 
 type AddressSpec struct {
@@ -30,6 +34,9 @@ func (s *AddressSpec) GetSchema() schema.Schema {
 
 IPv4- или IPv6-адрес`,
 				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"dns": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
@@ -37,6 +44,9 @@ IPv4- или IPv6-адрес`,
 				},
 				MarkdownDescription: `Настройки DNS`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.List{
+					locallistplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

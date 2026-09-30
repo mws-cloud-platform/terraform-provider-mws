@@ -8,8 +8,8 @@ import (
 )
 
 type ImageModel struct {
-	ImageParam   types.String   `tfsdk:"image"`
 	ProjectParam types.String   `tfsdk:"project"`
+	ImageParam   types.String   `tfsdk:"image"`
 	Timeouts     timeouts.Value `tfsdk:"timeouts"`
 	ID           types.String   `tfsdk:"id"`
 	Image

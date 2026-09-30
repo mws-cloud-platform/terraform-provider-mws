@@ -40,15 +40,15 @@ func (m *AuthorizedKeyDataSource) Metadata(ctx context.Context, req datasource.M
 func (m *AuthorizedKeyDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "AuthorizedKeyDataSource.Schema")
 	resp.Schema = new(tfmodel.AuthorizedKey).GetSchema()
-	resp.Schema.Attributes["authorized_key"] = schema.StringAttribute{
-		Required: true,
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
 	}
 	resp.Schema.Attributes["service_account"] = schema.StringAttribute{
+		Required: true,
+	}
+	resp.Schema.Attributes["authorized_key"] = schema.StringAttribute{
 		Required: true,
 	}
 }
@@ -101,9 +101,9 @@ func (m *AuthorizedKeyDataSource) Read(ctx context.Context, req datasource.ReadR
 	apiRes, err := m.sdk.GetAuthorizedKeyV2(
 		ctx,
 		client.GetAuthorizedKeyV2Request{
+			Project:        config.ProjectParam.ValueString(),
 			ServiceAccount: config.ServiceAccountParam.ValueString(),
 			AuthorizedKey:  config.AuthorizedKeyParam.ValueString(),
-			Project:        config.ProjectParam.ValueString(),
 		},
 	)
 	if err != nil {

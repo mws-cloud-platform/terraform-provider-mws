@@ -49,19 +49,19 @@ func (m *SecretResource) Metadata(ctx context.Context, req resource.MetadataRequ
 func (m *SecretResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	tflog.Info(ctx, "SecretResource.Schema")
 	resp.Schema = new(tfmodel.Secret).GetSchema()
-	resp.Schema.Attributes["name"] = schema.StringAttribute{
-		MarkdownDescription: `Имя секрета.`,
-		Required:            true,
-		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.RequiresReplaceIfConfigured(),
-		},
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
+	}
+	resp.Schema.Attributes["name"] = schema.StringAttribute{
+		MarkdownDescription: `Имя секрета.`,
+		Required:            true,
+		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}

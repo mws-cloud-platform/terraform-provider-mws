@@ -7,7 +7,7 @@ import (
 )
 
 type ClusterModel struct {
-	ClusterNameParam types.String `tfsdk:"cluster_name"`
 	ProjectParam     types.String `tfsdk:"project"`
+	ClusterNameParam types.String `tfsdk:"cluster_name"`
 	Cluster
 }

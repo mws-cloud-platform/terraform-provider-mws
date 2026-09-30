@@ -5,6 +5,7 @@ package converter
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
@@ -102,13 +103,13 @@ func ClickhouseClusterResourceAPIResponseToTFModel(ctx context.Context, am *mode
 	}
 
 	if am.Config != nil {
-		config := make(map[string]types.String, len(am.Config))
+		config := make(map[string]jsontypes.Normalized, len(am.Config))
 
 		for k, entity := range am.Config {
-			config[k] = types.StringValue(string(entity))
+			config[k] = jsontypes.NewNormalizedValue(string(entity))
 		}
 
-		configMap, d := types.MapValueFrom(ctx, types.StringType, config)
+		configMap, d := types.MapValueFrom(ctx, jsontypes.NormalizedType{}, config)
 		diags = append(diags, d...)
 		if diags.HasError() {
 			return nil, diags
@@ -116,7 +117,7 @@ func ClickhouseClusterResourceAPIResponseToTFModel(ctx context.Context, am *mode
 
 		t.Config = configMap
 	} else {
-		t.Config = types.MapNull(types.StringType)
+		t.Config = types.MapNull(jsontypes.NormalizedType{})
 	}
 
 	if am.Storage != nil {

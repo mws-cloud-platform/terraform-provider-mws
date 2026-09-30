@@ -8,9 +8,9 @@ import (
 )
 
 type FirewallRuleModel struct {
-	FirewallRuleParam types.String   `tfsdk:"firewall_rule"`
-	NetworkParam      types.String   `tfsdk:"network"`
 	ProjectParam      types.String   `tfsdk:"project"`
+	NetworkParam      types.String   `tfsdk:"network"`
+	FirewallRuleParam types.String   `tfsdk:"firewall_rule"`
 	Timeouts          timeouts.Value `tfsdk:"timeouts"`
 	ID                types.String   `tfsdk:"id"`
 	FirewallRule

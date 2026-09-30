@@ -8,13 +8,26 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/secretmanager/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/secretmanager/converter"
 )
 
-func TestSecretAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestSecretAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.SecretOptionalResponse{}
-	_, diags := conv.SecretAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.SecretOptionalResponse{
+		Kind:     "kind",
+		Metadata: commonmodel.CommonTypedResourceMetadataOptionalResponse{},
+		Spec:     model.SecretSpecOptionalResponse{},
+		Status: model.SecretStatusResponse{
+			ResourceStatusResponse: commonmodel.ResourceStatusResponse{
+				Ready: commonmodel.ResourceStatusReadyResponse{
+					State: "",
+				},
+			},
+			Active: false,
+		},
+	}
+	_, diags := conv.SecretAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

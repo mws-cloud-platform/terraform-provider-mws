@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestHardwareSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestHardwareSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.HardwareSpecOptionalResponse{}
-	_, diags := conv.HardwareSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.HardwareSpecOptionalResponse{}
+	_, diags := conv.HardwareSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

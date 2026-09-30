@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestAddressSpecOrRefAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestAddressSpecOrRefAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.AddressSpecOrRefOptionalResponse{}
-	_, diags := conv.AddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.AddressSpecOrRefOptionalResponse{}
+	_, diags := conv.AddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

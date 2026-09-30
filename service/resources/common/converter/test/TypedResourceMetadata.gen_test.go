@@ -13,48 +13,27 @@ import (
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
-func TestTypedResourceMetadataAPIToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonmodel.TypedResourceMetadata{}
-	_, diags := commonconv.TypedResourceMetadataAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
-func TestTypedResourceMetadataAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonmodel.TypedResourceMetadataResponse{}
-	_, diags := commonconv.TypedResourceMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
-func TestTypedResourceMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonmodel.TypedResourceMetadataOptionalResponse{}
-	_, diags := commonconv.TypedResourceMetadataAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestTypedResourceMetadataConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.TypedResourceMetadata{}
+	apiModel := commonmodel.TypedResourceMetadata{}
 
-	tfModel, diags := commonconv.TypedResourceMetadataAPIToTFModel(context.Background(), &emptyApiModel)
+	tfModel, diags := commonconv.TypedResourceMetadataAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 
 	result, diags := commonconv.TypedResourceMetadataTFToAPIModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	require.Equal(t, emptyApiModel, *result)
+	require.Equal(t, apiModel, *result)
 }
 
 func TestTypedResourceMetadataResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonmodel.TypedResourceMetadataRequest{}
+	apiModelRequest := commonmodel.TypedResourceMetadataRequest{}
 
-	emptyApiModelResponse, err := commonmodel.TypedResourceMetadataRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := commonmodel.TypedResourceMetadataRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := commonconv.TypedResourceMetadataAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := commonconv.TypedResourceMetadataAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := commonconv.TypedResourceMetadataTFToAPIRequestModel(context.Background(), tfModel)
@@ -63,17 +42,17 @@ func TestTypedResourceMetadataResponseConverters(t *testing.T) {
 	result, err := commonmodel.TypedResourceMetadataRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestTypedResourceMetadataOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonmodel.TypedResourceMetadataRequest{}
+	apiModelRequest := commonmodel.TypedResourceMetadataRequest{}
 
-	emptyApiModelResponse, err := commonmodel.TypedResourceMetadataRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := commonmodel.TypedResourceMetadataRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := commonconv.TypedResourceMetadataAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := commonconv.TypedResourceMetadataAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := commonconv.TypedResourceMetadataTFToAPIRequestModel(context.Background(), tfModel)
@@ -82,7 +61,7 @@ func TestTypedResourceMetadataOptionalResponseConverters(t *testing.T) {
 	result, err := commonmodel.TypedResourceMetadataRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateTypedResourceMetadataConverters(t *testing.T) {

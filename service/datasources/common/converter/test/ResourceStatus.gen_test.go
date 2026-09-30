@@ -12,23 +12,35 @@ import (
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
-func TestResourceStatusAPIToTFModelEmpty(t *testing.T) {
+func TestResourceStatusAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.ResourceStatus{}
-	_, diags := commonconv.ResourceStatusAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.ResourceStatus{
+		Ready: commonmodel.ResourceStatusReady{
+			State: "",
+		},
+	}
+	_, diags := commonconv.ResourceStatusAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestResourceStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestResourceStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.ResourceStatusResponse{}
-	_, diags := commonconv.ResourceStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.ResourceStatusResponse{
+		Ready: commonmodel.ResourceStatusReadyResponse{
+			State: "",
+		},
+	}
+	_, diags := commonconv.ResourceStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestResourceStatusAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestResourceStatusAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.ResourceStatusOptionalResponse{}
-	_, diags := commonconv.ResourceStatusAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.ResourceStatusOptionalResponse{
+		Ready: commonmodel.ResourceStatusReadyOptionalResponse{
+			State: "",
+		},
+	}
+	_, diags := commonconv.ResourceStatusAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

@@ -12,23 +12,23 @@ import (
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
-func TestCommonRoleBindingSpecSubjectAPIToTFModelEmpty(t *testing.T) {
+func TestCommonRoleBindingSpecSubjectAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.CommonRoleBindingSpecSubject{}
-	_, diags := commonconv.CommonRoleBindingSpecSubjectAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.CommonRoleBindingSpecSubject{}
+	_, diags := commonconv.CommonRoleBindingSpecSubjectAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestCommonRoleBindingSpecSubjectAPIResponseToTFModelEmpty(t *testing.T) {
+func TestCommonRoleBindingSpecSubjectAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.CommonRoleBindingSpecSubjectResponse{}
-	_, diags := commonconv.CommonRoleBindingSpecSubjectAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.CommonRoleBindingSpecSubjectResponse{}
+	_, diags := commonconv.CommonRoleBindingSpecSubjectAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestCommonRoleBindingSpecSubjectAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestCommonRoleBindingSpecSubjectAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.CommonRoleBindingSpecSubjectOptionalResponse{}
-	_, diags := commonconv.CommonRoleBindingSpecSubjectAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.CommonRoleBindingSpecSubjectOptionalResponse{}
+	_, diags := commonconv.CommonRoleBindingSpecSubjectAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

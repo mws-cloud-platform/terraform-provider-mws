@@ -40,14 +40,14 @@ func (m *CertificateRoleBindingDataSource) Metadata(ctx context.Context, req dat
 func (m *CertificateRoleBindingDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "CertificateRoleBindingDataSource.Schema")
 	resp.Schema = new(tfmodel.CertificateRoleBinding).GetSchema()
-	resp.Schema.Attributes["name"] = schema.StringAttribute{
-		MarkdownDescription: `Имя сертификата`,
-		Required:            true,
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
+	}
+	resp.Schema.Attributes["name"] = schema.StringAttribute{
+		MarkdownDescription: `Имя сертификата`,
+		Required:            true,
 	}
 	resp.Schema.Attributes["role_binding"] = schema.StringAttribute{
 		MarkdownDescription: `Имя привязки ролей сертификата`,

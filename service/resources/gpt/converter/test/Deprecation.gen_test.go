@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/gpt/converter"
 )
 
-func TestDeprecationAPIResponseToTFModelEmpty(t *testing.T) {
+func TestDeprecationAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.DeprecationResponse{}
-	_, diags := conv.DeprecationAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.DeprecationResponse{}
+	_, diags := conv.DeprecationAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

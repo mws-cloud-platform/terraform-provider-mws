@@ -16,25 +16,18 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/iam/model"
 )
 
-func TestAuthorizedKeyAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.AuthorizedKeyOptionalResponse{}
-	_, diags := conv.AuthorizedKeyAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestAuthorizedKeyOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.AuthorizedKeyRequest{
+	apiModelRequest := model.AuthorizedKeyRequest{
 		Spec: model.AuthorizedKeySpecRequest{
 			KeyAlgorithm: "keyAlgorithm",
 		},
 	}
 
-	emptyApiModelResponse, err := model.AuthorizedKeyRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.AuthorizedKeyRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.AuthorizedKeyAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.AuthorizedKeyAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.AuthorizedKeyTFToAPIRequestModel(context.Background(), tfModel)
@@ -43,7 +36,7 @@ func TestAuthorizedKeyOptionalResponseConverters(t *testing.T) {
 	result, err := model.AuthorizedKeyRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateAuthorizedKeyRequestConverters(t *testing.T) {
@@ -66,23 +59,16 @@ func TestUpdateAuthorizedKeyRequestConverters(t *testing.T) {
 	require.Equal(t, expectedUpdateModel, result)
 }
 
-func TestAuthorizedKeyMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.AuthorizedKeyMetadataOptionalResponse{}
-	_, diags := conv.AuthorizedKeyMetadataAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestAuthorizedKeyMetadataOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.AuthorizedKeyMetadataRequest{
+	apiModelRequest := model.AuthorizedKeyMetadataRequest{
 		TypedResourceMetadataRequest: commonmodel.TypedResourceMetadataRequest{},
 	}
 
-	emptyApiModelResponse, err := model.AuthorizedKeyMetadataRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.AuthorizedKeyMetadataRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.AuthorizedKeyMetadataAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.AuthorizedKeyMetadataAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.AuthorizedKeyMetadataTFToAPIRequestModel(context.Background(), tfModel)
@@ -91,7 +77,7 @@ func TestAuthorizedKeyMetadataOptionalResponseConverters(t *testing.T) {
 	result, err := model.AuthorizedKeyMetadataRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateAuthorizedKeyMetadataRequestConverters(t *testing.T) {

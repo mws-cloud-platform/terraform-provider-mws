@@ -8,9 +8,9 @@ import (
 )
 
 type EgressNatModel struct {
-	EgressNatParam types.String   `tfsdk:"egress_nat"`
-	NetworkParam   types.String   `tfsdk:"network"`
 	ProjectParam   types.String   `tfsdk:"project"`
+	NetworkParam   types.String   `tfsdk:"network"`
+	EgressNatParam types.String   `tfsdk:"egress_nat"`
 	Timeouts       timeouts.Value `tfsdk:"timeouts"`
 	ID             types.String   `tfsdk:"id"`
 	EgressNat

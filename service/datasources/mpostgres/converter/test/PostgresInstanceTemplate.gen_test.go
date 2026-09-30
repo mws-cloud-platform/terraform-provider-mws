@@ -7,14 +7,22 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
 	"go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
 )
 
-func TestPostgresInstanceTemplateAPIResponseToTFModelEmpty(t *testing.T) {
+func TestPostgresInstanceTemplateAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.PostgresInstanceTemplateResponse{}
-	_, diags := conv.PostgresInstanceTemplateAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.PostgresInstanceTemplateResponse{
+		VmType: compute.NewMustVmTypeRef("vmTypeID"),
+		Disk: model.DataDiskSpecResponse{
+			Size: bytesize.MustParseString("0 B"),
+			Type: "",
+		},
+	}
+	_, diags := conv.PostgresInstanceTemplateAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

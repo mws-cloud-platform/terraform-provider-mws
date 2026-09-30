@@ -49,10 +49,12 @@ func (m *FirewallRuleResource) Metadata(ctx context.Context, req resource.Metada
 func (m *FirewallRuleResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	tflog.Info(ctx, "FirewallRuleResource.Schema")
 	resp.Schema = new(tfmodel.FirewallRule).GetSchema()
-	resp.Schema.Attributes["firewall_rule"] = schema.StringAttribute{
-		MarkdownDescription: `Имя правила файрвола`,
-		Required:            true,
+	resp.Schema.Attributes["project"] = schema.StringAttribute{
+		MarkdownDescription: `Путь к проекту.`,
+		Optional:            true,
+		Computed:            true,
 		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.UseStateForUnknown(),
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}
@@ -63,12 +65,10 @@ func (m *FirewallRuleResource) Schema(ctx context.Context, req resource.SchemaRe
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}
-	resp.Schema.Attributes["project"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к проекту.`,
-		Optional:            true,
-		Computed:            true,
+	resp.Schema.Attributes["firewall_rule"] = schema.StringAttribute{
+		MarkdownDescription: `Имя правила файрвола`,
+		Required:            true,
 		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.UseStateForUnknown(),
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}

@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestVmTypeLocalDisksSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestVmTypeLocalDisksSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.VmTypeLocalDisksSpecOptionalResponse{}
-	_, diags := conv.VmTypeLocalDisksSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.VmTypeLocalDisksSpecOptionalResponse{}
+	_, diags := conv.VmTypeLocalDisksSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

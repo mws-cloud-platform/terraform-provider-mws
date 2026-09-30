@@ -49,6 +49,15 @@ func (m *NodeGroupResource) Metadata(ctx context.Context, req resource.MetadataR
 func (m *NodeGroupResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	tflog.Info(ctx, "NodeGroupResource.Schema")
 	resp.Schema = new(tfmodel.NodeGroup).GetSchema()
+	resp.Schema.Attributes["project"] = schema.StringAttribute{
+		MarkdownDescription: `Путь к проекту.`,
+		Optional:            true,
+		Computed:            true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
+	}
 	resp.Schema.Attributes["cluster_name"] = schema.StringAttribute{
 		MarkdownDescription: `Имя кластера`,
 		Required:            true,
@@ -60,15 +69,6 @@ func (m *NodeGroupResource) Schema(ctx context.Context, req resource.SchemaReque
 		MarkdownDescription: `Имя группы узлов`,
 		Required:            true,
 		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.RequiresReplaceIfConfigured(),
-		},
-	}
-	resp.Schema.Attributes["project"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к проекту.`,
-		Optional:            true,
-		Computed:            true,
-		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.UseStateForUnknown(),
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}

@@ -12,9 +12,13 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/converter"
 )
 
-func TestKafkaS3PropertiesAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestKafkaS3PropertiesAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.KafkaS3PropertiesOptionalResponse{}
-	_, diags := conv.KafkaS3PropertiesAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.KafkaS3PropertiesOptionalResponse{
+		BucketName:  "bucketName",
+		AccessKeyId: "accessKeyId",
+		Endpoint:    "endpoint",
+	}
+	_, diags := conv.KafkaS3PropertiesAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

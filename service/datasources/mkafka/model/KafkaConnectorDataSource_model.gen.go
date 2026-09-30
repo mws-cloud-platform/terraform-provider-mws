@@ -7,8 +7,8 @@ import (
 )
 
 type KafkaConnectorModel struct {
+	ProjectParam   types.String `tfsdk:"project"`
 	ClusterParam   types.String `tfsdk:"cluster"`
 	ConnectorParam types.String `tfsdk:"connector"`
-	ProjectParam   types.String `tfsdk:"project"`
 	KafkaConnector
 }

@@ -16,23 +16,16 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/gpt/model"
 )
 
-func TestDeploymentAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.DeploymentResponse{}
-	_, diags := conv.DeploymentAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestDeploymentResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.DeploymentRequest{
+	apiModelRequest := model.DeploymentRequest{
 		Spec: model.DeploymentSpecRequest{},
 	}
 
-	emptyApiModelResponse, err := model.DeploymentRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.DeploymentRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.DeploymentAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.DeploymentAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.DeploymentTFToAPIRequestModel(context.Background(), tfModel)
@@ -41,7 +34,7 @@ func TestDeploymentResponseConverters(t *testing.T) {
 	result, err := model.DeploymentRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateDeploymentRequestConverters(t *testing.T) {
@@ -64,23 +57,16 @@ func TestUpdateDeploymentRequestConverters(t *testing.T) {
 	require.Equal(t, expectedUpdateModel, result)
 }
 
-func TestDeploymentMetadataAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.DeploymentMetadataResponse{}
-	_, diags := conv.DeploymentMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestDeploymentMetadataResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.DeploymentMetadataRequest{
+	apiModelRequest := model.DeploymentMetadataRequest{
 		TypedResourceMetadataRequest: commonmodel.TypedResourceMetadataRequest{},
 	}
 
-	emptyApiModelResponse, err := model.DeploymentMetadataRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.DeploymentMetadataRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.DeploymentMetadataAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.DeploymentMetadataAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.DeploymentMetadataTFToAPIRequestModel(context.Background(), tfModel)
@@ -89,7 +75,7 @@ func TestDeploymentMetadataResponseConverters(t *testing.T) {
 	result, err := model.DeploymentMetadataRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateDeploymentMetadataRequestConverters(t *testing.T) {

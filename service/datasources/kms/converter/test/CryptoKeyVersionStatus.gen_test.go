@@ -8,20 +8,27 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/kms/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/kms/converter"
 )
 
-func TestCryptoKeyVersionStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestCryptoKeyVersionStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.CryptoKeyVersionStatusResponse{}
-	_, diags := conv.CryptoKeyVersionStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.CryptoKeyVersionStatusResponse{
+		ResourceStatusResponse: commonmodel.ResourceStatusResponse{
+			Ready: commonmodel.ResourceStatusReadyResponse{
+				State: "",
+			},
+		},
+	}
+	_, diags := conv.CryptoKeyVersionStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestCryptoKeyVersionStatusDestructionAPIResponseToTFModelEmpty(t *testing.T) {
+func TestCryptoKeyVersionStatusDestructionAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.CryptoKeyVersionStatusDestructionResponse{}
-	_, diags := conv.CryptoKeyVersionStatusDestructionAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.CryptoKeyVersionStatusDestructionResponse{}
+	_, diags := conv.CryptoKeyVersionStatusDestructionAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

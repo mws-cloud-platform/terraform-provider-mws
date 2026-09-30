@@ -12,9 +12,16 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
-func TestFirewallRuleAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestFirewallRuleAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.FirewallRuleOptionalResponse{}
-	_, diags := conv.FirewallRuleAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.FirewallRuleOptionalResponse{
+		Spec: model.FirewallRuleSpecOptionalResponse{
+			Direction:   "",
+			Action:      "",
+			Source:      model.FirewallRuleSourceOptionalResponse{},
+			Destination: model.FirewallRuleDestinationOptionalResponse{},
+		},
+	}
+	_, diags := conv.FirewallRuleAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

@@ -9,12 +9,15 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/converter"
 )
 
-func TestClickhouseEndpointAddressSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestClickhouseEndpointAddressSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClickhouseEndpointAddressSpecOptionalResponse{}
-	_, diags := conv.ClickhouseEndpointAddressSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClickhouseEndpointAddressSpecOptionalResponse{
+		Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
+	}
+	_, diags := conv.ClickhouseEndpointAddressSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

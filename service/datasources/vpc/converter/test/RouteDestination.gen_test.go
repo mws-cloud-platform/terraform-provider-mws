@@ -7,21 +7,28 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 
 	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
-func TestRouteDestinationAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestRouteDestinationAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.RouteDestinationOptionalResponse{}
-	_, diags := conv.RouteDestinationAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.RouteDestinationOptionalResponse{
+		Spec: model.RouteDestinationSpecOptionalResponse{
+			Cidrs: []cidraddress.CIDRAddress{},
+		},
+	}
+	_, diags := conv.RouteDestinationAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestRouteDestinationSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestRouteDestinationSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.RouteDestinationSpecOptionalResponse{}
-	_, diags := conv.RouteDestinationSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.RouteDestinationSpecOptionalResponse{
+		Cidrs: []cidraddress.CIDRAddress{},
+	}
+	_, diags := conv.RouteDestinationSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

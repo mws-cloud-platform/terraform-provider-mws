@@ -18,16 +18,9 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func TestEgressNatAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.EgressNatOptionalResponse{}
-	_, diags := conv.EgressNatAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestEgressNatOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.EgressNatRequest{
+	apiModelRequest := model.EgressNatRequest{
 		Spec: model.EgressNatSpecRequest{
 			Internal: model.EgressNatSpecInternalRequest{
 				Subnets: []vpc.SubnetRef{},
@@ -38,10 +31,10 @@ func TestEgressNatOptionalResponseConverters(t *testing.T) {
 		},
 	}
 
-	emptyApiModelResponse, err := model.EgressNatRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.EgressNatRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.EgressNatAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.EgressNatAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.EgressNatTFToAPIRequestModel(context.Background(), tfModel)
@@ -50,7 +43,7 @@ func TestEgressNatOptionalResponseConverters(t *testing.T) {
 	result, err := model.EgressNatRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateEgressNatRequestConverters(t *testing.T) {

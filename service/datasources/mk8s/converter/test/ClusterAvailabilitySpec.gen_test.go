@@ -12,30 +12,36 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/converter"
 )
 
-func TestClusterAvailabilitySpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestClusterAvailabilitySpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClusterAvailabilitySpecOptionalResponse{}
-	_, diags := conv.ClusterAvailabilitySpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClusterAvailabilitySpecOptionalResponse{}
+	_, diags := conv.ClusterAvailabilitySpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestClusterAvailabilitySpecRegionalAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestClusterAvailabilitySpecRegionalAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClusterAvailabilitySpecRegionalOptionalResponse{}
-	_, diags := conv.ClusterAvailabilitySpecRegionalAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClusterAvailabilitySpecRegionalOptionalResponse{
+		Zones: []string{},
+	}
+	_, diags := conv.ClusterAvailabilitySpecRegionalAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestClusterAvailabilitySpecStandaloneAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestClusterAvailabilitySpecStandaloneAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClusterAvailabilitySpecStandaloneOptionalResponse{}
-	_, diags := conv.ClusterAvailabilitySpecStandaloneAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClusterAvailabilitySpecStandaloneOptionalResponse{
+		Zone: "zone",
+	}
+	_, diags := conv.ClusterAvailabilitySpecStandaloneAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestClusterAvailabilitySpecZonalHaAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestClusterAvailabilitySpecZonalHaAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClusterAvailabilitySpecZonalHaOptionalResponse{}
-	_, diags := conv.ClusterAvailabilitySpecZonalHaAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClusterAvailabilitySpecZonalHaOptionalResponse{
+		Zone: "zone",
+	}
+	_, diags := conv.ClusterAvailabilitySpecZonalHaAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

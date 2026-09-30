@@ -12,9 +12,11 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/iam/converter"
 )
 
-func TestRoleStageAPIResponseToTFModelEmpty(t *testing.T) {
+func TestRoleStageAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.RoleStageResponse{}
-	_, diags := conv.RoleStageAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.RoleStageResponse{
+		Code: "",
+	}
+	_, diags := conv.RoleStageAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

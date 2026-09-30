@@ -7,8 +7,8 @@ import (
 )
 
 type BackupModel struct {
-	BackupParam  types.String `tfsdk:"backup"`
-	ClusterParam types.String `tfsdk:"cluster"`
 	ProjectParam types.String `tfsdk:"project"`
+	ClusterParam types.String `tfsdk:"cluster"`
+	BackupParam  types.String `tfsdk:"backup"`
 	ClickhouseBackup
 }

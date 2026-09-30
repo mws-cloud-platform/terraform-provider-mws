@@ -5,8 +5,12 @@ package model
 import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localint64planmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/int64planmodifier"
+	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 )
 
 type KafkaDataDiskSpec struct {
@@ -38,10 +42,16 @@ func (s *KafkaDataDiskSpec) GetSchema() schema.Schema {
 					),
 				},
 				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"iops": schema.Int64Attribute{
 				MarkdownDescription: `Количество дисковых операций в секунду`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.Int64{
+					localint64planmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

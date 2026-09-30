@@ -14,23 +14,16 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func TestEgressNatSpecExternalAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.EgressNatSpecExternalOptionalResponse{}
-	_, diags := conv.EgressNatSpecExternalAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestEgressNatSpecExternalOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.EgressNatSpecExternalRequest{
+	apiModelRequest := model.EgressNatSpecExternalRequest{
 		Addresses: []commonmodel.ResourceExternalAddressSpecOrRefRequest{},
 	}
 
-	emptyApiModelResponse, err := model.EgressNatSpecExternalRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.EgressNatSpecExternalRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.EgressNatSpecExternalAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.EgressNatSpecExternalAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.EgressNatSpecExternalTFToAPIRequestModel(context.Background(), tfModel)
@@ -39,7 +32,7 @@ func TestEgressNatSpecExternalOptionalResponseConverters(t *testing.T) {
 	result, err := model.EgressNatSpecExternalRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateEgressNatSpecExternalRequestConverters(t *testing.T) {

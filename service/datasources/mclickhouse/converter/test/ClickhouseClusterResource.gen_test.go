@@ -8,13 +8,30 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/resources/references/rm"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/converter"
 )
 
-func TestClickhouseClusterResourceAPIResponseToTFModelEmpty(t *testing.T) {
+func TestClickhouseClusterResourceAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClickhouseClusterResourceResponse{}
-	_, diags := conv.ClickhouseClusterResourceAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClickhouseClusterResourceResponse{
+		Active:  false,
+		Version: "version",
+		Region:  rm.NewMustRegionID("regionID"),
+		Shards:  []model.ClickhouseClusterShardResourceResponse{},
+		MaintenanceWindow: commonmodel.MaintenanceWindowResponse{
+			Weekly: commonmodel.WeeklyMaintenanceWindowResponse{
+				Days: []commonmodel.DayOfWeek{},
+				Hour: 0,
+			},
+		},
+		Backup: model.ClickhouseClusterBackupResourceResponse{
+			Hour:             0,
+			RetainPeriodDays: 0,
+		},
+	}
+	_, diags := conv.ClickhouseClusterResourceAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

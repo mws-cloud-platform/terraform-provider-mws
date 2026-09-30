@@ -15,21 +15,14 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
-func TestPluginsSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.PluginsSpecOptionalResponse{}
-	_, diags := conv.PluginsSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestPluginsSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.PluginsSpecRequest{}
+	apiModelRequest := model.PluginsSpecRequest{}
 
-	emptyApiModelResponse, err := model.PluginsSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.PluginsSpecRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.PluginsSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.PluginsSpecAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.PluginsSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -38,7 +31,7 @@ func TestPluginsSpecOptionalResponseConverters(t *testing.T) {
 	result, err := model.PluginsSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdatePluginsSpecRequestConverters(t *testing.T) {
@@ -61,21 +54,14 @@ func TestUpdatePluginsSpecRequestConverters(t *testing.T) {
 	require.Equal(t, expectedUpdateModel, result)
 }
 
-func TestPluginsSpecCniAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.PluginsSpecCniOptionalResponse{}
-	_, diags := conv.PluginsSpecCniAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestPluginsSpecCniOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.PluginsSpecCniRequest{}
+	apiModelRequest := model.PluginsSpecCniRequest{}
 
-	emptyApiModelResponse, err := model.PluginsSpecCniRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.PluginsSpecCniRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.PluginsSpecCniAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.PluginsSpecCniAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.PluginsSpecCniTFToAPIRequestModel(context.Background(), tfModel)
@@ -84,7 +70,7 @@ func TestPluginsSpecCniOptionalResponseConverters(t *testing.T) {
 	result, err := model.PluginsSpecCniRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdatePluginsSpecCniRequestConverters(t *testing.T) {

@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/converter"
 )
 
-func TestKafkaEndpointExternalAddressSpecAPIResponseToTFModelEmpty(t *testing.T) {
+func TestKafkaEndpointExternalAddressSpecAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.KafkaEndpointExternalAddressSpecResponse{}
-	_, diags := conv.KafkaEndpointExternalAddressSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.KafkaEndpointExternalAddressSpecResponse{}
+	_, diags := conv.KafkaEndpointExternalAddressSpecAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/converter"
 )
 
-func TestSecurityPostureStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestSecurityPostureStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.SecurityPostureStatusResponse{}
-	_, diags := conv.SecurityPostureStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.SecurityPostureStatusResponse{}
+	_, diags := conv.SecurityPostureStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

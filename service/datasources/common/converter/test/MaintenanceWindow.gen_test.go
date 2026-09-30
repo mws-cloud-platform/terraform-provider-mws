@@ -12,23 +12,38 @@ import (
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
-func TestMaintenanceWindowAPIToTFModelEmpty(t *testing.T) {
+func TestMaintenanceWindowAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.MaintenanceWindow{}
-	_, diags := commonconv.MaintenanceWindowAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.MaintenanceWindow{
+		Weekly: commonmodel.WeeklyMaintenanceWindow{
+			Days: []commonmodel.DayOfWeek{},
+			Hour: 0,
+		},
+	}
+	_, diags := commonconv.MaintenanceWindowAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestMaintenanceWindowAPIResponseToTFModelEmpty(t *testing.T) {
+func TestMaintenanceWindowAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.MaintenanceWindowResponse{}
-	_, diags := commonconv.MaintenanceWindowAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.MaintenanceWindowResponse{
+		Weekly: commonmodel.WeeklyMaintenanceWindowResponse{
+			Days: []commonmodel.DayOfWeek{},
+			Hour: 0,
+		},
+	}
+	_, diags := commonconv.MaintenanceWindowAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestMaintenanceWindowAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestMaintenanceWindowAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.MaintenanceWindowOptionalResponse{}
-	_, diags := commonconv.MaintenanceWindowAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.MaintenanceWindowOptionalResponse{
+		Weekly: commonmodel.WeeklyMaintenanceWindowOptionalResponse{
+			Days: []commonmodel.DayOfWeek{},
+			Hour: 0,
+		},
+	}
+	_, diags := commonconv.MaintenanceWindowAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

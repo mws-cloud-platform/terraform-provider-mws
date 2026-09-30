@@ -9,7 +9,6 @@ import (
 
 type ClickhouseClusterShard struct {
 	Name      types.String `tfsdk:"name"`
-	Count     types.Int64  `tfsdk:"count"`
 	Resources types.Object `tfsdk:"resources"`
 	Weight    types.Int64  `tfsdk:"weight"`
 	Endpoints types.List   `tfsdk:"endpoints"`
@@ -22,10 +21,6 @@ func (s *ClickhouseClusterShard) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"name": schema.StringAttribute{
 				MarkdownDescription: `-> Имя шарда, которому будут принадлежать узлы. В случае с несколькими шардами имя формируется как "name-{shardIndex}"`,
-				Computed:            true,
-			},
-			"count": schema.Int64Attribute{
-				MarkdownDescription: `Количество шардов, которые будут созданы`,
 				Computed:            true,
 			},
 			"resources": schema.SingleNestedAttribute{

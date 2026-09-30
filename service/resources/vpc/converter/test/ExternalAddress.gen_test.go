@@ -17,23 +17,16 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func TestExternalAddressAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ExternalAddressOptionalResponse{}
-	_, diags := conv.ExternalAddressAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestExternalAddressOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ExternalAddressRequest{
+	apiModelRequest := model.ExternalAddressRequest{
 		Spec: model.VpcExternalAddressSpecRequest{},
 	}
 
-	emptyApiModelResponse, err := model.ExternalAddressRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ExternalAddressRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ExternalAddressAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ExternalAddressAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ExternalAddressTFToAPIRequestModel(context.Background(), tfModel)
@@ -42,7 +35,7 @@ func TestExternalAddressOptionalResponseConverters(t *testing.T) {
 	result, err := model.ExternalAddressRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateExternalAddressRequestConverters(t *testing.T) {

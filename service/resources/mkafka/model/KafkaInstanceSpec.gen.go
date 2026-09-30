@@ -4,7 +4,10 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	locallistplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/listplanmodifier"
 )
 
 type KafkaInstanceSpec struct {
@@ -32,6 +35,9 @@ func (s *KafkaInstanceSpec) GetSchema() schema.Schema {
 				},
 				MarkdownDescription: `Параметры размещения брокеров по зонам`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.List{
+					locallistplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

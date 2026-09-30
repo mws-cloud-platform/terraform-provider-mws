@@ -5,9 +5,9 @@ package converter
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -52,15 +52,15 @@ func PluginsStatusCniAPIResponseToTFModel(ctx context.Context, am *model.Plugins
 	var t tfmodel.PluginsStatusCni
 
 	if am.Calico != nil {
-		t.Calico = types.StringPointerValue(ptr.Get(string(am.Calico)))
+		t.Calico = jsontypes.NewNormalizedValue(string(am.Calico))
 	} else {
-		t.Calico = types.StringNull()
+		t.Calico = jsontypes.NewNormalizedNull()
 	}
 
 	if am.Cilium != nil {
-		t.Cilium = types.StringPointerValue(ptr.Get(string(am.Cilium)))
+		t.Cilium = jsontypes.NewNormalizedValue(string(am.Cilium))
 	} else {
-		t.Cilium = types.StringNull()
+		t.Cilium = jsontypes.NewNormalizedNull()
 	}
 
 	return &t, diags

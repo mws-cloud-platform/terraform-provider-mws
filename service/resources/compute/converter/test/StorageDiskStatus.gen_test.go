@@ -9,12 +9,18 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
 )
 
-func TestStorageDiskStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestStorageDiskStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.StorageDiskStatusResponse{}
-	_, diags := conv.StorageDiskStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.StorageDiskStatusResponse{
+		Name:       "name",
+		Boot:       false,
+		DeviceName: "deviceName",
+		Ref:        compute.NewMustDiskRef("projectID", "diskID"),
+	}
+	_, diags := conv.StorageDiskStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

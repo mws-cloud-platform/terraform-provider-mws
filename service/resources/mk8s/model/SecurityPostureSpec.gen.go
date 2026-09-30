@@ -4,7 +4,10 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localboolplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/boolplanmodifier"
 )
 
 type SecurityPostureSpec struct {
@@ -18,6 +21,9 @@ func (s *SecurityPostureSpec) GetSchema() schema.Schema {
 			"enabled": schema.BoolAttribute{
 				MarkdownDescription: `Определяет, работает ли в кластере KSP. Если значение равно false, сканирование кластера выключено`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.Bool{
+					localboolplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

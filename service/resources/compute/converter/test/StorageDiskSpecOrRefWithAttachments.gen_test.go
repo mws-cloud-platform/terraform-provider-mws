@@ -13,24 +13,17 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func TestStorageDiskSpecOrRefWithAttachmentsAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.StorageDiskSpecOrRefWithAttachmentsOptionalResponse{}
-	_, diags := conv.StorageDiskSpecOrRefWithAttachmentsAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestStorageDiskSpecOrRefWithAttachmentsOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.StorageDiskSpecOrRefWithAttachmentsRequest{
+	apiModelRequest := model.StorageDiskSpecOrRefWithAttachmentsRequest{
 		Name: "name",
 		Disk: model.StorageDiskSpecOrRefRequest{},
 	}
 
-	emptyApiModelResponse, err := model.StorageDiskSpecOrRefWithAttachmentsRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.StorageDiskSpecOrRefWithAttachmentsRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.StorageDiskSpecOrRefWithAttachmentsAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.StorageDiskSpecOrRefWithAttachmentsAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.StorageDiskSpecOrRefWithAttachmentsTFToAPIRequestModel(context.Background(), tfModel)
@@ -39,7 +32,7 @@ func TestStorageDiskSpecOrRefWithAttachmentsOptionalResponseConverters(t *testin
 	result, err := model.StorageDiskSpecOrRefWithAttachmentsRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateStorageDiskSpecOrRefWithAttachmentsRequestConverters(t *testing.T) {

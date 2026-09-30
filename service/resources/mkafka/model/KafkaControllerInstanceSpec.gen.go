@@ -4,7 +4,11 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	locallistplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/listplanmodifier"
+	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 )
 
 type KafkaControllerInstanceSpec struct {
@@ -25,6 +29,9 @@ func (s *KafkaControllerInstanceSpec) GetSchema() schema.Schema {
 			"vm_type": schema.StringAttribute{
 				MarkdownDescription: `Тип виртуальной машины, описывающий ресурсы (vCPU, memory)`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"disk": schema.SingleNestedAttribute{
 				Attributes:          new(KafkaDataDiskSpec).GetSchema().Attributes,
@@ -37,6 +44,9 @@ func (s *KafkaControllerInstanceSpec) GetSchema() schema.Schema {
 				},
 				MarkdownDescription: `Параметры размещения контроллеров по зонам`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.List{
+					locallistplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

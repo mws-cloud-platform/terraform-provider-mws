@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/converter"
 )
 
-func TestClickhouseCoordinatorTypeAPIToTFModelEmpty(t *testing.T) {
+func TestClickhouseCoordinatorTypeAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClickhouseCoordinatorType("")
-	_, diags := conv.ClickhouseCoordinatorTypeAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClickhouseCoordinatorType("")
+	_, diags := conv.ClickhouseCoordinatorTypeAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

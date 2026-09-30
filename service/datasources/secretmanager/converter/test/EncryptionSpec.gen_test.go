@@ -8,13 +8,16 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/service/resources/references/kms"
 	"go.mws.cloud/go-sdk/service/secretmanager/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/secretmanager/converter"
 )
 
-func TestEncryptionSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestEncryptionSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.EncryptionSpecOptionalResponse{}
-	_, diags := conv.EncryptionSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.EncryptionSpecOptionalResponse{
+		CryptoKeyId: kms.NewMustCryptoKeyRef("projectID", "keyID"),
+	}
+	_, diags := conv.EncryptionSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

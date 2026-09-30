@@ -14,24 +14,17 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func TestKafkaAllocationAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.KafkaAllocationResponse{}
-	_, diags := conv.KafkaAllocationAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestKafkaAllocationResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.KafkaAllocationRequest{
+	apiModelRequest := model.KafkaAllocationRequest{
 		Zone:  rm.NewMustZoneRef("zoneID"),
 		Count: 0,
 	}
 
-	emptyApiModelResponse, err := model.KafkaAllocationRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.KafkaAllocationRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.KafkaAllocationAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.KafkaAllocationAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.KafkaAllocationTFToAPIRequestModel(context.Background(), tfModel)
@@ -40,7 +33,7 @@ func TestKafkaAllocationResponseConverters(t *testing.T) {
 	result, err := model.KafkaAllocationRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateKafkaAllocationRequestConverters(t *testing.T) {

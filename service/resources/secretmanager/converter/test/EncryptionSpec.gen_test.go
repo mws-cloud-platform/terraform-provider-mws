@@ -14,23 +14,16 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager/model"
 )
 
-func TestEncryptionSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.EncryptionSpecOptionalResponse{}
-	_, diags := conv.EncryptionSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestEncryptionSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.EncryptionSpecRequest{
+	apiModelRequest := model.EncryptionSpecRequest{
 		CryptoKeyId: kms.NewMustCryptoKeyRef("projectID", "keyID"),
 	}
 
-	emptyApiModelResponse, err := model.EncryptionSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.EncryptionSpecRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.EncryptionSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.EncryptionSpecAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.EncryptionSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -39,7 +32,7 @@ func TestEncryptionSpecOptionalResponseConverters(t *testing.T) {
 	result, err := model.EncryptionSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateEncryptionSpecRequestConverters(t *testing.T) {

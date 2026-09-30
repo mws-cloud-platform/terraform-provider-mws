@@ -8,13 +8,21 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/compute/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestDiskStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestDiskStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.DiskStatusResponse{}
-	_, diags := conv.DiskStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.DiskStatusResponse{
+		ResourceStatusResponse: commonmodel.ResourceStatusResponse{
+			Ready: commonmodel.ResourceStatusReadyResponse{
+				State: "",
+			},
+		},
+		LinkedVms: []commonmodel.LinkedVmInfoResponse{},
+	}
+	_, diags := conv.DiskStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

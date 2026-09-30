@@ -21,6 +21,7 @@ import (
 	dsmkafka "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka"
 	dsmpostgres "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres"
 	dsnlb "go.mws.cloud/terraform-provider-mws/service/datasources/nlb"
+	dsqueue "go.mws.cloud/terraform-provider-mws/service/datasources/queue"
 	dsrm "go.mws.cloud/terraform-provider-mws/service/datasources/rm"
 	dssecretmanager "go.mws.cloud/terraform-provider-mws/service/datasources/secretmanager"
 	dsvpc "go.mws.cloud/terraform-provider-mws/service/datasources/vpc"
@@ -34,6 +35,7 @@ import (
 	rsmkafka "go.mws.cloud/terraform-provider-mws/service/resources/mkafka"
 	rsmpostgres "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres"
 	rsnlb "go.mws.cloud/terraform-provider-mws/service/resources/nlb"
+	rsqueue "go.mws.cloud/terraform-provider-mws/service/resources/queue"
 	rssecretmanager "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager"
 	rsvpc "go.mws.cloud/terraform-provider-mws/service/resources/vpc"
 )
@@ -73,6 +75,8 @@ func resources() []func() resource.Resource {
 		rsmpostgres.NewClusterDatabaseResource,
 		rsmpostgres.NewBackupResource,
 		rsnlb.NewNlbResource,
+		rsqueue.NewTopicResource,
+		rsqueue.NewTopicRoleBindingResource,
 		crsrm.NewEnabledServiceResource,
 		rssecretmanager.NewSecretResource,
 		crssecretmanager.NewSecretVersionResource,
@@ -99,6 +103,7 @@ func dataSources() []func() datasource.DataSource {
 		dscompute.NewDiskBackupDataSource,
 		dsgpt.NewModelDataSource,
 		dsgpt.NewDeploymentDataSource,
+		dsiam.NewRoleDataSource,
 		dsiam.NewServiceAccountDataSource,
 		dsiam.NewHmacKeyDataSource,
 		dsiam.NewAuthorizedKeyDataSource,
@@ -116,6 +121,9 @@ func dataSources() []func() datasource.DataSource {
 		dsmpostgres.NewClusterDatabaseDataSource,
 		dsmpostgres.NewBackupDataSource,
 		dsnlb.NewNlbDataSource,
+		dsqueue.NewTopicDataSource,
+		dsqueue.NewConsumerGroupDataSource,
+		dsqueue.NewTopicRoleBindingDataSource,
 		dsrm.NewZoneDataSource,
 		dsrm.NewRegionDataSource,
 		dssecretmanager.NewSecretDataSource,

@@ -12,9 +12,11 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/converter"
 )
 
-func TestKafkaEndpointExternalAccessesStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestKafkaEndpointExternalAccessesStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.KafkaEndpointExternalAccessesStatusResponse{}
-	_, diags := conv.KafkaEndpointExternalAccessesStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.KafkaEndpointExternalAccessesStatusResponse{
+		Allowed: false,
+	}
+	_, diags := conv.KafkaEndpointExternalAccessesStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

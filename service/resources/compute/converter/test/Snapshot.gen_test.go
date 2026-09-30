@@ -17,25 +17,18 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func TestSnapshotAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.SnapshotOptionalResponse{}
-	_, diags := conv.SnapshotAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestSnapshotOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.SnapshotRequest{
+	apiModelRequest := model.SnapshotRequest{
 		Spec: model.SnapshotSpecRequest{
 			Source: model.SnapshotSourceRequest{},
 		},
 	}
 
-	emptyApiModelResponse, err := model.SnapshotRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.SnapshotRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.SnapshotAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.SnapshotAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.SnapshotTFToAPIRequestModel(context.Background(), tfModel)
@@ -44,7 +37,7 @@ func TestSnapshotOptionalResponseConverters(t *testing.T) {
 	result, err := model.SnapshotRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateSnapshotRequestConverters(t *testing.T) {

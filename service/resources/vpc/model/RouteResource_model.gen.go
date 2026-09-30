@@ -8,8 +8,8 @@ import (
 )
 
 type RouteModel struct {
-	NetworkParam types.String   `tfsdk:"network"`
 	ProjectParam types.String   `tfsdk:"project"`
+	NetworkParam types.String   `tfsdk:"network"`
 	RouteParam   types.String   `tfsdk:"route"`
 	Timeouts     timeouts.Value `tfsdk:"timeouts"`
 	ID           types.String   `tfsdk:"id"`

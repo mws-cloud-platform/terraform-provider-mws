@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
 )
 
-func TestEgressNatStatusPortAllocationAPIResponseToTFModelEmpty(t *testing.T) {
+func TestEgressNatStatusPortAllocationAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.EgressNatStatusPortAllocationResponse{}
-	_, diags := conv.EgressNatStatusPortAllocationAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.EgressNatStatusPortAllocationResponse{}
+	_, diags := conv.EgressNatStatusPortAllocationAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

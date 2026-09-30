@@ -12,23 +12,35 @@ import (
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
-func TestUsageAPIToTFModelEmpty(t *testing.T) {
+func TestUsageAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.Usage{}
-	_, diags := commonconv.UsageAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.Usage{
+		UsageType: "usageType",
+		Name:      "name",
+		Resource:  "resource",
+	}
+	_, diags := commonconv.UsageAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestUsageAPIResponseToTFModelEmpty(t *testing.T) {
+func TestUsageAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.UsageResponse{}
-	_, diags := commonconv.UsageAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.UsageResponse{
+		UsageType: "usageType",
+		Name:      "name",
+		Resource:  "resource",
+	}
+	_, diags := commonconv.UsageAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestUsageAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestUsageAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.UsageOptionalResponse{}
-	_, diags := commonconv.UsageAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.UsageOptionalResponse{
+		UsageType: "usageType",
+		Name:      "name",
+		Resource:  "resource",
+	}
+	_, diags := commonconv.UsageAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

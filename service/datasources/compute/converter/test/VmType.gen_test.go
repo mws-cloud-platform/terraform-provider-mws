@@ -8,20 +8,27 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestVmTypeAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestVmTypeAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.VmTypeOptionalResponse{}
-	_, diags := conv.VmTypeAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.VmTypeOptionalResponse{
+		Spec: model.VmTypeSpecOptionalResponse{},
+	}
+	_, diags := conv.VmTypeAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestVmTypeMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestVmTypeMetadataAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.VmTypeMetadataOptionalResponse{}
-	_, diags := conv.VmTypeMetadataAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.VmTypeMetadataOptionalResponse{
+		TypedResourceMetadataOptionalResponse: commonmodel.TypedResourceMetadataOptionalResponse{},
+		Id:                                    compute.NewMustVmTypeID("vmTypeID"),
+	}
+	_, diags := conv.VmTypeMetadataAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

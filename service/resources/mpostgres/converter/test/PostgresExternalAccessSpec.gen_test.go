@@ -13,23 +13,16 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func TestPostgresExternalAccessSpecAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.PostgresExternalAccessSpecResponse{}
-	_, diags := conv.PostgresExternalAccessSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestPostgresExternalAccessSpecResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.PostgresExternalAccessSpecRequest{
+	apiModelRequest := model.PostgresExternalAccessSpecRequest{
 		Allowed: false,
 	}
 
-	emptyApiModelResponse, err := model.PostgresExternalAccessSpecRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.PostgresExternalAccessSpecRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.PostgresExternalAccessSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.PostgresExternalAccessSpecAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.PostgresExternalAccessSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -38,7 +31,7 @@ func TestPostgresExternalAccessSpecResponseConverters(t *testing.T) {
 	result, err := model.PostgresExternalAccessSpecRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdatePostgresExternalAccessSpecRequestConverters(t *testing.T) {

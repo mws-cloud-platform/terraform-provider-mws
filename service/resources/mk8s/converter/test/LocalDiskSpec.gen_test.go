@@ -16,24 +16,17 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
-func TestLocalDiskSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.LocalDiskSpecOptionalResponse{}
-	_, diags := conv.LocalDiskSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestLocalDiskSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.LocalDiskSpecRequest{
+	apiModelRequest := model.LocalDiskSpecRequest{
 		Name: "name",
 		Size: bytesize.MustParseString("0 B"),
 	}
 
-	emptyApiModelResponse, err := model.LocalDiskSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.LocalDiskSpecRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.LocalDiskSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.LocalDiskSpecAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.LocalDiskSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -42,7 +35,7 @@ func TestLocalDiskSpecOptionalResponseConverters(t *testing.T) {
 	result, err := model.LocalDiskSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateLocalDiskSpecRequestConverters(t *testing.T) {

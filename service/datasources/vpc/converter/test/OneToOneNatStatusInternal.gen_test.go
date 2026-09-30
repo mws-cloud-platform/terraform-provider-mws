@@ -7,14 +7,22 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/ipaddress"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
-func TestOneToOneNatStatusInternalAPIResponseToTFModelEmpty(t *testing.T) {
+func TestOneToOneNatStatusInternalAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.OneToOneNatStatusInternalResponse{}
-	_, diags := conv.OneToOneNatStatusInternalAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.OneToOneNatStatusInternalResponse{
+		Address: commonmodel.ResourceAddressStatusResponse{
+			Ref:       vpc.NewMustAddressRef("projectID", "networkID", "addressID"),
+			IpAddress: ipaddress.MustParseIPAddressString("192.168.1.1"),
+		},
+	}
+	_, diags := conv.OneToOneNatStatusInternalAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

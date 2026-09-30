@@ -57,7 +57,7 @@ resource "mws_mkafka_cluster" "example" {
 
   instances = {
     broker = {
-      vm_type = "compute/vmTypes/gen-2-4"
+      vm_type = "compute/vmTypes/gen-2-8"
       disk = {
         size = "10Gb"
         type = "NETWORK_STANDARD_SSD"
@@ -71,7 +71,7 @@ resource "mws_mkafka_cluster" "example" {
     }
     controller = {
       combined_with_broker = false
-      vm_type              = "compute/vmTypes/gen-2-4"
+      vm_type              = "compute/vmTypes/gen-2-8"
       disk = {
         size = "10Gb"
         type = "NETWORK_STANDARD_SSD"

@@ -7,7 +7,7 @@ import (
 )
 
 type ModelModel struct {
-	ModelNameParam types.String `tfsdk:"model_name"`
 	ProjectParam   types.String `tfsdk:"project"`
+	ModelNameParam types.String `tfsdk:"model_name"`
 	Model
 }

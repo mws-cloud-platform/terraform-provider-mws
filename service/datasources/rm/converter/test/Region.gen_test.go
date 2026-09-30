@@ -8,20 +8,25 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/rm/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/rm/converter"
 )
 
-func TestRegionAPIResponseToTFModelEmpty(t *testing.T) {
+func TestRegionAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.RegionResponse{}
-	_, diags := conv.RegionAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.RegionResponse{
+		Spec: []byte(`""`),
+	}
+	_, diags := conv.RegionAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestRegionMetadataAPIResponseToTFModelEmpty(t *testing.T) {
+func TestRegionMetadataAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.RegionMetadataResponse{}
-	_, diags := conv.RegionMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.RegionMetadataResponse{
+		TypedResourceMetadataResponse: commonmodel.TypedResourceMetadataResponse{},
+	}
+	_, diags := conv.RegionMetadataAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

@@ -7,7 +7,7 @@ import (
 )
 
 type ExternalAddressModel struct {
-	ExternalAddressParam types.String `tfsdk:"external_address"`
 	ProjectParam         types.String `tfsdk:"project"`
+	ExternalAddressParam types.String `tfsdk:"external_address"`
 	ExternalAddress
 }

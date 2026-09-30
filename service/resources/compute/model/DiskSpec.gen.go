@@ -4,7 +4,10 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 )
 
 type DiskSpecSource struct {
@@ -20,15 +23,24 @@ func (s *DiskSpecSource) GetSchema() schema.Schema {
 			"image": schema.StringAttribute{
 				MarkdownDescription: `ID образа`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"snapshot": schema.StringAttribute{
 				MarkdownDescription: `ID снимка`,
 				Optional:            true,
 				DeprecationMessage:  `Отказываемся в пользу diskBackup`,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"disk_backup": schema.StringAttribute{
 				MarkdownDescription: `ID резервной копии диска`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

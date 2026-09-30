@@ -7,21 +7,28 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
 	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/converter"
 )
 
-func TestClickhouseInstanceDiskSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestClickhouseInstanceDiskSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClickhouseInstanceDiskSpecOptionalResponse{}
-	_, diags := conv.ClickhouseInstanceDiskSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClickhouseInstanceDiskSpecOptionalResponse{
+		Size: bytesize.MustParseString("0 B"),
+		Type: "",
+	}
+	_, diags := conv.ClickhouseInstanceDiskSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestClickhouseInstanceDiskSpecAPIResponseToTFModelEmpty(t *testing.T) {
+func TestClickhouseInstanceDiskSpecAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClickhouseInstanceDiskSpecResponse{}
-	_, diags := conv.ClickhouseInstanceDiskSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClickhouseInstanceDiskSpecResponse{
+		Size: bytesize.MustParseString("0 B"),
+		Type: "",
+	}
+	_, diags := conv.ClickhouseInstanceDiskSpecAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

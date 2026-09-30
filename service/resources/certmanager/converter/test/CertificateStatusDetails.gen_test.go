@@ -5,6 +5,7 @@ package converter_test
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 
@@ -12,9 +13,16 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/converter"
 )
 
-func TestCertificateStatusDetailsAPIResponseToTFModelEmpty(t *testing.T) {
+func TestCertificateStatusDetailsAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.CertificateStatusDetailsResponse{}
-	_, diags := conv.CertificateStatusDetailsAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.CertificateStatusDetailsResponse{
+		Serial:    "serial",
+		Issuer:    "issuer",
+		Subject:   "subject",
+		NotAfter:  time.Unix(0, 0).UTC(),
+		NotBefore: time.Unix(0, 0).UTC(),
+		Domains:   []model.CertificateDomain{},
+	}
+	_, diags := conv.CertificateStatusDetailsAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

@@ -7,14 +7,19 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/units/duration"
 
 	"go.mws.cloud/go-sdk/service/compute/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestAddressDnsSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestAddressDnsSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.AddressDnsSpecOptionalResponse{}
-	_, diags := conv.AddressDnsSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.AddressDnsSpecOptionalResponse{
+		Name: "name",
+		Ttl:  duration.MustParseString("PT0S"),
+		Ptr:  false,
+	}
+	_, diags := conv.AddressDnsSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

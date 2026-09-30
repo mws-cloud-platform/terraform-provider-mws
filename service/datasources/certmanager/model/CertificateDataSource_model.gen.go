@@ -7,7 +7,7 @@ import (
 )
 
 type CertificateModel struct {
-	NameParam    types.String `tfsdk:"name"`
 	ProjectParam types.String `tfsdk:"project"`
+	NameParam    types.String `tfsdk:"name"`
 	Certificate
 }

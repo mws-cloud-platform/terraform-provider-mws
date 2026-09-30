@@ -40,14 +40,14 @@ func (m *NetworkDataSource) Metadata(ctx context.Context, req datasource.Metadat
 func (m *NetworkDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "NetworkDataSource.Schema")
 	resp.Schema = new(tfmodel.Network).GetSchema()
-	resp.Schema.Attributes["network"] = schema.StringAttribute{
-		MarkdownDescription: `Имя сети`,
-		Required:            true,
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
+	}
+	resp.Schema.Attributes["network"] = schema.StringAttribute{
+		MarkdownDescription: `Имя сети`,
+		Required:            true,
 	}
 }
 

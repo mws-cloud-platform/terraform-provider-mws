@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
 )
 
-func TestNodeGroupVersionControlStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestNodeGroupVersionControlStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NodeGroupVersionControlStatusResponse{}
-	_, diags := conv.NodeGroupVersionControlStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NodeGroupVersionControlStatusResponse{}
+	_, diags := conv.NodeGroupVersionControlStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

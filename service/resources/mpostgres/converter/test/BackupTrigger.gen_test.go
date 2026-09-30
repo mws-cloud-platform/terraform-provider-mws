@@ -12,22 +12,15 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
 )
 
-func TestBackupTriggerAPIToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.BackupTrigger("")
-	_, diags := conv.BackupTriggerAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestBackupTriggerConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.BackupTrigger("")
+	apiModel := model.BackupTrigger("")
 
-	tfModel, diags := conv.BackupTriggerAPIToTFModel(context.Background(), &emptyApiModel)
+	tfModel, diags := conv.BackupTriggerAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 
 	result, diags := conv.BackupTriggerTFToAPIModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	require.Equal(t, emptyApiModel, *result)
+	require.Equal(t, apiModel, *result)
 }

@@ -4,7 +4,10 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 )
 
 type CommonRoleBindingFederationContext struct {
@@ -19,6 +22,9 @@ func (s *CommonRoleBindingFederationContext) GetSchema() schema.Schema {
 			"subject": schema.StringAttribute{
 				MarkdownDescription: `Идентификатор субъекта федерации`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"attribute": schema.SingleNestedAttribute{
 				Attributes:          new(CommonRoleBindingFederationContextAttribute).GetSchema().Attributes,

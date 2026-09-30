@@ -13,21 +13,14 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func TestHardwareSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.HardwareSpecOptionalResponse{}
-	_, diags := conv.HardwareSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestHardwareSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.HardwareSpecRequest{}
+	apiModelRequest := model.HardwareSpecRequest{}
 
-	emptyApiModelResponse, err := model.HardwareSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.HardwareSpecRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.HardwareSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.HardwareSpecAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.HardwareSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -36,7 +29,7 @@ func TestHardwareSpecOptionalResponseConverters(t *testing.T) {
 	result, err := model.HardwareSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateHardwareSpecRequestConverters(t *testing.T) {

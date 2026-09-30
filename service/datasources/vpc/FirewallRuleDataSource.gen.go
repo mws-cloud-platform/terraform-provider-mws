@@ -40,18 +40,18 @@ func (m *FirewallRuleDataSource) Metadata(ctx context.Context, req datasource.Me
 func (m *FirewallRuleDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "FirewallRuleDataSource.Schema")
 	resp.Schema = new(tfmodel.FirewallRule).GetSchema()
-	resp.Schema.Attributes["firewall_rule"] = schema.StringAttribute{
-		MarkdownDescription: `Имя правила файрвола`,
-		Required:            true,
+	resp.Schema.Attributes["project"] = schema.StringAttribute{
+		MarkdownDescription: `Путь к проекту.`,
+		Optional:            true,
+		Computed:            true,
 	}
 	resp.Schema.Attributes["network"] = schema.StringAttribute{
 		MarkdownDescription: `Имя сети`,
 		Required:            true,
 	}
-	resp.Schema.Attributes["project"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к проекту.`,
-		Optional:            true,
-		Computed:            true,
+	resp.Schema.Attributes["firewall_rule"] = schema.StringAttribute{
+		MarkdownDescription: `Имя правила файрвола`,
+		Required:            true,
 	}
 }
 

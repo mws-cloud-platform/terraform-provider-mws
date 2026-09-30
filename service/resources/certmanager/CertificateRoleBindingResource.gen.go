@@ -49,19 +49,19 @@ func (m *CertificateRoleBindingResource) Metadata(ctx context.Context, req resou
 func (m *CertificateRoleBindingResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	tflog.Info(ctx, "CertificateRoleBindingResource.Schema")
 	resp.Schema = new(tfmodel.CertificateRoleBinding).GetSchema()
-	resp.Schema.Attributes["name"] = schema.StringAttribute{
-		MarkdownDescription: `Имя сертификата`,
-		Required:            true,
-		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.RequiresReplaceIfConfigured(),
-		},
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
+	}
+	resp.Schema.Attributes["name"] = schema.StringAttribute{
+		MarkdownDescription: `Имя сертификата`,
+		Required:            true,
+		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}

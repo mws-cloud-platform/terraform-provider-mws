@@ -54,4 +54,14 @@ resource "mws_mclickhouse_cluster" "cluster" {
     hour               = 2
     retain_period_days = 7
   }
+
+  config = {
+    logLevel       = jsonencode("information")
+    maxConnections = jsonencode(2048)
+
+    metricLogConfiguration = jsonencode({
+      enabled                    = true
+      logTimeIntervalToRetention = "10s"
+    })
+  }
 }

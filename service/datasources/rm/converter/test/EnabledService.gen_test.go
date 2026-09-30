@@ -8,20 +8,25 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/rm/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/rm/converter"
 )
 
-func TestEnabledServiceAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestEnabledServiceAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.EnabledServiceOptionalResponse{}
-	_, diags := conv.EnabledServiceAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.EnabledServiceOptionalResponse{
+		Spec: model.EnabledServiceSpecOptionalResponse{},
+	}
+	_, diags := conv.EnabledServiceAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestEnabledServiceMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestEnabledServiceMetadataAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.EnabledServiceMetadataOptionalResponse{}
-	_, diags := conv.EnabledServiceMetadataAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.EnabledServiceMetadataOptionalResponse{
+		TypedResourceMetadataOptionalResponse: commonmodel.TypedResourceMetadataOptionalResponse{},
+	}
+	_, diags := conv.EnabledServiceMetadataAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

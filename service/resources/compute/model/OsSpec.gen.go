@@ -4,7 +4,10 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localmapplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/mapplanmodifier"
 )
 
 type OsSpec struct {
@@ -46,6 +49,9 @@ func (s *OsSpecMetadata) GetSchema() schema.Schema {
 			"attributes": schema.MapAttribute{
 				ElementType: types.StringType,
 				Optional:    true,
+				PlanModifiers: []planmodifier.Map{
+					localmapplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

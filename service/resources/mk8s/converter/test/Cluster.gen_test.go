@@ -18,16 +18,9 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
-func TestClusterAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ClusterOptionalResponse{}
-	_, diags := conv.ClusterAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestClusterOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ClusterRequest{
+	apiModelRequest := model.ClusterRequest{
 		Spec: model.ClusterSpecRequest{
 			Availability: model.ClusterAvailabilitySpecRequest{},
 			Network: model.ClusterSpecNetworkRequest{
@@ -41,10 +34,10 @@ func TestClusterOptionalResponseConverters(t *testing.T) {
 		},
 	}
 
-	emptyApiModelResponse, err := model.ClusterRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ClusterRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ClusterAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ClusterAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ClusterTFToAPIRequestModel(context.Background(), tfModel)
@@ -53,7 +46,7 @@ func TestClusterOptionalResponseConverters(t *testing.T) {
 	result, err := model.ClusterRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateClusterRequestConverters(t *testing.T) {

@@ -7,8 +7,8 @@ import (
 )
 
 type ApiKeyModel struct {
-	ApiKeyParam         types.String `tfsdk:"api_key"`
 	ProjectParam        types.String `tfsdk:"project"`
 	ServiceAccountParam types.String `tfsdk:"service_account"`
+	ApiKeyParam         types.String `tfsdk:"api_key"`
 	ApiKey
 }

@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/vpc/converter"
 )
 
-func TestRegionalStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestRegionalStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.RegionalStatusResponse{}
-	_, diags := conv.RegionalStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.RegionalStatusResponse{}
+	_, diags := conv.RegionalStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

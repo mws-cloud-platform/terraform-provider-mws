@@ -8,20 +8,25 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/mkafka/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/converter"
 )
 
-func TestKafkaConnectorAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestKafkaConnectorAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.KafkaConnectorOptionalResponse{}
-	_, diags := conv.KafkaConnectorAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.KafkaConnectorOptionalResponse{
+		Spec: model.KafkaConnectorSpecOptionalResponse{},
+	}
+	_, diags := conv.KafkaConnectorAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestKafkaConnectorMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestKafkaConnectorMetadataAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.KafkaConnectorMetadataOptionalResponse{}
-	_, diags := conv.KafkaConnectorMetadataAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.KafkaConnectorMetadataOptionalResponse{
+		TypedResourceMetadataOptionalResponse: commonmodel.TypedResourceMetadataOptionalResponse{},
+	}
+	_, diags := conv.KafkaConnectorMetadataAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

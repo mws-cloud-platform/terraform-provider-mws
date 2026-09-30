@@ -16,6 +16,8 @@ var existingResources = map[string]bool{
 	"mws_resmanager_region": true,
 	"mws_resmanager_zone":   true,
 	"mws_gpt_model":         true,
+	"mws_compute_vm_type":   true,
+	"mws_iam_role":          true,
 }
 
 func TestDataSourcesExamples(t *testing.T) {

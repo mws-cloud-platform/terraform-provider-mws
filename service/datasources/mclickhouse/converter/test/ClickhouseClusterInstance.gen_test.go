@@ -9,12 +9,16 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/resources/references/rm"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/converter"
 )
 
-func TestClickhouseClusterInstanceAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestClickhouseClusterInstanceAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClickhouseClusterInstanceOptionalResponse{}
-	_, diags := conv.ClickhouseClusterInstanceAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClickhouseClusterInstanceOptionalResponse{
+		Name: "name",
+		Zone: rm.NewMustZoneRef("zoneID"),
+	}
+	_, diags := conv.ClickhouseClusterInstanceAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

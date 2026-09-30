@@ -4,7 +4,11 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localboolplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/boolplanmodifier"
+	localint64planmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/int64planmodifier"
 )
 
 type CryptoKeySpecDestructionPolicy struct {
@@ -38,10 +42,16 @@ func (s *CryptoKeySpecRotationPolicy) GetSchema() schema.Schema {
 			"enabled": schema.BoolAttribute{
 				MarkdownDescription: `Флаг, указывающий, включена ли автоматическая ротация для ключа`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.Bool{
+					localboolplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"rotation_interval_days": schema.Int64Attribute{
 				MarkdownDescription: `Интервал в днях, через который должна выполняться ротация криптографического ключа`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.Int64{
+					localint64planmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}
@@ -60,6 +70,9 @@ func (s *CryptoKeySpecUsagePolicy) GetSchema() schema.Schema {
 Если значение установлено в "false", все операции шифрования, расшифровки и другие
 криптографические операции с этим ключом будут заблокированы`,
 				Optional: true,
+				PlanModifiers: []planmodifier.Bool{
+					localboolplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

@@ -15,23 +15,16 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func TestEgressNatSpecPortAllocationAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.EgressNatSpecPortAllocationOptionalResponse{}
-	_, diags := conv.EgressNatSpecPortAllocationAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestEgressNatSpecPortAllocationOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.EgressNatSpecPortAllocationRequest{
+	apiModelRequest := model.EgressNatSpecPortAllocationRequest{
 		PortsPerClient: unitsrange.MustParseString[largenumber.LargeNumber]("1-3"),
 	}
 
-	emptyApiModelResponse, err := model.EgressNatSpecPortAllocationRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.EgressNatSpecPortAllocationRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.EgressNatSpecPortAllocationAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.EgressNatSpecPortAllocationAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.EgressNatSpecPortAllocationTFToAPIRequestModel(context.Background(), tfModel)
@@ -40,7 +33,7 @@ func TestEgressNatSpecPortAllocationOptionalResponseConverters(t *testing.T) {
 	result, err := model.EgressNatSpecPortAllocationRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateEgressNatSpecPortAllocationRequestConverters(t *testing.T) {

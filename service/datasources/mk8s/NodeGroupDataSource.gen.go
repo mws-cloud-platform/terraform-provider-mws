@@ -40,6 +40,11 @@ func (m *NodeGroupDataSource) Metadata(ctx context.Context, req datasource.Metad
 func (m *NodeGroupDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "NodeGroupDataSource.Schema")
 	resp.Schema = new(tfmodel.NodeGroup).GetSchema()
+	resp.Schema.Attributes["project"] = schema.StringAttribute{
+		MarkdownDescription: `Путь к проекту.`,
+		Optional:            true,
+		Computed:            true,
+	}
 	resp.Schema.Attributes["cluster_name"] = schema.StringAttribute{
 		MarkdownDescription: `Имя кластера`,
 		Required:            true,
@@ -47,11 +52,6 @@ func (m *NodeGroupDataSource) Schema(ctx context.Context, req datasource.SchemaR
 	resp.Schema.Attributes["node_group_name"] = schema.StringAttribute{
 		MarkdownDescription: `Имя группы узлов`,
 		Required:            true,
-	}
-	resp.Schema.Attributes["project"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к проекту.`,
-		Optional:            true,
-		Computed:            true,
 	}
 }
 

@@ -3,6 +3,7 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -24,8 +25,8 @@ func (s *PluginsStatus) GetSchema() schema.Schema {
 }
 
 type PluginsStatusCni struct {
-	Calico types.String `tfsdk:"calico"`
-	Cilium types.String `tfsdk:"cilium"`
+	Calico jsontypes.Normalized `tfsdk:"calico"`
+	Cilium jsontypes.Normalized `tfsdk:"cilium"`
 }
 
 func (s *PluginsStatusCni) GetSchema() schema.Schema {
@@ -33,10 +34,12 @@ func (s *PluginsStatusCni) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля Cni анонимного типа структуры PluginsStatus`,
 		Attributes: map[string]schema.Attribute{
 			"calico": schema.StringAttribute{
+				CustomType:          jsontypes.NormalizedType{},
 				MarkdownDescription: `Настройка CNI-плагина Calico`,
 				Computed:            true,
 			},
 			"cilium": schema.StringAttribute{
+				CustomType:          jsontypes.NormalizedType{},
 				MarkdownDescription: `Настройка CNI-плагина Cilium`,
 				Computed:            true,
 			},

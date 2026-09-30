@@ -8,13 +8,21 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
-func TestFirewallRuleStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestFirewallRuleStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.FirewallRuleStatusResponse{}
-	_, diags := conv.FirewallRuleStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.FirewallRuleStatusResponse{
+		ResourceStatusResponse: commonmodel.ResourceStatusResponse{
+			Ready: commonmodel.ResourceStatusReadyResponse{
+				State: "",
+			},
+		},
+		RegionalStatusResponse: model.RegionalStatusResponse{},
+	}
+	_, diags := conv.FirewallRuleStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

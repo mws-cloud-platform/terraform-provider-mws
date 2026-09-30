@@ -12,9 +12,12 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/gpt/converter"
 )
 
-func TestCapabilitiesAPIResponseToTFModelEmpty(t *testing.T) {
+func TestCapabilitiesAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.CapabilitiesResponse{}
-	_, diags := conv.CapabilitiesAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.CapabilitiesResponse{
+		Reasoning:   false,
+		ToolCalling: false,
+	}
+	_, diags := conv.CapabilitiesAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

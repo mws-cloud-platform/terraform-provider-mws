@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/kms/converter"
 )
 
-func TestCryptoKeyAlgorithmAPIToTFModelEmpty(t *testing.T) {
+func TestCryptoKeyAlgorithmAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.CryptoKeyAlgorithm("")
-	_, diags := conv.CryptoKeyAlgorithmAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.CryptoKeyAlgorithm("")
+	_, diags := conv.CryptoKeyAlgorithmAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestVmTypeNetworkSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestVmTypeNetworkSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.VmTypeNetworkSpecOptionalResponse{}
-	_, diags := conv.VmTypeNetworkSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.VmTypeNetworkSpecOptionalResponse{}
+	_, diags := conv.VmTypeNetworkSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

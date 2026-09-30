@@ -59,7 +59,7 @@ func (s *TopicSuite) SetupSuite() {
 	s.Require().NoError(err)
 	addressRef, err := vpcref.ParseAddressRef(ctx, s.address1ID)
 	s.Require().NoError(err)
-	gen24 := compute.NewMustVmTypeRef("gen-2-4")
+	gen24 := compute.NewMustVmTypeRef("gen-2-8")
 	disk10GB := bytesize.MustParseString("10GB")
 	isActive := true
 	s.kafkaCluster, err = s.kafkaSDK.CreateKafkaCluster(ctx, mkafkaclient.UpsertKafkaClusterRequest{

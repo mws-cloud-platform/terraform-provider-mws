@@ -15,21 +15,14 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func TestAddressSpecOrRefAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.AddressSpecOrRefOptionalResponse{}
-	_, diags := conv.AddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestAddressSpecOrRefOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.AddressSpecOrRefRequest{}
+	apiModelRequest := model.AddressSpecOrRefRequest{}
 
-	emptyApiModelResponse, err := model.AddressSpecOrRefRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.AddressSpecOrRefRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.AddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.AddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.AddressSpecOrRefTFToAPIRequestModel(context.Background(), tfModel)
@@ -38,7 +31,7 @@ func TestAddressSpecOrRefOptionalResponseConverters(t *testing.T) {
 	result, err := model.AddressSpecOrRefRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateAddressSpecOrRefRequestConverters(t *testing.T) {

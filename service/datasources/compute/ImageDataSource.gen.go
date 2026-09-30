@@ -40,14 +40,14 @@ func (m *ImageDataSource) Metadata(ctx context.Context, req datasource.MetadataR
 func (m *ImageDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "ImageDataSource.Schema")
 	resp.Schema = new(tfmodel.Image).GetSchema()
-	resp.Schema.Attributes["image"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к образу`,
-		Required:            true,
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
+	}
+	resp.Schema.Attributes["image"] = schema.StringAttribute{
+		MarkdownDescription: `Путь к образу`,
+		Required:            true,
 	}
 }
 

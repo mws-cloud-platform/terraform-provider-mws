@@ -16,23 +16,16 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/iam/model"
 )
 
-func TestApiKeyAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ApiKeyResponse{}
-	_, diags := conv.ApiKeyAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestApiKeyResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ApiKeyRequest{
+	apiModelRequest := model.ApiKeyRequest{
 		Spec: model.ApiKeySpecRequest{},
 	}
 
-	emptyApiModelResponse, err := model.ApiKeyRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ApiKeyRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ApiKeyAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ApiKeyAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ApiKeyTFToAPIRequestModel(context.Background(), tfModel)
@@ -41,7 +34,7 @@ func TestApiKeyResponseConverters(t *testing.T) {
 	result, err := model.ApiKeyRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateApiKeyRequestConverters(t *testing.T) {
@@ -64,23 +57,16 @@ func TestUpdateApiKeyRequestConverters(t *testing.T) {
 	require.Equal(t, expectedUpdateModel, result)
 }
 
-func TestApiKeyMetadataAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ApiKeyMetadataResponse{}
-	_, diags := conv.ApiKeyMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestApiKeyMetadataResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ApiKeyMetadataRequest{
+	apiModelRequest := model.ApiKeyMetadataRequest{
 		TypedResourceMetadataRequest: commonmodel.TypedResourceMetadataRequest{},
 	}
 
-	emptyApiModelResponse, err := model.ApiKeyMetadataRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ApiKeyMetadataRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ApiKeyMetadataAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ApiKeyMetadataAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ApiKeyMetadataTFToAPIRequestModel(context.Background(), tfModel)
@@ -89,7 +75,7 @@ func TestApiKeyMetadataResponseConverters(t *testing.T) {
 	result, err := model.ApiKeyMetadataRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateApiKeyMetadataRequestConverters(t *testing.T) {

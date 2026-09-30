@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestOneToOneNatExternalAddressStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestOneToOneNatExternalAddressStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.OneToOneNatExternalAddressStatusResponse{}
-	_, diags := conv.OneToOneNatExternalAddressStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.OneToOneNatExternalAddressStatusResponse{}
+	_, diags := conv.OneToOneNatExternalAddressStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

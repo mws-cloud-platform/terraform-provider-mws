@@ -8,8 +8,8 @@ import (
 )
 
 type NetworkModel struct {
-	NetworkParam types.String   `tfsdk:"network"`
 	ProjectParam types.String   `tfsdk:"project"`
+	NetworkParam types.String   `tfsdk:"network"`
 	Timeouts     timeouts.Value `tfsdk:"timeouts"`
 	ID           types.String   `tfsdk:"id"`
 	Network

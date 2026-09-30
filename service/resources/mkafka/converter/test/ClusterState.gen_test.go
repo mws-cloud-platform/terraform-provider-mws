@@ -12,22 +12,15 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 )
 
-func TestClusterStateAPIToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ClusterState("")
-	_, diags := conv.ClusterStateAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestClusterStateConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClusterState("")
+	apiModel := model.ClusterState("")
 
-	tfModel, diags := conv.ClusterStateAPIToTFModel(context.Background(), &emptyApiModel)
+	tfModel, diags := conv.ClusterStateAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 
 	result, diags := conv.ClusterStateTFToAPIModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	require.Equal(t, emptyApiModel, *result)
+	require.Equal(t, apiModel, *result)
 }

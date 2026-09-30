@@ -13,21 +13,14 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
-func TestSecurityPostureSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.SecurityPostureSpecOptionalResponse{}
-	_, diags := conv.SecurityPostureSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestSecurityPostureSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.SecurityPostureSpecRequest{}
+	apiModelRequest := model.SecurityPostureSpecRequest{}
 
-	emptyApiModelResponse, err := model.SecurityPostureSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.SecurityPostureSpecRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.SecurityPostureSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.SecurityPostureSpecAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.SecurityPostureSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -36,7 +29,7 @@ func TestSecurityPostureSpecOptionalResponseConverters(t *testing.T) {
 	result, err := model.SecurityPostureSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateSecurityPostureSpecRequestConverters(t *testing.T) {

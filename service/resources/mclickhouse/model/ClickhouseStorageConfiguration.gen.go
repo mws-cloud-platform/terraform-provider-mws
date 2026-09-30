@@ -4,7 +4,12 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localboolplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/boolplanmodifier"
+	localfloat64planmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/float64planmodifier"
+	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 )
 
 type ClickhouseStorageConfiguration struct {
@@ -23,14 +28,23 @@ func (s *ClickhouseStorageConfiguration) GetSchema() schema.Schema {
 			"hybrid_storage_enabled": schema.BoolAttribute{
 				MarkdownDescription: `Включить гибридное хранилище (hot SSD + cold S3)`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.Bool{
+					localboolplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"move_factor": schema.Float64Attribute{
 				MarkdownDescription: `Соотношение свободного дискового пространства на SSD дисках кластера (от 0.01 до 1) Когда это соотношение превышает значение параметра конфигурации, ClickHouse начинает перемещать данные в следующий том по порядку`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.Float64{
+					localfloat64planmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"data_caching_enabled": schema.BoolAttribute{
 				MarkdownDescription: `Включить кеширование данных с объектного хранилища на сетевых SSD дисках`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.Bool{
+					localboolplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"cache_max_size": schema.StringAttribute{
 				MarkdownDescription: `Максимальный размер кеша объектного хранилища, расположенный на SSD
@@ -41,6 +55,9 @@ func (s *ClickhouseStorageConfiguration) GetSchema() schema.Schema {
 Значение базовой единицы измерения (в байтах) должно оставаться целым.
 Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются`,
 				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"max_data_part_size_ssd": schema.StringAttribute{
 				MarkdownDescription: `Максимальный размер части данных в байтах, который может храниться на дисках тома (SSD)
@@ -51,6 +68,9 @@ func (s *ClickhouseStorageConfiguration) GetSchema() schema.Schema {
 Значение базовой единицы измерения (в байтах) должно оставаться целым.
 Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются`,
 				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

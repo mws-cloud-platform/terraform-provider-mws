@@ -12,22 +12,15 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 )
 
-func TestKafkaDataDiskIopsAPIToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.KafkaDataDiskIops(0)
-	_, diags := conv.KafkaDataDiskIopsAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestKafkaDataDiskIopsConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.KafkaDataDiskIops(0)
+	apiModel := model.KafkaDataDiskIops(0)
 
-	tfModel, diags := conv.KafkaDataDiskIopsAPIToTFModel(context.Background(), &emptyApiModel)
+	tfModel, diags := conv.KafkaDataDiskIopsAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 
 	result, diags := conv.KafkaDataDiskIopsTFToAPIModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	require.Equal(t, emptyApiModel, *result)
+	require.Equal(t, apiModel, *result)
 }

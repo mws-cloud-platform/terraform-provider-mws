@@ -7,7 +7,7 @@ import (
 )
 
 type CryptoKeyModel struct {
-	KeyParam     types.String `tfsdk:"key"`
 	ProjectParam types.String `tfsdk:"project"`
+	KeyParam     types.String `tfsdk:"key"`
 	CryptoKey
 }

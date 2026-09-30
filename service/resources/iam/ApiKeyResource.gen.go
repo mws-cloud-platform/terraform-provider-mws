@@ -50,13 +50,6 @@ func (m *ApiKeyResource) Metadata(ctx context.Context, req resource.MetadataRequ
 func (m *ApiKeyResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	tflog.Info(ctx, "ApiKeyResource.Schema")
 	resp.Schema = new(tfmodel.ApiKey).GetSchema()
-	resp.Schema.Attributes["api_key"] = schema.StringAttribute{
-		MarkdownDescription: `Идентификатор API-ключа`,
-		Required:            true,
-		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.RequiresReplaceIfConfigured(),
-		},
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
@@ -68,6 +61,13 @@ func (m *ApiKeyResource) Schema(ctx context.Context, req resource.SchemaRequest,
 	}
 	resp.Schema.Attributes["service_account"] = schema.StringAttribute{
 		MarkdownDescription: `Идентификатор сервисного аккаунта.`,
+		Required:            true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
+	}
+	resp.Schema.Attributes["api_key"] = schema.StringAttribute{
+		MarkdownDescription: `Идентификатор API-ключа`,
 		Required:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.RequiresReplaceIfConfigured(),
@@ -150,9 +150,9 @@ func (m *ApiKeyResource) Create(ctx context.Context, req resource.CreateRequest,
 	apiRes, err := m.sdk.CreateApiKey(
 		ctx,
 		client.UpsertApiKeyRequest{
+			Project:        plan.ProjectParam.ValueString(),
 			ServiceAccount: plan.ServiceAccountParam.ValueString(),
 			ApiKey:         plan.ApiKeyParam.ValueString(),
-			Project:        plan.ProjectParam.ValueString(),
 			Body:           *body,
 		},
 	)
@@ -182,9 +182,9 @@ func (m *ApiKeyResource) Create(ctx context.Context, req resource.CreateRequest,
 	apiRes, err = m.sdk.GetApiKey(
 		ctx,
 		client.GetApiKeyRequest{
+			Project:        plan.ProjectParam.ValueString(),
 			ServiceAccount: plan.ServiceAccountParam.ValueString(),
 			ApiKey:         plan.ApiKeyParam.ValueString(),
-			Project:        plan.ProjectParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -236,9 +236,9 @@ func (m *ApiKeyResource) Read(ctx context.Context, req resource.ReadRequest, res
 	apiRes, err := m.sdk.GetApiKey(
 		ctx,
 		client.GetApiKeyRequest{
+			Project:        state.ProjectParam.ValueString(),
 			ServiceAccount: state.ServiceAccountParam.ValueString(),
 			ApiKey:         state.ApiKeyParam.ValueString(),
-			Project:        state.ProjectParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -310,9 +310,9 @@ func (m *ApiKeyResource) Update(ctx context.Context, req resource.UpdateRequest,
 	apiRes, err := m.sdk.UpdateApiKey(
 		ctx,
 		client.UpdateApiKeyRequest{
+			Project:        plan.ProjectParam.ValueString(),
 			ServiceAccount: plan.ServiceAccountParam.ValueString(),
 			ApiKey:         plan.ApiKeyParam.ValueString(),
-			Project:        plan.ProjectParam.ValueString(),
 			Body:           *body,
 		},
 	)
@@ -340,9 +340,9 @@ func (m *ApiKeyResource) Update(ctx context.Context, req resource.UpdateRequest,
 	apiRes, err = m.sdk.GetApiKey(
 		ctx,
 		client.GetApiKeyRequest{
+			Project:        plan.ProjectParam.ValueString(),
 			ServiceAccount: plan.ServiceAccountParam.ValueString(),
 			ApiKey:         plan.ApiKeyParam.ValueString(),
-			Project:        plan.ProjectParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -400,9 +400,9 @@ func (m *ApiKeyResource) Delete(ctx context.Context, req resource.DeleteRequest,
 	err := m.sdk.DeleteApiKey(
 		ctx,
 		client.DeleteApiKeyRequest{
+			Project:        state.ProjectParam.ValueString(),
 			ServiceAccount: state.ServiceAccountParam.ValueString(),
 			ApiKey:         state.ApiKeyParam.ValueString(),
-			Project:        state.ProjectParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)

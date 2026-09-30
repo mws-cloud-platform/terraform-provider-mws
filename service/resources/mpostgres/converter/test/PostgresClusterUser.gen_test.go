@@ -17,23 +17,16 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func TestPostgresClusterUserAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.PostgresClusterUserResponse{}
-	_, diags := conv.PostgresClusterUserAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestPostgresClusterUserResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.PostgresClusterUserRequest{
+	apiModelRequest := model.PostgresClusterUserRequest{
 		Spec: model.PostgresClusterUserSpecRequest{},
 	}
 
-	emptyApiModelResponse, err := model.PostgresClusterUserRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.PostgresClusterUserRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.PostgresClusterUserAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.PostgresClusterUserAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.PostgresClusterUserTFToAPIRequestModel(context.Background(), tfModel)
@@ -42,7 +35,7 @@ func TestPostgresClusterUserResponseConverters(t *testing.T) {
 	result, err := model.PostgresClusterUserRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdatePostgresClusterUserRequestConverters(t *testing.T) {
@@ -72,23 +65,16 @@ func TestUpdatePostgresClusterUserRequestConverters(t *testing.T) {
 	require.Equal(t, expectedUpdateModel, result)
 }
 
-func TestPostgresClusterUserMetadataAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.PostgresClusterUserMetadataResponse{}
-	_, diags := conv.PostgresClusterUserMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestPostgresClusterUserMetadataResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.PostgresClusterUserMetadataRequest{
+	apiModelRequest := model.PostgresClusterUserMetadataRequest{
 		TypedResourceMetadataRequest: commonmodel.TypedResourceMetadataRequest{},
 	}
 
-	emptyApiModelResponse, err := model.PostgresClusterUserMetadataRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.PostgresClusterUserMetadataRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.PostgresClusterUserMetadataAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.PostgresClusterUserMetadataAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.PostgresClusterUserMetadataTFToAPIRequestModel(context.Background(), tfModel)
@@ -97,7 +83,7 @@ func TestPostgresClusterUserMetadataResponseConverters(t *testing.T) {
 	result, err := model.PostgresClusterUserMetadataRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdatePostgresClusterUserMetadataRequestConverters(t *testing.T) {

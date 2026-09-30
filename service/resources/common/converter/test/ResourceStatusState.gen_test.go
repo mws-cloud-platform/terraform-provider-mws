@@ -12,22 +12,15 @@ import (
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 )
 
-func TestResourceStatusStateAPIToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonmodel.ResourceStatusState("")
-	_, diags := commonconv.ResourceStatusStateAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestResourceStatusStateConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.ResourceStatusState("")
+	apiModel := commonmodel.ResourceStatusState("")
 
-	tfModel, diags := commonconv.ResourceStatusStateAPIToTFModel(context.Background(), &emptyApiModel)
+	tfModel, diags := commonconv.ResourceStatusStateAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 
 	result, diags := commonconv.ResourceStatusStateTFToAPIModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	require.Equal(t, emptyApiModel, *result)
+	require.Equal(t, apiModel, *result)
 }

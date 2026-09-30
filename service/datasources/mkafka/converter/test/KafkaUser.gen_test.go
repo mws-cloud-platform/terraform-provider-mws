@@ -8,20 +8,27 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/mkafka/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/converter"
 )
 
-func TestKafkaUserAPIResponseToTFModelEmpty(t *testing.T) {
+func TestKafkaUserAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.KafkaUserResponse{}
-	_, diags := conv.KafkaUserAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.KafkaUserResponse{
+		Spec: model.KafkaUserSpecResponse{
+			Roles: []model.KafkaClusterRoleResponse{},
+		},
+	}
+	_, diags := conv.KafkaUserAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestKafkaUserMetadataAPIResponseToTFModelEmpty(t *testing.T) {
+func TestKafkaUserMetadataAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.KafkaUserMetadataResponse{}
-	_, diags := conv.KafkaUserMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.KafkaUserMetadataResponse{
+		TypedResourceMetadataResponse: commonmodel.TypedResourceMetadataResponse{},
+	}
+	_, diags := conv.KafkaUserMetadataAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

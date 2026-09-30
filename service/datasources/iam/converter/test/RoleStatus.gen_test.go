@@ -8,13 +8,23 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/iam/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/iam/converter"
 )
 
-func TestRoleStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestRoleStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.RoleStatusResponse{}
-	_, diags := conv.RoleStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.RoleStatusResponse{
+		ResourceStatusResponse: commonmodel.ResourceStatusResponse{
+			Ready: commonmodel.ResourceStatusReadyResponse{
+				State: "",
+			},
+		},
+		Stage: model.RoleStageResponse{
+			Code: "",
+		},
+	}
+	_, diags := conv.RoleStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

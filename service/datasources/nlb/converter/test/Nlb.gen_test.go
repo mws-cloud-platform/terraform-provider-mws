@@ -12,9 +12,14 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/nlb/converter"
 )
 
-func TestNlbAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestNlbAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NlbOptionalResponse{}
-	_, diags := conv.NlbAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NlbOptionalResponse{
+		Spec: model.NlbSpecOptionalResponse{
+			Listener: model.NlbListenerOptionalResponse{},
+			Rules:    []model.NlbRuleOptionalResponse{},
+		},
+	}
+	_, diags := conv.NlbAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

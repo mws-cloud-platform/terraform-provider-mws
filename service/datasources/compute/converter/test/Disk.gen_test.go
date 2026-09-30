@@ -12,9 +12,13 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestDiskAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestDiskAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.DiskOptionalResponse{}
-	_, diags := conv.DiskAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.DiskOptionalResponse{
+		Spec: model.DiskSpecOptionalResponse{
+			Zone: "zone",
+		},
+	}
+	_, diags := conv.DiskAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

@@ -8,20 +8,23 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
-func TestRouteNextHopAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestRouteNextHopAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.RouteNextHopOptionalResponse{}
-	_, diags := conv.RouteNextHopAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.RouteNextHopOptionalResponse{}
+	_, diags := conv.RouteNextHopAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestRouteNextHopAddressAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestRouteNextHopAddressAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.RouteNextHopAddressOptionalResponse{}
-	_, diags := conv.RouteNextHopAddressAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.RouteNextHopAddressOptionalResponse{
+		Ref: vpc.NewMustAddressRef("projectID", "networkID", "addressID"),
+	}
+	_, diags := conv.RouteNextHopAddressAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

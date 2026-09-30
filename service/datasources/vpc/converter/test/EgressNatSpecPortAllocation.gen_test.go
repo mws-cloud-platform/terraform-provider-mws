@@ -7,14 +7,18 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/units/largenumber"
+	unitsrange "go.mws.cloud/go-sdk/pkg/apimodels/units/range"
 
 	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
-func TestEgressNatSpecPortAllocationAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestEgressNatSpecPortAllocationAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.EgressNatSpecPortAllocationOptionalResponse{}
-	_, diags := conv.EgressNatSpecPortAllocationAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.EgressNatSpecPortAllocationOptionalResponse{
+		PortsPerClient: unitsrange.MustParseString[largenumber.LargeNumber]("1-3"),
+	}
+	_, diags := conv.EgressNatSpecPortAllocationAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

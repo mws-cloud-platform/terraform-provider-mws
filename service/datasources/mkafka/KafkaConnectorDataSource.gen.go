@@ -40,6 +40,11 @@ func (m *KafkaConnectorDataSource) Metadata(ctx context.Context, req datasource.
 func (m *KafkaConnectorDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "KafkaConnectorDataSource.Schema")
 	resp.Schema = new(tfmodel.KafkaConnector).GetSchema()
+	resp.Schema.Attributes["project"] = schema.StringAttribute{
+		MarkdownDescription: `Путь к проекту.`,
+		Optional:            true,
+		Computed:            true,
+	}
 	resp.Schema.Attributes["cluster"] = schema.StringAttribute{
 		MarkdownDescription: `Название или идентификатор кластера.`,
 		Required:            true,
@@ -47,11 +52,6 @@ func (m *KafkaConnectorDataSource) Schema(ctx context.Context, req datasource.Sc
 	resp.Schema.Attributes["connector"] = schema.StringAttribute{
 		MarkdownDescription: `Имя коннектора.`,
 		Required:            true,
-	}
-	resp.Schema.Attributes["project"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к проекту.`,
-		Optional:            true,
-		Computed:            true,
 	}
 }
 

@@ -12,23 +12,41 @@ import (
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
-func TestCommonRoleBindingStatusAPIToTFModelEmpty(t *testing.T) {
+func TestCommonRoleBindingStatusAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.CommonRoleBindingStatus{}
-	_, diags := commonconv.CommonRoleBindingStatusAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.CommonRoleBindingStatus{
+		ResourceStatus: commonmodel.ResourceStatus{
+			Ready: commonmodel.ResourceStatusReady{
+				State: "",
+			},
+		},
+	}
+	_, diags := commonconv.CommonRoleBindingStatusAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestCommonRoleBindingStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestCommonRoleBindingStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.CommonRoleBindingStatusResponse{}
-	_, diags := commonconv.CommonRoleBindingStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.CommonRoleBindingStatusResponse{
+		ResourceStatusResponse: commonmodel.ResourceStatusResponse{
+			Ready: commonmodel.ResourceStatusReadyResponse{
+				State: "",
+			},
+		},
+	}
+	_, diags := commonconv.CommonRoleBindingStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestCommonRoleBindingStatusAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestCommonRoleBindingStatusAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.CommonRoleBindingStatusOptionalResponse{}
-	_, diags := commonconv.CommonRoleBindingStatusAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.CommonRoleBindingStatusOptionalResponse{
+		ResourceStatusOptionalResponse: commonmodel.ResourceStatusOptionalResponse{
+			Ready: commonmodel.ResourceStatusReadyOptionalResponse{
+				State: "",
+			},
+		},
+	}
+	_, diags := commonconv.CommonRoleBindingStatusAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

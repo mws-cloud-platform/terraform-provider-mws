@@ -49,19 +49,19 @@ func (m *CryptoKeyRoleBindingResource) Metadata(ctx context.Context, req resourc
 func (m *CryptoKeyRoleBindingResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	tflog.Info(ctx, "CryptoKeyRoleBindingResource.Schema")
 	resp.Schema = new(tfmodel.CryptoKeyRoleBinding).GetSchema()
-	resp.Schema.Attributes["key"] = schema.StringAttribute{
-		MarkdownDescription: `Название крипто-ключа`,
-		Required:            true,
-		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.RequiresReplaceIfConfigured(),
-		},
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
+	}
+	resp.Schema.Attributes["key"] = schema.StringAttribute{
+		MarkdownDescription: `Название крипто-ключа`,
+		Required:            true,
+		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}

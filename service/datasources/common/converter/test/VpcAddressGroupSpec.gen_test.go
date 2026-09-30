@@ -12,23 +12,29 @@ import (
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
-func TestVpcAddressGroupSpecAPIToTFModelEmpty(t *testing.T) {
+func TestVpcAddressGroupSpecAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.VpcAddressGroupSpec{}
-	_, diags := commonconv.VpcAddressGroupSpecAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.VpcAddressGroupSpec{
+		Addresses: []commonmodel.ResourceAddressSpecOrRef{},
+	}
+	_, diags := commonconv.VpcAddressGroupSpecAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestVpcAddressGroupSpecAPIResponseToTFModelEmpty(t *testing.T) {
+func TestVpcAddressGroupSpecAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.VpcAddressGroupSpecResponse{}
-	_, diags := commonconv.VpcAddressGroupSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.VpcAddressGroupSpecResponse{
+		Addresses: []commonmodel.ResourceAddressSpecOrRefResponse{},
+	}
+	_, diags := commonconv.VpcAddressGroupSpecAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestVpcAddressGroupSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestVpcAddressGroupSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.VpcAddressGroupSpecOptionalResponse{}
-	_, diags := commonconv.VpcAddressGroupSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.VpcAddressGroupSpecOptionalResponse{
+		Addresses: []commonmodel.ResourceAddressSpecOrRefOptionalResponse{},
+	}
+	_, diags := commonconv.VpcAddressGroupSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

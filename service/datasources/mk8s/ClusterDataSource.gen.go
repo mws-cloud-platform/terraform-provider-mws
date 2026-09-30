@@ -40,14 +40,14 @@ func (m *ClusterDataSource) Metadata(ctx context.Context, req datasource.Metadat
 func (m *ClusterDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "ClusterDataSource.Schema")
 	resp.Schema = new(tfmodel.Cluster).GetSchema()
-	resp.Schema.Attributes["cluster_name"] = schema.StringAttribute{
-		MarkdownDescription: `Имя кластера`,
-		Required:            true,
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
+	}
+	resp.Schema.Attributes["cluster_name"] = schema.StringAttribute{
+		MarkdownDescription: `Имя кластера`,
+		Required:            true,
 	}
 }
 

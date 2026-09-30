@@ -14,25 +14,18 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func TestPostgresEndpointAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.PostgresEndpointResponse{}
-	_, diags := conv.PostgresEndpointAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestPostgresEndpointResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.PostgresEndpointRequest{
+	apiModelRequest := model.PostgresEndpointRequest{
 		Name:             "name",
 		Network:          vpc.NewMustNetworkRef("projectID", "networkID"),
 		PrimaryAddresses: []model.PostgresNetworkAddressRequest{},
 	}
 
-	emptyApiModelResponse, err := model.PostgresEndpointRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.PostgresEndpointRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.PostgresEndpointAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.PostgresEndpointAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.PostgresEndpointTFToAPIRequestModel(context.Background(), tfModel)
@@ -41,7 +34,7 @@ func TestPostgresEndpointResponseConverters(t *testing.T) {
 	result, err := model.PostgresEndpointRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdatePostgresEndpointRequestConverters(t *testing.T) {

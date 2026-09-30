@@ -7,8 +7,8 @@ import (
 )
 
 type SubnetModel struct {
-	NetworkParam types.String `tfsdk:"network"`
 	ProjectParam types.String `tfsdk:"project"`
+	NetworkParam types.String `tfsdk:"network"`
 	SubnetParam  types.String `tfsdk:"subnet"`
 	Subnet
 }

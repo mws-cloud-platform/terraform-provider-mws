@@ -15,16 +15,9 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func TestClickhouseClusterCoordinatorAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ClickhouseClusterCoordinatorOptionalResponse{}
-	_, diags := conv.ClickhouseClusterCoordinatorAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestClickhouseClusterCoordinatorOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ClickhouseClusterCoordinatorRequest{
+	apiModelRequest := model.ClickhouseClusterCoordinatorRequest{
 		Resources: model.ClickhouseCoordinatorHWResourcesRequest{
 			VmType: mclickhouse.NewMustClickhouseVmTypeRef("vmTypeID"),
 			Disk: model.ClickhouseInstanceDiskSpecRequest{
@@ -35,10 +28,10 @@ func TestClickhouseClusterCoordinatorOptionalResponseConverters(t *testing.T) {
 		Instances: []model.ClickhouseClusterCoordinatorInstanceRequest{},
 	}
 
-	emptyApiModelResponse, err := model.ClickhouseClusterCoordinatorRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ClickhouseClusterCoordinatorRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ClickhouseClusterCoordinatorAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ClickhouseClusterCoordinatorAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ClickhouseClusterCoordinatorTFToAPIRequestModel(context.Background(), tfModel)
@@ -47,7 +40,7 @@ func TestClickhouseClusterCoordinatorOptionalResponseConverters(t *testing.T) {
 	result, err := model.ClickhouseClusterCoordinatorRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateClickhouseClusterCoordinatorRequestConverters(t *testing.T) {

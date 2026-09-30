@@ -14,23 +14,16 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func TestPostgresNetworkAddressSpecAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.PostgresNetworkAddressSpecResponse{}
-	_, diags := conv.PostgresNetworkAddressSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestPostgresNetworkAddressSpecResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.PostgresNetworkAddressSpecRequest{
+	apiModelRequest := model.PostgresNetworkAddressSpecRequest{
 		Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
 	}
 
-	emptyApiModelResponse, err := model.PostgresNetworkAddressSpecRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.PostgresNetworkAddressSpecRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.PostgresNetworkAddressSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.PostgresNetworkAddressSpecAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.PostgresNetworkAddressSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -39,7 +32,7 @@ func TestPostgresNetworkAddressSpecResponseConverters(t *testing.T) {
 	result, err := model.PostgresNetworkAddressSpecRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdatePostgresNetworkAddressSpecRequestConverters(t *testing.T) {

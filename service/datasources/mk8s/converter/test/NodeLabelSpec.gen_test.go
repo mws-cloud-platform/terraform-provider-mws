@@ -12,16 +12,22 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/converter"
 )
 
-func TestNodeLabelSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestNodeLabelSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NodeLabelSpecOptionalResponse{}
-	_, diags := conv.NodeLabelSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NodeLabelSpecOptionalResponse{
+		Key:   "key",
+		Value: "value",
+	}
+	_, diags := conv.NodeLabelSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestNodeLabelSpecAPIResponseToTFModelEmpty(t *testing.T) {
+func TestNodeLabelSpecAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NodeLabelSpecResponse{}
-	_, diags := conv.NodeLabelSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NodeLabelSpecResponse{
+		Key:   "key",
+		Value: "value",
+	}
+	_, diags := conv.NodeLabelSpecAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

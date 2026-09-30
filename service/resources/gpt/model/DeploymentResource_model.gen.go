@@ -8,8 +8,8 @@ import (
 )
 
 type DeploymentModel struct {
-	DeploymentNameParam types.String   `tfsdk:"deployment_name"`
 	ProjectParam        types.String   `tfsdk:"project"`
+	DeploymentNameParam types.String   `tfsdk:"deployment_name"`
 	Timeouts            timeouts.Value `tfsdk:"timeouts"`
 	ID                  types.String   `tfsdk:"id"`
 	Deployment

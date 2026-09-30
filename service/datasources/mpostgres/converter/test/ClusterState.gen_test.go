@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
 )
 
-func TestClusterStateAPIToTFModelEmpty(t *testing.T) {
+func TestClusterStateAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClusterState("")
-	_, diags := conv.ClusterStateAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClusterState("")
+	_, diags := conv.ClusterStateAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

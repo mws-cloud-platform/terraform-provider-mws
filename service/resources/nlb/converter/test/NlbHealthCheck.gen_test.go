@@ -14,24 +14,17 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/nlb/model"
 )
 
-func TestNlbHealthCheckAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.NlbHealthCheckOptionalResponse{}
-	_, diags := conv.NlbHealthCheckAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestNlbHealthCheckOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.NlbHealthCheckRequest{
+	apiModelRequest := model.NlbHealthCheckRequest{
 		Protocol: model.NlbHealthCheckProtocolRequest{},
 		Timeout:  duration.MustParseString("PT0S"),
 	}
 
-	emptyApiModelResponse, err := model.NlbHealthCheckRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.NlbHealthCheckRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.NlbHealthCheckAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.NlbHealthCheckAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.NlbHealthCheckTFToAPIRequestModel(context.Background(), tfModel)
@@ -40,7 +33,7 @@ func TestNlbHealthCheckOptionalResponseConverters(t *testing.T) {
 	result, err := model.NlbHealthCheckRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateNlbHealthCheckRequestConverters(t *testing.T) {

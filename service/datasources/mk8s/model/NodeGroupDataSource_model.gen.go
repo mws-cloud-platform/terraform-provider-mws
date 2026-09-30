@@ -7,8 +7,8 @@ import (
 )
 
 type NodeGroupModel struct {
+	ProjectParam       types.String `tfsdk:"project"`
 	ClusterNameParam   types.String `tfsdk:"cluster_name"`
 	NodeGroupNameParam types.String `tfsdk:"node_group_name"`
-	ProjectParam       types.String `tfsdk:"project"`
 	NodeGroup
 }

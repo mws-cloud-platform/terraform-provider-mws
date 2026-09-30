@@ -7,21 +7,40 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/converter"
 )
 
-func TestKafkaClusterAPIResponseToTFModelEmpty(t *testing.T) {
+func TestKafkaClusterAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.KafkaClusterResponse{}
-	_, diags := conv.KafkaClusterAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.KafkaClusterResponse{
+		Spec: model.KafkaClusterSpecResponse{
+			Version:   "version",
+			Endpoints: []model.KafkaEndpointResponse{},
+			Instances: model.KafkaInstanceResponse{
+				Broker: model.KafkaInstanceSpecResponse{
+					VmType: compute.NewMustVmTypeRef("vmTypeID"),
+					Disk: model.KafkaDataDiskSpecResponse{
+						Size: bytesize.MustParseString("0 B"),
+					},
+				},
+				Controller: model.KafkaControllerInstanceSpecResponse{},
+			},
+		},
+	}
+	_, diags := conv.KafkaClusterAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestKafkaClusterMetadataAPIResponseToTFModelEmpty(t *testing.T) {
+func TestKafkaClusterMetadataAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.KafkaClusterMetadataResponse{}
-	_, diags := conv.KafkaClusterMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.KafkaClusterMetadataResponse{
+		TypedResourceMetadataResponse: commonmodel.TypedResourceMetadataResponse{},
+	}
+	_, diags := conv.KafkaClusterMetadataAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

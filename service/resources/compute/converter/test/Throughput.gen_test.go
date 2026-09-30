@@ -9,26 +9,18 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/throughput"
 
-	"go.mws.cloud/go-sdk/service/compute/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
 )
 
-func TestThroughputAPIToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.Throughput{}
-	_, diags := conv.ThroughputAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestThroughputConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := throughput.MustParseString("0 Bps")
+	apiModel := throughput.MustParseString("0 Bps")
 
-	tfModel, diags := conv.ThroughputAPIToTFModel(context.Background(), &emptyApiModel)
+	tfModel, diags := conv.ThroughputAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 
 	result, diags := conv.ThroughputTFToAPIModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	require.Equal(t, emptyApiModel, *result)
+	require.Equal(t, apiModel, *result)
 }

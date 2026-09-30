@@ -40,6 +40,11 @@ func (m *NlbDataSource) Metadata(ctx context.Context, req datasource.MetadataReq
 func (m *NlbDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "NlbDataSource.Schema")
 	resp.Schema = new(tfmodel.Nlb).GetSchema()
+	resp.Schema.Attributes["project"] = schema.StringAttribute{
+		MarkdownDescription: `Путь к проекту.`,
+		Optional:            true,
+		Computed:            true,
+	}
 	resp.Schema.Attributes["network"] = schema.StringAttribute{
 		MarkdownDescription: `Имя сети`,
 		Required:            true,
@@ -47,11 +52,6 @@ func (m *NlbDataSource) Schema(ctx context.Context, req datasource.SchemaRequest
 	resp.Schema.Attributes["nlb"] = schema.StringAttribute{
 		MarkdownDescription: `Имя сетевого балансировщика нагрузки`,
 		Required:            true,
-	}
-	resp.Schema.Attributes["project"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к проекту.`,
-		Optional:            true,
-		Computed:            true,
 	}
 }
 

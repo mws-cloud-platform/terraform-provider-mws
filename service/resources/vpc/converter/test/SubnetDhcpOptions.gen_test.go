@@ -17,21 +17,14 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func TestSubnetDhcpOptionsAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.SubnetDhcpOptionsOptionalResponse{}
-	_, diags := conv.SubnetDhcpOptionsAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestSubnetDhcpOptionsOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.SubnetDhcpOptionsRequest{}
+	apiModelRequest := model.SubnetDhcpOptionsRequest{}
 
-	emptyApiModelResponse, err := model.SubnetDhcpOptionsRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.SubnetDhcpOptionsRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.SubnetDhcpOptionsAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.SubnetDhcpOptionsAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.SubnetDhcpOptionsTFToAPIRequestModel(context.Background(), tfModel)
@@ -40,24 +33,17 @@ func TestSubnetDhcpOptionsOptionalResponseConverters(t *testing.T) {
 	result, err := model.SubnetDhcpOptionsRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
-func TestSubnetDhcpOptionsAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.SubnetDhcpOptionsResponse{}
-	_, diags := conv.SubnetDhcpOptionsAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestSubnetDhcpOptionsResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.SubnetDhcpOptionsRequest{}
+	apiModelRequest := model.SubnetDhcpOptionsRequest{}
 
-	emptyApiModelResponse, err := model.SubnetDhcpOptionsRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.SubnetDhcpOptionsRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.SubnetDhcpOptionsAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.SubnetDhcpOptionsAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.SubnetDhcpOptionsTFToAPIRequestModel(context.Background(), tfModel)
@@ -66,7 +52,7 @@ func TestSubnetDhcpOptionsResponseConverters(t *testing.T) {
 	result, err := model.SubnetDhcpOptionsRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateSubnetDhcpOptionsRequestConverters(t *testing.T) {

@@ -12,22 +12,15 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/converter"
 )
 
-func TestCertificateChallengeStatusAPIToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.CertificateChallengeStatus("")
-	_, diags := conv.CertificateChallengeStatusAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestCertificateChallengeStatusConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.CertificateChallengeStatus("")
+	apiModel := model.CertificateChallengeStatus("")
 
-	tfModel, diags := conv.CertificateChallengeStatusAPIToTFModel(context.Background(), &emptyApiModel)
+	tfModel, diags := conv.CertificateChallengeStatusAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 
 	result, diags := conv.CertificateChallengeStatusTFToAPIModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	require.Equal(t, emptyApiModel, *result)
+	require.Equal(t, apiModel, *result)
 }

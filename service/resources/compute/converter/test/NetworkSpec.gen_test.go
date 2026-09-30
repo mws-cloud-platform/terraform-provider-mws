@@ -13,23 +13,16 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func TestNetworkSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.NetworkSpecOptionalResponse{}
-	_, diags := conv.NetworkSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestNetworkSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.NetworkSpecRequest{
+	apiModelRequest := model.NetworkSpecRequest{
 		NetworkInterfaces: []model.NetworkInterfaceSpecRequest{},
 	}
 
-	emptyApiModelResponse, err := model.NetworkSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.NetworkSpecRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.NetworkSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.NetworkSpecAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.NetworkSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -38,7 +31,7 @@ func TestNetworkSpecOptionalResponseConverters(t *testing.T) {
 	result, err := model.NetworkSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateNetworkSpecRequestConverters(t *testing.T) {

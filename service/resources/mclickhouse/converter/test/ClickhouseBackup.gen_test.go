@@ -16,21 +16,14 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func TestClickhouseBackupAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ClickhouseBackupOptionalResponse{}
-	_, diags := conv.ClickhouseBackupAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestClickhouseBackupOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ClickhouseBackupRequest{}
+	apiModelRequest := model.ClickhouseBackupRequest{}
 
-	emptyApiModelResponse, err := model.ClickhouseBackupRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ClickhouseBackupRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ClickhouseBackupAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ClickhouseBackupAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ClickhouseBackupTFToAPIRequestModel(context.Background(), tfModel)
@@ -39,7 +32,7 @@ func TestClickhouseBackupOptionalResponseConverters(t *testing.T) {
 	result, err := model.ClickhouseBackupRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateClickhouseBackupRequestConverters(t *testing.T) {
@@ -62,23 +55,16 @@ func TestUpdateClickhouseBackupRequestConverters(t *testing.T) {
 	require.Equal(t, expectedUpdateModel, result)
 }
 
-func TestClickhouseBackupMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ClickhouseBackupMetadataOptionalResponse{}
-	_, diags := conv.ClickhouseBackupMetadataAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestClickhouseBackupMetadataOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ClickhouseBackupMetadataRequest{
+	apiModelRequest := model.ClickhouseBackupMetadataRequest{
 		TypedResourceMetadataRequest: commonmodel.TypedResourceMetadataRequest{},
 	}
 
-	emptyApiModelResponse, err := model.ClickhouseBackupMetadataRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ClickhouseBackupMetadataRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ClickhouseBackupMetadataAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ClickhouseBackupMetadataAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ClickhouseBackupMetadataTFToAPIRequestModel(context.Background(), tfModel)
@@ -87,7 +73,7 @@ func TestClickhouseBackupMetadataOptionalResponseConverters(t *testing.T) {
 	result, err := model.ClickhouseBackupMetadataRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateClickhouseBackupMetadataRequestConverters(t *testing.T) {

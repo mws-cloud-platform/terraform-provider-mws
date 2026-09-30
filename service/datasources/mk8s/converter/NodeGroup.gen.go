@@ -135,6 +135,12 @@ func NodeGroupAPIOptionalResponseToTFModel(ctx context.Context, am *model.NodeGr
 		})
 	}
 
+	if val, ok := am.Spec.DataCache.Get(); ok {
+		t.DataCache = types.BoolValue(val)
+	} else {
+		t.DataCache = types.BoolNull()
+	}
+
 	scaleTmp, d := NodeGroupSpecScaleAPIOptionalResponseToTFModel(ctx, &am.Spec.Scale)
 	diags = append(diags, d...)
 	if diags.HasError() {

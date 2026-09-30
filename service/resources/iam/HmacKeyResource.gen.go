@@ -50,12 +50,6 @@ func (m *HmacKeyResource) Metadata(ctx context.Context, req resource.MetadataReq
 func (m *HmacKeyResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	tflog.Info(ctx, "HmacKeyResource.Schema")
 	resp.Schema = new(tfmodel.HmacKey).GetSchema()
-	resp.Schema.Attributes["key_name"] = schema.StringAttribute{
-		Required: true,
-		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.RequiresReplaceIfConfigured(),
-		},
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
@@ -66,6 +60,12 @@ func (m *HmacKeyResource) Schema(ctx context.Context, req resource.SchemaRequest
 		},
 	}
 	resp.Schema.Attributes["service_account"] = schema.StringAttribute{
+		Required: true,
+		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
+	}
+	resp.Schema.Attributes["key_name"] = schema.StringAttribute{
 		Required: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.RequiresReplaceIfConfigured(),
@@ -148,9 +148,9 @@ func (m *HmacKeyResource) Create(ctx context.Context, req resource.CreateRequest
 	apiRes, err := m.sdk.CreateHmacKey(
 		ctx,
 		client.UpsertHmacKeyRequest{
+			Project:        plan.ProjectParam.ValueString(),
 			ServiceAccount: plan.ServiceAccountParam.ValueString(),
 			KeyName:        plan.KeyNameParam.ValueString(),
-			Project:        plan.ProjectParam.ValueString(),
 			Body:           *body,
 		},
 	)
@@ -180,9 +180,9 @@ func (m *HmacKeyResource) Create(ctx context.Context, req resource.CreateRequest
 	apiRes, err = m.sdk.GetHmacKey(
 		ctx,
 		client.GetHmacKeyRequest{
+			Project:        plan.ProjectParam.ValueString(),
 			ServiceAccount: plan.ServiceAccountParam.ValueString(),
 			KeyName:        plan.KeyNameParam.ValueString(),
-			Project:        plan.ProjectParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -234,9 +234,9 @@ func (m *HmacKeyResource) Read(ctx context.Context, req resource.ReadRequest, re
 	apiRes, err := m.sdk.GetHmacKey(
 		ctx,
 		client.GetHmacKeyRequest{
+			Project:        state.ProjectParam.ValueString(),
 			ServiceAccount: state.ServiceAccountParam.ValueString(),
 			KeyName:        state.KeyNameParam.ValueString(),
-			Project:        state.ProjectParam.ValueString(),
 		},
 	)
 	if err != nil {
@@ -308,9 +308,9 @@ func (m *HmacKeyResource) Update(ctx context.Context, req resource.UpdateRequest
 	apiRes, err := m.sdk.UpdateHmacKey(
 		ctx,
 		client.UpdateHmacKeyRequest{
+			Project:        plan.ProjectParam.ValueString(),
 			ServiceAccount: plan.ServiceAccountParam.ValueString(),
 			KeyName:        plan.KeyNameParam.ValueString(),
-			Project:        plan.ProjectParam.ValueString(),
 			Body:           *body,
 		},
 	)
@@ -338,9 +338,9 @@ func (m *HmacKeyResource) Update(ctx context.Context, req resource.UpdateRequest
 	apiRes, err = m.sdk.GetHmacKey(
 		ctx,
 		client.GetHmacKeyRequest{
+			Project:        plan.ProjectParam.ValueString(),
 			ServiceAccount: plan.ServiceAccountParam.ValueString(),
 			KeyName:        plan.KeyNameParam.ValueString(),
-			Project:        plan.ProjectParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -398,9 +398,9 @@ func (m *HmacKeyResource) Delete(ctx context.Context, req resource.DeleteRequest
 	err := m.sdk.DeleteHmacKey(
 		ctx,
 		client.DeleteHmacKeyRequest{
+			Project:        state.ProjectParam.ValueString(),
 			ServiceAccount: state.ServiceAccountParam.ValueString(),
 			KeyName:        state.KeyNameParam.ValueString(),
-			Project:        state.ProjectParam.ValueString(),
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)

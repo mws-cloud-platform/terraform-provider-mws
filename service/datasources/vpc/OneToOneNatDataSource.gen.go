@@ -40,6 +40,11 @@ func (m *OneToOneNatDataSource) Metadata(ctx context.Context, req datasource.Met
 func (m *OneToOneNatDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "OneToOneNatDataSource.Schema")
 	resp.Schema = new(tfmodel.OneToOneNat).GetSchema()
+	resp.Schema.Attributes["project"] = schema.StringAttribute{
+		MarkdownDescription: `Путь к проекту.`,
+		Optional:            true,
+		Computed:            true,
+	}
 	resp.Schema.Attributes["network"] = schema.StringAttribute{
 		MarkdownDescription: `Имя сети`,
 		Required:            true,
@@ -47,11 +52,6 @@ func (m *OneToOneNatDataSource) Schema(ctx context.Context, req datasource.Schem
 	resp.Schema.Attributes["one_to_one_nat"] = schema.StringAttribute{
 		MarkdownDescription: `Имя One-to-One NAT`,
 		Required:            true,
-	}
-	resp.Schema.Attributes["project"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к проекту.`,
-		Optional:            true,
-		Computed:            true,
 	}
 }
 

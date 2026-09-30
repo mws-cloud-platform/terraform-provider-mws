@@ -8,20 +8,23 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
 )
 
-func TestPostgresBackupAPIResponseToTFModelEmpty(t *testing.T) {
+func TestPostgresBackupAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.PostgresBackupResponse{}
-	_, diags := conv.PostgresBackupAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.PostgresBackupResponse{}
+	_, diags := conv.PostgresBackupAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestPostgresBackupMetadataAPIResponseToTFModelEmpty(t *testing.T) {
+func TestPostgresBackupMetadataAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.PostgresBackupMetadataResponse{}
-	_, diags := conv.PostgresBackupMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.PostgresBackupMetadataResponse{
+		TypedResourceMetadataResponse: commonmodel.TypedResourceMetadataResponse{},
+	}
+	_, diags := conv.PostgresBackupMetadataAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

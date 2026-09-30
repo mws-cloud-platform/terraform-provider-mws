@@ -40,14 +40,14 @@ func (m *CryptoKeyDataSource) Metadata(ctx context.Context, req datasource.Metad
 func (m *CryptoKeyDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "CryptoKeyDataSource.Schema")
 	resp.Schema = new(tfmodel.CryptoKey).GetSchema()
-	resp.Schema.Attributes["key"] = schema.StringAttribute{
-		MarkdownDescription: `Название крипто-ключа`,
-		Required:            true,
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
+	}
+	resp.Schema.Attributes["key"] = schema.StringAttribute{
+		MarkdownDescription: `Название крипто-ключа`,
+		Required:            true,
 	}
 }
 

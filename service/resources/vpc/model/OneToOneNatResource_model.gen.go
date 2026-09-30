@@ -8,9 +8,9 @@ import (
 )
 
 type OneToOneNatModel struct {
+	ProjectParam     types.String   `tfsdk:"project"`
 	NetworkParam     types.String   `tfsdk:"network"`
 	OneToOneNatParam types.String   `tfsdk:"one_to_one_nat"`
-	ProjectParam     types.String   `tfsdk:"project"`
 	Timeouts         timeouts.Value `tfsdk:"timeouts"`
 	ID               types.String   `tfsdk:"id"`
 	OneToOneNat

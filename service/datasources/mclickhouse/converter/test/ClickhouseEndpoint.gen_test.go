@@ -12,9 +12,11 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/converter"
 )
 
-func TestClickhouseEndpointAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestClickhouseEndpointAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClickhouseEndpointOptionalResponse{}
-	_, diags := conv.ClickhouseEndpointAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClickhouseEndpointOptionalResponse{
+		Address: model.ClickhouseEndpointAddressSpecOrRefOptionalResponse{},
+	}
+	_, diags := conv.ClickhouseEndpointAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

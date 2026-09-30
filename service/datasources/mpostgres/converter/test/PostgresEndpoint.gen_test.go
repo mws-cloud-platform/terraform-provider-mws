@@ -9,12 +9,17 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
 )
 
-func TestPostgresEndpointAPIResponseToTFModelEmpty(t *testing.T) {
+func TestPostgresEndpointAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.PostgresEndpointResponse{}
-	_, diags := conv.PostgresEndpointAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.PostgresEndpointResponse{
+		Name:             "name",
+		Network:          vpc.NewMustNetworkRef("projectID", "networkID"),
+		PrimaryAddresses: []model.PostgresNetworkAddressResponse{},
+	}
+	_, diags := conv.PostgresEndpointAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

@@ -40,14 +40,14 @@ func (m *ExternalAddressDataSource) Metadata(ctx context.Context, req datasource
 func (m *ExternalAddressDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "ExternalAddressDataSource.Schema")
 	resp.Schema = new(tfmodel.ExternalAddress).GetSchema()
-	resp.Schema.Attributes["external_address"] = schema.StringAttribute{
-		MarkdownDescription: `Имя внешнего IP-адреса`,
-		Required:            true,
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
+	}
+	resp.Schema.Attributes["external_address"] = schema.StringAttribute{
+		MarkdownDescription: `Имя внешнего IP-адреса`,
+		Required:            true,
 	}
 }
 

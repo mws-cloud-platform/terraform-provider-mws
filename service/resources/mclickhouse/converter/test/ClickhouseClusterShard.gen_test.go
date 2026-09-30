@@ -15,16 +15,9 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func TestClickhouseClusterShardAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ClickhouseClusterShardOptionalResponse{}
-	_, diags := conv.ClickhouseClusterShardAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestClickhouseClusterShardOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ClickhouseClusterShardRequest{
+	apiModelRequest := model.ClickhouseClusterShardRequest{
 		Name: "name",
 		Resources: model.ClickhouseInstanceHWResourcesRequest{
 			VmType: mclickhouse.NewMustClickhouseVmTypeRef("vmTypeID"),
@@ -36,10 +29,10 @@ func TestClickhouseClusterShardOptionalResponseConverters(t *testing.T) {
 		Instances: []model.ClickhouseClusterInstanceRequest{},
 	}
 
-	emptyApiModelResponse, err := model.ClickhouseClusterShardRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ClickhouseClusterShardRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ClickhouseClusterShardAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ClickhouseClusterShardAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ClickhouseClusterShardTFToAPIRequestModel(context.Background(), tfModel)
@@ -48,7 +41,7 @@ func TestClickhouseClusterShardOptionalResponseConverters(t *testing.T) {
 	result, err := model.ClickhouseClusterShardRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateClickhouseClusterShardRequestConverters(t *testing.T) {

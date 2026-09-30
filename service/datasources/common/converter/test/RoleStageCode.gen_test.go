@@ -12,9 +12,9 @@ import (
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
-func TestRoleStageCodeAPIToTFModelEmpty(t *testing.T) {
+func TestRoleStageCodeAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.RoleStageCode("")
-	_, diags := commonconv.RoleStageCodeAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.RoleStageCode("")
+	_, diags := commonconv.RoleStageCodeAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

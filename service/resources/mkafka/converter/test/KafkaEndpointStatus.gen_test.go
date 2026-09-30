@@ -9,12 +9,20 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 )
 
-func TestKafkaEndpointStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestKafkaEndpointStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.KafkaEndpointStatusResponse{}
-	_, diags := conv.KafkaEndpointStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.KafkaEndpointStatusResponse{
+		Name:            "name",
+		Network:         vpc.NewMustNetworkID("projectID", "networkID"),
+		BrokerAddresses: []model.KafkaEndpointBrokerAddressStatusResponse{},
+		ExternalAccess: model.KafkaEndpointExternalAccessesStatusResponse{
+			Allowed: false,
+		},
+	}
+	_, diags := conv.KafkaEndpointStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

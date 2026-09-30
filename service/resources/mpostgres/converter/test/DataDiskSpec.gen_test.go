@@ -14,24 +14,17 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func TestDataDiskSpecAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.DataDiskSpecResponse{}
-	_, diags := conv.DataDiskSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestDataDiskSpecResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.DataDiskSpecRequest{
+	apiModelRequest := model.DataDiskSpecRequest{
 		Size: bytesize.MustParseString("0 B"),
 		Type: "",
 	}
 
-	emptyApiModelResponse, err := model.DataDiskSpecRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.DataDiskSpecRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.DataDiskSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.DataDiskSpecAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.DataDiskSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -40,7 +33,7 @@ func TestDataDiskSpecResponseConverters(t *testing.T) {
 	result, err := model.DataDiskSpecRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateDataDiskSpecRequestConverters(t *testing.T) {

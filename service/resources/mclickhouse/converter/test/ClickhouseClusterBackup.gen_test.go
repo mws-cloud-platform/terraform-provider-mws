@@ -13,21 +13,14 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func TestClickhouseClusterBackupAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ClickhouseClusterBackupOptionalResponse{}
-	_, diags := conv.ClickhouseClusterBackupAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestClickhouseClusterBackupOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ClickhouseClusterBackupRequest{}
+	apiModelRequest := model.ClickhouseClusterBackupRequest{}
 
-	emptyApiModelResponse, err := model.ClickhouseClusterBackupRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ClickhouseClusterBackupRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ClickhouseClusterBackupAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ClickhouseClusterBackupAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ClickhouseClusterBackupTFToAPIRequestModel(context.Background(), tfModel)
@@ -36,7 +29,7 @@ func TestClickhouseClusterBackupOptionalResponseConverters(t *testing.T) {
 	result, err := model.ClickhouseClusterBackupRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateClickhouseClusterBackupRequestConverters(t *testing.T) {

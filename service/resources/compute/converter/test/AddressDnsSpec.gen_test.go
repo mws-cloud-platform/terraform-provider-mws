@@ -14,25 +14,18 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func TestAddressDnsSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.AddressDnsSpecOptionalResponse{}
-	_, diags := conv.AddressDnsSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestAddressDnsSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.AddressDnsSpecRequest{
+	apiModelRequest := model.AddressDnsSpecRequest{
 		Name: "name",
 		Ttl:  duration.MustParseString("PT0S"),
 		Ptr:  false,
 	}
 
-	emptyApiModelResponse, err := model.AddressDnsSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.AddressDnsSpecRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.AddressDnsSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.AddressDnsSpecAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.AddressDnsSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -41,7 +34,7 @@ func TestAddressDnsSpecOptionalResponseConverters(t *testing.T) {
 	result, err := model.AddressDnsSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateAddressDnsSpecRequestConverters(t *testing.T) {

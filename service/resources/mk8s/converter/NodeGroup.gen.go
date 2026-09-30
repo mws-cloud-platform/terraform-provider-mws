@@ -137,6 +137,12 @@ func NodeGroupAPIOptionalResponseToTFModel(ctx context.Context, am *model.NodeGr
 		})
 	}
 
+	if val, ok := am.Spec.DataCache.Get(); ok {
+		t.DataCache = types.BoolValue(val)
+	} else {
+		t.DataCache = types.BoolNull()
+	}
+
 	scaleTmp, d := NodeGroupSpecScaleAPIOptionalResponseToTFModel(ctx, &am.Spec.Scale)
 	diags = append(diags, d...)
 	if diags.HasError() {
@@ -341,6 +347,10 @@ func NodeGroupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroup) 
 			}
 			am.Spec.LocalDisks = append(am.Spec.LocalDisks, *tmp)
 		}
+	}
+
+	if !plan.DataCache.IsNull() && !plan.DataCache.IsUnknown() {
+		am.Spec.DataCache = plan.DataCache.ValueBoolPointer()
 	}
 
 	if !plan.Scale.IsNull() && !plan.Scale.IsUnknown() {
@@ -611,6 +621,15 @@ func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 				am.Spec.SetTo(model.UpdateNodeGroupSpecRequest{})
 			}
 			am.Spec.Value.LocalDisks.SetToNull()
+		}
+	}
+
+	if !plan.DataCache.Equal(state.DataCache) {
+		if !plan.DataCache.IsNull() && !plan.DataCache.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(model.UpdateNodeGroupSpecRequest{})
+			}
+			am.Spec.Value.DataCache.SetTo(plan.DataCache.ValueBool())
 		}
 	}
 

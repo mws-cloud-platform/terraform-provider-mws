@@ -40,14 +40,14 @@ func (m *SecretDataSource) Metadata(ctx context.Context, req datasource.Metadata
 func (m *SecretDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "SecretDataSource.Schema")
 	resp.Schema = new(tfmodel.Secret).GetSchema()
-	resp.Schema.Attributes["name"] = schema.StringAttribute{
-		MarkdownDescription: `Имя секрета.`,
-		Required:            true,
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
+	}
+	resp.Schema.Attributes["name"] = schema.StringAttribute{
+		MarkdownDescription: `Имя секрета.`,
+		Required:            true,
 	}
 }
 

@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestOneToOneNatAddressSpecOrRefAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestOneToOneNatAddressSpecOrRefAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.OneToOneNatAddressSpecOrRefOptionalResponse{}
-	_, diags := conv.OneToOneNatAddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.OneToOneNatAddressSpecOrRefOptionalResponse{}
+	_, diags := conv.OneToOneNatAddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

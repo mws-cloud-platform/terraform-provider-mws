@@ -18,52 +18,31 @@ import (
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
-func TestResourceAddressSpecAPIToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonmodel.ResourceAddressSpec{}
-	_, diags := commonconv.ResourceAddressSpecAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
-func TestResourceAddressSpecAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonmodel.ResourceAddressSpecResponse{}
-	_, diags := commonconv.ResourceAddressSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
-func TestResourceAddressSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonmodel.ResourceAddressSpecOptionalResponse{}
-	_, diags := commonconv.ResourceAddressSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestResourceAddressSpecConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.ResourceAddressSpec{
+	apiModel := commonmodel.ResourceAddressSpec{
 		Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
 	}
 
-	tfModel, diags := commonconv.ResourceAddressSpecAPIToTFModel(context.Background(), &emptyApiModel)
+	tfModel, diags := commonconv.ResourceAddressSpecAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 
 	result, diags := commonconv.ResourceAddressSpecTFToAPIModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	require.Equal(t, emptyApiModel, *result)
+	require.Equal(t, apiModel, *result)
 }
 
 func TestResourceAddressSpecResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonmodel.ResourceAddressSpecRequest{
+	apiModelRequest := commonmodel.ResourceAddressSpecRequest{
 		Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
 	}
 
-	emptyApiModelResponse, err := commonmodel.ResourceAddressSpecRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := commonmodel.ResourceAddressSpecRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := commonconv.ResourceAddressSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := commonconv.ResourceAddressSpecAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := commonconv.ResourceAddressSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -72,19 +51,19 @@ func TestResourceAddressSpecResponseConverters(t *testing.T) {
 	result, err := commonmodel.ResourceAddressSpecRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestResourceAddressSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonmodel.ResourceAddressSpecRequest{
+	apiModelRequest := commonmodel.ResourceAddressSpecRequest{
 		Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
 	}
 
-	emptyApiModelResponse, err := commonmodel.ResourceAddressSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := commonmodel.ResourceAddressSpecRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := commonconv.ResourceAddressSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := commonconv.ResourceAddressSpecAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := commonconv.ResourceAddressSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -93,7 +72,7 @@ func TestResourceAddressSpecOptionalResponseConverters(t *testing.T) {
 	result, err := commonmodel.ResourceAddressSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateResourceAddressSpecConverters(t *testing.T) {

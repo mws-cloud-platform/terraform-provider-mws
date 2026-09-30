@@ -8,13 +8,16 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
-func TestOneToOneNatSpecInternalAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestOneToOneNatSpecInternalAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.OneToOneNatSpecInternalOptionalResponse{}
-	_, diags := conv.OneToOneNatSpecInternalAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.OneToOneNatSpecInternalOptionalResponse{
+		Address: commonmodel.ResourceAddressSpecOrRefOptionalResponse{},
+	}
+	_, diags := conv.OneToOneNatSpecInternalAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

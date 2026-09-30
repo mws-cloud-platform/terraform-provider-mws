@@ -3,6 +3,7 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
@@ -58,7 +59,7 @@ func (s *ClickhouseClusterResource) GetSchema() schema.Schema {
 				Computed:            true,
 			},
 			"config": schema.MapAttribute{
-				ElementType:         types.StringType,
+				ElementType:         jsontypes.NormalizedType{},
 				MarkdownDescription: `Настройки ClickHouse`,
 				Computed:            true,
 			},

@@ -8,13 +8,44 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/gpt/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/gpt/converter"
 )
 
-func TestDeploymentStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestDeploymentStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.DeploymentStatusResponse{}
-	_, diags := conv.DeploymentStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.DeploymentStatusResponse{
+		ResourceStatusResponse: commonmodel.ResourceStatusResponse{
+			Ready: commonmodel.ResourceStatusReadyResponse{
+				State: "",
+			},
+		},
+		InputModalities: model.InputModalitiesResponse{
+			Text:  false,
+			Image: false,
+			File:  false,
+			Audio: false,
+		},
+		OutputModalities: model.OutputModalitiesResponse{
+			Text:          false,
+			Embedding:     false,
+			Audio:         false,
+			Image:         false,
+			Reranking:     false,
+			Transcription: false,
+		},
+		Modalities: model.ModalitiesResponse{
+			Text:   false,
+			Vision: false,
+			Audio:  false,
+		},
+		Capabilities: model.CapabilitiesResponse{
+			Reasoning:   false,
+			ToolCalling: false,
+		},
+		Deprecation: model.DeprecationResponse{},
+	}
+	_, diags := conv.DeploymentStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

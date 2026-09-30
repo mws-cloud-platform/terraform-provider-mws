@@ -6,6 +6,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
@@ -158,13 +159,13 @@ func ClickhouseClusterAPIOptionalResponseToTFModel(ctx context.Context, am *mode
 	}
 
 	if val, ok := am.Spec.Config.Get(); ok {
-		config := make(map[string]types.String, len(val))
+		config := make(map[string]jsontypes.Normalized, len(val))
 
 		for k, entity := range val {
-			config[k] = types.StringValue(string(entity))
+			config[k] = jsontypes.NewNormalizedValue(string(entity))
 		}
 
-		configMap, d := types.MapValueFrom(ctx, types.StringType, config)
+		configMap, d := types.MapValueFrom(ctx, jsontypes.NormalizedType{}, config)
 		diags = append(diags, d...)
 		if diags.HasError() {
 			return nil, diags
@@ -172,7 +173,7 @@ func ClickhouseClusterAPIOptionalResponseToTFModel(ctx context.Context, am *mode
 
 		t.Config = configMap
 	} else {
-		t.Config = types.MapNull(types.StringType)
+		t.Config = types.MapNull(jsontypes.NormalizedType{})
 	}
 
 	if val, ok := am.Spec.Storage.Get(); ok {
@@ -344,7 +345,7 @@ func ClickhouseClusterTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Cli
 	}
 
 	if !plan.Config.IsNull() && !plan.Config.IsUnknown() {
-		config := make(map[string]types.String)
+		config := make(map[string]jsontypes.Normalized)
 		dConfig := plan.Config.ElementsAs(ctx, &config, false)
 		diags = append(diags, dConfig...)
 		if diags.HasError() {
@@ -591,7 +592,7 @@ func ClickhouseClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 			if !am.Spec.IsSet() {
 				am.Spec.SetTo(model.UpdateClickhouseClusterSpecRequest{})
 			}
-			config := make(map[string]types.String)
+			config := make(map[string]jsontypes.Normalized)
 			dConfig := plan.Config.ElementsAs(ctx, &config, false)
 			diags = append(diags, dConfig...)
 			if diags.HasError() {

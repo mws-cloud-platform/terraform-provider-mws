@@ -12,16 +12,24 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/converter"
 )
 
-func TestNodeTaintSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestNodeTaintSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NodeTaintSpecOptionalResponse{}
-	_, diags := conv.NodeTaintSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NodeTaintSpecOptionalResponse{
+		Key:    "key",
+		Value:  "value",
+		Effect: "",
+	}
+	_, diags := conv.NodeTaintSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestNodeTaintSpecAPIResponseToTFModelEmpty(t *testing.T) {
+func TestNodeTaintSpecAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NodeTaintSpecResponse{}
-	_, diags := conv.NodeTaintSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NodeTaintSpecResponse{
+		Key:    "key",
+		Value:  "value",
+		Effect: "",
+	}
+	_, diags := conv.NodeTaintSpecAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

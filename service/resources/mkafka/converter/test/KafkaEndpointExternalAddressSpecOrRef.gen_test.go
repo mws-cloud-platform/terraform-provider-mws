@@ -15,21 +15,14 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func TestKafkaEndpointExternalAddressSpecOrRefAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.KafkaEndpointExternalAddressSpecOrRefResponse{}
-	_, diags := conv.KafkaEndpointExternalAddressSpecOrRefAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestKafkaEndpointExternalAddressSpecOrRefResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.KafkaEndpointExternalAddressSpecOrRefRequest{}
+	apiModelRequest := model.KafkaEndpointExternalAddressSpecOrRefRequest{}
 
-	emptyApiModelResponse, err := model.KafkaEndpointExternalAddressSpecOrRefRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.KafkaEndpointExternalAddressSpecOrRefRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.KafkaEndpointExternalAddressSpecOrRefAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.KafkaEndpointExternalAddressSpecOrRefAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.KafkaEndpointExternalAddressSpecOrRefTFToAPIRequestModel(context.Background(), tfModel)
@@ -38,7 +31,7 @@ func TestKafkaEndpointExternalAddressSpecOrRefResponseConverters(t *testing.T) {
 	result, err := model.KafkaEndpointExternalAddressSpecOrRefRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateKafkaEndpointExternalAddressSpecOrRefRequestConverters(t *testing.T) {

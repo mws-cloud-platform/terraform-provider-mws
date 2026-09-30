@@ -7,14 +7,19 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/units/duration"
 
 	"go.mws.cloud/go-sdk/service/compute/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
 )
 
-func TestVirtualMachineAddressDnsStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestVirtualMachineAddressDnsStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.VirtualMachineAddressDnsStatusResponse{}
-	_, diags := conv.VirtualMachineAddressDnsStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.VirtualMachineAddressDnsStatusResponse{
+		Name: "name",
+		Ttl:  duration.MustParseString("PT0S"),
+		Ptr:  false,
+	}
+	_, diags := conv.VirtualMachineAddressDnsStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

@@ -13,23 +13,16 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func TestPostgresInstanceAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.PostgresInstanceResponse{}
-	_, diags := conv.PostgresInstanceAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestPostgresInstanceResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.PostgresInstanceRequest{
+	apiModelRequest := model.PostgresInstanceRequest{
 		Count: 0,
 	}
 
-	emptyApiModelResponse, err := model.PostgresInstanceRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.PostgresInstanceRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.PostgresInstanceAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.PostgresInstanceAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.PostgresInstanceTFToAPIRequestModel(context.Background(), tfModel)
@@ -38,7 +31,7 @@ func TestPostgresInstanceResponseConverters(t *testing.T) {
 	result, err := model.PostgresInstanceRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdatePostgresInstanceRequestConverters(t *testing.T) {

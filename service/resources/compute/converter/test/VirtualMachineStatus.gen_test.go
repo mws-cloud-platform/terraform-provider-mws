@@ -8,13 +8,31 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/compute/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
 )
 
-func TestVirtualMachineStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestVirtualMachineStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.VirtualMachineStatusResponse{}
-	_, diags := conv.VirtualMachineStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.VirtualMachineStatusResponse{
+		ResourceStatusResponse: commonmodel.ResourceStatusResponse{
+			Ready: commonmodel.ResourceStatusReadyResponse{
+				State: "",
+			},
+		},
+		Id:       "id",
+		Hardware: model.HardwareStatusResponse{},
+		Os: model.OsStatusResponse{
+			Fqdn: "fqdn",
+		},
+		Storage: model.StorageStatusResponse{
+			Disks: []model.StorageDiskStatusResponse{},
+		},
+		Network: model.VirtualMachineNetworkStatusResponse{
+			NetworkInterfaces: []model.NetworkInterfaceStatusResponse{},
+		},
+	}
+	_, diags := conv.VirtualMachineStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

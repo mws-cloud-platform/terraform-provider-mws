@@ -7,21 +7,40 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
 )
 
-func TestPostgresClusterAPIResponseToTFModelEmpty(t *testing.T) {
+func TestPostgresClusterAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.PostgresClusterResponse{}
-	_, diags := conv.PostgresClusterAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.PostgresClusterResponse{
+		Spec: model.PostgresClusterSpecResponse{
+			Version:   "version",
+			Active:    false,
+			Endpoints: []model.PostgresEndpointResponse{},
+			InstanceTemplate: model.PostgresInstanceTemplateResponse{
+				VmType: compute.NewMustVmTypeRef("vmTypeID"),
+				Disk: model.DataDiskSpecResponse{
+					Size: bytesize.MustParseString("0 B"),
+					Type: "",
+				},
+			},
+			Instances: []model.PostgresInstanceResponse{},
+		},
+	}
+	_, diags := conv.PostgresClusterAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestPostgresClusterMetadataAPIResponseToTFModelEmpty(t *testing.T) {
+func TestPostgresClusterMetadataAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.PostgresClusterMetadataResponse{}
-	_, diags := conv.PostgresClusterMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.PostgresClusterMetadataResponse{
+		TypedResourceMetadataResponse: commonmodel.TypedResourceMetadataResponse{},
+	}
+	_, diags := conv.PostgresClusterMetadataAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

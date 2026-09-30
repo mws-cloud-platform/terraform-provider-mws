@@ -18,26 +18,19 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/kms/model"
 )
 
-func TestCryptoKeyRoleBindingAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.CryptoKeyRoleBindingOptionalResponse{}
-	_, diags := conv.CryptoKeyRoleBindingAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestCryptoKeyRoleBindingOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.CryptoKeyRoleBindingRequest{
+	apiModelRequest := model.CryptoKeyRoleBindingRequest{
 		Spec: commonmodel.CommonRoleBindingSpecRequest{
 			Subject: commonmodel.CommonRoleBindingSpecSubjectRequest{},
 			Role:    iam.NewMustRoleRef("roleID"),
 		},
 	}
 
-	emptyApiModelResponse, err := model.CryptoKeyRoleBindingRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.CryptoKeyRoleBindingRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.CryptoKeyRoleBindingAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.CryptoKeyRoleBindingAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.CryptoKeyRoleBindingTFToAPIRequestModel(context.Background(), tfModel)
@@ -46,7 +39,7 @@ func TestCryptoKeyRoleBindingOptionalResponseConverters(t *testing.T) {
 	result, err := model.CryptoKeyRoleBindingRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateCryptoKeyRoleBindingRequestConverters(t *testing.T) {

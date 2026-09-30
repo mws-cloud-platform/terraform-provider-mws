@@ -8,8 +8,8 @@ import (
 )
 
 type DiskModel struct {
-	DiskParam    types.String   `tfsdk:"disk"`
 	ProjectParam types.String   `tfsdk:"project"`
+	DiskParam    types.String   `tfsdk:"disk"`
 	Timeouts     timeouts.Value `tfsdk:"timeouts"`
 	ID           types.String   `tfsdk:"id"`
 	Disk

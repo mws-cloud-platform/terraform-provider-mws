@@ -7,8 +7,8 @@ import (
 )
 
 type SecretRoleBindingModel struct {
-	NameParam        types.String `tfsdk:"name"`
 	ProjectParam     types.String `tfsdk:"project"`
+	NameParam        types.String `tfsdk:"name"`
 	RoleBindingParam types.String `tfsdk:"role_binding"`
 	SecretRoleBinding
 }

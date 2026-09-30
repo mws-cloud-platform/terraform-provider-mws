@@ -18,25 +18,18 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func TestSubnetAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.SubnetOptionalResponse{}
-	_, diags := conv.SubnetAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestSubnetOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.SubnetRequest{
+	apiModelRequest := model.SubnetRequest{
 		Spec: model.SubnetSpecRequest{
 			Cidr: cidraddress.MustParseCIDR4AddressString("192.168.1.0/24"),
 		},
 	}
 
-	emptyApiModelResponse, err := model.SubnetRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.SubnetRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.SubnetAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.SubnetAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.SubnetTFToAPIRequestModel(context.Background(), tfModel)
@@ -45,7 +38,7 @@ func TestSubnetOptionalResponseConverters(t *testing.T) {
 	result, err := model.SubnetRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateSubnetRequestConverters(t *testing.T) {

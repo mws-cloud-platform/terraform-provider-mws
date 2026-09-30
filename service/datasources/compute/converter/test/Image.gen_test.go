@@ -12,9 +12,13 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestImageAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestImageAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ImageOptionalResponse{}
-	_, diags := conv.ImageAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ImageOptionalResponse{
+		Spec: model.ImageSpecOptionalResponse{
+			Source: model.ImageSpecSourceOptionalResponse{},
+		},
+	}
+	_, diags := conv.ImageAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

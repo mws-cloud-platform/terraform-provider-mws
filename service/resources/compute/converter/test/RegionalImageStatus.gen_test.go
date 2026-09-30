@@ -8,13 +8,22 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/resources/references/rm"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
 )
 
-func TestRegionalImageStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestRegionalImageStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.RegionalImageStatusResponse{}
-	_, diags := conv.RegionalImageStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.RegionalImageStatusResponse{
+		ResourceStatusResponse: commonmodel.ResourceStatusResponse{
+			Ready: commonmodel.ResourceStatusReadyResponse{
+				State: "",
+			},
+		},
+		RegionId: rm.NewMustRegionRef("regionID"),
+	}
+	_, diags := conv.RegionalImageStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

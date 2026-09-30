@@ -12,23 +12,32 @@ import (
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
-func TestCommonRoleBindingFederationContextAttributeAPIToTFModelEmpty(t *testing.T) {
+func TestCommonRoleBindingFederationContextAttributeAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.CommonRoleBindingFederationContextAttribute{}
-	_, diags := commonconv.CommonRoleBindingFederationContextAttributeAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.CommonRoleBindingFederationContextAttribute{
+		Name:  "name",
+		Value: "value",
+	}
+	_, diags := commonconv.CommonRoleBindingFederationContextAttributeAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestCommonRoleBindingFederationContextAttributeAPIResponseToTFModelEmpty(t *testing.T) {
+func TestCommonRoleBindingFederationContextAttributeAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.CommonRoleBindingFederationContextAttributeResponse{}
-	_, diags := commonconv.CommonRoleBindingFederationContextAttributeAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.CommonRoleBindingFederationContextAttributeResponse{
+		Name:  "name",
+		Value: "value",
+	}
+	_, diags := commonconv.CommonRoleBindingFederationContextAttributeAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestCommonRoleBindingFederationContextAttributeAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestCommonRoleBindingFederationContextAttributeAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.CommonRoleBindingFederationContextAttributeOptionalResponse{}
-	_, diags := commonconv.CommonRoleBindingFederationContextAttributeAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.CommonRoleBindingFederationContextAttributeOptionalResponse{
+		Name:  "name",
+		Value: "value",
+	}
+	_, diags := commonconv.CommonRoleBindingFederationContextAttributeAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

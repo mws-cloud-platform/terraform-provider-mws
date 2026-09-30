@@ -17,25 +17,18 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func TestImageAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ImageOptionalResponse{}
-	_, diags := conv.ImageAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestImageOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ImageRequest{
+	apiModelRequest := model.ImageRequest{
 		Spec: model.ImageSpecRequest{
 			Source: model.ImageSpecSourceRequest{},
 		},
 	}
 
-	emptyApiModelResponse, err := model.ImageRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ImageRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ImageAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ImageAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ImageTFToAPIRequestModel(context.Background(), tfModel)
@@ -44,7 +37,7 @@ func TestImageOptionalResponseConverters(t *testing.T) {
 	result, err := model.ImageRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateImageRequestConverters(t *testing.T) {

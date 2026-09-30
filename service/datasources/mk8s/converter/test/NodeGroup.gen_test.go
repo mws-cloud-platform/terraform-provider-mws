@@ -9,12 +9,31 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/resources/references/compute"
+	"go.mws.cloud/go-sdk/service/resources/references/iam"
+	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/converter"
 )
 
-func TestNodeGroupAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestNodeGroupAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NodeGroupOptionalResponse{}
-	_, diags := conv.NodeGroupAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NodeGroupOptionalResponse{
+		Spec: model.NodeGroupSpecOptionalResponse{
+			Zone: "zone",
+			Subnet: model.NodeGroupSpecSubnetOptionalResponse{
+				Ref: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
+			},
+			VmType: model.NodeGroupSpecVmTypeOptionalResponse{
+				Ref: compute.NewMustVmTypeRef("vmTypeID"),
+			},
+			Scale:           model.NodeGroupSpecScaleOptionalResponse{},
+			VersionControl:  model.NodeGroupVersionControlSpecOptionalResponse{},
+			RolloutStrategy: model.NodeGroupSpecRolloutStrategyOptionalResponse{},
+			ServiceAccount: model.NodeGroupSpecServiceAccountOptionalResponse{
+				Ref: iam.NewMustServiceAccountRef("projectID", "serviceAccountID"),
+			},
+		},
+	}
+	_, diags := conv.NodeGroupAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

@@ -40,14 +40,14 @@ func (m *CryptoKeyRoleBindingDataSource) Metadata(ctx context.Context, req datas
 func (m *CryptoKeyRoleBindingDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "CryptoKeyRoleBindingDataSource.Schema")
 	resp.Schema = new(tfmodel.CryptoKeyRoleBinding).GetSchema()
-	resp.Schema.Attributes["key"] = schema.StringAttribute{
-		MarkdownDescription: `Название крипто-ключа`,
-		Required:            true,
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
+	}
+	resp.Schema.Attributes["key"] = schema.StringAttribute{
+		MarkdownDescription: `Название крипто-ключа`,
+		Required:            true,
 	}
 	resp.Schema.Attributes["role_binding"] = schema.StringAttribute{
 		MarkdownDescription: `Название биндинга роли для крипто-ключа`,

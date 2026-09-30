@@ -7,8 +7,8 @@ import (
 )
 
 type ClusterDatabaseModel struct {
+	ProjectParam  types.String `tfsdk:"project"`
 	ClusterParam  types.String `tfsdk:"cluster"`
 	DatabaseParam types.String `tfsdk:"database"`
-	ProjectParam  types.String `tfsdk:"project"`
 	PostgresClusterDatabase
 }

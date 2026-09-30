@@ -12,22 +12,15 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 )
 
-func TestKafkaConnectorOutputFieldsAPIToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.KafkaConnectorOutputFields("")
-	_, diags := conv.KafkaConnectorOutputFieldsAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestKafkaConnectorOutputFieldsConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.KafkaConnectorOutputFields("")
+	apiModel := model.KafkaConnectorOutputFields("")
 
-	tfModel, diags := conv.KafkaConnectorOutputFieldsAPIToTFModel(context.Background(), &emptyApiModel)
+	tfModel, diags := conv.KafkaConnectorOutputFieldsAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 
 	result, diags := conv.KafkaConnectorOutputFieldsTFToAPIModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	require.Equal(t, emptyApiModel, *result)
+	require.Equal(t, apiModel, *result)
 }

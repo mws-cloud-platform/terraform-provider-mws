@@ -12,16 +12,16 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
-func TestSubnetDhcpOptionsAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestSubnetDhcpOptionsAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.SubnetDhcpOptionsOptionalResponse{}
-	_, diags := conv.SubnetDhcpOptionsAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.SubnetDhcpOptionsOptionalResponse{}
+	_, diags := conv.SubnetDhcpOptionsAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestSubnetDhcpOptionsAPIResponseToTFModelEmpty(t *testing.T) {
+func TestSubnetDhcpOptionsAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.SubnetDhcpOptionsResponse{}
-	_, diags := conv.SubnetDhcpOptionsAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.SubnetDhcpOptionsResponse{}
+	_, diags := conv.SubnetDhcpOptionsAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

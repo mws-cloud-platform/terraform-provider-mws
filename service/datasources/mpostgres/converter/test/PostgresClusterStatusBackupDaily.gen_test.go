@@ -12,9 +12,11 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
 )
 
-func TestPostgresClusterStatusBackupDailyAPIResponseToTFModelEmpty(t *testing.T) {
+func TestPostgresClusterStatusBackupDailyAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.PostgresClusterStatusBackupDailyResponse{}
-	_, diags := conv.PostgresClusterStatusBackupDailyAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.PostgresClusterStatusBackupDailyResponse{
+		Hour: 0,
+	}
+	_, diags := conv.PostgresClusterStatusBackupDailyAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

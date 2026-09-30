@@ -12,9 +12,9 @@ import (
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
-func TestDayOfWeekAPIToTFModelEmpty(t *testing.T) {
+func TestDayOfWeekAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.DayOfWeek("")
-	_, diags := commonconv.DayOfWeekAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.DayOfWeek("")
+	_, diags := commonconv.DayOfWeekAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

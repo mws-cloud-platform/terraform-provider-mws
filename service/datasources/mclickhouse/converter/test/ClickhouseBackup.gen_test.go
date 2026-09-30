@@ -8,20 +8,23 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/converter"
 )
 
-func TestClickhouseBackupAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestClickhouseBackupAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClickhouseBackupOptionalResponse{}
-	_, diags := conv.ClickhouseBackupAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClickhouseBackupOptionalResponse{}
+	_, diags := conv.ClickhouseBackupAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestClickhouseBackupMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestClickhouseBackupMetadataAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClickhouseBackupMetadataOptionalResponse{}
-	_, diags := conv.ClickhouseBackupMetadataAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClickhouseBackupMetadataOptionalResponse{
+		TypedResourceMetadataOptionalResponse: commonmodel.TypedResourceMetadataOptionalResponse{},
+	}
+	_, diags := conv.ClickhouseBackupMetadataAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

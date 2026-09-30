@@ -13,21 +13,14 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func TestPostgresUserAdditionalRoleAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.PostgresUserAdditionalRoleResponse{}
-	_, diags := conv.PostgresUserAdditionalRoleAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestPostgresUserAdditionalRoleResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.PostgresUserAdditionalRoleRequest{}
+	apiModelRequest := model.PostgresUserAdditionalRoleRequest{}
 
-	emptyApiModelResponse, err := model.PostgresUserAdditionalRoleRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.PostgresUserAdditionalRoleRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.PostgresUserAdditionalRoleAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.PostgresUserAdditionalRoleAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.PostgresUserAdditionalRoleTFToAPIRequestModel(context.Background(), tfModel)
@@ -36,7 +29,7 @@ func TestPostgresUserAdditionalRoleResponseConverters(t *testing.T) {
 	result, err := model.PostgresUserAdditionalRoleRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdatePostgresUserAdditionalRoleRequestConverters(t *testing.T) {

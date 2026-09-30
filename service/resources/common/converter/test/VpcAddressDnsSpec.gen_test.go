@@ -14,56 +14,35 @@ import (
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
-func TestVpcAddressDnsSpecAPIToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonmodel.VpcAddressDnsSpec{}
-	_, diags := commonconv.VpcAddressDnsSpecAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
-func TestVpcAddressDnsSpecAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonmodel.VpcAddressDnsSpecResponse{}
-	_, diags := commonconv.VpcAddressDnsSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
-func TestVpcAddressDnsSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonmodel.VpcAddressDnsSpecOptionalResponse{}
-	_, diags := commonconv.VpcAddressDnsSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestVpcAddressDnsSpecConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.VpcAddressDnsSpec{
+	apiModel := commonmodel.VpcAddressDnsSpec{
 		Name: "name",
 		Ttl:  duration.MustParseString("PT0S"),
 		Ptr:  false,
 	}
 
-	tfModel, diags := commonconv.VpcAddressDnsSpecAPIToTFModel(context.Background(), &emptyApiModel)
+	tfModel, diags := commonconv.VpcAddressDnsSpecAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 
 	result, diags := commonconv.VpcAddressDnsSpecTFToAPIModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	require.Equal(t, emptyApiModel, *result)
+	require.Equal(t, apiModel, *result)
 }
 
 func TestVpcAddressDnsSpecResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonmodel.VpcAddressDnsSpecRequest{
+	apiModelRequest := commonmodel.VpcAddressDnsSpecRequest{
 		Name: "name",
 		Ttl:  duration.MustParseString("PT0S"),
 		Ptr:  false,
 	}
 
-	emptyApiModelResponse, err := commonmodel.VpcAddressDnsSpecRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := commonmodel.VpcAddressDnsSpecRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := commonconv.VpcAddressDnsSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := commonconv.VpcAddressDnsSpecAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := commonconv.VpcAddressDnsSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -72,21 +51,21 @@ func TestVpcAddressDnsSpecResponseConverters(t *testing.T) {
 	result, err := commonmodel.VpcAddressDnsSpecRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestVpcAddressDnsSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonmodel.VpcAddressDnsSpecRequest{
+	apiModelRequest := commonmodel.VpcAddressDnsSpecRequest{
 		Name: "name",
 		Ttl:  duration.MustParseString("PT0S"),
 		Ptr:  false,
 	}
 
-	emptyApiModelResponse, err := commonmodel.VpcAddressDnsSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := commonmodel.VpcAddressDnsSpecRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := commonconv.VpcAddressDnsSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := commonconv.VpcAddressDnsSpecAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := commonconv.VpcAddressDnsSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -95,7 +74,7 @@ func TestVpcAddressDnsSpecOptionalResponseConverters(t *testing.T) {
 	result, err := commonmodel.VpcAddressDnsSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateVpcAddressDnsSpecConverters(t *testing.T) {

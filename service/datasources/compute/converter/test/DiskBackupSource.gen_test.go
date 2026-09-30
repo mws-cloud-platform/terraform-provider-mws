@@ -9,19 +9,22 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestDiskBackupSourceAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestDiskBackupSourceAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.DiskBackupSourceOptionalResponse{}
-	_, diags := conv.DiskBackupSourceAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.DiskBackupSourceOptionalResponse{}
+	_, diags := conv.DiskBackupSourceAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestDiskBackupSourceDiskAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestDiskBackupSourceDiskAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.DiskBackupSourceDiskOptionalResponse{}
-	_, diags := conv.DiskBackupSourceDiskAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.DiskBackupSourceDiskOptionalResponse{
+		Id: compute.NewMustDiskRef("projectID", "diskID"),
+	}
+	_, diags := conv.DiskBackupSourceDiskAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

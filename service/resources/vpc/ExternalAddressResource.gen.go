@@ -49,19 +49,19 @@ func (m *ExternalAddressResource) Metadata(ctx context.Context, req resource.Met
 func (m *ExternalAddressResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	tflog.Info(ctx, "ExternalAddressResource.Schema")
 	resp.Schema = new(tfmodel.ExternalAddress).GetSchema()
-	resp.Schema.Attributes["external_address"] = schema.StringAttribute{
-		MarkdownDescription: `Имя внешнего IP-адреса`,
-		Required:            true,
-		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.RequiresReplaceIfConfigured(),
-		},
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
+	}
+	resp.Schema.Attributes["external_address"] = schema.StringAttribute{
+		MarkdownDescription: `Имя внешнего IP-адреса`,
+		Required:            true,
+		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}

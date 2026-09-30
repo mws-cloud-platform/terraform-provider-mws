@@ -13,21 +13,14 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func TestOneToOneNatAddressSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.OneToOneNatAddressSpecOptionalResponse{}
-	_, diags := conv.OneToOneNatAddressSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestOneToOneNatAddressSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.OneToOneNatAddressSpecRequest{}
+	apiModelRequest := model.OneToOneNatAddressSpecRequest{}
 
-	emptyApiModelResponse, err := model.OneToOneNatAddressSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.OneToOneNatAddressSpecRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.OneToOneNatAddressSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.OneToOneNatAddressSpecAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.OneToOneNatAddressSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -36,7 +29,7 @@ func TestOneToOneNatAddressSpecOptionalResponseConverters(t *testing.T) {
 	result, err := model.OneToOneNatAddressSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateOneToOneNatAddressSpecRequestConverters(t *testing.T) {

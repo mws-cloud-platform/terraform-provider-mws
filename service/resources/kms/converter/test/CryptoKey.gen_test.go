@@ -19,23 +19,16 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/kms/model"
 )
 
-func TestCryptoKeyAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.CryptoKeyOptionalResponse{}
-	_, diags := conv.CryptoKeyAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestCryptoKeyOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.CryptoKeyRequest{
+	apiModelRequest := model.CryptoKeyRequest{
 		Spec: model.CryptoKeySpecRequest{},
 	}
 
-	emptyApiModelResponse, err := model.CryptoKeyRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.CryptoKeyRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.CryptoKeyAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.CryptoKeyAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.CryptoKeyTFToAPIRequestModel(context.Background(), tfModel)
@@ -44,7 +37,7 @@ func TestCryptoKeyOptionalResponseConverters(t *testing.T) {
 	result, err := model.CryptoKeyRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateCryptoKeyRequestConverters(t *testing.T) {

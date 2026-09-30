@@ -8,9 +8,9 @@ import (
 )
 
 type HmacKeyModel struct {
-	KeyNameParam        types.String   `tfsdk:"key_name"`
 	ProjectParam        types.String   `tfsdk:"project"`
 	ServiceAccountParam types.String   `tfsdk:"service_account"`
+	KeyNameParam        types.String   `tfsdk:"key_name"`
 	Timeouts            timeouts.Value `tfsdk:"timeouts"`
 	ID                  types.String   `tfsdk:"id"`
 	HmacKey

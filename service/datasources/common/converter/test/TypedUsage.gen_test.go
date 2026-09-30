@@ -8,27 +8,40 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	resmodels "go.mws.cloud/go-sdk/pkg/resources/models"
 	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
-func TestTypedUsageAPIToTFModelEmpty(t *testing.T) {
+func TestTypedUsageAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.TypedUsage{}
-	_, diags := commonconv.TypedUsageAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.TypedUsage{
+		UsageType: "usageType",
+		Name:      "name",
+		Resource:  resmodels.NewMustAnyResourceID("ID"),
+	}
+	_, diags := commonconv.TypedUsageAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestTypedUsageAPIResponseToTFModelEmpty(t *testing.T) {
+func TestTypedUsageAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.TypedUsageResponse{}
-	_, diags := commonconv.TypedUsageAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.TypedUsageResponse{
+		UsageType: "usageType",
+		Name:      "name",
+		Resource:  resmodels.NewMustAnyResourceID("ID"),
+	}
+	_, diags := commonconv.TypedUsageAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestTypedUsageAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestTypedUsageAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.TypedUsageOptionalResponse{}
-	_, diags := commonconv.TypedUsageAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.TypedUsageOptionalResponse{
+		UsageType: "usageType",
+		Name:      "name",
+		Resource:  resmodels.NewMustAnyResourceID("ID"),
+	}
+	_, diags := commonconv.TypedUsageAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

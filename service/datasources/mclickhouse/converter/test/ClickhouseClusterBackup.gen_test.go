@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/converter"
 )
 
-func TestClickhouseClusterBackupAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestClickhouseClusterBackupAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClickhouseClusterBackupOptionalResponse{}
-	_, diags := conv.ClickhouseClusterBackupAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClickhouseClusterBackupOptionalResponse{}
+	_, diags := conv.ClickhouseClusterBackupAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

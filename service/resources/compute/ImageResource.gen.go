@@ -49,19 +49,19 @@ func (m *ImageResource) Metadata(ctx context.Context, req resource.MetadataReque
 func (m *ImageResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	tflog.Info(ctx, "ImageResource.Schema")
 	resp.Schema = new(tfmodel.Image).GetSchema()
-	resp.Schema.Attributes["image"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к образу`,
-		Required:            true,
-		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.RequiresReplaceIfConfigured(),
-		},
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
+	}
+	resp.Schema.Attributes["image"] = schema.StringAttribute{
+		MarkdownDescription: `Путь к образу`,
+		Required:            true,
+		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}

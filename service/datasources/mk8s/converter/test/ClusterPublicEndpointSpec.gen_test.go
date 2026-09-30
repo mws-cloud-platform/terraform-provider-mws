@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/converter"
 )
 
-func TestClusterPublicEndpointSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestClusterPublicEndpointSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClusterPublicEndpointSpecOptionalResponse{}
-	_, diags := conv.ClusterPublicEndpointSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClusterPublicEndpointSpecOptionalResponse{}
+	_, diags := conv.ClusterPublicEndpointSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

@@ -15,16 +15,9 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func TestClickhouseInstanceHWResourcesAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ClickhouseInstanceHWResourcesOptionalResponse{}
-	_, diags := conv.ClickhouseInstanceHWResourcesAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestClickhouseInstanceHWResourcesOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ClickhouseInstanceHWResourcesRequest{
+	apiModelRequest := model.ClickhouseInstanceHWResourcesRequest{
 		VmType: mclickhouse.NewMustClickhouseVmTypeRef("vmTypeID"),
 		Disk: model.ClickhouseInstanceDiskSpecRequest{
 			Size: bytesize.MustParseString("0 B"),
@@ -32,10 +25,10 @@ func TestClickhouseInstanceHWResourcesOptionalResponseConverters(t *testing.T) {
 		},
 	}
 
-	emptyApiModelResponse, err := model.ClickhouseInstanceHWResourcesRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ClickhouseInstanceHWResourcesRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ClickhouseInstanceHWResourcesAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ClickhouseInstanceHWResourcesAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ClickhouseInstanceHWResourcesTFToAPIRequestModel(context.Background(), tfModel)
@@ -44,19 +37,12 @@ func TestClickhouseInstanceHWResourcesOptionalResponseConverters(t *testing.T) {
 	result, err := model.ClickhouseInstanceHWResourcesRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
-func TestClickhouseInstanceHWResourcesAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ClickhouseInstanceHWResourcesResponse{}
-	_, diags := conv.ClickhouseInstanceHWResourcesAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestClickhouseInstanceHWResourcesResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ClickhouseInstanceHWResourcesRequest{
+	apiModelRequest := model.ClickhouseInstanceHWResourcesRequest{
 		VmType: mclickhouse.NewMustClickhouseVmTypeRef("vmTypeID"),
 		Disk: model.ClickhouseInstanceDiskSpecRequest{
 			Size: bytesize.MustParseString("0 B"),
@@ -64,10 +50,10 @@ func TestClickhouseInstanceHWResourcesResponseConverters(t *testing.T) {
 		},
 	}
 
-	emptyApiModelResponse, err := model.ClickhouseInstanceHWResourcesRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ClickhouseInstanceHWResourcesRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ClickhouseInstanceHWResourcesAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ClickhouseInstanceHWResourcesAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ClickhouseInstanceHWResourcesTFToAPIRequestModel(context.Background(), tfModel)
@@ -76,7 +62,7 @@ func TestClickhouseInstanceHWResourcesResponseConverters(t *testing.T) {
 	result, err := model.ClickhouseInstanceHWResourcesRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateClickhouseInstanceHWResourcesRequestConverters(t *testing.T) {

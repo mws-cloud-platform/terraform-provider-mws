@@ -49,19 +49,19 @@ func (m *TopicResource) Metadata(ctx context.Context, req resource.MetadataReque
 func (m *TopicResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	tflog.Info(ctx, "TopicResource.Schema")
 	resp.Schema = new(tfmodel.KafkaTopic).GetSchema()
-	resp.Schema.Attributes["cluster"] = schema.StringAttribute{
-		MarkdownDescription: `Название или идентификатор кластера.`,
-		Required:            true,
-		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.RequiresReplaceIfConfigured(),
-		},
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
+	}
+	resp.Schema.Attributes["cluster"] = schema.StringAttribute{
+		MarkdownDescription: `Название или идентификатор кластера.`,
+		Required:            true,
+		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}

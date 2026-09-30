@@ -5,8 +5,11 @@ package model
 import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localint64planmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/int64planmodifier"
 )
 
 type ClickhouseInstanceDiskSpec struct {
@@ -42,6 +45,9 @@ func (s *ClickhouseInstanceDiskSpec) GetSchema() schema.Schema {
 			"iops": schema.Int64Attribute{
 				MarkdownDescription: `IOPS`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.Int64{
+					localint64planmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

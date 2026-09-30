@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/converter"
 )
 
-func TestKafkaDataDiskStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestKafkaDataDiskStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.KafkaDataDiskStatusResponse{}
-	_, diags := conv.KafkaDataDiskStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.KafkaDataDiskStatusResponse{}
+	_, diags := conv.KafkaDataDiskStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

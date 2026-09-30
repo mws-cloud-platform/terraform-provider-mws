@@ -7,28 +7,39 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/ipaddress"
 
 	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
-func TestResourceExternalAddressStatusAPIToTFModelEmpty(t *testing.T) {
+func TestResourceExternalAddressStatusAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.ResourceExternalAddressStatus{}
-	_, diags := commonconv.ResourceExternalAddressStatusAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.ResourceExternalAddressStatus{
+		Ref:       vpc.NewMustExternalAddressRef("projectID", "externalAddressID"),
+		IpAddress: ipaddress.MustParseIPAddressString("192.168.1.1"),
+	}
+	_, diags := commonconv.ResourceExternalAddressStatusAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestResourceExternalAddressStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestResourceExternalAddressStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.ResourceExternalAddressStatusResponse{}
-	_, diags := commonconv.ResourceExternalAddressStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.ResourceExternalAddressStatusResponse{
+		Ref:       vpc.NewMustExternalAddressRef("projectID", "externalAddressID"),
+		IpAddress: ipaddress.MustParseIPAddressString("192.168.1.1"),
+	}
+	_, diags := commonconv.ResourceExternalAddressStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestResourceExternalAddressStatusAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestResourceExternalAddressStatusAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.ResourceExternalAddressStatusOptionalResponse{}
-	_, diags := commonconv.ResourceExternalAddressStatusAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.ResourceExternalAddressStatusOptionalResponse{
+		Ref:       vpc.NewMustExternalAddressRef("projectID", "externalAddressID"),
+		IpAddress: ipaddress.MustParseIPAddressString("192.168.1.1"),
+	}
+	_, diags := commonconv.ResourceExternalAddressStatusAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

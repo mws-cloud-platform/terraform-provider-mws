@@ -40,18 +40,18 @@ func (m *BackupDataSource) Metadata(ctx context.Context, req datasource.Metadata
 func (m *BackupDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "BackupDataSource.Schema")
 	resp.Schema = new(tfmodel.PostgresBackup).GetSchema()
-	resp.Schema.Attributes["backup"] = schema.StringAttribute{
-		MarkdownDescription: `Backup базы данных.`,
-		Required:            true,
+	resp.Schema.Attributes["project"] = schema.StringAttribute{
+		MarkdownDescription: `Путь к проекту.`,
+		Optional:            true,
+		Computed:            true,
 	}
 	resp.Schema.Attributes["cluster"] = schema.StringAttribute{
 		MarkdownDescription: `Название или идентификатор кластера.`,
 		Required:            true,
 	}
-	resp.Schema.Attributes["project"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к проекту.`,
-		Optional:            true,
-		Computed:            true,
+	resp.Schema.Attributes["backup"] = schema.StringAttribute{
+		MarkdownDescription: `Backup базы данных.`,
+		Required:            true,
 	}
 }
 

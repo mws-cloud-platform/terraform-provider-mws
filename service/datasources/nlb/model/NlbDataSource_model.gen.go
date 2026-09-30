@@ -7,8 +7,8 @@ import (
 )
 
 type NlbModel struct {
+	ProjectParam types.String `tfsdk:"project"`
 	NetworkParam types.String `tfsdk:"network"`
 	NlbParam     types.String `tfsdk:"nlb"`
-	ProjectParam types.String `tfsdk:"project"`
 	Nlb
 }

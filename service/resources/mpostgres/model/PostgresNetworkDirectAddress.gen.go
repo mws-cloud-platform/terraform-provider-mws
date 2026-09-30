@@ -4,7 +4,10 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 )
 
 type PostgresNetworkDirectAddress struct {
@@ -19,6 +22,9 @@ func (s *PostgresNetworkDirectAddress) GetSchema() schema.Schema {
 			"ref": schema.StringAttribute{
 				MarkdownDescription: `Идентификатор адреса для подключения к узлу`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"spec": schema.SingleNestedAttribute{
 				Attributes:          new(PostgresNetworkAddressSpec).GetSchema().Attributes,
@@ -33,6 +39,9 @@ func (s *PostgresNetworkDirectAddress) GetSchema() schema.Schema {
 			"zone": schema.StringAttribute{
 				MarkdownDescription: `Зона инстанса, к которому ведет адрес`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

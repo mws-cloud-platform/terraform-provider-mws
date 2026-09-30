@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestPossiblyZeroIopsAPIToTFModelEmpty(t *testing.T) {
+func TestPossiblyZeroIopsAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.PossiblyZeroIops(0)
-	_, diags := conv.PossiblyZeroIopsAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.PossiblyZeroIops(0)
+	_, diags := conv.PossiblyZeroIopsAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

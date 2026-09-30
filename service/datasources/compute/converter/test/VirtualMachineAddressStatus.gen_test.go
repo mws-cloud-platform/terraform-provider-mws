@@ -9,12 +9,15 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestVirtualMachineAddressStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestVirtualMachineAddressStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.VirtualMachineAddressStatusResponse{}
-	_, diags := conv.VirtualMachineAddressStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.VirtualMachineAddressStatusResponse{
+		Ref: vpc.NewMustAddressRef("projectID", "networkID", "addressID"),
+	}
+	_, diags := conv.VirtualMachineAddressStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

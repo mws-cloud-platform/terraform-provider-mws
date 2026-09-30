@@ -49,19 +49,19 @@ func (m *SubnetResource) Metadata(ctx context.Context, req resource.MetadataRequ
 func (m *SubnetResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	tflog.Info(ctx, "SubnetResource.Schema")
 	resp.Schema = new(tfmodel.Subnet).GetSchema()
-	resp.Schema.Attributes["network"] = schema.StringAttribute{
-		MarkdownDescription: `Имя сети`,
-		Required:            true,
-		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.RequiresReplaceIfConfigured(),
-		},
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
+	}
+	resp.Schema.Attributes["network"] = schema.StringAttribute{
+		MarkdownDescription: `Имя сети`,
+		Required:            true,
+		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}

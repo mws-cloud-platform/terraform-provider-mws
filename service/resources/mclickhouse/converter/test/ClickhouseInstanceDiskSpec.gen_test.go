@@ -14,24 +14,17 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func TestClickhouseInstanceDiskSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ClickhouseInstanceDiskSpecOptionalResponse{}
-	_, diags := conv.ClickhouseInstanceDiskSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestClickhouseInstanceDiskSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ClickhouseInstanceDiskSpecRequest{
+	apiModelRequest := model.ClickhouseInstanceDiskSpecRequest{
 		Size: bytesize.MustParseString("0 B"),
 		Type: "",
 	}
 
-	emptyApiModelResponse, err := model.ClickhouseInstanceDiskSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ClickhouseInstanceDiskSpecRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ClickhouseInstanceDiskSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ClickhouseInstanceDiskSpecAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ClickhouseInstanceDiskSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -40,27 +33,20 @@ func TestClickhouseInstanceDiskSpecOptionalResponseConverters(t *testing.T) {
 	result, err := model.ClickhouseInstanceDiskSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
-func TestClickhouseInstanceDiskSpecAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ClickhouseInstanceDiskSpecResponse{}
-	_, diags := conv.ClickhouseInstanceDiskSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestClickhouseInstanceDiskSpecResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ClickhouseInstanceDiskSpecRequest{
+	apiModelRequest := model.ClickhouseInstanceDiskSpecRequest{
 		Size: bytesize.MustParseString("0 B"),
 		Type: "",
 	}
 
-	emptyApiModelResponse, err := model.ClickhouseInstanceDiskSpecRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ClickhouseInstanceDiskSpecRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ClickhouseInstanceDiskSpecAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ClickhouseInstanceDiskSpecAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ClickhouseInstanceDiskSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -69,7 +55,7 @@ func TestClickhouseInstanceDiskSpecResponseConverters(t *testing.T) {
 	result, err := model.ClickhouseInstanceDiskSpecRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateClickhouseInstanceDiskSpecRequestConverters(t *testing.T) {

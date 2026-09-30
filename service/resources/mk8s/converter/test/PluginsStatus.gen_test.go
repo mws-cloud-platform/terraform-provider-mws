@@ -12,16 +12,16 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
 )
 
-func TestPluginsStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestPluginsStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.PluginsStatusResponse{}
-	_, diags := conv.PluginsStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.PluginsStatusResponse{}
+	_, diags := conv.PluginsStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestPluginsStatusCniAPIResponseToTFModelEmpty(t *testing.T) {
+func TestPluginsStatusCniAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.PluginsStatusCniResponse{}
-	_, diags := conv.PluginsStatusCniAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.PluginsStatusCniResponse{}
+	_, diags := conv.PluginsStatusCniAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

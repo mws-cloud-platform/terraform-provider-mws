@@ -9,12 +9,15 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/service/compute/model"
+	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
 )
 
-func TestVirtualMachineOneToOneNatStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestVirtualMachineOneToOneNatStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.VirtualMachineOneToOneNatStatusResponse{}
-	_, diags := conv.VirtualMachineOneToOneNatStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.VirtualMachineOneToOneNatStatusResponse{
+		Ref: vpc.NewMustOneToOneNatRef("projectID", "networkID", "oneToOneNatID"),
+	}
+	_, diags := conv.VirtualMachineOneToOneNatStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

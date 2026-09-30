@@ -9,47 +9,69 @@ import (
 	"github.com/stretchr/testify/require"
 
 	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/resources/references/iam"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
-func TestCommonRoleBindingAPIToTFModelEmpty(t *testing.T) {
+func TestCommonRoleBindingAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.CommonRoleBinding{}
-	_, diags := commonconv.CommonRoleBindingAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.CommonRoleBinding{
+		Spec: commonmodel.CommonRoleBindingSpec{
+			Subject: commonmodel.CommonRoleBindingSpecSubject{},
+			Role:    iam.NewMustRoleRef("roleID"),
+		},
+	}
+	_, diags := commonconv.CommonRoleBindingAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestCommonRoleBindingAPIResponseToTFModelEmpty(t *testing.T) {
+func TestCommonRoleBindingAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.CommonRoleBindingResponse{}
-	_, diags := commonconv.CommonRoleBindingAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.CommonRoleBindingResponse{
+		Spec: commonmodel.CommonRoleBindingSpecResponse{
+			Subject: commonmodel.CommonRoleBindingSpecSubjectResponse{},
+			Role:    iam.NewMustRoleRef("roleID"),
+		},
+	}
+	_, diags := commonconv.CommonRoleBindingAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestCommonRoleBindingAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestCommonRoleBindingAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.CommonRoleBindingOptionalResponse{}
-	_, diags := commonconv.CommonRoleBindingAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.CommonRoleBindingOptionalResponse{
+		Spec: commonmodel.CommonRoleBindingSpecOptionalResponse{
+			Subject: commonmodel.CommonRoleBindingSpecSubjectOptionalResponse{},
+			Role:    iam.NewMustRoleRef("roleID"),
+		},
+	}
+	_, diags := commonconv.CommonRoleBindingAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestCommonRoleBindingMetadataAPIToTFModelEmpty(t *testing.T) {
+func TestCommonRoleBindingMetadataAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.CommonRoleBindingMetadata{}
-	_, diags := commonconv.CommonRoleBindingMetadataAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.CommonRoleBindingMetadata{
+		TypedResourceMetadata: commonmodel.TypedResourceMetadata{},
+	}
+	_, diags := commonconv.CommonRoleBindingMetadataAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestCommonRoleBindingMetadataAPIResponseToTFModelEmpty(t *testing.T) {
+func TestCommonRoleBindingMetadataAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.CommonRoleBindingMetadataResponse{}
-	_, diags := commonconv.CommonRoleBindingMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.CommonRoleBindingMetadataResponse{
+		TypedResourceMetadataResponse: commonmodel.TypedResourceMetadataResponse{},
+	}
+	_, diags := commonconv.CommonRoleBindingMetadataAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestCommonRoleBindingMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestCommonRoleBindingMetadataAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.CommonRoleBindingMetadataOptionalResponse{}
-	_, diags := commonconv.CommonRoleBindingMetadataAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.CommonRoleBindingMetadataOptionalResponse{
+		TypedResourceMetadataOptionalResponse: commonmodel.TypedResourceMetadataOptionalResponse{},
+	}
+	_, diags := commonconv.CommonRoleBindingMetadataAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

@@ -12,22 +12,15 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
 )
 
-func TestIopsAPIToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.Iops(0)
-	_, diags := conv.IopsAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestIopsConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.Iops(0)
+	apiModel := model.Iops(0)
 
-	tfModel, diags := conv.IopsAPIToTFModel(context.Background(), &emptyApiModel)
+	tfModel, diags := conv.IopsAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 
 	result, diags := conv.IopsTFToAPIModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	require.Equal(t, emptyApiModel, *result)
+	require.Equal(t, apiModel, *result)
 }

@@ -9,12 +9,15 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/converter"
 )
 
-func TestClusterPrimaryEndpointSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestClusterPrimaryEndpointSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClusterPrimaryEndpointSpecOptionalResponse{}
-	_, diags := conv.ClusterPrimaryEndpointSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClusterPrimaryEndpointSpecOptionalResponse{
+		Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
+	}
+	_, diags := conv.ClusterPrimaryEndpointSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

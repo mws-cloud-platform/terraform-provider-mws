@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
 )
 
-func TestPostgresRoleBindingRoleAPIToTFModelEmpty(t *testing.T) {
+func TestPostgresRoleBindingRoleAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.PostgresRoleBindingRole("")
-	_, diags := conv.PostgresRoleBindingRoleAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.PostgresRoleBindingRole("")
+	_, diags := conv.PostgresRoleBindingRoleAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

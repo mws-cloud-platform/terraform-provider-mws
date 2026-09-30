@@ -4,8 +4,11 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
+	localboolplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/boolplanmodifier"
+	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
@@ -22,10 +25,16 @@ func (s *NodeGroupVersionControlSpec) GetSchema() schema.Schema {
 			"version": schema.StringAttribute{
 				MarkdownDescription: `Минимальная версия группы узлов. Не может быть выше версии кластера.  Автоматически обновляется до default-версии в окно обслуживания. Если указанная версия выше текущей, обновление запустится немедленно. Во время автоматического обновления это поле не изменяется, а актуальная версия указывается в статусе группы узлов`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"auto_update": schema.BoolAttribute{
 				MarkdownDescription: `Автоматическое обновление версии группы узлов в рамках релизного канала и окна обслуживания`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.Bool{
+					localboolplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"maintenance_window": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.MaintenanceWindow).GetSchema().Attributes,

@@ -12,22 +12,15 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
 )
 
-func TestPostgresUserAccessControlPolicyAPIToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.PostgresUserAccessControlPolicy("")
-	_, diags := conv.PostgresUserAccessControlPolicyAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestPostgresUserAccessControlPolicyConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.PostgresUserAccessControlPolicy("")
+	apiModel := model.PostgresUserAccessControlPolicy("")
 
-	tfModel, diags := conv.PostgresUserAccessControlPolicyAPIToTFModel(context.Background(), &emptyApiModel)
+	tfModel, diags := conv.PostgresUserAccessControlPolicyAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 
 	result, diags := conv.PostgresUserAccessControlPolicyTFToAPIModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	require.Equal(t, emptyApiModel, *result)
+	require.Equal(t, apiModel, *result)
 }

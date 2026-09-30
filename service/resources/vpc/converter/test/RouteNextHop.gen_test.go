@@ -17,21 +17,14 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func TestRouteNextHopAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.RouteNextHopOptionalResponse{}
-	_, diags := conv.RouteNextHopAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestRouteNextHopOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.RouteNextHopRequest{}
+	apiModelRequest := model.RouteNextHopRequest{}
 
-	emptyApiModelResponse, err := model.RouteNextHopRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.RouteNextHopRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.RouteNextHopAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.RouteNextHopAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.RouteNextHopTFToAPIRequestModel(context.Background(), tfModel)
@@ -40,7 +33,7 @@ func TestRouteNextHopOptionalResponseConverters(t *testing.T) {
 	result, err := model.RouteNextHopRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateRouteNextHopRequestConverters(t *testing.T) {
@@ -68,23 +61,16 @@ func TestUpdateRouteNextHopRequestConverters(t *testing.T) {
 	require.Equal(t, expectedUpdateModel, result)
 }
 
-func TestRouteNextHopAddressAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.RouteNextHopAddressOptionalResponse{}
-	_, diags := conv.RouteNextHopAddressAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestRouteNextHopAddressOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.RouteNextHopAddressRequest{
+	apiModelRequest := model.RouteNextHopAddressRequest{
 		Ref: vpc.NewMustAddressRef("projectID", "networkID", "addressID"),
 	}
 
-	emptyApiModelResponse, err := model.RouteNextHopAddressRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.RouteNextHopAddressRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.RouteNextHopAddressAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.RouteNextHopAddressAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.RouteNextHopAddressTFToAPIRequestModel(context.Background(), tfModel)
@@ -93,7 +79,7 @@ func TestRouteNextHopAddressOptionalResponseConverters(t *testing.T) {
 	result, err := model.RouteNextHopAddressRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateRouteNextHopAddressRequestConverters(t *testing.T) {

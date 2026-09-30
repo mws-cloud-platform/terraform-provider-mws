@@ -12,9 +12,11 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
-func TestExternalAddressAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestExternalAddressAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ExternalAddressOptionalResponse{}
-	_, diags := conv.ExternalAddressAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ExternalAddressOptionalResponse{
+		Spec: model.VpcExternalAddressSpecOptionalResponse{},
+	}
+	_, diags := conv.ExternalAddressAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

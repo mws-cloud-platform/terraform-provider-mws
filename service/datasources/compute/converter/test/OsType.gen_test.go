@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestOsTypeAPIToTFModelEmpty(t *testing.T) {
+func TestOsTypeAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.OsType("")
-	_, diags := conv.OsTypeAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.OsType("")
+	_, diags := conv.OsTypeAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

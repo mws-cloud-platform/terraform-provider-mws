@@ -7,14 +7,19 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 
 	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
-func TestSubnetAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestSubnetAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.SubnetOptionalResponse{}
-	_, diags := conv.SubnetAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.SubnetOptionalResponse{
+		Spec: model.SubnetSpecOptionalResponse{
+			Cidr: cidraddress.MustParseCIDR4AddressString("192.168.1.0/24"),
+		},
+	}
+	_, diags := conv.SubnetAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

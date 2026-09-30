@@ -8,13 +8,16 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/nlb/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/nlb/converter"
 )
 
-func TestNlbListenerInternalAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestNlbListenerInternalAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NlbListenerInternalOptionalResponse{}
-	_, diags := conv.NlbListenerInternalAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NlbListenerInternalOptionalResponse{
+		Address: commonmodel.ResourceAddressSpecOrRefOptionalResponse{},
+	}
+	_, diags := conv.NlbListenerInternalAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

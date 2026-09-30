@@ -40,14 +40,14 @@ func (m *ClusterUserDataSource) Metadata(ctx context.Context, req datasource.Met
 func (m *ClusterUserDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "ClusterUserDataSource.Schema")
 	resp.Schema = new(tfmodel.KafkaUser).GetSchema()
-	resp.Schema.Attributes["cluster"] = schema.StringAttribute{
-		MarkdownDescription: `Название или идентификатор кластера.`,
-		Required:            true,
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
+	}
+	resp.Schema.Attributes["cluster"] = schema.StringAttribute{
+		MarkdownDescription: `Название или идентификатор кластера.`,
+		Required:            true,
 	}
 	resp.Schema.Attributes["user"] = schema.StringAttribute{
 		MarkdownDescription: `Пользователь кластера.`,

@@ -9,12 +9,16 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/resources/references/rm"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/converter"
 )
 
-func TestKafkaAllocationAPIResponseToTFModelEmpty(t *testing.T) {
+func TestKafkaAllocationAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.KafkaAllocationResponse{}
-	_, diags := conv.KafkaAllocationAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.KafkaAllocationResponse{
+		Zone:  rm.NewMustZoneRef("zoneID"),
+		Count: 0,
+	}
+	_, diags := conv.KafkaAllocationAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

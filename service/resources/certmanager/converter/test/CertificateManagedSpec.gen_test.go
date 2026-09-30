@@ -15,21 +15,14 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/model"
 )
 
-func TestCertificateManagedSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.CertificateManagedSpecOptionalResponse{}
-	_, diags := conv.CertificateManagedSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestCertificateManagedSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.CertificateManagedSpecRequest{}
+	apiModelRequest := model.CertificateManagedSpecRequest{}
 
-	emptyApiModelResponse, err := model.CertificateManagedSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.CertificateManagedSpecRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.CertificateManagedSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.CertificateManagedSpecAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.CertificateManagedSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -38,7 +31,7 @@ func TestCertificateManagedSpecOptionalResponseConverters(t *testing.T) {
 	result, err := model.CertificateManagedSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateCertificateManagedSpecRequestConverters(t *testing.T) {

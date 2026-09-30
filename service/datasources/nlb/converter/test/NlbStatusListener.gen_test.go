@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/nlb/converter"
 )
 
-func TestNlbStatusListenerAPIResponseToTFModelEmpty(t *testing.T) {
+func TestNlbStatusListenerAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NlbStatusListenerResponse{}
-	_, diags := conv.NlbStatusListenerAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NlbStatusListenerResponse{}
+	_, diags := conv.NlbStatusListenerAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

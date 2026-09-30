@@ -8,13 +8,18 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
-func TestAddressAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestAddressAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.AddressOptionalResponse{}
-	_, diags := conv.AddressAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.AddressOptionalResponse{
+		Spec: model.VpcAddressSpecOptionalResponse{
+			Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
+		},
+	}
+	_, diags := conv.AddressAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

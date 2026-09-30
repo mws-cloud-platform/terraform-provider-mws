@@ -7,14 +7,21 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/units/duration"
 
 	"go.mws.cloud/go-sdk/service/nlb/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/nlb/converter"
 )
 
-func TestNlbStatusHealthCheckAPIResponseToTFModelEmpty(t *testing.T) {
+func TestNlbStatusHealthCheckAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NlbStatusHealthCheckResponse{}
-	_, diags := conv.NlbStatusHealthCheckAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NlbStatusHealthCheckResponse{
+		Protocol:           model.NlbStatusHealthCheckProtocolResponse{},
+		Interval:           duration.MustParseString("PT0S"),
+		Timeout:            duration.MustParseString("PT0S"),
+		UnhealthyThreshold: 0,
+		HealthyThreshold:   0,
+	}
+	_, diags := conv.NlbStatusHealthCheckAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

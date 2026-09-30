@@ -13,21 +13,14 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func TestClickhouseStorageConfigurationAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ClickhouseStorageConfigurationOptionalResponse{}
-	_, diags := conv.ClickhouseStorageConfigurationAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestClickhouseStorageConfigurationOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ClickhouseStorageConfigurationRequest{}
+	apiModelRequest := model.ClickhouseStorageConfigurationRequest{}
 
-	emptyApiModelResponse, err := model.ClickhouseStorageConfigurationRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ClickhouseStorageConfigurationRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ClickhouseStorageConfigurationAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ClickhouseStorageConfigurationAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ClickhouseStorageConfigurationTFToAPIRequestModel(context.Background(), tfModel)
@@ -36,24 +29,17 @@ func TestClickhouseStorageConfigurationOptionalResponseConverters(t *testing.T) 
 	result, err := model.ClickhouseStorageConfigurationRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
-}
-
-func TestClickhouseStorageConfigurationAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ClickhouseStorageConfigurationResponse{}
-	_, diags := conv.ClickhouseStorageConfigurationAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestClickhouseStorageConfigurationResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ClickhouseStorageConfigurationRequest{}
+	apiModelRequest := model.ClickhouseStorageConfigurationRequest{}
 
-	emptyApiModelResponse, err := model.ClickhouseStorageConfigurationRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ClickhouseStorageConfigurationRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ClickhouseStorageConfigurationAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ClickhouseStorageConfigurationAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ClickhouseStorageConfigurationTFToAPIRequestModel(context.Background(), tfModel)
@@ -62,7 +48,7 @@ func TestClickhouseStorageConfigurationResponseConverters(t *testing.T) {
 	result, err := model.ClickhouseStorageConfigurationRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateClickhouseStorageConfigurationRequestConverters(t *testing.T) {

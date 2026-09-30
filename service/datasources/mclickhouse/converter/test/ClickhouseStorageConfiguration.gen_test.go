@@ -12,16 +12,16 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/converter"
 )
 
-func TestClickhouseStorageConfigurationAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestClickhouseStorageConfigurationAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClickhouseStorageConfigurationOptionalResponse{}
-	_, diags := conv.ClickhouseStorageConfigurationAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClickhouseStorageConfigurationOptionalResponse{}
+	_, diags := conv.ClickhouseStorageConfigurationAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestClickhouseStorageConfigurationAPIResponseToTFModelEmpty(t *testing.T) {
+func TestClickhouseStorageConfigurationAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClickhouseStorageConfigurationResponse{}
-	_, diags := conv.ClickhouseStorageConfigurationAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClickhouseStorageConfigurationResponse{}
+	_, diags := conv.ClickhouseStorageConfigurationAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

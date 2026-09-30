@@ -7,14 +7,27 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 
 	"go.mws.cloud/go-sdk/service/mk8s/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/converter"
 )
 
-func TestClusterAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestClusterAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClusterOptionalResponse{}
-	_, diags := conv.ClusterAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClusterOptionalResponse{
+		Spec: model.ClusterSpecOptionalResponse{
+			Availability: model.ClusterAvailabilitySpecOptionalResponse{},
+			Network: model.ClusterSpecNetworkOptionalResponse{
+				PrimaryEndpoint: model.ClusterPrimaryEndpointSpecOrRefOptionalResponse{},
+				PodsCidr:        cidraddress.MustParseCIDR4AddressString("192.168.1.0/24"),
+				ServicesCidr:    cidraddress.MustParseCIDR4AddressString("192.168.1.0/24"),
+			},
+			VersionControl: model.ClusterVersionControlSpecOptionalResponse{
+				ReleaseChannel: "releaseChannel",
+			},
+		},
+	}
+	_, diags := conv.ClusterAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

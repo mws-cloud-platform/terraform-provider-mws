@@ -12,9 +12,11 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
-func TestNetworkAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestNetworkAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NetworkOptionalResponse{}
-	_, diags := conv.NetworkAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NetworkOptionalResponse{
+		Spec: model.VpcNetworkSpecOptionalResponse{},
+	}
+	_, diags := conv.NetworkAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

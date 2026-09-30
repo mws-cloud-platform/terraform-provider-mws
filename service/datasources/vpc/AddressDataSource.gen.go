@@ -40,18 +40,18 @@ func (m *AddressDataSource) Metadata(ctx context.Context, req datasource.Metadat
 func (m *AddressDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "AddressDataSource.Schema")
 	resp.Schema = new(tfmodel.Address).GetSchema()
-	resp.Schema.Attributes["address"] = schema.StringAttribute{
-		MarkdownDescription: `IP-адрес`,
-		Required:            true,
+	resp.Schema.Attributes["project"] = schema.StringAttribute{
+		MarkdownDescription: `Путь к проекту.`,
+		Optional:            true,
+		Computed:            true,
 	}
 	resp.Schema.Attributes["network"] = schema.StringAttribute{
 		MarkdownDescription: `Имя сети`,
 		Required:            true,
 	}
-	resp.Schema.Attributes["project"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к проекту.`,
-		Optional:            true,
-		Computed:            true,
+	resp.Schema.Attributes["address"] = schema.StringAttribute{
+		MarkdownDescription: `IP-адрес`,
+		Required:            true,
 	}
 }
 

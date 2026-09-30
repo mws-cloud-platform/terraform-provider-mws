@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/converter"
 )
 
-func TestKafkaConnectorStateAPIToTFModelEmpty(t *testing.T) {
+func TestKafkaConnectorStateAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.KafkaConnectorState("")
-	_, diags := conv.KafkaConnectorStateAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.KafkaConnectorState("")
+	_, diags := conv.KafkaConnectorStateAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

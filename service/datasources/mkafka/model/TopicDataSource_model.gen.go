@@ -7,8 +7,8 @@ import (
 )
 
 type TopicModel struct {
-	ClusterParam types.String `tfsdk:"cluster"`
 	ProjectParam types.String `tfsdk:"project"`
+	ClusterParam types.String `tfsdk:"cluster"`
 	TopicParam   types.String `tfsdk:"topic"`
 	KafkaTopic
 }

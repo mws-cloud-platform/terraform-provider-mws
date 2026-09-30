@@ -15,21 +15,14 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func TestOsSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.OsSpecOptionalResponse{}
-	_, diags := conv.OsSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestOsSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.OsSpecRequest{}
+	apiModelRequest := model.OsSpecRequest{}
 
-	emptyApiModelResponse, err := model.OsSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.OsSpecRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.OsSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.OsSpecAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.OsSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -38,7 +31,7 @@ func TestOsSpecOptionalResponseConverters(t *testing.T) {
 	result, err := model.OsSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateOsSpecRequestConverters(t *testing.T) {
@@ -61,21 +54,14 @@ func TestUpdateOsSpecRequestConverters(t *testing.T) {
 	require.Equal(t, expectedUpdateModel, result)
 }
 
-func TestOsSpecMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.OsSpecMetadataOptionalResponse{}
-	_, diags := conv.OsSpecMetadataAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestOsSpecMetadataOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.OsSpecMetadataRequest{}
+	apiModelRequest := model.OsSpecMetadataRequest{}
 
-	emptyApiModelResponse, err := model.OsSpecMetadataRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.OsSpecMetadataRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.OsSpecMetadataAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.OsSpecMetadataAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.OsSpecMetadataTFToAPIRequestModel(context.Background(), tfModel)
@@ -84,7 +70,7 @@ func TestOsSpecMetadataOptionalResponseConverters(t *testing.T) {
 	result, err := model.OsSpecMetadataRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateOsSpecMetadataRequestConverters(t *testing.T) {

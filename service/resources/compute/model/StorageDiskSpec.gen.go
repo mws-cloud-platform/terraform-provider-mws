@@ -4,7 +4,11 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localint64planmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/int64planmodifier"
+	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 )
 
 type StorageDiskSpec struct {
@@ -25,6 +29,9 @@ func (s *StorageDiskSpec) GetSchema() schema.Schema {
 Значение базовой единицы измерения (в байтах) должно оставаться целым.
 Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются`,
 				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"source": schema.SingleNestedAttribute{
 				Attributes:          new(StorageDiskSpecSource).GetSchema().Attributes,
@@ -38,6 +45,9 @@ func (s *StorageDiskSpec) GetSchema() schema.Schema {
 			"iops": schema.Int64Attribute{
 				MarkdownDescription: `Запрашиваемое пользователем значение IOPS`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.Int64{
+					localint64planmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

@@ -3,6 +3,7 @@ package conv
 import (
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
@@ -28,6 +29,8 @@ func MustKnownValue(t attr.Type) attr.Value {
 		return types.MapValueMust(t.ElemType, map[string]attr.Value{})
 	case basetypes.ObjectType:
 		return MustKnownObjectValue(t.AttrTypes)
+	case jsontypes.NormalizedType:
+		return jsontypes.NewNormalizedValue("{}")
 	default:
 		panic(fmt.Sprintf("unsupported attr type %T", t))
 	}

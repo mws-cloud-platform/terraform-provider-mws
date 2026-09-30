@@ -40,6 +40,11 @@ func (m *ClusterDatabaseDataSource) Metadata(ctx context.Context, req datasource
 func (m *ClusterDatabaseDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "ClusterDatabaseDataSource.Schema")
 	resp.Schema = new(tfmodel.PostgresClusterDatabase).GetSchema()
+	resp.Schema.Attributes["project"] = schema.StringAttribute{
+		MarkdownDescription: `Путь к проекту.`,
+		Optional:            true,
+		Computed:            true,
+	}
 	resp.Schema.Attributes["cluster"] = schema.StringAttribute{
 		MarkdownDescription: `Название или идентификатор кластера.`,
 		Required:            true,
@@ -47,11 +52,6 @@ func (m *ClusterDatabaseDataSource) Schema(ctx context.Context, req datasource.S
 	resp.Schema.Attributes["database"] = schema.StringAttribute{
 		MarkdownDescription: `Имя базы данных.`,
 		Required:            true,
-	}
-	resp.Schema.Attributes["project"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к проекту.`,
-		Optional:            true,
-		Computed:            true,
 	}
 }
 

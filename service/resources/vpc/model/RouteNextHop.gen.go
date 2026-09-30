@@ -3,14 +3,15 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type RouteNextHop struct {
-	NetworkLocal types.String `tfsdk:"network_local"`
-	NatGateway   types.String `tfsdk:"nat_gateway"`
-	Address      types.Object `tfsdk:"address"`
+	NetworkLocal jsontypes.Normalized `tfsdk:"network_local"`
+	NatGateway   types.String         `tfsdk:"nat_gateway"`
+	Address      types.Object         `tfsdk:"address"`
 }
 
 func (s *RouteNextHop) GetSchema() schema.Schema {
@@ -18,6 +19,7 @@ func (s *RouteNextHop) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"network_local": schema.StringAttribute{
+				CustomType:          jsontypes.NormalizedType{},
 				MarkdownDescription: `Локальная сеть`,
 				Computed:            true,
 			},

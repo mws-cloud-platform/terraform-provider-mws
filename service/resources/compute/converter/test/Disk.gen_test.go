@@ -17,25 +17,18 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
 )
 
-func TestDiskAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.DiskOptionalResponse{}
-	_, diags := conv.DiskAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestDiskOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.DiskRequest{
+	apiModelRequest := model.DiskRequest{
 		Spec: model.DiskSpecRequest{
 			Zone: "zone",
 		},
 	}
 
-	emptyApiModelResponse, err := model.DiskRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.DiskRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.DiskAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.DiskAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.DiskTFToAPIRequestModel(context.Background(), tfModel)
@@ -44,7 +37,7 @@ func TestDiskOptionalResponseConverters(t *testing.T) {
 	result, err := model.DiskRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateDiskRequestConverters(t *testing.T) {

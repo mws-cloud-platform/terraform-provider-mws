@@ -15,21 +15,14 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/model"
 )
 
-func TestKafkaS3SinkConnectorAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.KafkaS3SinkConnectorOptionalResponse{}
-	_, diags := conv.KafkaS3SinkConnectorAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestKafkaS3SinkConnectorOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.KafkaS3SinkConnectorRequest{}
+	apiModelRequest := model.KafkaS3SinkConnectorRequest{}
 
-	emptyApiModelResponse, err := model.KafkaS3SinkConnectorRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.KafkaS3SinkConnectorRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.KafkaS3SinkConnectorAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.KafkaS3SinkConnectorAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.KafkaS3SinkConnectorTFToAPIRequestModel(context.Background(), tfModel)
@@ -38,7 +31,7 @@ func TestKafkaS3SinkConnectorOptionalResponseConverters(t *testing.T) {
 	result, err := model.KafkaS3SinkConnectorRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateKafkaS3SinkConnectorRequestConverters(t *testing.T) {

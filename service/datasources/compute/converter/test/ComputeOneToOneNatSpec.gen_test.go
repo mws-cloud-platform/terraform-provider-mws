@@ -12,16 +12,22 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestComputeOneToOneNatSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestComputeOneToOneNatSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ComputeOneToOneNatSpecOptionalResponse{}
-	_, diags := conv.ComputeOneToOneNatSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ComputeOneToOneNatSpecOptionalResponse{
+		External: model.ComputeOneToOneNatSpecExternalOptionalResponse{
+			Address: model.OneToOneNatAddressSpecOrRefOptionalResponse{},
+		},
+	}
+	_, diags := conv.ComputeOneToOneNatSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestComputeOneToOneNatSpecExternalAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestComputeOneToOneNatSpecExternalAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ComputeOneToOneNatSpecExternalOptionalResponse{}
-	_, diags := conv.ComputeOneToOneNatSpecExternalAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ComputeOneToOneNatSpecExternalOptionalResponse{
+		Address: model.OneToOneNatAddressSpecOrRefOptionalResponse{},
+	}
+	_, diags := conv.ComputeOneToOneNatSpecExternalAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

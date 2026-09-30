@@ -4,7 +4,10 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	locallistplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/listplanmodifier"
 )
 
 type KafkaEndpointExternalAccesses struct {
@@ -26,6 +29,9 @@ func (s *KafkaEndpointExternalAccesses) GetSchema() schema.Schema {
 				},
 				MarkdownDescription: `Список внешних адресов, используемых для настройки доступа к кластеру Kafka. Если флаг "allowed" установлен в true и адреса не указаны, внешние адреса будут выделены автоматически`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.List{
+					locallistplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

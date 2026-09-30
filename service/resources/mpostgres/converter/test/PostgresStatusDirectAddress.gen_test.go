@@ -12,9 +12,11 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
 )
 
-func TestPostgresStatusDirectAddressAPIResponseToTFModelEmpty(t *testing.T) {
+func TestPostgresStatusDirectAddressAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.PostgresStatusDirectAddressResponse{}
-	_, diags := conv.PostgresStatusDirectAddressAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.PostgresStatusDirectAddressResponse{
+		PostgresStatusAddressResponse: model.PostgresStatusAddressResponse{},
+	}
+	_, diags := conv.PostgresStatusDirectAddressAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

@@ -49,10 +49,12 @@ func (m *AddressGroupResource) Metadata(ctx context.Context, req resource.Metada
 func (m *AddressGroupResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	tflog.Info(ctx, "AddressGroupResource.Schema")
 	resp.Schema = new(tfmodel.VpcAddressGroup).GetSchema()
-	resp.Schema.Attributes["address_group"] = schema.StringAttribute{
-		MarkdownDescription: `Имя группы адресов`,
-		Required:            true,
+	resp.Schema.Attributes["project"] = schema.StringAttribute{
+		MarkdownDescription: `Путь к проекту.`,
+		Optional:            true,
+		Computed:            true,
 		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.UseStateForUnknown(),
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}
@@ -63,12 +65,10 @@ func (m *AddressGroupResource) Schema(ctx context.Context, req resource.SchemaRe
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}
-	resp.Schema.Attributes["project"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к проекту.`,
-		Optional:            true,
-		Computed:            true,
+	resp.Schema.Attributes["address_group"] = schema.StringAttribute{
+		MarkdownDescription: `Имя группы адресов`,
+		Required:            true,
 		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.UseStateForUnknown(),
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}

@@ -4,12 +4,15 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localint64planmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/int64planmodifier"
+	locallistplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/listplanmodifier"
 )
 
 type ClickhouseClusterShard struct {
 	Name      types.String `tfsdk:"name"`
-	Count     types.Int64  `tfsdk:"count"`
 	Resources types.Object `tfsdk:"resources"`
 	Weight    types.Int64  `tfsdk:"weight"`
 	Endpoints types.List   `tfsdk:"endpoints"`
@@ -24,10 +27,6 @@ func (s *ClickhouseClusterShard) GetSchema() schema.Schema {
 				MarkdownDescription: `-> Имя шарда, которому будут принадлежать узлы. В случае с несколькими шардами имя формируется как "name-{shardIndex}"`,
 				Required:            true,
 			},
-			"count": schema.Int64Attribute{
-				MarkdownDescription: `Количество шардов, которые будут созданы`,
-				Optional:            true,
-			},
 			"resources": schema.SingleNestedAttribute{
 				Attributes:          new(ClickhouseInstanceHWResources).GetSchema().Attributes,
 				MarkdownDescription: `Ресурсы одного узла ClickHouse`,
@@ -36,6 +35,9 @@ func (s *ClickhouseClusterShard) GetSchema() schema.Schema {
 			"weight": schema.Int64Attribute{
 				MarkdownDescription: `Вес шарда`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.Int64{
+					localint64planmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"endpoints": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
@@ -43,6 +45,9 @@ func (s *ClickhouseClusterShard) GetSchema() schema.Schema {
 				},
 				MarkdownDescription: `Описание эндпоинтов шардов`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.List{
+					locallistplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"instances": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{

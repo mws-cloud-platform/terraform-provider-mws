@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/converter"
 )
 
-func TestLocalDiskStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestLocalDiskStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.LocalDiskStatusResponse{}
-	_, diags := conv.LocalDiskStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.LocalDiskStatusResponse{}
+	_, diags := conv.LocalDiskStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

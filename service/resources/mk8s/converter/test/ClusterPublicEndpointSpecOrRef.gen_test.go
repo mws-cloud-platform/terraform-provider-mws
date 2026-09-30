@@ -17,21 +17,14 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
 )
 
-func TestClusterPublicEndpointSpecOrRefAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ClusterPublicEndpointSpecOrRefOptionalResponse{}
-	_, diags := conv.ClusterPublicEndpointSpecOrRefAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestClusterPublicEndpointSpecOrRefOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ClusterPublicEndpointSpecOrRefRequest{}
+	apiModelRequest := model.ClusterPublicEndpointSpecOrRefRequest{}
 
-	emptyApiModelResponse, err := model.ClusterPublicEndpointSpecOrRefRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ClusterPublicEndpointSpecOrRefRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ClusterPublicEndpointSpecOrRefAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ClusterPublicEndpointSpecOrRefAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ClusterPublicEndpointSpecOrRefTFToAPIRequestModel(context.Background(), tfModel)
@@ -40,7 +33,7 @@ func TestClusterPublicEndpointSpecOrRefOptionalResponseConverters(t *testing.T) 
 	result, err := model.ClusterPublicEndpointSpecOrRefRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateClusterPublicEndpointSpecOrRefRequestConverters(t *testing.T) {

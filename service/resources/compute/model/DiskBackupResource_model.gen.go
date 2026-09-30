@@ -8,8 +8,8 @@ import (
 )
 
 type DiskBackupModel struct {
-	DiskBackupParam types.String   `tfsdk:"disk_backup"`
 	ProjectParam    types.String   `tfsdk:"project"`
+	DiskBackupParam types.String   `tfsdk:"disk_backup"`
 	Timeouts        timeouts.Value `tfsdk:"timeouts"`
 	ID              types.String   `tfsdk:"id"`
 	DiskBackup

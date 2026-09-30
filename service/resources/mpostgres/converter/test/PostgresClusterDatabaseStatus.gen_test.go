@@ -8,13 +8,19 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/converter"
 )
 
-func TestPostgresClusterDatabaseStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestPostgresClusterDatabaseStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.PostgresClusterDatabaseStatusResponse{}
-	_, diags := conv.PostgresClusterDatabaseStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.PostgresClusterDatabaseStatusResponse{
+		ResourceStatusResponse: commonmodel.ResourceStatusResponse{
+			Ready: commonmodel.ResourceStatusReadyResponse{
+				State: "",
+			},
+		}}
+	_, diags := conv.PostgresClusterDatabaseStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

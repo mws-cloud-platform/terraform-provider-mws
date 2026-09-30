@@ -12,9 +12,12 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/certmanager/converter"
 )
 
-func TestHttp01ChallengeAPIResponseToTFModelEmpty(t *testing.T) {
+func TestHttp01ChallengeAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.Http01ChallengeResponse{}
-	_, diags := conv.Http01ChallengeAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.Http01ChallengeResponse{
+		SourceUrl: "sourceUrl",
+		Delegated: false,
+	}
+	_, diags := conv.Http01ChallengeAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

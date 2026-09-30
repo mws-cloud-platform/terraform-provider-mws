@@ -8,13 +8,16 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
-func TestEgressNatSpecInternalAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestEgressNatSpecInternalAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.EgressNatSpecInternalOptionalResponse{}
-	_, diags := conv.EgressNatSpecInternalAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.EgressNatSpecInternalOptionalResponse{
+		Subnets: []vpc.SubnetRef{},
+	}
+	_, diags := conv.EgressNatSpecInternalAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/certmanager/converter"
 )
 
-func TestCertificateManagedSpecIssuerAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestCertificateManagedSpecIssuerAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.CertificateManagedSpecIssuerOptionalResponse{}
-	_, diags := conv.CertificateManagedSpecIssuerAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.CertificateManagedSpecIssuerOptionalResponse{}
+	_, diags := conv.CertificateManagedSpecIssuerAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

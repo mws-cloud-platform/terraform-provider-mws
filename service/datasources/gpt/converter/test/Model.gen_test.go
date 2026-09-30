@@ -8,20 +8,50 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/gpt/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/gpt/converter"
 )
 
-func TestModelAPIResponseToTFModelEmpty(t *testing.T) {
+func TestModelAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ModelResponse{}
-	_, diags := conv.ModelAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ModelResponse{
+		Spec: model.ModelSpecResponse{
+			InputModalities: model.InputModalitiesResponse{
+				Text:  false,
+				Image: false,
+				File:  false,
+				Audio: false,
+			},
+			OutputModalities: model.OutputModalitiesResponse{
+				Text:          false,
+				Embedding:     false,
+				Audio:         false,
+				Image:         false,
+				Reranking:     false,
+				Transcription: false,
+			},
+			Modalities: model.ModalitiesResponse{
+				Text:   false,
+				Vision: false,
+				Audio:  false,
+			},
+			Capabilities: model.CapabilitiesResponse{
+				Reasoning:   false,
+				ToolCalling: false,
+			},
+			Deprecation: model.DeprecationResponse{},
+		},
+	}
+	_, diags := conv.ModelAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestModelMetadataAPIResponseToTFModelEmpty(t *testing.T) {
+func TestModelMetadataAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ModelMetadataResponse{}
-	_, diags := conv.ModelMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ModelMetadataResponse{
+		TypedResourceMetadataResponse: commonmodel.TypedResourceMetadataResponse{},
+	}
+	_, diags := conv.ModelMetadataAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

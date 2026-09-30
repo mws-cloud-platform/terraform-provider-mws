@@ -7,14 +7,22 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/ipaddress"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/nlb/model"
+	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/nlb/converter"
 )
 
-func TestNlbStatusListenerInternalAPIResponseToTFModelEmpty(t *testing.T) {
+func TestNlbStatusListenerInternalAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NlbStatusListenerInternalResponse{}
-	_, diags := conv.NlbStatusListenerInternalAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NlbStatusListenerInternalResponse{
+		Address: commonmodel.ResourceAddressStatusResponse{
+			Ref:       vpc.NewMustAddressRef("projectID", "networkID", "addressID"),
+			IpAddress: ipaddress.MustParseIPAddressString("192.168.1.1"),
+		},
+	}
+	_, diags := conv.NlbStatusListenerInternalAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

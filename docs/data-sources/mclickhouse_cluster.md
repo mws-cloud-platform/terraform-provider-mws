@@ -209,7 +209,6 @@ Read-Only:
 
 Read-Only:
 
-- `count` (Number) Количество шардов, которые будут созданы
 - `endpoints` (Attributes List) Описание эндпоинтов шардов (see [below for nested schema](#nestedatt--shards--endpoints))
 - `instances` (Attributes List) (see [below for nested schema](#nestedatt--shards--instances))
 - `name` (String) -> Имя шарда, которому будут принадлежать узлы. В случае с несколькими шардами имя формируется как "name-{shardIndex}"

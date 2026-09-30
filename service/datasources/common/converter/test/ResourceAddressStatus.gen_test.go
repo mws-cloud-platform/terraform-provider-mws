@@ -7,28 +7,39 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/ipaddress"
 
 	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
-func TestResourceAddressStatusAPIToTFModelEmpty(t *testing.T) {
+func TestResourceAddressStatusAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.ResourceAddressStatus{}
-	_, diags := commonconv.ResourceAddressStatusAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.ResourceAddressStatus{
+		Ref:       vpc.NewMustAddressRef("projectID", "networkID", "addressID"),
+		IpAddress: ipaddress.MustParseIPAddressString("192.168.1.1"),
+	}
+	_, diags := commonconv.ResourceAddressStatusAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestResourceAddressStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestResourceAddressStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.ResourceAddressStatusResponse{}
-	_, diags := commonconv.ResourceAddressStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.ResourceAddressStatusResponse{
+		Ref:       vpc.NewMustAddressRef("projectID", "networkID", "addressID"),
+		IpAddress: ipaddress.MustParseIPAddressString("192.168.1.1"),
+	}
+	_, diags := commonconv.ResourceAddressStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestResourceAddressStatusAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestResourceAddressStatusAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.ResourceAddressStatusOptionalResponse{}
-	_, diags := commonconv.ResourceAddressStatusAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.ResourceAddressStatusOptionalResponse{
+		Ref:       vpc.NewMustAddressRef("projectID", "networkID", "addressID"),
+		IpAddress: ipaddress.MustParseIPAddressString("192.168.1.1"),
+	}
+	_, diags := commonconv.ResourceAddressStatusAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

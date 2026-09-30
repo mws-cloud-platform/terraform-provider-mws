@@ -12,9 +12,14 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/gpt/converter"
 )
 
-func TestInputModalitiesAPIResponseToTFModelEmpty(t *testing.T) {
+func TestInputModalitiesAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.InputModalitiesResponse{}
-	_, diags := conv.InputModalitiesAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.InputModalitiesResponse{
+		Text:  false,
+		Image: false,
+		File:  false,
+		Audio: false,
+	}
+	_, diags := conv.InputModalitiesAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

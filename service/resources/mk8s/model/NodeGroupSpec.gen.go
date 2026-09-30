@@ -4,7 +4,10 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localint64planmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/int64planmodifier"
 )
 
 type NodeGroupSpecRolloutStrategy struct {
@@ -18,9 +21,15 @@ func (s *NodeGroupSpecRolloutStrategy) GetSchema() schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"max_surge": schema.Int64Attribute{
 				Optional: true,
+				PlanModifiers: []planmodifier.Int64{
+					localint64planmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"max_unavailable": schema.Int64Attribute{
 				Optional: true,
+				PlanModifiers: []planmodifier.Int64{
+					localint64planmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

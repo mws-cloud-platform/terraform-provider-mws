@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/converter"
 )
 
-func TestConnectorHealthAPIToTFModelEmpty(t *testing.T) {
+func TestConnectorHealthAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ConnectorHealth("")
-	_, diags := conv.ConnectorHealthAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ConnectorHealth("")
+	_, diags := conv.ConnectorHealthAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

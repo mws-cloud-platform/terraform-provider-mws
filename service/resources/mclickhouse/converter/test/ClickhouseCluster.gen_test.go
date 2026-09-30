@@ -17,16 +17,9 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
 )
 
-func TestClickhouseClusterAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ClickhouseClusterOptionalResponse{}
-	_, diags := conv.ClickhouseClusterAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestClickhouseClusterOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ClickhouseClusterRequest{
+	apiModelRequest := model.ClickhouseClusterRequest{
 		Spec: model.ClickhouseClusterSpecRequest{
 			Version: "version",
 			Shards:  []model.ClickhouseClusterShardRequest{},
@@ -36,10 +29,10 @@ func TestClickhouseClusterOptionalResponseConverters(t *testing.T) {
 		},
 	}
 
-	emptyApiModelResponse, err := model.ClickhouseClusterRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ClickhouseClusterRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ClickhouseClusterAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ClickhouseClusterAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ClickhouseClusterTFToAPIRequestModel(context.Background(), tfModel)
@@ -48,7 +41,7 @@ func TestClickhouseClusterOptionalResponseConverters(t *testing.T) {
 	result, err := model.ClickhouseClusterRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateClickhouseClusterRequestConverters(t *testing.T) {
@@ -93,23 +86,16 @@ func TestUpdateClickhouseClusterRequestConverters(t *testing.T) {
 	require.Equal(t, expectedUpdateModel, result)
 }
 
-func TestClickhouseClusterMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.ClickhouseClusterMetadataOptionalResponse{}
-	_, diags := conv.ClickhouseClusterMetadataAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestClickhouseClusterMetadataOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.ClickhouseClusterMetadataRequest{
+	apiModelRequest := model.ClickhouseClusterMetadataRequest{
 		TypedResourceMetadataRequest: commonmodel.TypedResourceMetadataRequest{},
 	}
 
-	emptyApiModelResponse, err := model.ClickhouseClusterMetadataRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.ClickhouseClusterMetadataRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.ClickhouseClusterMetadataAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.ClickhouseClusterMetadataAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.ClickhouseClusterMetadataTFToAPIRequestModel(context.Background(), tfModel)
@@ -118,7 +104,7 @@ func TestClickhouseClusterMetadataOptionalResponseConverters(t *testing.T) {
 	result, err := model.ClickhouseClusterMetadataRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateClickhouseClusterMetadataRequestConverters(t *testing.T) {

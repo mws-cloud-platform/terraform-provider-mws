@@ -14,23 +14,16 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func TestFirewallRuleSourceSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.FirewallRuleSourceSpecOptionalResponse{}
-	_, diags := conv.FirewallRuleSourceSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestFirewallRuleSourceSpecOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.FirewallRuleSourceSpecRequest{
+	apiModelRequest := model.FirewallRuleSourceSpecRequest{
 		Cidrs: []cidraddress.CIDR4Address{},
 	}
 
-	emptyApiModelResponse, err := model.FirewallRuleSourceSpecRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.FirewallRuleSourceSpecRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.FirewallRuleSourceSpecAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.FirewallRuleSourceSpecAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.FirewallRuleSourceSpecTFToAPIRequestModel(context.Background(), tfModel)
@@ -39,7 +32,7 @@ func TestFirewallRuleSourceSpecOptionalResponseConverters(t *testing.T) {
 	result, err := model.FirewallRuleSourceSpecRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateFirewallRuleSourceSpecRequestConverters(t *testing.T) {

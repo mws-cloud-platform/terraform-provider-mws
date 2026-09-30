@@ -13,56 +13,35 @@ import (
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
-func TestResourceStatusAPIToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonmodel.ResourceStatus{}
-	_, diags := commonconv.ResourceStatusAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
-func TestResourceStatusAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonmodel.ResourceStatusResponse{}
-	_, diags := commonconv.ResourceStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
-func TestResourceStatusAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonmodel.ResourceStatusOptionalResponse{}
-	_, diags := commonconv.ResourceStatusAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestResourceStatusConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.ResourceStatus{
+	apiModel := commonmodel.ResourceStatus{
 		Ready: commonmodel.ResourceStatusReady{
 			State: "",
 		},
 	}
 
-	tfModel, diags := commonconv.ResourceStatusAPIToTFModel(context.Background(), &emptyApiModel)
+	tfModel, diags := commonconv.ResourceStatusAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 
 	result, diags := commonconv.ResourceStatusTFToAPIModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	require.Equal(t, emptyApiModel, *result)
+	require.Equal(t, apiModel, *result)
 }
 
 func TestResourceStatusResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonmodel.ResourceStatusRequest{
+	apiModelRequest := commonmodel.ResourceStatusRequest{
 		Ready: commonmodel.ResourceStatusReadyRequest{
 			State: "",
 		},
 	}
 
-	emptyApiModelResponse, err := commonmodel.ResourceStatusRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := commonmodel.ResourceStatusRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := commonconv.ResourceStatusAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := commonconv.ResourceStatusAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := commonconv.ResourceStatusTFToAPIRequestModel(context.Background(), tfModel)
@@ -71,21 +50,21 @@ func TestResourceStatusResponseConverters(t *testing.T) {
 	result, err := commonmodel.ResourceStatusRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestResourceStatusOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonmodel.ResourceStatusRequest{
+	apiModelRequest := commonmodel.ResourceStatusRequest{
 		Ready: commonmodel.ResourceStatusReadyRequest{
 			State: "",
 		},
 	}
 
-	emptyApiModelResponse, err := commonmodel.ResourceStatusRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := commonmodel.ResourceStatusRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := commonconv.ResourceStatusAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := commonconv.ResourceStatusAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := commonconv.ResourceStatusTFToAPIRequestModel(context.Background(), tfModel)
@@ -94,7 +73,7 @@ func TestResourceStatusOptionalResponseConverters(t *testing.T) {
 	result, err := commonmodel.ResourceStatusRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateResourceStatusConverters(t *testing.T) {

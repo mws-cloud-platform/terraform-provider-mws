@@ -12,9 +12,13 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestSnapshotAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestSnapshotAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.SnapshotOptionalResponse{}
-	_, diags := conv.SnapshotAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.SnapshotOptionalResponse{
+		Spec: model.SnapshotSpecOptionalResponse{
+			Source: model.SnapshotSourceOptionalResponse{},
+		},
+	}
+	_, diags := conv.SnapshotAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

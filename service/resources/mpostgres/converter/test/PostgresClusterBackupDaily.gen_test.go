@@ -13,21 +13,14 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
 )
 
-func TestPostgresClusterBackupDailyAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.PostgresClusterBackupDailyResponse{}
-	_, diags := conv.PostgresClusterBackupDailyAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestPostgresClusterBackupDailyResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.PostgresClusterBackupDailyRequest{}
+	apiModelRequest := model.PostgresClusterBackupDailyRequest{}
 
-	emptyApiModelResponse, err := model.PostgresClusterBackupDailyRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.PostgresClusterBackupDailyRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.PostgresClusterBackupDailyAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.PostgresClusterBackupDailyAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.PostgresClusterBackupDailyTFToAPIRequestModel(context.Background(), tfModel)
@@ -36,7 +29,7 @@ func TestPostgresClusterBackupDailyResponseConverters(t *testing.T) {
 	result, err := model.PostgresClusterBackupDailyRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdatePostgresClusterBackupDailyRequestConverters(t *testing.T) {

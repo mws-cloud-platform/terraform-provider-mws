@@ -8,9 +8,9 @@ import (
 )
 
 type AddressGroupModel struct {
-	AddressGroupParam types.String   `tfsdk:"address_group"`
-	NetworkParam      types.String   `tfsdk:"network"`
 	ProjectParam      types.String   `tfsdk:"project"`
+	NetworkParam      types.String   `tfsdk:"network"`
+	AddressGroupParam types.String   `tfsdk:"address_group"`
 	Timeouts          timeouts.Value `tfsdk:"timeouts"`
 	ID                types.String   `tfsdk:"id"`
 	VpcAddressGroup

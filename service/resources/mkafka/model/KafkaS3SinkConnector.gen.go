@@ -5,8 +5,14 @@ package model
 import (
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localboolplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/boolplanmodifier"
+	localint64planmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/int64planmodifier"
+	locallistplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/listplanmodifier"
+	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 )
 
 type KafkaS3SinkConnector struct {
@@ -30,10 +36,16 @@ func (s *KafkaS3SinkConnector) GetSchema() schema.Schema {
 			"topics": schema.StringAttribute{
 				MarkdownDescription: `Список топиков для резервного копирования в S3, через запятую`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"topics_regex": schema.StringAttribute{
 				MarkdownDescription: `Регулярное выражение для выбора топиков`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"s3_properties": schema.SingleNestedAttribute{
 				Attributes:          new(KafkaS3Properties).GetSchema().Attributes,
@@ -43,6 +55,9 @@ func (s *KafkaS3SinkConnector) GetSchema() schema.Schema {
 			"tasks_max": schema.Int64Attribute{
 				MarkdownDescription: `Максимальное количество задач (tasks) для коннектора. Не может быть больше числа партиций в топиках`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.Int64{
+					localint64planmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"input_format": schema.StringAttribute{
 				MarkdownDescription: `Формат данных в Kafka-топике (как коннектор десериализует сообщения)`,
@@ -54,6 +69,9 @@ func (s *KafkaS3SinkConnector) GetSchema() schema.Schema {
 					),
 				},
 				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"output_format": schema.StringAttribute{
 				MarkdownDescription: `Формат файлов в S3 (как коннектор сериализует сообщения из топика при записи в файл)`,
@@ -63,6 +81,9 @@ func (s *KafkaS3SinkConnector) GetSchema() schema.Schema {
 					),
 				},
 				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"file_compression_type": schema.StringAttribute{
 				MarkdownDescription: `Тип сжатия, используемый для файлов`,
@@ -75,15 +96,24 @@ func (s *KafkaS3SinkConnector) GetSchema() schema.Schema {
 					),
 				},
 				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"output_fields": schema.ListAttribute{
 				ElementType:         types.StringType,
 				MarkdownDescription: `Список полей сообщения в топике, которые будут записаны в файл, резервно копируемый в S3`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.List{
+					locallistplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"output_envelope": schema.BoolAttribute{
 				MarkdownDescription: `Нужно ли оборачивать (envelope) значение в JSON-объект`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.Bool{
+					localboolplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"error_handling": schema.StringAttribute{
 				MarkdownDescription: `Политика обработки ошибок сериализации. DLQ — битые сообщения сохраняются в топик Dead Letter Queue`,
@@ -93,10 +123,16 @@ func (s *KafkaS3SinkConnector) GetSchema() schema.Schema {
 					),
 				},
 				Optional: true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"dlq_topic": schema.StringAttribute{
 				MarkdownDescription: `Имя топика, используемого для Dead Letter Queue (только при errorHandling=DLQ)`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

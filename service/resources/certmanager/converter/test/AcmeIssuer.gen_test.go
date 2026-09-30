@@ -13,24 +13,17 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/certmanager/model"
 )
 
-func TestAcmeIssuerAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.AcmeIssuerOptionalResponse{}
-	_, diags := conv.AcmeIssuerAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestAcmeIssuerOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.AcmeIssuerRequest{
+	apiModelRequest := model.AcmeIssuerRequest{
 		Server:        "",
 		ChallengeType: "",
 	}
 
-	emptyApiModelResponse, err := model.AcmeIssuerRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.AcmeIssuerRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.AcmeIssuerAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.AcmeIssuerAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.AcmeIssuerTFToAPIRequestModel(context.Background(), tfModel)
@@ -39,7 +32,7 @@ func TestAcmeIssuerOptionalResponseConverters(t *testing.T) {
 	result, err := model.AcmeIssuerRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateAcmeIssuerRequestConverters(t *testing.T) {

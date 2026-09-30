@@ -7,14 +7,23 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/ipaddress"
 
 	"go.mws.cloud/go-sdk/service/mclickhouse/model"
+	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/converter"
 )
 
-func TestClickhouseEndpointResourceAPIResponseToTFModelEmpty(t *testing.T) {
+func TestClickhouseEndpointResourceAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClickhouseEndpointResourceResponse{}
-	_, diags := conv.ClickhouseEndpointResourceAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClickhouseEndpointResourceResponse{
+		Address: model.ClickhouseEndpointAddressResourceResponse{
+			Ref:       vpc.NewMustAddressRef("projectID", "networkID", "addressID"),
+			Subnet:    vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
+			IpAddress: ipaddress.MustParseIPAddressString("192.168.1.1"),
+			Dns:       []model.ClickhouseEndpointAddressDnsResourceResponse{},
+		},
+	}
+	_, diags := conv.ClickhouseEndpointResourceAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

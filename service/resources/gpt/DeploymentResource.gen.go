@@ -49,19 +49,19 @@ func (m *DeploymentResource) Metadata(ctx context.Context, req resource.Metadata
 func (m *DeploymentResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	tflog.Info(ctx, "DeploymentResource.Schema")
 	resp.Schema = new(tfmodel.Deployment).GetSchema()
-	resp.Schema.Attributes["deployment_name"] = schema.StringAttribute{
-		MarkdownDescription: `Параметр пути для имени деплоймента, уникальный в рамках проекта.`,
-		Required:            true,
-		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.RequiresReplaceIfConfigured(),
-		},
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+			stringplanmodifier.RequiresReplaceIfConfigured(),
+		},
+	}
+	resp.Schema.Attributes["deployment_name"] = schema.StringAttribute{
+		MarkdownDescription: `Параметр пути для имени деплоймента, уникальный в рамках проекта.`,
+		Required:            true,
+		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}

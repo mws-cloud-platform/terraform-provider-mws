@@ -8,20 +8,25 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/iam/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/iam/converter"
 )
 
-func TestApiKeyAPIResponseToTFModelEmpty(t *testing.T) {
+func TestApiKeyAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ApiKeyResponse{}
-	_, diags := conv.ApiKeyAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ApiKeyResponse{
+		Spec: model.ApiKeySpecResponse{},
+	}
+	_, diags := conv.ApiKeyAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestApiKeyMetadataAPIResponseToTFModelEmpty(t *testing.T) {
+func TestApiKeyMetadataAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ApiKeyMetadataResponse{}
-	_, diags := conv.ApiKeyMetadataAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ApiKeyMetadataResponse{
+		TypedResourceMetadataResponse: commonmodel.TypedResourceMetadataResponse{},
+	}
+	_, diags := conv.ApiKeyMetadataAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

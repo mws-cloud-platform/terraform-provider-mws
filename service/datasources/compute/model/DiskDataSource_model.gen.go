@@ -7,7 +7,7 @@ import (
 )
 
 type DiskModel struct {
-	DiskParam    types.String `tfsdk:"disk"`
 	ProjectParam types.String `tfsdk:"project"`
+	DiskParam    types.String `tfsdk:"disk"`
 	Disk
 }

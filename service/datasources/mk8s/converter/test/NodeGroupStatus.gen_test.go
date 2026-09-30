@@ -8,55 +8,74 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/mk8s/model"
+	"go.mws.cloud/go-sdk/service/resources/references/compute"
+	"go.mws.cloud/go-sdk/service/resources/references/iam"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s/converter"
 )
 
-func TestNodeGroupStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestNodeGroupStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NodeGroupStatusResponse{}
-	_, diags := conv.NodeGroupStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NodeGroupStatusResponse{
+		ResourceStatusResponse: commonmodel.ResourceStatusResponse{
+			Ready: commonmodel.ResourceStatusReadyResponse{
+				State: "",
+			},
+		},
+	}
+	_, diags := conv.NodeGroupStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestNodeGroupStatusNodeGroupStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestNodeGroupStatusNodeGroupStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NodeGroupStatusNodeGroupStatusResponse{}
-	_, diags := conv.NodeGroupStatusNodeGroupStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NodeGroupStatusNodeGroupStatusResponse{}
+	_, diags := conv.NodeGroupStatusNodeGroupStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestNodeGroupStatusRolloutStrategyAPIResponseToTFModelEmpty(t *testing.T) {
+func TestNodeGroupStatusRolloutStrategyAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NodeGroupStatusRolloutStrategyResponse{}
-	_, diags := conv.NodeGroupStatusRolloutStrategyAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NodeGroupStatusRolloutStrategyResponse{
+		MaxSurge:       0,
+		MaxUnavailable: 0,
+	}
+	_, diags := conv.NodeGroupStatusRolloutStrategyAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestNodeGroupStatusScaleAPIResponseToTFModelEmpty(t *testing.T) {
+func TestNodeGroupStatusScaleAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NodeGroupStatusScaleResponse{}
-	_, diags := conv.NodeGroupStatusScaleAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NodeGroupStatusScaleResponse{}
+	_, diags := conv.NodeGroupStatusScaleAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestNodeGroupStatusScaleAutoscalingAPIResponseToTFModelEmpty(t *testing.T) {
+func TestNodeGroupStatusScaleAutoscalingAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NodeGroupStatusScaleAutoscalingResponse{}
-	_, diags := conv.NodeGroupStatusScaleAutoscalingAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NodeGroupStatusScaleAutoscalingResponse{
+		Min: 0,
+		Max: 0,
+	}
+	_, diags := conv.NodeGroupStatusScaleAutoscalingAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestNodeGroupStatusServiceAccountAPIResponseToTFModelEmpty(t *testing.T) {
+func TestNodeGroupStatusServiceAccountAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NodeGroupStatusServiceAccountResponse{}
-	_, diags := conv.NodeGroupStatusServiceAccountAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NodeGroupStatusServiceAccountResponse{
+		Ref: iam.NewMustServiceAccountRef("projectID", "serviceAccountID"),
+	}
+	_, diags := conv.NodeGroupStatusServiceAccountAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestNodeGroupStatusVmTypeAPIResponseToTFModelEmpty(t *testing.T) {
+func TestNodeGroupStatusVmTypeAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.NodeGroupStatusVmTypeResponse{}
-	_, diags := conv.NodeGroupStatusVmTypeAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.NodeGroupStatusVmTypeResponse{
+		Ref: compute.NewMustVmTypeRef("vmTypeID"),
+	}
+	_, diags := conv.NodeGroupStatusVmTypeAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

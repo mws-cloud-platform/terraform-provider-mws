@@ -8,20 +8,31 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/converter"
 )
 
-func TestClickhouseClusterAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestClickhouseClusterAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClickhouseClusterOptionalResponse{}
-	_, diags := conv.ClickhouseClusterAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClickhouseClusterOptionalResponse{
+		Spec: model.ClickhouseClusterSpecOptionalResponse{
+			Version: "version",
+			Shards:  []model.ClickhouseClusterShardOptionalResponse{},
+			BootstrapAdmin: model.ClickhouseClusterBootstrapAdminSpecOptionalResponse{
+				Username: "username",
+			},
+		},
+	}
+	_, diags := conv.ClickhouseClusterAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestClickhouseClusterMetadataAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestClickhouseClusterMetadataAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClickhouseClusterMetadataOptionalResponse{}
-	_, diags := conv.ClickhouseClusterMetadataAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClickhouseClusterMetadataOptionalResponse{
+		TypedResourceMetadataOptionalResponse: commonmodel.TypedResourceMetadataOptionalResponse{},
+	}
+	_, diags := conv.ClickhouseClusterMetadataAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

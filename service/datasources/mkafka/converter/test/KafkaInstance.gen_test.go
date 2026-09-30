@@ -7,14 +7,24 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
 	"go.mws.cloud/go-sdk/service/mkafka/model"
+	"go.mws.cloud/go-sdk/service/resources/references/compute"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka/converter"
 )
 
-func TestKafkaInstanceAPIResponseToTFModelEmpty(t *testing.T) {
+func TestKafkaInstanceAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.KafkaInstanceResponse{}
-	_, diags := conv.KafkaInstanceAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.KafkaInstanceResponse{
+		Broker: model.KafkaInstanceSpecResponse{
+			VmType: compute.NewMustVmTypeRef("vmTypeID"),
+			Disk: model.KafkaDataDiskSpecResponse{
+				Size: bytesize.MustParseString("0 B"),
+			},
+		},
+		Controller: model.KafkaControllerInstanceSpecResponse{},
+	}
+	_, diags := conv.KafkaInstanceAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

@@ -12,16 +12,16 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/compute/converter"
 )
 
-func TestStorageDiskSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestStorageDiskSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.StorageDiskSpecOptionalResponse{}
-	_, diags := conv.StorageDiskSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.StorageDiskSpecOptionalResponse{}
+	_, diags := conv.StorageDiskSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestStorageDiskSpecSourceAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestStorageDiskSpecSourceAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.StorageDiskSpecSourceOptionalResponse{}
-	_, diags := conv.StorageDiskSpecSourceAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.StorageDiskSpecSourceOptionalResponse{}
+	_, diags := conv.StorageDiskSpecSourceAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

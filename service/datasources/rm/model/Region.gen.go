@@ -3,6 +3,7 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
@@ -28,6 +29,7 @@ func (s *Region) GetSchema() schema.Schema {
 				Computed:   true,
 			},
 			"spec": schema.StringAttribute{
+				CustomType:          jsontypes.NormalizedType{},
 				MarkdownDescription: `Спецификация региона`,
 				Computed:            true,
 			},

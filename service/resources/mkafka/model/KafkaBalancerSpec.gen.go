@@ -4,7 +4,10 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localboolplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/boolplanmodifier"
 )
 
 type KafkaBalancerSpec struct {
@@ -19,10 +22,16 @@ func (s *KafkaBalancerSpec) GetSchema() schema.Schema {
 			"enabled": schema.BoolAttribute{
 				MarkdownDescription: `Состояние балансировщика — включен или выключен`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.Bool{
+					localboolplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"auto_rebalance": schema.BoolAttribute{
 				MarkdownDescription: `Если включено - запускать автоматическую ребалансировку во время сервисного окна`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.Bool{
+					localboolplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

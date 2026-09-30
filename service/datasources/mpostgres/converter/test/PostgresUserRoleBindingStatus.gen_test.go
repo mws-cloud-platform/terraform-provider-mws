@@ -8,13 +8,20 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/converter"
 )
 
-func TestPostgresUserRoleBindingStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestPostgresUserRoleBindingStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.PostgresUserRoleBindingStatusResponse{}
-	_, diags := conv.PostgresUserRoleBindingStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.PostgresUserRoleBindingStatusResponse{
+		ResourceStatusResponse: commonmodel.ResourceStatusResponse{
+			Ready: commonmodel.ResourceStatusReadyResponse{
+				State: "",
+			},
+		},
+	}
+	_, diags := conv.PostgresUserRoleBindingStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

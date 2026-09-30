@@ -12,9 +12,9 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
-func TestEgressNatStatusInternalAPIResponseToTFModelEmpty(t *testing.T) {
+func TestEgressNatStatusInternalAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.EgressNatStatusInternalResponse{}
-	_, diags := conv.EgressNatStatusInternalAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.EgressNatStatusInternalResponse{}
+	_, diags := conv.EgressNatStatusInternalAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

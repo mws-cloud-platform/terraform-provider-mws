@@ -9,26 +9,33 @@ import (
 	"github.com/stretchr/testify/require"
 
 	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
-func TestResourceAddressSpecAPIToTFModelEmpty(t *testing.T) {
+func TestResourceAddressSpecAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.ResourceAddressSpec{}
-	_, diags := commonconv.ResourceAddressSpecAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.ResourceAddressSpec{
+		Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
+	}
+	_, diags := commonconv.ResourceAddressSpecAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestResourceAddressSpecAPIResponseToTFModelEmpty(t *testing.T) {
+func TestResourceAddressSpecAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.ResourceAddressSpecResponse{}
-	_, diags := commonconv.ResourceAddressSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.ResourceAddressSpecResponse{
+		Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
+	}
+	_, diags := commonconv.ResourceAddressSpecAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestResourceAddressSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestResourceAddressSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.ResourceAddressSpecOptionalResponse{}
-	_, diags := commonconv.ResourceAddressSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.ResourceAddressSpecOptionalResponse{
+		Subnet: vpc.NewMustSubnetRef("projectID", "networkID", "subnetID"),
+	}
+	_, diags := commonconv.ResourceAddressSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

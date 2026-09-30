@@ -4,7 +4,10 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localboolplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/boolplanmodifier"
 )
 
 type KafkaSchemaRegistrySpec struct {
@@ -18,6 +21,9 @@ func (s *KafkaSchemaRegistrySpec) GetSchema() schema.Schema {
 			"enabled": schema.BoolAttribute{
 				MarkdownDescription: `Включить Schema Registry в кластере`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.Bool{
+					localboolplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

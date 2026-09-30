@@ -17,26 +17,19 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/nlb/model"
 )
 
-func TestNlbAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.NlbOptionalResponse{}
-	_, diags := conv.NlbAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestNlbOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.NlbRequest{
+	apiModelRequest := model.NlbRequest{
 		Spec: model.NlbSpecRequest{
 			Listener: model.NlbListenerRequest{},
 			Rules:    []model.NlbRuleRequest{},
 		},
 	}
 
-	emptyApiModelResponse, err := model.NlbRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.NlbRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.NlbAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.NlbAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.NlbTFToAPIRequestModel(context.Background(), tfModel)
@@ -45,7 +38,7 @@ func TestNlbOptionalResponseConverters(t *testing.T) {
 	result, err := model.NlbRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateNlbRequestConverters(t *testing.T) {

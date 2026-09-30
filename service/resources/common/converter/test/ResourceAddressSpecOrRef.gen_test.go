@@ -17,48 +17,27 @@ import (
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
 
-func TestResourceAddressSpecOrRefAPIToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonmodel.ResourceAddressSpecOrRef{}
-	_, diags := commonconv.ResourceAddressSpecOrRefAPIToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
-func TestResourceAddressSpecOrRefAPIResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonmodel.ResourceAddressSpecOrRefResponse{}
-	_, diags := commonconv.ResourceAddressSpecOrRefAPIResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
-func TestResourceAddressSpecOrRefAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := commonmodel.ResourceAddressSpecOrRefOptionalResponse{}
-	_, diags := commonconv.ResourceAddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestResourceAddressSpecOrRefConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.ResourceAddressSpecOrRef{}
+	apiModel := commonmodel.ResourceAddressSpecOrRef{}
 
-	tfModel, diags := commonconv.ResourceAddressSpecOrRefAPIToTFModel(context.Background(), &emptyApiModel)
+	tfModel, diags := commonconv.ResourceAddressSpecOrRefAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 
 	result, diags := commonconv.ResourceAddressSpecOrRefTFToAPIModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	require.Equal(t, emptyApiModel, *result)
+	require.Equal(t, apiModel, *result)
 }
 
 func TestResourceAddressSpecOrRefResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonmodel.ResourceAddressSpecOrRefRequest{}
+	apiModelRequest := commonmodel.ResourceAddressSpecOrRefRequest{}
 
-	emptyApiModelResponse, err := commonmodel.ResourceAddressSpecOrRefRequestToResponse(&emptyApiModelRequest)
+	apiModelResponse, err := commonmodel.ResourceAddressSpecOrRefRequestToResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := commonconv.ResourceAddressSpecOrRefAPIResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := commonconv.ResourceAddressSpecOrRefAPIResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := commonconv.ResourceAddressSpecOrRefTFToAPIRequestModel(context.Background(), tfModel)
@@ -67,17 +46,17 @@ func TestResourceAddressSpecOrRefResponseConverters(t *testing.T) {
 	result, err := commonmodel.ResourceAddressSpecOrRefRequestToResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestResourceAddressSpecOrRefOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := commonmodel.ResourceAddressSpecOrRefRequest{}
+	apiModelRequest := commonmodel.ResourceAddressSpecOrRefRequest{}
 
-	emptyApiModelResponse, err := commonmodel.ResourceAddressSpecOrRefRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := commonmodel.ResourceAddressSpecOrRefRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := commonconv.ResourceAddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := commonconv.ResourceAddressSpecOrRefAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := commonconv.ResourceAddressSpecOrRefTFToAPIRequestModel(context.Background(), tfModel)
@@ -86,7 +65,7 @@ func TestResourceAddressSpecOrRefOptionalResponseConverters(t *testing.T) {
 	result, err := commonmodel.ResourceAddressSpecOrRefRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateResourceAddressSpecOrRefConverters(t *testing.T) {

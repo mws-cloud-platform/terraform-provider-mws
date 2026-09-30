@@ -5,6 +5,7 @@ package converter
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
@@ -25,9 +26,9 @@ func RouteStatusNextHopAPIResponseToTFModel(ctx context.Context, am *model.Route
 	var t tfmodel.RouteStatusNextHop
 
 	if am.NetworkLocal != nil {
-		t.NetworkLocal = types.StringPointerValue(ptr.Get(string(am.NetworkLocal)))
+		t.NetworkLocal = jsontypes.NewNormalizedValue(string(am.NetworkLocal))
 	} else {
-		t.NetworkLocal = types.StringNull()
+		t.NetworkLocal = jsontypes.NewNormalizedNull()
 	}
 
 	if am.NatGateway != nil {

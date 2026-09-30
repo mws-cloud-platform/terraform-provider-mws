@@ -18,26 +18,19 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager/model"
 )
 
-func TestSecretRoleBindingAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.SecretRoleBindingOptionalResponse{}
-	_, diags := conv.SecretRoleBindingAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestSecretRoleBindingOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.SecretRoleBindingRequest{
+	apiModelRequest := model.SecretRoleBindingRequest{
 		Spec: commonmodel.CommonRoleBindingSpecRequest{
 			Subject: commonmodel.CommonRoleBindingSpecSubjectRequest{},
 			Role:    iam.NewMustRoleRef("roleID"),
 		},
 	}
 
-	emptyApiModelResponse, err := model.SecretRoleBindingRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.SecretRoleBindingRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.SecretRoleBindingAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.SecretRoleBindingAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.SecretRoleBindingTFToAPIRequestModel(context.Background(), tfModel)
@@ -46,7 +39,7 @@ func TestSecretRoleBindingOptionalResponseConverters(t *testing.T) {
 	result, err := model.SecretRoleBindingRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateSecretRoleBindingRequestConverters(t *testing.T) {

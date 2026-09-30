@@ -12,9 +12,11 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse/converter"
 )
 
-func TestClickhouseClusterBootstrapAdminSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestClickhouseClusterBootstrapAdminSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.ClickhouseClusterBootstrapAdminSpecOptionalResponse{}
-	_, diags := conv.ClickhouseClusterBootstrapAdminSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.ClickhouseClusterBootstrapAdminSpecOptionalResponse{
+		Username: "username",
+	}
+	_, diags := conv.ClickhouseClusterBootstrapAdminSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

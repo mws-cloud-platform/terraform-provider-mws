@@ -175,7 +175,6 @@ Required:
 
 Optional:
 
-- `count` (Number) Количество шардов, которые будут созданы
 - `endpoints` (Attributes List) Описание эндпоинтов шардов (see [below for nested schema](#nestedatt--shards--endpoints))
 - `weight` (Number) Вес шарда
 

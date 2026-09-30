@@ -7,7 +7,7 @@ import (
 )
 
 type ImageModel struct {
-	ImageParam   types.String `tfsdk:"image"`
 	ProjectParam types.String `tfsdk:"project"`
+	ImageParam   types.String `tfsdk:"image"`
 	Image
 }

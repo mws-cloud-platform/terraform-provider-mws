@@ -40,14 +40,14 @@ func (m *SecretRoleBindingDataSource) Metadata(ctx context.Context, req datasour
 func (m *SecretRoleBindingDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	tflog.Info(ctx, "SecretRoleBindingDataSource.Schema")
 	resp.Schema = new(tfmodel.SecretRoleBinding).GetSchema()
-	resp.Schema.Attributes["name"] = schema.StringAttribute{
-		MarkdownDescription: `Имя секрета.`,
-		Required:            true,
-	}
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
 		Optional:            true,
 		Computed:            true,
+	}
+	resp.Schema.Attributes["name"] = schema.StringAttribute{
+		MarkdownDescription: `Имя секрета.`,
+		Required:            true,
 	}
 	resp.Schema.Attributes["role_binding"] = schema.StringAttribute{
 		Required: true,

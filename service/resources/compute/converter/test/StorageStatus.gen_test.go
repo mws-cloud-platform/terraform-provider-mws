@@ -12,9 +12,11 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/compute/converter"
 )
 
-func TestStorageStatusAPIResponseToTFModelEmpty(t *testing.T) {
+func TestStorageStatusAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.StorageStatusResponse{}
-	_, diags := conv.StorageStatusAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.StorageStatusResponse{
+		Disks: []model.StorageDiskStatusResponse{},
+	}
+	_, diags := conv.StorageStatusAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

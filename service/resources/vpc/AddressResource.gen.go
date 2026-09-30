@@ -49,10 +49,12 @@ func (m *AddressResource) Metadata(ctx context.Context, req resource.MetadataReq
 func (m *AddressResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	tflog.Info(ctx, "AddressResource.Schema")
 	resp.Schema = new(tfmodel.Address).GetSchema()
-	resp.Schema.Attributes["address"] = schema.StringAttribute{
-		MarkdownDescription: `IP-адрес`,
-		Required:            true,
+	resp.Schema.Attributes["project"] = schema.StringAttribute{
+		MarkdownDescription: `Путь к проекту.`,
+		Optional:            true,
+		Computed:            true,
 		PlanModifiers: []planmodifier.String{
+			stringplanmodifier.UseStateForUnknown(),
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}
@@ -63,12 +65,10 @@ func (m *AddressResource) Schema(ctx context.Context, req resource.SchemaRequest
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}
-	resp.Schema.Attributes["project"] = schema.StringAttribute{
-		MarkdownDescription: `Путь к проекту.`,
-		Optional:            true,
-		Computed:            true,
+	resp.Schema.Attributes["address"] = schema.StringAttribute{
+		MarkdownDescription: `IP-адрес`,
+		Required:            true,
 		PlanModifiers: []planmodifier.String{
-			stringplanmodifier.UseStateForUnknown(),
 			stringplanmodifier.RequiresReplaceIfConfigured(),
 		},
 	}

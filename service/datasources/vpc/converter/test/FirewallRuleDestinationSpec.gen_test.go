@@ -7,14 +7,17 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 
 	"go.mws.cloud/go-sdk/service/vpc/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/vpc/converter"
 )
 
-func TestFirewallRuleDestinationSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestFirewallRuleDestinationSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := model.FirewallRuleDestinationSpecOptionalResponse{}
-	_, diags := conv.FirewallRuleDestinationSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := model.FirewallRuleDestinationSpecOptionalResponse{
+		Cidrs: []cidraddress.CIDR4Address{},
+	}
+	_, diags := conv.FirewallRuleDestinationSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

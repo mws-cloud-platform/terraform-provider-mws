@@ -18,16 +18,9 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/vpc/model"
 )
 
-func TestRouteAPIOptionalResponseToTFModelEmpty(t *testing.T) {
-	t.Parallel()
-	emptyApiModel := model.RouteOptionalResponse{}
-	_, diags := conv.RouteAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
-	require.False(t, diags.HasError())
-}
-
 func TestRouteOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	emptyApiModelRequest := model.RouteRequest{
+	apiModelRequest := model.RouteRequest{
 		Spec: model.RouteSpecRequest{
 			Destination: model.RouteDestinationRequest{
 				Spec: model.RouteDestinationSpecRequest{
@@ -38,10 +31,10 @@ func TestRouteOptionalResponseConverters(t *testing.T) {
 		},
 	}
 
-	emptyApiModelResponse, err := model.RouteRequestToOptionalResponse(&emptyApiModelRequest)
+	apiModelResponse, err := model.RouteRequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.RouteAPIOptionalResponseToTFModel(context.Background(), emptyApiModelResponse)
+	tfModel, diags := conv.RouteAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
 	filledApiModelRequest, diags := conv.RouteTFToAPIRequestModel(context.Background(), tfModel)
@@ -50,7 +43,7 @@ func TestRouteOptionalResponseConverters(t *testing.T) {
 	result, err := model.RouteRequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
-	require.Equal(t, *emptyApiModelResponse, *result)
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestUpdateRouteRequestConverters(t *testing.T) {

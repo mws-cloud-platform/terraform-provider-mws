@@ -4,7 +4,10 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localint64planmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/int64planmodifier"
 )
 
 type PostgresClusterBackupDaily struct {
@@ -18,6 +21,9 @@ func (s *PostgresClusterBackupDaily) GetSchema() schema.Schema {
 			"hour": schema.Int64Attribute{
 				MarkdownDescription: `Час начала автоматического бэкапирования`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.Int64{
+					localint64planmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}

@@ -7,28 +7,41 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"go.mws.cloud/go-sdk/pkg/apimodels/units/duration"
 
 	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/datasources/common/converter"
 )
 
-func TestVpcAddressDnsSpecAPIToTFModelEmpty(t *testing.T) {
+func TestVpcAddressDnsSpecAPIToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.VpcAddressDnsSpec{}
-	_, diags := commonconv.VpcAddressDnsSpecAPIToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.VpcAddressDnsSpec{
+		Name: "name",
+		Ttl:  duration.MustParseString("PT0S"),
+		Ptr:  false,
+	}
+	_, diags := commonconv.VpcAddressDnsSpecAPIToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestVpcAddressDnsSpecAPIResponseToTFModelEmpty(t *testing.T) {
+func TestVpcAddressDnsSpecAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.VpcAddressDnsSpecResponse{}
-	_, diags := commonconv.VpcAddressDnsSpecAPIResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.VpcAddressDnsSpecResponse{
+		Name: "name",
+		Ttl:  duration.MustParseString("PT0S"),
+		Ptr:  false,
+	}
+	_, diags := commonconv.VpcAddressDnsSpecAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
-func TestVpcAddressDnsSpecAPIOptionalResponseToTFModelEmpty(t *testing.T) {
+func TestVpcAddressDnsSpecAPIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	emptyApiModel := commonmodel.VpcAddressDnsSpecOptionalResponse{}
-	_, diags := commonconv.VpcAddressDnsSpecAPIOptionalResponseToTFModel(context.Background(), &emptyApiModel)
+	apiModel := commonmodel.VpcAddressDnsSpecOptionalResponse{
+		Name: "name",
+		Ttl:  duration.MustParseString("PT0S"),
+		Ptr:  false,
+	}
+	_, diags := commonconv.VpcAddressDnsSpecAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

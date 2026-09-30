@@ -8,8 +8,8 @@ import (
 )
 
 type SecretVersionModel struct {
-	NameParam    types.String   `tfsdk:"name"`
 	ProjectParam types.String   `tfsdk:"project"`
+	NameParam    types.String   `tfsdk:"name"`
 	VersionParam types.String   `tfsdk:"version"`
 	Timeouts     timeouts.Value `tfsdk:"timeouts"`
 	ID           types.String   `tfsdk:"id"`

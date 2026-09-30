@@ -4,7 +4,11 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localint64planmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/int64planmodifier"
+	locallistplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/listplanmodifier"
 )
 
 type ClickhouseClusterInstance struct {
@@ -25,6 +29,9 @@ func (s *ClickhouseClusterInstance) GetSchema() schema.Schema {
 			"count": schema.Int64Attribute{
 				MarkdownDescription: `Количество узлов в зоне доступности`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.Int64{
+					localint64planmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"zone": schema.StringAttribute{
 				MarkdownDescription: `Зона доступности`,
@@ -36,6 +43,9 @@ func (s *ClickhouseClusterInstance) GetSchema() schema.Schema {
 				},
 				MarkdownDescription: `Описание эндпоинтов узлов`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.List{
+					locallistplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 		},
 	}
