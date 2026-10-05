@@ -8,8 +8,7 @@ import (
 )
 
 type CommonRoleBindingList struct {
-	Items         types.List    `tfsdk:"items"`
-	NextPageToken NextPageToken `tfsdk:"next_page_token"`
+	Items types.List `tfsdk:"items"`
 }
 
 func (s *CommonRoleBindingList) GetSchema() schema.Schema {
@@ -21,10 +20,6 @@ func (s *CommonRoleBindingList) GetSchema() schema.Schema {
 					Attributes: new(CommonRoleBinding).GetSchema().Attributes,
 				},
 				MarkdownDescription: `List of public role bindings`,
-				Computed:            true,
-			},
-			"next_page_token": schema.StringAttribute{
-				MarkdownDescription: `Строка, которую нужно передать в следующем запросе, чтобы получить следующую страницу. Для последней страницы не задан`,
 				Computed:            true,
 			},
 		},

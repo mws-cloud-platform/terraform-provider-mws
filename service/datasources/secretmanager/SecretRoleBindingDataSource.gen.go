@@ -82,7 +82,7 @@ func (m *SecretRoleBindingDataSource) Configure(ctx context.Context, req datasou
 func (m *SecretRoleBindingDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "SecretRoleBindingDataSource.Read")
 
-	var config tfmodel.SecretRoleBindingModel
+	var config tfmodel.SecretRoleBindingDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

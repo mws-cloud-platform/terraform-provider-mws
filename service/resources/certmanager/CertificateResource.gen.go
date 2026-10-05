@@ -108,7 +108,7 @@ func (m *CertificateResource) Configure(ctx context.Context, req resource.Config
 func (m *CertificateResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "CertificateResource.Create")
 
-	var plan tfmodel.CertificateModel
+	var plan tfmodel.CertificateResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -143,7 +143,7 @@ func (m *CertificateResource) Create(ctx context.Context, req resource.CreateReq
 
 	body, diags = func(ctx context.Context, planApiRequest *model.CertificateRequest) (*model.CertificateRequest, tfdiag.Diagnostics) {
 
-		var configData tfmodel.CertificateModel
+		var configData tfmodel.CertificateResourceModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
 		if resp.Diagnostics.HasError() {
 			return nil, resp.Diagnostics
@@ -208,7 +208,7 @@ func (m *CertificateResource) Create(ctx context.Context, req resource.CreateReq
 func (m *CertificateResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "CertificateResource.Read")
 
-	var state tfmodel.CertificateModel
+	var state tfmodel.CertificateResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -263,13 +263,13 @@ func (m *CertificateResource) Read(ctx context.Context, req resource.ReadRequest
 func (m *CertificateResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "CertificateResource.Update")
 
-	var plan tfmodel.CertificateModel
+	var plan tfmodel.CertificateResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.CertificateModel
+	var state tfmodel.CertificateResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -304,7 +304,7 @@ func (m *CertificateResource) Update(ctx context.Context, req resource.UpdateReq
 
 	body, diags = func(ctx context.Context, planApiRequest *model.UpdateCertificateRequest) (*model.UpdateCertificateRequest, tfdiag.Diagnostics) {
 
-		var configData tfmodel.CertificateModel
+		var configData tfmodel.CertificateResourceModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
 		if resp.Diagnostics.HasError() {
 			return nil, resp.Diagnostics
@@ -369,7 +369,7 @@ func (m *CertificateResource) Update(ctx context.Context, req resource.UpdateReq
 func (m *CertificateResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "CertificateResource.Delete")
 
-	var state tfmodel.CertificateModel
+	var state tfmodel.CertificateResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -413,7 +413,7 @@ func (m *CertificateResource) Delete(ctx context.Context, req resource.DeleteReq
 func (m *CertificateResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "CertificateResource.ImportState")
 
-	var state tfmodel.CertificateModel
+	var state tfmodel.CertificateResourceModel
 
 	ref, err := certmanagerref.ParseCertificateRef(ctx, req.ID)
 	if err != nil {

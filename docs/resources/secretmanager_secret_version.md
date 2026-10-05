@@ -3,12 +3,12 @@
 page_title: "mws_secretmanager_secret_version Resource - mws"
 subcategory: ""
 description: |-
-  
+  Версия секрета, содержащая одну или несколько пар «ключ-значение»
 ---
 
 # mws_secretmanager_secret_version (Resource)
 
-
+Версия секрета, содержащая одну или несколько пар «ключ-значение»
 
 ## Примеры использования
 

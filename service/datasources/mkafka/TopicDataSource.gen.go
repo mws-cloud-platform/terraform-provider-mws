@@ -83,7 +83,7 @@ func (m *TopicDataSource) Configure(ctx context.Context, req datasource.Configur
 func (m *TopicDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "TopicDataSource.Read")
 
-	var config tfmodel.TopicModel
+	var config tfmodel.TopicDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

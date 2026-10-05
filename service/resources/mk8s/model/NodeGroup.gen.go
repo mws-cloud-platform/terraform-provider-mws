@@ -20,6 +20,7 @@ type NodeGroup struct {
 	Status           types.Object `tfsdk:"status"`
 	Zone             types.String `tfsdk:"zone"`
 	Subnet           types.Object `tfsdk:"subnet"`
+	Network          types.Object `tfsdk:"network"`
 	VmType           types.Object `tfsdk:"vm_type"`
 	ImageStorageSize types.String `tfsdk:"image_storage_size"`
 	ImageStorageIops types.Int64  `tfsdk:"image_storage_iops"`
@@ -65,6 +66,11 @@ Compute, на которых запускаются контейнеры с пр
 			"subnet": schema.SingleNestedAttribute{
 				Attributes: new(NodeGroupSpecSubnet).GetSchema().Attributes,
 				Required:   true,
+			},
+			"network": schema.SingleNestedAttribute{
+				Attributes:          new(NodeGroupSpecNetwork).GetSchema().Attributes,
+				MarkdownDescription: `Настройки сети группы узлов`,
+				Optional:            true,
 			},
 			"vm_type": schema.SingleNestedAttribute{
 				Attributes:          new(NodeGroupSpecVmType).GetSchema().Attributes,

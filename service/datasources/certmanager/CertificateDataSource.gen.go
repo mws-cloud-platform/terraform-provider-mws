@@ -79,7 +79,7 @@ func (m *CertificateDataSource) Configure(ctx context.Context, req datasource.Co
 func (m *CertificateDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "CertificateDataSource.Read")
 
-	var config tfmodel.CertificateModel
+	var config tfmodel.CertificateDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

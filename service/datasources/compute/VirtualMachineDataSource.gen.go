@@ -78,7 +78,7 @@ func (m *VirtualMachineDataSource) Configure(ctx context.Context, req datasource
 func (m *VirtualMachineDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "VirtualMachineDataSource.Read")
 
-	var config tfmodel.VirtualMachineModel
+	var config tfmodel.VirtualMachineDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

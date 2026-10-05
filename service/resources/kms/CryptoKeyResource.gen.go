@@ -107,7 +107,7 @@ func (m *CryptoKeyResource) Configure(ctx context.Context, req resource.Configur
 func (m *CryptoKeyResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "CryptoKeyResource.Create")
 
-	var plan tfmodel.CryptoKeyModel
+	var plan tfmodel.CryptoKeyResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -172,7 +172,7 @@ func (m *CryptoKeyResource) Create(ctx context.Context, req resource.CreateReque
 func (m *CryptoKeyResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "CryptoKeyResource.Read")
 
-	var state tfmodel.CryptoKeyModel
+	var state tfmodel.CryptoKeyResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -215,13 +215,13 @@ func (m *CryptoKeyResource) Read(ctx context.Context, req resource.ReadRequest, 
 func (m *CryptoKeyResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "CryptoKeyResource.Update")
 
-	var plan tfmodel.CryptoKeyModel
+	var plan tfmodel.CryptoKeyResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.CryptoKeyModel
+	var state tfmodel.CryptoKeyResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -286,7 +286,7 @@ func (m *CryptoKeyResource) Update(ctx context.Context, req resource.UpdateReque
 func (m *CryptoKeyResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "CryptoKeyResource.Delete")
 
-	var state tfmodel.CryptoKeyModel
+	var state tfmodel.CryptoKeyResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -323,7 +323,7 @@ func (m *CryptoKeyResource) Delete(ctx context.Context, req resource.DeleteReque
 func (m *CryptoKeyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "CryptoKeyResource.ImportState")
 
-	var state tfmodel.CryptoKeyModel
+	var state tfmodel.CryptoKeyResourceModel
 
 	ref, err := kmsref.ParseCryptoKeyRef(ctx, req.ID)
 	if err != nil {

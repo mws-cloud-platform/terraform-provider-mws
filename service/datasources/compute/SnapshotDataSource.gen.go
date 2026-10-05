@@ -80,7 +80,7 @@ func (m *SnapshotDataSource) Configure(ctx context.Context, req datasource.Confi
 func (m *SnapshotDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "SnapshotDataSource.Read")
 
-	var config tfmodel.SnapshotModel
+	var config tfmodel.SnapshotDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

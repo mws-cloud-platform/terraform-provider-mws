@@ -113,7 +113,7 @@ func (m *EgressNatResource) Configure(ctx context.Context, req resource.Configur
 func (m *EgressNatResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "EgressNatResource.Create")
 
-	var plan tfmodel.EgressNatModel
+	var plan tfmodel.EgressNatResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -179,7 +179,7 @@ func (m *EgressNatResource) Create(ctx context.Context, req resource.CreateReque
 func (m *EgressNatResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "EgressNatResource.Read")
 
-	var state tfmodel.EgressNatModel
+	var state tfmodel.EgressNatResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -229,13 +229,13 @@ func (m *EgressNatResource) Read(ctx context.Context, req resource.ReadRequest, 
 func (m *EgressNatResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "EgressNatResource.Update")
 
-	var plan tfmodel.EgressNatModel
+	var plan tfmodel.EgressNatResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.EgressNatModel
+	var state tfmodel.EgressNatResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -301,7 +301,7 @@ func (m *EgressNatResource) Update(ctx context.Context, req resource.UpdateReque
 func (m *EgressNatResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "EgressNatResource.Delete")
 
-	var state tfmodel.EgressNatModel
+	var state tfmodel.EgressNatResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -346,7 +346,7 @@ func (m *EgressNatResource) Delete(ctx context.Context, req resource.DeleteReque
 func (m *EgressNatResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "EgressNatResource.ImportState")
 
-	var state tfmodel.EgressNatModel
+	var state tfmodel.EgressNatResourceModel
 
 	ref, err := vpcref.ParseEgressNatRef(ctx, req.ID)
 	if err != nil {

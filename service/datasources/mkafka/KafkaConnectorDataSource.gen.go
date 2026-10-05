@@ -83,7 +83,7 @@ func (m *KafkaConnectorDataSource) Configure(ctx context.Context, req datasource
 func (m *KafkaConnectorDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "KafkaConnectorDataSource.Read")
 
-	var config tfmodel.KafkaConnectorModel
+	var config tfmodel.KafkaConnectorDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

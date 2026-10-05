@@ -17,7 +17,7 @@ type GlobalRoleV2 struct {
 
 func (s *GlobalRoleV2) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Роль — это конкретный набор разрешений, который регламентирует, какие действия аккаунт может выполнять с организацией, каталогом, проектом или ресурсом`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,

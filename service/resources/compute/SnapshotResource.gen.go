@@ -107,7 +107,7 @@ func (m *SnapshotResource) Configure(ctx context.Context, req resource.Configure
 func (m *SnapshotResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "SnapshotResource.Create")
 
-	var plan tfmodel.SnapshotModel
+	var plan tfmodel.SnapshotResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -172,7 +172,7 @@ func (m *SnapshotResource) Create(ctx context.Context, req resource.CreateReques
 func (m *SnapshotResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "SnapshotResource.Read")
 
-	var state tfmodel.SnapshotModel
+	var state tfmodel.SnapshotResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -221,13 +221,13 @@ func (m *SnapshotResource) Read(ctx context.Context, req resource.ReadRequest, r
 func (m *SnapshotResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "SnapshotResource.Update")
 
-	var plan tfmodel.SnapshotModel
+	var plan tfmodel.SnapshotResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.SnapshotModel
+	var state tfmodel.SnapshotResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -292,7 +292,7 @@ func (m *SnapshotResource) Update(ctx context.Context, req resource.UpdateReques
 func (m *SnapshotResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "SnapshotResource.Delete")
 
-	var state tfmodel.SnapshotModel
+	var state tfmodel.SnapshotResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -336,7 +336,7 @@ func (m *SnapshotResource) Delete(ctx context.Context, req resource.DeleteReques
 func (m *SnapshotResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "SnapshotResource.ImportState")
 
-	var state tfmodel.SnapshotModel
+	var state tfmodel.SnapshotResourceModel
 
 	ref, err := computeref.ParseSnapshotRef(ctx, req.ID)
 	if err != nil {

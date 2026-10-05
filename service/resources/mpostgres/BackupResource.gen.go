@@ -66,7 +66,7 @@ func (m *BackupResource) Schema(ctx context.Context, req resource.SchemaRequest,
 		},
 	}
 	resp.Schema.Attributes["backup"] = schema.StringAttribute{
-		MarkdownDescription: `Backup базы данных.`,
+		MarkdownDescription: `Резервная копия базы данных.`,
 		Required:            true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.RequiresReplaceIfConfigured(),
@@ -113,7 +113,7 @@ func (m *BackupResource) Configure(ctx context.Context, req resource.ConfigureRe
 func (m *BackupResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "BackupResource.Create")
 
-	var plan tfmodel.BackupModel
+	var plan tfmodel.BackupResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -179,7 +179,7 @@ func (m *BackupResource) Create(ctx context.Context, req resource.CreateRequest,
 func (m *BackupResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "BackupResource.Read")
 
-	var state tfmodel.BackupModel
+	var state tfmodel.BackupResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -229,13 +229,13 @@ func (m *BackupResource) Read(ctx context.Context, req resource.ReadRequest, res
 func (m *BackupResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "BackupResource.Update")
 
-	var plan tfmodel.BackupModel
+	var plan tfmodel.BackupResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.BackupModel
+	var state tfmodel.BackupResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -301,7 +301,7 @@ func (m *BackupResource) Update(ctx context.Context, req resource.UpdateRequest,
 func (m *BackupResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "BackupResource.Delete")
 
-	var state tfmodel.BackupModel
+	var state tfmodel.BackupResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -346,7 +346,7 @@ func (m *BackupResource) Delete(ctx context.Context, req resource.DeleteRequest,
 func (m *BackupResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "BackupResource.ImportState")
 
-	var state tfmodel.BackupModel
+	var state tfmodel.BackupResourceModel
 
 	ref, err := mpostgresref.ParsePostgresBackupRef(ctx, req.ID)
 	if err != nil {

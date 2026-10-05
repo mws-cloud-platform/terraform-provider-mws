@@ -105,7 +105,7 @@ func (m *VirtualMachineResource) Configure(ctx context.Context, req resource.Con
 func (m *VirtualMachineResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "VirtualMachineResource.Create")
 
-	var plan tfmodel.VirtualMachineModel
+	var plan tfmodel.VirtualMachineResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -180,7 +180,7 @@ func (m *VirtualMachineResource) Create(ctx context.Context, req resource.Create
 func (m *VirtualMachineResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "VirtualMachineResource.Read")
 
-	var state tfmodel.VirtualMachineModel
+	var state tfmodel.VirtualMachineResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -239,13 +239,13 @@ func (m *VirtualMachineResource) Read(ctx context.Context, req resource.ReadRequ
 func (m *VirtualMachineResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "VirtualMachineResource.Update")
 
-	var plan tfmodel.VirtualMachineModel
+	var plan tfmodel.VirtualMachineResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.VirtualMachineModel
+	var state tfmodel.VirtualMachineResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -320,7 +320,7 @@ func (m *VirtualMachineResource) Update(ctx context.Context, req resource.Update
 func (m *VirtualMachineResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "VirtualMachineResource.Delete")
 
-	var state tfmodel.VirtualMachineModel
+	var state tfmodel.VirtualMachineResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -374,7 +374,7 @@ func (m *VirtualMachineResource) Delete(ctx context.Context, req resource.Delete
 func (m *VirtualMachineResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "VirtualMachineResource.ImportState")
 
-	var state tfmodel.VirtualMachineModel
+	var state tfmodel.VirtualMachineResourceModel
 
 	ref, err := computeref.ParseVirtualMachineRef(ctx, req.ID)
 	if err != nil {

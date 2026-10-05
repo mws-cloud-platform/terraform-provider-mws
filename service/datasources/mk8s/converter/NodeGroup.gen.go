@@ -82,6 +82,24 @@ func NodeGroupAPIOptionalResponseToTFModel(ctx context.Context, am *model.NodeGr
 	}
 	t.Subnet = subnetTfObject
 
+	if val, ok := am.Spec.Network.Get(); ok {
+		networkTmp, d := NodeGroupSpecNetworkAPIOptionalResponseToTFModel(ctx, &val)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		networkTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.NodeGroupSpecNetwork).GetSchema().Attributes),
+			*networkTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.Network = networkTfObject
+	} else {
+		t.Network = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.NodeGroupSpecNetwork).GetSchema().Attributes))
+	}
+
 	vmTypeTmp, d := NodeGroupSpecVmTypeAPIOptionalResponseToTFModel(ctx, &am.Spec.VmType)
 	diags = append(diags, d...)
 	if diags.HasError() {

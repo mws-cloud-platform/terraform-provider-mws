@@ -83,7 +83,7 @@ func (m *AddressGroupDataSource) Configure(ctx context.Context, req datasource.C
 func (m *AddressGroupDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "AddressGroupDataSource.Read")
 
-	var config tfmodel.AddressGroupModel
+	var config tfmodel.AddressGroupDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

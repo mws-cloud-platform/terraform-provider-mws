@@ -106,7 +106,7 @@ func (m *DiskBackupResource) Configure(ctx context.Context, req resource.Configu
 func (m *DiskBackupResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "DiskBackupResource.Create")
 
-	var plan tfmodel.DiskBackupModel
+	var plan tfmodel.DiskBackupResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -171,7 +171,7 @@ func (m *DiskBackupResource) Create(ctx context.Context, req resource.CreateRequ
 func (m *DiskBackupResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "DiskBackupResource.Read")
 
-	var state tfmodel.DiskBackupModel
+	var state tfmodel.DiskBackupResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -220,13 +220,13 @@ func (m *DiskBackupResource) Read(ctx context.Context, req resource.ReadRequest,
 func (m *DiskBackupResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "DiskBackupResource.Update")
 
-	var plan tfmodel.DiskBackupModel
+	var plan tfmodel.DiskBackupResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.DiskBackupModel
+	var state tfmodel.DiskBackupResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -291,7 +291,7 @@ func (m *DiskBackupResource) Update(ctx context.Context, req resource.UpdateRequ
 func (m *DiskBackupResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "DiskBackupResource.Delete")
 
-	var state tfmodel.DiskBackupModel
+	var state tfmodel.DiskBackupResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -335,7 +335,7 @@ func (m *DiskBackupResource) Delete(ctx context.Context, req resource.DeleteRequ
 func (m *DiskBackupResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "DiskBackupResource.ImportState")
 
-	var state tfmodel.DiskBackupModel
+	var state tfmodel.DiskBackupResourceModel
 
 	ref, err := computeref.ParseDiskBackupRef(ctx, req.ID)
 	if err != nil {

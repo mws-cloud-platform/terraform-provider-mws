@@ -84,7 +84,7 @@ func (m *TopicRoleBindingDataSource) Configure(ctx context.Context, req datasour
 func (m *TopicRoleBindingDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "TopicRoleBindingDataSource.Read")
 
-	var config tfmodel.TopicRoleBindingModel
+	var config tfmodel.TopicRoleBindingDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

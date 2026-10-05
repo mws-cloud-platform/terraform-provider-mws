@@ -42,7 +42,7 @@ func LoadSDKFromConfig(ctx context.Context, config *base.Config, env env.Env, ve
 		opts = append(opts, mwssdk.WithServiceAccountAuthorizedKey(saAuthorizedKey))
 	case base.IsValueSet(config.MWSToken):
 		opts = append(opts, mwssdk.WithCredentials(credentials.StaticProvider(credentials.Credentials{
-			AccessToken: config.MWSToken.ValueString(),
+			AccessToken: credentials.NewAccessToken(config.MWSToken.ValueString()),
 		})))
 	case onComputeVMWithSA(ctx, env):
 		// do nothing, since there is no explicit option for setting VM SA credentials provider.

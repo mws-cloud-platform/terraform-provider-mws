@@ -115,7 +115,7 @@ func (m *ClusterUserResource) Configure(ctx context.Context, req resource.Config
 func (m *ClusterUserResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "ClusterUserResource.Create")
 
-	var plan tfmodel.ClusterUserModel
+	var plan tfmodel.ClusterUserResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -150,7 +150,7 @@ func (m *ClusterUserResource) Create(ctx context.Context, req resource.CreateReq
 
 	body, diags = func(ctx context.Context, planApiRequest *model.KafkaUserRequest) (*model.KafkaUserRequest, tfdiag.Diagnostics) {
 
-		var configData tfmodel.ClusterUserModel
+		var configData tfmodel.ClusterUserResourceModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
 		if resp.Diagnostics.HasError() {
 			return nil, resp.Diagnostics
@@ -216,7 +216,7 @@ func (m *ClusterUserResource) Create(ctx context.Context, req resource.CreateReq
 func (m *ClusterUserResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "ClusterUserResource.Read")
 
-	var state tfmodel.ClusterUserModel
+	var state tfmodel.ClusterUserResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -272,13 +272,13 @@ func (m *ClusterUserResource) Read(ctx context.Context, req resource.ReadRequest
 func (m *ClusterUserResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "ClusterUserResource.Update")
 
-	var plan tfmodel.ClusterUserModel
+	var plan tfmodel.ClusterUserResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.ClusterUserModel
+	var state tfmodel.ClusterUserResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -313,7 +313,7 @@ func (m *ClusterUserResource) Update(ctx context.Context, req resource.UpdateReq
 
 	body, diags = func(ctx context.Context, planApiRequest *model.UpdateKafkaUserRequest) (*model.UpdateKafkaUserRequest, tfdiag.Diagnostics) {
 
-		var configData tfmodel.ClusterUserModel
+		var configData tfmodel.ClusterUserResourceModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
 		if resp.Diagnostics.HasError() {
 			return nil, resp.Diagnostics
@@ -379,7 +379,7 @@ func (m *ClusterUserResource) Update(ctx context.Context, req resource.UpdateReq
 func (m *ClusterUserResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "ClusterUserResource.Delete")
 
-	var state tfmodel.ClusterUserModel
+	var state tfmodel.ClusterUserResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -424,7 +424,7 @@ func (m *ClusterUserResource) Delete(ctx context.Context, req resource.DeleteReq
 func (m *ClusterUserResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "ClusterUserResource.ImportState")
 
-	var state tfmodel.ClusterUserModel
+	var state tfmodel.ClusterUserResourceModel
 
 	ref, err := mkafkaref.ParseKafkaClusterUserRef(ctx, req.ID)
 	if err != nil {

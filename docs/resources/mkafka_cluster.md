@@ -165,7 +165,7 @@ variable "kafka_name" {
 - `active` (Boolean) Состояние кластера — включен или выключен
 - `balancer` (Attributes) Настройка балансировщика кластера (see [below for nested schema](#nestedatt--balancer))
 - `kind` (String)
-- `maintenance_window` (Attributes) (see [below for nested schema](#nestedatt--maintenance_window))
+- `maintenance_window` (Attributes) Сервисное окно Maintenance API (see [below for nested schema](#nestedatt--maintenance_window))
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
 - `product_config` (String) Настройки Kafka. Если не указаны, будут использованы настройки по умолчанию
 - `project` (String) Путь к проекту.
@@ -446,6 +446,7 @@ Read-Only:
   * "DELETED"      - Удалён;
   * "UNIDENTIFIED" - Не удаётся определить статус;
   * "RESTORING"    - Восстанавливается
+- `version` (String) Версия Kafka
 
 <a id="nestedatt--status--balancer"></a>
 ### Nested Schema for `status.balancer`

@@ -3,12 +3,12 @@
 page_title: "mws_secretmanager_secret_version Data Source - mws"
 subcategory: ""
 description: |-
-  
+  Версия секрета, содержащая одну или несколько пар «ключ-значение»
 ---
 
 # mws_secretmanager_secret_version (Data Source)
 
-
+Версия секрета, содержащая одну или несколько пар «ключ-значение»
 
 ## Примеры использования
 

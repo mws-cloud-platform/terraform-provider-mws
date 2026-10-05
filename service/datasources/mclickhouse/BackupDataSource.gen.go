@@ -83,7 +83,7 @@ func (m *BackupDataSource) Configure(ctx context.Context, req datasource.Configu
 func (m *BackupDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "BackupDataSource.Read")
 
-	var config tfmodel.BackupModel
+	var config tfmodel.BackupDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

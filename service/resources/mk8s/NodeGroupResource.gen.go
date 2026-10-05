@@ -113,7 +113,7 @@ func (m *NodeGroupResource) Configure(ctx context.Context, req resource.Configur
 func (m *NodeGroupResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "NodeGroupResource.Create")
 
-	var plan tfmodel.NodeGroupModel
+	var plan tfmodel.NodeGroupResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -189,7 +189,7 @@ func (m *NodeGroupResource) Create(ctx context.Context, req resource.CreateReque
 func (m *NodeGroupResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "NodeGroupResource.Read")
 
-	var state tfmodel.NodeGroupModel
+	var state tfmodel.NodeGroupResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -249,13 +249,13 @@ func (m *NodeGroupResource) Read(ctx context.Context, req resource.ReadRequest, 
 func (m *NodeGroupResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "NodeGroupResource.Update")
 
-	var plan tfmodel.NodeGroupModel
+	var plan tfmodel.NodeGroupResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.NodeGroupModel
+	var state tfmodel.NodeGroupResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -331,7 +331,7 @@ func (m *NodeGroupResource) Update(ctx context.Context, req resource.UpdateReque
 func (m *NodeGroupResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "NodeGroupResource.Delete")
 
-	var state tfmodel.NodeGroupModel
+	var state tfmodel.NodeGroupResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -386,7 +386,7 @@ func (m *NodeGroupResource) Delete(ctx context.Context, req resource.DeleteReque
 func (m *NodeGroupResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "NodeGroupResource.ImportState")
 
-	var state tfmodel.NodeGroupModel
+	var state tfmodel.NodeGroupResourceModel
 
 	ref, err := mk8sref.ParseNodeGroupRef(ctx, req.ID)
 	if err != nil {

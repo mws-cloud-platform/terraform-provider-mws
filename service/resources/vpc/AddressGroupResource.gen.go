@@ -113,7 +113,7 @@ func (m *AddressGroupResource) Configure(ctx context.Context, req resource.Confi
 func (m *AddressGroupResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "AddressGroupResource.Create")
 
-	var plan tfmodel.AddressGroupModel
+	var plan tfmodel.AddressGroupResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -179,7 +179,7 @@ func (m *AddressGroupResource) Create(ctx context.Context, req resource.CreateRe
 func (m *AddressGroupResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "AddressGroupResource.Read")
 
-	var state tfmodel.AddressGroupModel
+	var state tfmodel.AddressGroupResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -229,13 +229,13 @@ func (m *AddressGroupResource) Read(ctx context.Context, req resource.ReadReques
 func (m *AddressGroupResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "AddressGroupResource.Update")
 
-	var plan tfmodel.AddressGroupModel
+	var plan tfmodel.AddressGroupResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.AddressGroupModel
+	var state tfmodel.AddressGroupResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -301,7 +301,7 @@ func (m *AddressGroupResource) Update(ctx context.Context, req resource.UpdateRe
 func (m *AddressGroupResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "AddressGroupResource.Delete")
 
-	var state tfmodel.AddressGroupModel
+	var state tfmodel.AddressGroupResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -346,7 +346,7 @@ func (m *AddressGroupResource) Delete(ctx context.Context, req resource.DeleteRe
 func (m *AddressGroupResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "AddressGroupResource.ImportState")
 
-	var state tfmodel.AddressGroupModel
+	var state tfmodel.AddressGroupResourceModel
 
 	ref, err := vpcref.ParseAddressGroupRef(ctx, req.ID)
 	if err != nil {

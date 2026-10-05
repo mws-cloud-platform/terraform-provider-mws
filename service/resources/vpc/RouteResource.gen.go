@@ -113,7 +113,7 @@ func (m *RouteResource) Configure(ctx context.Context, req resource.ConfigureReq
 func (m *RouteResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "RouteResource.Create")
 
-	var plan tfmodel.RouteModel
+	var plan tfmodel.RouteResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -179,7 +179,7 @@ func (m *RouteResource) Create(ctx context.Context, req resource.CreateRequest, 
 func (m *RouteResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "RouteResource.Read")
 
-	var state tfmodel.RouteModel
+	var state tfmodel.RouteResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -229,13 +229,13 @@ func (m *RouteResource) Read(ctx context.Context, req resource.ReadRequest, resp
 func (m *RouteResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "RouteResource.Update")
 
-	var plan tfmodel.RouteModel
+	var plan tfmodel.RouteResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.RouteModel
+	var state tfmodel.RouteResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -301,7 +301,7 @@ func (m *RouteResource) Update(ctx context.Context, req resource.UpdateRequest, 
 func (m *RouteResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "RouteResource.Delete")
 
-	var state tfmodel.RouteModel
+	var state tfmodel.RouteResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -346,7 +346,7 @@ func (m *RouteResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 func (m *RouteResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "RouteResource.ImportState")
 
-	var state tfmodel.RouteModel
+	var state tfmodel.RouteResourceModel
 
 	ref, err := vpcref.ParseRouteRef(ctx, req.ID)
 	if err != nil {

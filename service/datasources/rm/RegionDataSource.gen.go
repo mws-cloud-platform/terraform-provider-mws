@@ -72,7 +72,7 @@ func (m *RegionDataSource) Configure(ctx context.Context, req datasource.Configu
 func (m *RegionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "RegionDataSource.Read")
 
-	var config tfmodel.RegionModel
+	var config tfmodel.RegionDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

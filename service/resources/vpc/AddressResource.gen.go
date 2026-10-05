@@ -113,7 +113,7 @@ func (m *AddressResource) Configure(ctx context.Context, req resource.ConfigureR
 func (m *AddressResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "AddressResource.Create")
 
-	var plan tfmodel.AddressModel
+	var plan tfmodel.AddressResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -179,7 +179,7 @@ func (m *AddressResource) Create(ctx context.Context, req resource.CreateRequest
 func (m *AddressResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "AddressResource.Read")
 
-	var state tfmodel.AddressModel
+	var state tfmodel.AddressResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -229,13 +229,13 @@ func (m *AddressResource) Read(ctx context.Context, req resource.ReadRequest, re
 func (m *AddressResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "AddressResource.Update")
 
-	var plan tfmodel.AddressModel
+	var plan tfmodel.AddressResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.AddressModel
+	var state tfmodel.AddressResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -301,7 +301,7 @@ func (m *AddressResource) Update(ctx context.Context, req resource.UpdateRequest
 func (m *AddressResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "AddressResource.Delete")
 
-	var state tfmodel.AddressModel
+	var state tfmodel.AddressResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -346,7 +346,7 @@ func (m *AddressResource) Delete(ctx context.Context, req resource.DeleteRequest
 func (m *AddressResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "AddressResource.ImportState")
 
-	var state tfmodel.AddressModel
+	var state tfmodel.AddressResourceModel
 
 	ref, err := vpcref.ParseAddressRef(ctx, req.ID)
 	if err != nil {

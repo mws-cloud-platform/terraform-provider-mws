@@ -24,7 +24,7 @@ type Topic struct {
 
 func (s *Topic) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Топик — это логический поток сообщений, который создается пользователем и обеспечивает группировку сообщений по темам`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,
@@ -41,8 +41,8 @@ func (s *Topic) GetSchema() schema.Schema {
 				Optional:            true,
 			},
 			"status": schema.SingleNestedAttribute{
-				Attributes:          new(tfcommon.ResourceStatus).GetSchema().Attributes,
-				MarkdownDescription: `Текущее состояние ресурса, вычисляемое системой`,
+				Attributes:          new(TopicStatus).GetSchema().Attributes,
+				MarkdownDescription: `Наблюдаемое состояние топика`,
 				Computed:            true,
 			},
 			"partition_count": schema.Int64Attribute{

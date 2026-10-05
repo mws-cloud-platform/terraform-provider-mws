@@ -113,7 +113,7 @@ func (m *CertificateRoleBindingResource) Configure(ctx context.Context, req reso
 func (m *CertificateRoleBindingResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "CertificateRoleBindingResource.Create")
 
-	var plan tfmodel.CertificateRoleBindingModel
+	var plan tfmodel.CertificateRoleBindingResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -179,7 +179,7 @@ func (m *CertificateRoleBindingResource) Create(ctx context.Context, req resourc
 func (m *CertificateRoleBindingResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "CertificateRoleBindingResource.Read")
 
-	var state tfmodel.CertificateRoleBindingModel
+	var state tfmodel.CertificateRoleBindingResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -229,13 +229,13 @@ func (m *CertificateRoleBindingResource) Read(ctx context.Context, req resource.
 func (m *CertificateRoleBindingResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "CertificateRoleBindingResource.Update")
 
-	var plan tfmodel.CertificateRoleBindingModel
+	var plan tfmodel.CertificateRoleBindingResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.CertificateRoleBindingModel
+	var state tfmodel.CertificateRoleBindingResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -301,7 +301,7 @@ func (m *CertificateRoleBindingResource) Update(ctx context.Context, req resourc
 func (m *CertificateRoleBindingResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "CertificateRoleBindingResource.Delete")
 
-	var state tfmodel.CertificateRoleBindingModel
+	var state tfmodel.CertificateRoleBindingResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -346,7 +346,7 @@ func (m *CertificateRoleBindingResource) Delete(ctx context.Context, req resourc
 func (m *CertificateRoleBindingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "CertificateRoleBindingResource.ImportState")
 
-	var state tfmodel.CertificateRoleBindingModel
+	var state tfmodel.CertificateRoleBindingResourceModel
 
 	ref, err := certmanagerref.ParseCertificateRoleBindingRef(ctx, req.ID)
 	if err != nil {

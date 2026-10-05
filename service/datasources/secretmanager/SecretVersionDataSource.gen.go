@@ -83,7 +83,7 @@ func (m *SecretVersionDataSource) Configure(ctx context.Context, req datasource.
 func (m *SecretVersionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "SecretVersionDataSource.Read")
 
-	var config tfmodel.SecretVersionModel
+	var config tfmodel.SecretVersionDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

@@ -71,7 +71,7 @@ func (m *RoleDataSource) Configure(ctx context.Context, req datasource.Configure
 func (m *RoleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "RoleDataSource.Read")
 
-	var config tfmodel.RoleModel
+	var config tfmodel.RoleDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

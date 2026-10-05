@@ -14,7 +14,7 @@ require (
 	github.com/hashicorp/terraform-plugin-sdk v1.17.2
 	github.com/hashicorp/terraform-plugin-testing v1.16.0
 	github.com/stretchr/testify v1.12.1
-	go.mws.cloud/go-sdk v0.25.0
+	go.mws.cloud/go-sdk v0.26.0
 	go.mws.cloud/util-toolset v0.15.1
 	go.opentelemetry.io/otel/sdk v1.46.0
 	go.uber.org/zap v1.28.0

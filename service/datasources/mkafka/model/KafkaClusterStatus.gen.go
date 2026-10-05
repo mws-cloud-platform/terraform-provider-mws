@@ -17,6 +17,7 @@ type KafkaClusterStatus struct {
 	Health               ClusterHealth `tfsdk:"health"`
 	Message              types.String  `tfsdk:"message"`
 	Region               types.String  `tfsdk:"region"`
+	Version              types.String  `tfsdk:"version"`
 	EffectiveKafkaConfig types.Map     `tfsdk:"effective_kafka_config"`
 	Instances            types.Object  `tfsdk:"instances"`
 	Endpoints            types.List    `tfsdk:"endpoints"`
@@ -85,6 +86,10 @@ func (s *KafkaClusterStatus) GetSchema() schema.Schema {
 			},
 			"region": schema.StringAttribute{
 				MarkdownDescription: `Регион, которому принадлежит кластер`,
+				Computed:            true,
+			},
+			"version": schema.StringAttribute{
+				MarkdownDescription: `Версия Kafka`,
 				Computed:            true,
 			},
 			"effective_kafka_config": schema.MapAttribute{

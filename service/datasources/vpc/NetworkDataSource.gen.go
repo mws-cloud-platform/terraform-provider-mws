@@ -79,7 +79,7 @@ func (m *NetworkDataSource) Configure(ctx context.Context, req datasource.Config
 func (m *NetworkDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "NetworkDataSource.Read")
 
-	var config tfmodel.NetworkModel
+	var config tfmodel.NetworkDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

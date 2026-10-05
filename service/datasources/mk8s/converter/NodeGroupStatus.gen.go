@@ -38,6 +38,24 @@ func NodeGroupStatusAPIResponseToTFModel(ctx context.Context, am *model.NodeGrou
 	}
 	t.Ready = readyTfObject
 
+	if am.Network != nil {
+		networkTmp, d := NodeGroupStatusNetworkAPIResponseToTFModel(ctx, am.Network)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		networkTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.NodeGroupStatusNetwork).GetSchema().Attributes),
+			*networkTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.Network = networkTfObject
+	} else {
+		t.Network = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.NodeGroupStatusNetwork).GetSchema().Attributes))
+	}
+
 	if am.VmType != nil {
 		vmTypeTmp, d := NodeGroupStatusVmTypeAPIResponseToTFModel(ctx, am.VmType)
 		diags = append(diags, d...)

@@ -79,7 +79,7 @@ func (m *DiskDataSource) Configure(ctx context.Context, req datasource.Configure
 func (m *DiskDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "DiskDataSource.Read")
 
-	var config tfmodel.DiskModel
+	var config tfmodel.DiskDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

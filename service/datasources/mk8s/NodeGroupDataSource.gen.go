@@ -83,7 +83,7 @@ func (m *NodeGroupDataSource) Configure(ctx context.Context, req datasource.Conf
 func (m *NodeGroupDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "NodeGroupDataSource.Read")
 
-	var config tfmodel.NodeGroupModel
+	var config tfmodel.NodeGroupDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

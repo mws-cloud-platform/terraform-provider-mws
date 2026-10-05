@@ -83,7 +83,7 @@ func (m *OneToOneNatDataSource) Configure(ctx context.Context, req datasource.Co
 func (m *OneToOneNatDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "OneToOneNatDataSource.Read")
 
-	var config tfmodel.OneToOneNatModel
+	var config tfmodel.OneToOneNatDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

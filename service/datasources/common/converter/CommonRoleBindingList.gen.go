@@ -48,17 +48,6 @@ func CommonRoleBindingListAPIToTFModel(ctx context.Context, am *commonmodel.Comm
 		})
 	}
 
-	if am.NextPageToken != nil {
-		nextPageTokenTmp, d := NextPageTokenAPIToTFModel(ctx, am.NextPageToken)
-		diags = append(diags, d...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		t.NextPageToken = nextPageTokenTmp
-	} else {
-		t.NextPageToken = types.StringNull()
-	}
-
 	return &t, diags
 }
 
@@ -97,17 +86,6 @@ func CommonRoleBindingListAPIResponseToTFModel(ctx context.Context, am *commonmo
 		})
 	}
 
-	if am.NextPageToken != nil {
-		nextPageTokenTmp, d := NextPageTokenAPIToTFModel(ctx, am.NextPageToken)
-		diags = append(diags, d...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		t.NextPageToken = nextPageTokenTmp
-	} else {
-		t.NextPageToken = types.StringNull()
-	}
-
 	return &t, diags
 }
 
@@ -144,17 +122,6 @@ func CommonRoleBindingListAPIOptionalResponseToTFModel(ctx context.Context, am *
 		t.Items = types.ListNull(types.ObjectType{
 			AttrTypes: tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBinding).GetSchema().Attributes),
 		})
-	}
-
-	if val, ok := am.NextPageToken.Get(); ok {
-		nextPageTokenTmp, d := NextPageTokenAPIToTFModel(ctx, &val)
-		diags = append(diags, d...)
-		if diags.HasError() {
-			return nil, diags
-		}
-		t.NextPageToken = nextPageTokenTmp
-	} else {
-		t.NextPageToken = types.StringNull()
 	}
 
 	return &t, diags

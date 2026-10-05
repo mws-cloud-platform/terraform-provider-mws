@@ -3,12 +3,12 @@
 page_title: "mws_queue_topic Data Source - mws"
 subcategory: ""
 description: |-
-  
+  Топик — это логический поток сообщений, который создается пользователем и обеспечивает группировку сообщений по темам
 ---
 
 # mws_queue_topic (Data Source)
 
-
+Топик — это логический поток сообщений, который создается пользователем и обеспечивает группировку сообщений по темам
 
 ## Примеры использования
 
@@ -38,7 +38,7 @@ data "mws_queue_topic" "queue_topic" {
 - `kind` (String)
 - `metadata` (Attributes) Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров (see [below for nested schema](#nestedatt--metadata))
 - `partition_count` (Number) Кол-во партиций топика
-- `status` (Attributes) Текущее состояние ресурса, вычисляемое системой (see [below for nested schema](#nestedatt--status))
+- `status` (Attributes) Наблюдаемое состояние топика (see [below for nested schema](#nestedatt--status))
 - `topic_id` (String) Идентификатор топика
 
 <a id="nestedatt--metadata"></a>
@@ -77,6 +77,9 @@ Read-Only:
 
 Read-Only:
 
+- `config` (Map of String) Эффективная конфигурация топика, которая используется сервером.
+Конфигурация, заданная пользователем и дополненная внутренними значениями по умолчанию.
+Все значения параметров конфигурации передаются как строки
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
 
 <a id="nestedatt--status--ready"></a>

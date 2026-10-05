@@ -78,7 +78,7 @@ func (m *ServiceAccountDataSource) Configure(ctx context.Context, req datasource
 func (m *ServiceAccountDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "ServiceAccountDataSource.Read")
 
-	var config tfmodel.ServiceAccountModel
+	var config tfmodel.ServiceAccountDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

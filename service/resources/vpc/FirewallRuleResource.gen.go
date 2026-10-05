@@ -113,7 +113,7 @@ func (m *FirewallRuleResource) Configure(ctx context.Context, req resource.Confi
 func (m *FirewallRuleResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "FirewallRuleResource.Create")
 
-	var plan tfmodel.FirewallRuleModel
+	var plan tfmodel.FirewallRuleResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -179,7 +179,7 @@ func (m *FirewallRuleResource) Create(ctx context.Context, req resource.CreateRe
 func (m *FirewallRuleResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "FirewallRuleResource.Read")
 
-	var state tfmodel.FirewallRuleModel
+	var state tfmodel.FirewallRuleResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -229,13 +229,13 @@ func (m *FirewallRuleResource) Read(ctx context.Context, req resource.ReadReques
 func (m *FirewallRuleResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "FirewallRuleResource.Update")
 
-	var plan tfmodel.FirewallRuleModel
+	var plan tfmodel.FirewallRuleResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.FirewallRuleModel
+	var state tfmodel.FirewallRuleResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -301,7 +301,7 @@ func (m *FirewallRuleResource) Update(ctx context.Context, req resource.UpdateRe
 func (m *FirewallRuleResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "FirewallRuleResource.Delete")
 
-	var state tfmodel.FirewallRuleModel
+	var state tfmodel.FirewallRuleResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -346,7 +346,7 @@ func (m *FirewallRuleResource) Delete(ctx context.Context, req resource.DeleteRe
 func (m *FirewallRuleResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "FirewallRuleResource.ImportState")
 
-	var state tfmodel.FirewallRuleModel
+	var state tfmodel.FirewallRuleResourceModel
 
 	ref, err := vpcref.ParseFirewallRuleRef(ctx, req.ID)
 	if err != nil {

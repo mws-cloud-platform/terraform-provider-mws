@@ -108,7 +108,7 @@ variable "subnet_cidr" {
 
 ### Required
 
-- `backup` (String) Backup базы данных.
+- `backup` (String) Резервная копия базы данных.
 - `cluster` (String) Название или идентификатор кластера.
 
 ### Optional

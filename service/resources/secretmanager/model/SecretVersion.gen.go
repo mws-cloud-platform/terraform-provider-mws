@@ -22,7 +22,7 @@ type SecretVersion struct {
 
 func (s *SecretVersion) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Версия секрета, содержащая одну или несколько пар «ключ-значение»`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,

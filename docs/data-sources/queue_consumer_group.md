@@ -3,12 +3,12 @@
 page_title: "mws_queue_consumer_group Data Source - mws"
 subcategory: ""
 description: |-
-  
+  Группа потребителей — это потребители, которые совместно обрабатывают сообщения из топика
 ---
 
 # mws_queue_consumer_group (Data Source)
 
-
+Группа потребителей — это потребители, которые совместно обрабатывают сообщения из топика
 
 ## Примеры использования
 

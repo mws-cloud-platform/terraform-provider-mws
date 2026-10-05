@@ -113,7 +113,7 @@ func (m *SubnetResource) Configure(ctx context.Context, req resource.ConfigureRe
 func (m *SubnetResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "SubnetResource.Create")
 
-	var plan tfmodel.SubnetModel
+	var plan tfmodel.SubnetResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -179,7 +179,7 @@ func (m *SubnetResource) Create(ctx context.Context, req resource.CreateRequest,
 func (m *SubnetResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "SubnetResource.Read")
 
-	var state tfmodel.SubnetModel
+	var state tfmodel.SubnetResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -229,13 +229,13 @@ func (m *SubnetResource) Read(ctx context.Context, req resource.ReadRequest, res
 func (m *SubnetResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "SubnetResource.Update")
 
-	var plan tfmodel.SubnetModel
+	var plan tfmodel.SubnetResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.SubnetModel
+	var state tfmodel.SubnetResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -301,7 +301,7 @@ func (m *SubnetResource) Update(ctx context.Context, req resource.UpdateRequest,
 func (m *SubnetResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "SubnetResource.Delete")
 
-	var state tfmodel.SubnetModel
+	var state tfmodel.SubnetResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -346,7 +346,7 @@ func (m *SubnetResource) Delete(ctx context.Context, req resource.DeleteRequest,
 func (m *SubnetResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "SubnetResource.ImportState")
 
-	var state tfmodel.SubnetModel
+	var state tfmodel.SubnetResourceModel
 
 	ref, err := vpcref.ParseSubnetRef(ctx, req.ID)
 	if err != nil {

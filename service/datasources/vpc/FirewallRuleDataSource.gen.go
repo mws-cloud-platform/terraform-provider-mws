@@ -83,7 +83,7 @@ func (m *FirewallRuleDataSource) Configure(ctx context.Context, req datasource.C
 func (m *FirewallRuleDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "FirewallRuleDataSource.Read")
 
-	var config tfmodel.FirewallRuleModel
+	var config tfmodel.FirewallRuleDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

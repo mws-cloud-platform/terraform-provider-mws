@@ -13,6 +13,7 @@ import (
 
 type NodeGroupStatus struct {
 	tfcommon.ResourceStatus
+	Network          types.Object `tfsdk:"network"`
 	VmType           types.Object `tfsdk:"vm_type"`
 	Cpu              types.String `tfsdk:"cpu"`
 	Memory           types.String `tfsdk:"memory"`
@@ -37,6 +38,11 @@ func (s *NodeGroupStatus) GetSchema() schema.Schema {
 			"ready": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.ResourceStatusReady).GetSchema().Attributes,
 				MarkdownDescription: `Информация о статусе реконсиляции`,
+				Computed:            true,
+			},
+			"network": schema.SingleNestedAttribute{
+				Attributes:          new(NodeGroupStatusNetwork).GetSchema().Attributes,
+				MarkdownDescription: `Сетевые настройки группы узлов`,
 				Computed:            true,
 			},
 			"vm_type": schema.SingleNestedAttribute{

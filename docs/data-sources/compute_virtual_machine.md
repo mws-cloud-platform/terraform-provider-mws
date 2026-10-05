@@ -486,7 +486,7 @@ Read-Only:
 Read-Only:
 
 - `disk_backup` (String) Ссылка на резервную копию диска
-- `image` (String) Ссылка на образ
+- `image` (String) Ссылка на образ. Образы из каталога MWS находятся в системных проектах mws-<os>, например, mws-ubuntu, mws-debian
 
 
 

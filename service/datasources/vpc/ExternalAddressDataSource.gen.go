@@ -79,7 +79,7 @@ func (m *ExternalAddressDataSource) Configure(ctx context.Context, req datasourc
 func (m *ExternalAddressDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "ExternalAddressDataSource.Read")
 
-	var config tfmodel.ExternalAddressModel
+	var config tfmodel.ExternalAddressDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

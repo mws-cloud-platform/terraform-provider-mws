@@ -106,7 +106,7 @@ func (m *DiskResource) Configure(ctx context.Context, req resource.ConfigureRequ
 func (m *DiskResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "DiskResource.Create")
 
-	var plan tfmodel.DiskModel
+	var plan tfmodel.DiskResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -181,7 +181,7 @@ func (m *DiskResource) Create(ctx context.Context, req resource.CreateRequest, r
 func (m *DiskResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "DiskResource.Read")
 
-	var state tfmodel.DiskModel
+	var state tfmodel.DiskResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -240,13 +240,13 @@ func (m *DiskResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 func (m *DiskResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "DiskResource.Update")
 
-	var plan tfmodel.DiskModel
+	var plan tfmodel.DiskResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.DiskModel
+	var state tfmodel.DiskResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -321,7 +321,7 @@ func (m *DiskResource) Update(ctx context.Context, req resource.UpdateRequest, r
 func (m *DiskResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "DiskResource.Delete")
 
-	var state tfmodel.DiskModel
+	var state tfmodel.DiskResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -375,7 +375,7 @@ func (m *DiskResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 func (m *DiskResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "DiskResource.ImportState")
 
-	var state tfmodel.DiskModel
+	var state tfmodel.DiskResourceModel
 
 	ref, err := computeref.ParseDiskRef(ctx, req.ID)
 	if err != nil {

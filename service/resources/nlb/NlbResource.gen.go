@@ -113,7 +113,7 @@ func (m *NlbResource) Configure(ctx context.Context, req resource.ConfigureReque
 func (m *NlbResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "NlbResource.Create")
 
-	var plan tfmodel.NlbModel
+	var plan tfmodel.NlbResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -179,7 +179,7 @@ func (m *NlbResource) Create(ctx context.Context, req resource.CreateRequest, re
 func (m *NlbResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "NlbResource.Read")
 
-	var state tfmodel.NlbModel
+	var state tfmodel.NlbResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -229,13 +229,13 @@ func (m *NlbResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 func (m *NlbResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "NlbResource.Update")
 
-	var plan tfmodel.NlbModel
+	var plan tfmodel.NlbResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.NlbModel
+	var state tfmodel.NlbResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -301,7 +301,7 @@ func (m *NlbResource) Update(ctx context.Context, req resource.UpdateRequest, re
 func (m *NlbResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "NlbResource.Delete")
 
-	var state tfmodel.NlbModel
+	var state tfmodel.NlbResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -346,7 +346,7 @@ func (m *NlbResource) Delete(ctx context.Context, req resource.DeleteRequest, re
 func (m *NlbResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "NlbResource.ImportState")
 
-	var state tfmodel.NlbModel
+	var state tfmodel.NlbResourceModel
 
 	ref, err := nlbref.ParseNlbRef(ctx, req.ID)
 	if err != nil {

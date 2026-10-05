@@ -63,6 +63,7 @@ func TestUpdateNodeGroupRequestConverters(t *testing.T) {
 	var nullPlanTfModel tfmodel.NodeGroup
 	var stateTfModel tfmodel.NodeGroup
 	stateTfModel.Metadata = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonTypedResourceMetadata).GetSchema().Attributes))
+	stateTfModel.Network = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.NodeGroupSpecNetwork).GetSchema().Attributes))
 	stateTfModel.LocalDisks = types.ListValueMust(types.ObjectType{
 		AttrTypes: tfconv.GetAttributesTypes(new(tfmodel.LocalDiskSpec).GetSchema().Attributes),
 	}, []tfattr.Value{})
@@ -79,6 +80,10 @@ func TestUpdateNodeGroupRequestConverters(t *testing.T) {
 			Null: true,
 		},
 		Spec: optional.NewOptional(model.UpdateNodeGroupSpecRequest{
+			Network: optional.OptionalNil[model.UpdateNodeGroupSpecNetworkRequest]{
+				Set:  true,
+				Null: true,
+			},
 			LocalDisks: optional.OptionalNil[[]model.UpdateLocalDiskSpecRequest]{
 				Set:  true,
 				Null: true,

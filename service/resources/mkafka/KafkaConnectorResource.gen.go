@@ -115,7 +115,7 @@ func (m *KafkaConnectorResource) Configure(ctx context.Context, req resource.Con
 func (m *KafkaConnectorResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "KafkaConnectorResource.Create")
 
-	var plan tfmodel.KafkaConnectorModel
+	var plan tfmodel.KafkaConnectorResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -150,7 +150,7 @@ func (m *KafkaConnectorResource) Create(ctx context.Context, req resource.Create
 
 	body, diags = func(ctx context.Context, planApiRequest *model.KafkaConnectorRequest) (*model.KafkaConnectorRequest, tfdiag.Diagnostics) {
 
-		var configData tfmodel.KafkaConnectorModel
+		var configData tfmodel.KafkaConnectorResourceModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
 		if resp.Diagnostics.HasError() {
 			return nil, resp.Diagnostics
@@ -216,7 +216,7 @@ func (m *KafkaConnectorResource) Create(ctx context.Context, req resource.Create
 func (m *KafkaConnectorResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "KafkaConnectorResource.Read")
 
-	var state tfmodel.KafkaConnectorModel
+	var state tfmodel.KafkaConnectorResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -272,13 +272,13 @@ func (m *KafkaConnectorResource) Read(ctx context.Context, req resource.ReadRequ
 func (m *KafkaConnectorResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "KafkaConnectorResource.Update")
 
-	var plan tfmodel.KafkaConnectorModel
+	var plan tfmodel.KafkaConnectorResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.KafkaConnectorModel
+	var state tfmodel.KafkaConnectorResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -313,7 +313,7 @@ func (m *KafkaConnectorResource) Update(ctx context.Context, req resource.Update
 
 	body, diags = func(ctx context.Context, planApiRequest *model.UpdateKafkaConnectorRequest) (*model.UpdateKafkaConnectorRequest, tfdiag.Diagnostics) {
 
-		var configData tfmodel.KafkaConnectorModel
+		var configData tfmodel.KafkaConnectorResourceModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
 		if resp.Diagnostics.HasError() {
 			return nil, resp.Diagnostics
@@ -379,7 +379,7 @@ func (m *KafkaConnectorResource) Update(ctx context.Context, req resource.Update
 func (m *KafkaConnectorResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "KafkaConnectorResource.Delete")
 
-	var state tfmodel.KafkaConnectorModel
+	var state tfmodel.KafkaConnectorResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -424,7 +424,7 @@ func (m *KafkaConnectorResource) Delete(ctx context.Context, req resource.Delete
 func (m *KafkaConnectorResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "KafkaConnectorResource.ImportState")
 
-	var state tfmodel.KafkaConnectorModel
+	var state tfmodel.KafkaConnectorResourceModel
 
 	ref, err := mkafkaref.ParseKafkaConnectorRef(ctx, req.ID)
 	if err != nil {

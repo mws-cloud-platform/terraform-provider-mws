@@ -83,7 +83,7 @@ func (m *AddressDataSource) Configure(ctx context.Context, req datasource.Config
 func (m *AddressDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "AddressDataSource.Read")
 
-	var config tfmodel.AddressModel
+	var config tfmodel.AddressDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

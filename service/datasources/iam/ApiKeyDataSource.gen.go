@@ -83,7 +83,7 @@ func (m *ApiKeyDataSource) Configure(ctx context.Context, req datasource.Configu
 func (m *ApiKeyDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "ApiKeyDataSource.Read")
 
-	var config tfmodel.ApiKeyModel
+	var config tfmodel.ApiKeyDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

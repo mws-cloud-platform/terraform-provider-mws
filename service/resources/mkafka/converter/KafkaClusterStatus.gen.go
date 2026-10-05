@@ -72,6 +72,12 @@ func KafkaClusterStatusAPIResponseToTFModel(ctx context.Context, am *model.Kafka
 		t.Region = types.StringNull()
 	}
 
+	if am.Version != nil {
+		t.Version = types.StringPointerValue(am.Version)
+	} else {
+		t.Version = types.StringNull()
+	}
+
 	if am.EffectiveKafkaConfig != nil {
 		effectiveKafkaConfig := make(map[string]types.String, len(am.EffectiveKafkaConfig))
 

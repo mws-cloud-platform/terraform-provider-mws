@@ -83,7 +83,7 @@ func (m *SubnetDataSource) Configure(ctx context.Context, req datasource.Configu
 func (m *SubnetDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "SubnetDataSource.Read")
 
-	var config tfmodel.SubnetModel
+	var config tfmodel.SubnetDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

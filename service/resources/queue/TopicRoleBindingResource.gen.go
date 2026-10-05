@@ -114,7 +114,7 @@ func (m *TopicRoleBindingResource) Configure(ctx context.Context, req resource.C
 func (m *TopicRoleBindingResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "TopicRoleBindingResource.Create")
 
-	var plan tfmodel.TopicRoleBindingModel
+	var plan tfmodel.TopicRoleBindingResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -180,7 +180,7 @@ func (m *TopicRoleBindingResource) Create(ctx context.Context, req resource.Crea
 func (m *TopicRoleBindingResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "TopicRoleBindingResource.Read")
 
-	var state tfmodel.TopicRoleBindingModel
+	var state tfmodel.TopicRoleBindingResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -230,13 +230,13 @@ func (m *TopicRoleBindingResource) Read(ctx context.Context, req resource.ReadRe
 func (m *TopicRoleBindingResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "TopicRoleBindingResource.Update")
 
-	var plan tfmodel.TopicRoleBindingModel
+	var plan tfmodel.TopicRoleBindingResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.TopicRoleBindingModel
+	var state tfmodel.TopicRoleBindingResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -302,7 +302,7 @@ func (m *TopicRoleBindingResource) Update(ctx context.Context, req resource.Upda
 func (m *TopicRoleBindingResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "TopicRoleBindingResource.Delete")
 
-	var state tfmodel.TopicRoleBindingModel
+	var state tfmodel.TopicRoleBindingResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -347,7 +347,7 @@ func (m *TopicRoleBindingResource) Delete(ctx context.Context, req resource.Dele
 func (m *TopicRoleBindingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "TopicRoleBindingResource.ImportState")
 
-	var state tfmodel.TopicRoleBindingModel
+	var state tfmodel.TopicRoleBindingResourceModel
 
 	ref, err := queueref.ParseTopicRoleBindingRef(ctx, req.ID)
 	if err != nil {

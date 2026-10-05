@@ -81,7 +81,7 @@ func (m *HmacKeyDataSource) Configure(ctx context.Context, req datasource.Config
 func (m *HmacKeyDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "HmacKeyDataSource.Read")
 
-	var config tfmodel.HmacKeyModel
+	var config tfmodel.HmacKeyDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

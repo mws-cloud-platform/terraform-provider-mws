@@ -18,7 +18,7 @@ func TestPostgresClusterDatabaseAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
 	apiModel := model.PostgresClusterDatabaseResponse{
 		Spec: model.PostgresClusterDatabaseSpecResponse{
-			Owner: mpostgres.NewMustPostgresClusterUserRef("projectID", "kd5veic", "y6cV3gUxcffy"),
+			Owner: mpostgres.NewMustPostgresClusterUserRef("projectID", "lg", "U"),
 		},
 	}
 	_, diags := conv.PostgresClusterDatabaseAPIResponseToTFModel(context.Background(), &apiModel)

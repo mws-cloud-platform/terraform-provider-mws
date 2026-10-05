@@ -3,12 +3,12 @@
 page_title: "mws_iam_authorized_key Resource - mws"
 subcategory: ""
 description: |-
-  
+  Авторизованный ключ (authorized key) — это ключ с алгоритмом шифрования ES256, применяемый для аутентификации во всех сервисах MWS (исключая Object Storage, Artifact Registry и GPT)
 ---
 
 # mws_iam_authorized_key (Resource)
 
-
+Авторизованный ключ (authorized key) — это ключ с алгоритмом шифрования ES256, применяемый для аутентификации во всех сервисах MWS (исключая Object Storage, Artifact Registry и GPT)
 
 ## Примеры использования
 

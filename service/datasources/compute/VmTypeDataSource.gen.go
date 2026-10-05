@@ -71,7 +71,7 @@ func (m *VmTypeDataSource) Configure(ctx context.Context, req datasource.Configu
 func (m *VmTypeDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "VmTypeDataSource.Read")
 
-	var config tfmodel.VmTypeModel
+	var config tfmodel.VmTypeDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

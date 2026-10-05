@@ -83,7 +83,7 @@ func (m *NlbDataSource) Configure(ctx context.Context, req datasource.ConfigureR
 func (m *NlbDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "NlbDataSource.Read")
 
-	var config tfmodel.NlbModel
+	var config tfmodel.NlbDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

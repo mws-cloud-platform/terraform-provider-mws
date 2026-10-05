@@ -114,7 +114,7 @@ func (m *ApiKeyResource) Configure(ctx context.Context, req resource.ConfigureRe
 func (m *ApiKeyResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "ApiKeyResource.Create")
 
-	var plan tfmodel.ApiKeyModel
+	var plan tfmodel.ApiKeyResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -214,7 +214,7 @@ func (m *ApiKeyResource) Create(ctx context.Context, req resource.CreateRequest,
 func (m *ApiKeyResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "ApiKeyResource.Read")
 
-	var state tfmodel.ApiKeyModel
+	var state tfmodel.ApiKeyResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -268,13 +268,13 @@ func (m *ApiKeyResource) Read(ctx context.Context, req resource.ReadRequest, res
 func (m *ApiKeyResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "ApiKeyResource.Update")
 
-	var plan tfmodel.ApiKeyModel
+	var plan tfmodel.ApiKeyResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.ApiKeyModel
+	var state tfmodel.ApiKeyResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -373,7 +373,7 @@ func (m *ApiKeyResource) Update(ctx context.Context, req resource.UpdateRequest,
 func (m *ApiKeyResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "ApiKeyResource.Delete")
 
-	var state tfmodel.ApiKeyModel
+	var state tfmodel.ApiKeyResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -418,7 +418,7 @@ func (m *ApiKeyResource) Delete(ctx context.Context, req resource.DeleteRequest,
 func (m *ApiKeyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "ApiKeyResource.ImportState")
 
-	var state tfmodel.ApiKeyModel
+	var state tfmodel.ApiKeyResourceModel
 
 	ref, err := iamref.ParseApiKeyRef(ctx, req.ID)
 	if err != nil {

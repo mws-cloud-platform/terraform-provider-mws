@@ -106,7 +106,7 @@ func (m *SecretResource) Configure(ctx context.Context, req resource.ConfigureRe
 func (m *SecretResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "SecretResource.Create")
 
-	var plan tfmodel.SecretModel
+	var plan tfmodel.SecretResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -171,7 +171,7 @@ func (m *SecretResource) Create(ctx context.Context, req resource.CreateRequest,
 func (m *SecretResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "SecretResource.Read")
 
-	var state tfmodel.SecretModel
+	var state tfmodel.SecretResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -220,13 +220,13 @@ func (m *SecretResource) Read(ctx context.Context, req resource.ReadRequest, res
 func (m *SecretResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "SecretResource.Update")
 
-	var plan tfmodel.SecretModel
+	var plan tfmodel.SecretResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.SecretModel
+	var state tfmodel.SecretResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -291,7 +291,7 @@ func (m *SecretResource) Update(ctx context.Context, req resource.UpdateRequest,
 func (m *SecretResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "SecretResource.Delete")
 
-	var state tfmodel.SecretModel
+	var state tfmodel.SecretResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -335,7 +335,7 @@ func (m *SecretResource) Delete(ctx context.Context, req resource.DeleteRequest,
 func (m *SecretResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "SecretResource.ImportState")
 
-	var state tfmodel.SecretModel
+	var state tfmodel.SecretResourceModel
 
 	ref, err := secretmanagerref.ParseSecretRef(ctx, req.ID)
 	if err != nil {

@@ -79,7 +79,7 @@ func (m *ConsumerGroupDataSource) Configure(ctx context.Context, req datasource.
 func (m *ConsumerGroupDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "ConsumerGroupDataSource.Read")
 
-	var config tfmodel.ConsumerGroupModel
+	var config tfmodel.ConsumerGroupDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

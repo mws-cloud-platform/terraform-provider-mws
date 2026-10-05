@@ -83,7 +83,7 @@ func (m *ClusterDatabaseDataSource) Configure(ctx context.Context, req datasourc
 func (m *ClusterDatabaseDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "ClusterDatabaseDataSource.Read")
 
-	var config tfmodel.ClusterDatabaseModel
+	var config tfmodel.ClusterDatabaseDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

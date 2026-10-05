@@ -83,7 +83,7 @@ func (m *RouteDataSource) Configure(ctx context.Context, req datasource.Configur
 func (m *RouteDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "RouteDataSource.Read")
 
-	var config tfmodel.RouteModel
+	var config tfmodel.RouteDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

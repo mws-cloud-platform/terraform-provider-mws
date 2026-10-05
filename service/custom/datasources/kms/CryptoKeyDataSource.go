@@ -15,7 +15,8 @@ func Read(ctx context.Context,
 	req datasource.ReadRequest,
 	resp *datasource.ReadResponse,
 	sdk *resourcesdk.CryptoKey,
-	data tfmodel.CryptoKeyModel) (*model.CryptoKeyOptionalResponse, error) {
+	data tfmodel.CryptoKeyDataSourceModel,
+) (*model.CryptoKeyOptionalResponse, error) {
 	return sdk.GetCryptoKey(
 		ctx,
 		client.GetCryptoKeyRequest{

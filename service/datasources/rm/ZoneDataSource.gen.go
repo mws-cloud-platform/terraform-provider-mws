@@ -75,7 +75,7 @@ func (m *ZoneDataSource) Configure(ctx context.Context, req datasource.Configure
 func (m *ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "ZoneDataSource.Read")
 
-	var config tfmodel.ZoneModel
+	var config tfmodel.ZoneDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

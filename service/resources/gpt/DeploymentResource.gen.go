@@ -106,7 +106,7 @@ func (m *DeploymentResource) Configure(ctx context.Context, req resource.Configu
 func (m *DeploymentResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "DeploymentResource.Create")
 
-	var plan tfmodel.DeploymentModel
+	var plan tfmodel.DeploymentResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -171,7 +171,7 @@ func (m *DeploymentResource) Create(ctx context.Context, req resource.CreateRequ
 func (m *DeploymentResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "DeploymentResource.Read")
 
-	var state tfmodel.DeploymentModel
+	var state tfmodel.DeploymentResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -220,13 +220,13 @@ func (m *DeploymentResource) Read(ctx context.Context, req resource.ReadRequest,
 func (m *DeploymentResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "DeploymentResource.Update")
 
-	var plan tfmodel.DeploymentModel
+	var plan tfmodel.DeploymentResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.DeploymentModel
+	var state tfmodel.DeploymentResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -291,7 +291,7 @@ func (m *DeploymentResource) Update(ctx context.Context, req resource.UpdateRequ
 func (m *DeploymentResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "DeploymentResource.Delete")
 
-	var state tfmodel.DeploymentModel
+	var state tfmodel.DeploymentResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -335,7 +335,7 @@ func (m *DeploymentResource) Delete(ctx context.Context, req resource.DeleteRequ
 func (m *DeploymentResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "DeploymentResource.ImportState")
 
-	var state tfmodel.DeploymentModel
+	var state tfmodel.DeploymentResourceModel
 
 	ref, err := gptref.ParseDeploymentRef(ctx, req.ID)
 	if err != nil {

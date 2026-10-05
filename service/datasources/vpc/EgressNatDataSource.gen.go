@@ -83,7 +83,7 @@ func (m *EgressNatDataSource) Configure(ctx context.Context, req datasource.Conf
 func (m *EgressNatDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "EgressNatDataSource.Read")
 
-	var config tfmodel.EgressNatModel
+	var config tfmodel.EgressNatDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

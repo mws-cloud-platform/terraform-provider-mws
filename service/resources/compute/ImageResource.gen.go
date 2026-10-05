@@ -106,7 +106,7 @@ func (m *ImageResource) Configure(ctx context.Context, req resource.ConfigureReq
 func (m *ImageResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "ImageResource.Create")
 
-	var plan tfmodel.ImageModel
+	var plan tfmodel.ImageResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -171,7 +171,7 @@ func (m *ImageResource) Create(ctx context.Context, req resource.CreateRequest, 
 func (m *ImageResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "ImageResource.Read")
 
-	var state tfmodel.ImageModel
+	var state tfmodel.ImageResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -220,13 +220,13 @@ func (m *ImageResource) Read(ctx context.Context, req resource.ReadRequest, resp
 func (m *ImageResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "ImageResource.Update")
 
-	var plan tfmodel.ImageModel
+	var plan tfmodel.ImageResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.ImageModel
+	var state tfmodel.ImageResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -291,7 +291,7 @@ func (m *ImageResource) Update(ctx context.Context, req resource.UpdateRequest, 
 func (m *ImageResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "ImageResource.Delete")
 
-	var state tfmodel.ImageModel
+	var state tfmodel.ImageResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -335,7 +335,7 @@ func (m *ImageResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 func (m *ImageResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "ImageResource.ImportState")
 
-	var state tfmodel.ImageModel
+	var state tfmodel.ImageResourceModel
 
 	ref, err := computeref.ParseImageRef(ctx, req.ID)
 	if err != nil {

@@ -53,7 +53,7 @@ func (s *StorageDiskSpecSource) GetSchema() schema.Schema {
 		MarkdownDescription: `Представление поля Source анонимного типа структуры StorageDiskSpec`,
 		Attributes: map[string]schema.Attribute{
 			"image": schema.StringAttribute{
-				MarkdownDescription: `Ссылка на образ`,
+				MarkdownDescription: `Ссылка на образ. Образы из каталога MWS находятся в системных проектах mws-<os>, например, mws-ubuntu, mws-debian`,
 				Computed:            true,
 			},
 			"disk_backup": schema.StringAttribute{

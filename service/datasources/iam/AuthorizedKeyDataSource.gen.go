@@ -81,7 +81,7 @@ func (m *AuthorizedKeyDataSource) Configure(ctx context.Context, req datasource.
 func (m *AuthorizedKeyDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "AuthorizedKeyDataSource.Read")
 
-	var config tfmodel.AuthorizedKeyModel
+	var config tfmodel.AuthorizedKeyDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

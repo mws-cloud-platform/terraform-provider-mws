@@ -113,7 +113,7 @@ func (m *OneToOneNatResource) Configure(ctx context.Context, req resource.Config
 func (m *OneToOneNatResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "OneToOneNatResource.Create")
 
-	var plan tfmodel.OneToOneNatModel
+	var plan tfmodel.OneToOneNatResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -179,7 +179,7 @@ func (m *OneToOneNatResource) Create(ctx context.Context, req resource.CreateReq
 func (m *OneToOneNatResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "OneToOneNatResource.Read")
 
-	var state tfmodel.OneToOneNatModel
+	var state tfmodel.OneToOneNatResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -229,13 +229,13 @@ func (m *OneToOneNatResource) Read(ctx context.Context, req resource.ReadRequest
 func (m *OneToOneNatResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "OneToOneNatResource.Update")
 
-	var plan tfmodel.OneToOneNatModel
+	var plan tfmodel.OneToOneNatResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.OneToOneNatModel
+	var state tfmodel.OneToOneNatResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -301,7 +301,7 @@ func (m *OneToOneNatResource) Update(ctx context.Context, req resource.UpdateReq
 func (m *OneToOneNatResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "OneToOneNatResource.Delete")
 
-	var state tfmodel.OneToOneNatModel
+	var state tfmodel.OneToOneNatResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -346,7 +346,7 @@ func (m *OneToOneNatResource) Delete(ctx context.Context, req resource.DeleteReq
 func (m *OneToOneNatResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "OneToOneNatResource.ImportState")
 
-	var state tfmodel.OneToOneNatModel
+	var state tfmodel.OneToOneNatResourceModel
 
 	ref, err := vpcref.ParseOneToOneNatRef(ctx, req.ID)
 	if err != nil {

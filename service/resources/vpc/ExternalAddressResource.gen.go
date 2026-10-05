@@ -106,7 +106,7 @@ func (m *ExternalAddressResource) Configure(ctx context.Context, req resource.Co
 func (m *ExternalAddressResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "ExternalAddressResource.Create")
 
-	var plan tfmodel.ExternalAddressModel
+	var plan tfmodel.ExternalAddressResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -171,7 +171,7 @@ func (m *ExternalAddressResource) Create(ctx context.Context, req resource.Creat
 func (m *ExternalAddressResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "ExternalAddressResource.Read")
 
-	var state tfmodel.ExternalAddressModel
+	var state tfmodel.ExternalAddressResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -220,13 +220,13 @@ func (m *ExternalAddressResource) Read(ctx context.Context, req resource.ReadReq
 func (m *ExternalAddressResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "ExternalAddressResource.Update")
 
-	var plan tfmodel.ExternalAddressModel
+	var plan tfmodel.ExternalAddressResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.ExternalAddressModel
+	var state tfmodel.ExternalAddressResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -291,7 +291,7 @@ func (m *ExternalAddressResource) Update(ctx context.Context, req resource.Updat
 func (m *ExternalAddressResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "ExternalAddressResource.Delete")
 
-	var state tfmodel.ExternalAddressModel
+	var state tfmodel.ExternalAddressResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -335,7 +335,7 @@ func (m *ExternalAddressResource) Delete(ctx context.Context, req resource.Delet
 func (m *ExternalAddressResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "ExternalAddressResource.ImportState")
 
-	var state tfmodel.ExternalAddressModel
+	var state tfmodel.ExternalAddressResourceModel
 
 	ref, err := vpcref.ParseExternalAddressRef(ctx, req.ID)
 	if err != nil {

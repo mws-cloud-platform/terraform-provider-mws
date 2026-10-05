@@ -112,7 +112,7 @@ func (m *HmacKeyResource) Configure(ctx context.Context, req resource.ConfigureR
 func (m *HmacKeyResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "HmacKeyResource.Create")
 
-	var plan tfmodel.HmacKeyModel
+	var plan tfmodel.HmacKeyResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -212,7 +212,7 @@ func (m *HmacKeyResource) Create(ctx context.Context, req resource.CreateRequest
 func (m *HmacKeyResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "HmacKeyResource.Read")
 
-	var state tfmodel.HmacKeyModel
+	var state tfmodel.HmacKeyResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -266,13 +266,13 @@ func (m *HmacKeyResource) Read(ctx context.Context, req resource.ReadRequest, re
 func (m *HmacKeyResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "HmacKeyResource.Update")
 
-	var plan tfmodel.HmacKeyModel
+	var plan tfmodel.HmacKeyResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.HmacKeyModel
+	var state tfmodel.HmacKeyResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -371,7 +371,7 @@ func (m *HmacKeyResource) Update(ctx context.Context, req resource.UpdateRequest
 func (m *HmacKeyResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "HmacKeyResource.Delete")
 
-	var state tfmodel.HmacKeyModel
+	var state tfmodel.HmacKeyResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -416,7 +416,7 @@ func (m *HmacKeyResource) Delete(ctx context.Context, req resource.DeleteRequest
 func (m *HmacKeyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "HmacKeyResource.ImportState")
 
-	var state tfmodel.HmacKeyModel
+	var state tfmodel.HmacKeyResourceModel
 
 	ref, err := iamref.ParseHmacKeyRef(ctx, req.ID)
 	if err != nil {

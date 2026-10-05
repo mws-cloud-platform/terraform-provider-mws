@@ -88,8 +88,9 @@ func (s *KafkaCluster) GetSchema() schema.Schema {
 				},
 			},
 			"maintenance_window": schema.SingleNestedAttribute{
-				Attributes: new(tfcommon.MaintenanceWindow).GetSchema().Attributes,
-				Optional:   true,
+				Attributes:          new(tfcommon.MaintenanceWindow).GetSchema().Attributes,
+				MarkdownDescription: `Сервисное окно Maintenance API`,
+				Optional:            true,
 			},
 			"schema_registry": schema.SingleNestedAttribute{
 				Attributes:          new(KafkaSchemaRegistrySpec).GetSchema().Attributes,

@@ -25,7 +25,7 @@ type Model struct {
 
 func (s *Model) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Модель – это набор числовых параметров (весов) и архитектура нейронной сети, полученных в результате обучения. При каждом запросе вычисляет наиболее вероятный результат, используя знания, заложенные в этих параметрах, и конфигурацию, переданную на вход`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,

@@ -83,7 +83,7 @@ func (m *CryptoKeyRoleBindingDataSource) Configure(ctx context.Context, req data
 func (m *CryptoKeyRoleBindingDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "CryptoKeyRoleBindingDataSource.Read")
 
-	var config tfmodel.CryptoKeyRoleBindingModel
+	var config tfmodel.CryptoKeyRoleBindingDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

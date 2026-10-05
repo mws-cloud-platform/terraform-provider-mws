@@ -113,7 +113,7 @@ func (m *ClusterDatabaseResource) Configure(ctx context.Context, req resource.Co
 func (m *ClusterDatabaseResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "ClusterDatabaseResource.Create")
 
-	var plan tfmodel.ClusterDatabaseModel
+	var plan tfmodel.ClusterDatabaseResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -179,7 +179,7 @@ func (m *ClusterDatabaseResource) Create(ctx context.Context, req resource.Creat
 func (m *ClusterDatabaseResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "ClusterDatabaseResource.Read")
 
-	var state tfmodel.ClusterDatabaseModel
+	var state tfmodel.ClusterDatabaseResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -229,13 +229,13 @@ func (m *ClusterDatabaseResource) Read(ctx context.Context, req resource.ReadReq
 func (m *ClusterDatabaseResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "ClusterDatabaseResource.Update")
 
-	var plan tfmodel.ClusterDatabaseModel
+	var plan tfmodel.ClusterDatabaseResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.ClusterDatabaseModel
+	var state tfmodel.ClusterDatabaseResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -301,7 +301,7 @@ func (m *ClusterDatabaseResource) Update(ctx context.Context, req resource.Updat
 func (m *ClusterDatabaseResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "ClusterDatabaseResource.Delete")
 
-	var state tfmodel.ClusterDatabaseModel
+	var state tfmodel.ClusterDatabaseResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -346,7 +346,7 @@ func (m *ClusterDatabaseResource) Delete(ctx context.Context, req resource.Delet
 func (m *ClusterDatabaseResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "ClusterDatabaseResource.ImportState")
 
-	var state tfmodel.ClusterDatabaseModel
+	var state tfmodel.ClusterDatabaseResourceModel
 
 	ref, err := mpostgresref.ParsePostgresClusterDatabaseRef(ctx, req.ID)
 	if err != nil {

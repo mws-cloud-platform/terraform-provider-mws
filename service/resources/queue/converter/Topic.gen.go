@@ -50,13 +50,13 @@ func TopicAPIOptionalResponseToTFModel(ctx context.Context, am *model.TopicOptio
 	}
 
 	if am.Status != nil {
-		statusTmp, d := commonconv.ResourceStatusAPIResponseToTFModel(ctx, am.Status)
+		statusTmp, d := TopicStatusAPIResponseToTFModel(ctx, am.Status)
 		diags = append(diags, d...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		statusTfObject, d := types.ObjectValueFrom(ctx,
-			tfconv.GetAttributesTypes(new(tfcommon.ResourceStatus).GetSchema().Attributes),
+			tfconv.GetAttributesTypes(new(tfmodel.TopicStatus).GetSchema().Attributes),
 			*statusTmp)
 		diags = append(diags, d...)
 		if diags.HasError() {
@@ -64,7 +64,7 @@ func TopicAPIOptionalResponseToTFModel(ctx context.Context, am *model.TopicOptio
 		}
 		t.Status = statusTfObject
 	} else {
-		t.Status = types.ObjectNull(tfconv.GetAttributesTypes(new(tfcommon.ResourceStatus).GetSchema().Attributes))
+		t.Status = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.TopicStatus).GetSchema().Attributes))
 	}
 
 	if val, ok := am.Spec.PartitionCount.Get(); ok {
@@ -133,13 +133,13 @@ func TopicAPIResponseToTFModel(ctx context.Context, am *model.TopicResponse) (*t
 	}
 
 	if am.Status != nil {
-		statusTmp, d := commonconv.ResourceStatusAPIResponseToTFModel(ctx, am.Status)
+		statusTmp, d := TopicStatusAPIResponseToTFModel(ctx, am.Status)
 		diags = append(diags, d...)
 		if diags.HasError() {
 			return nil, diags
 		}
 		statusTfObject, d := types.ObjectValueFrom(ctx,
-			tfconv.GetAttributesTypes(new(tfcommon.ResourceStatus).GetSchema().Attributes),
+			tfconv.GetAttributesTypes(new(tfmodel.TopicStatus).GetSchema().Attributes),
 			*statusTmp)
 		diags = append(diags, d...)
 		if diags.HasError() {
@@ -147,7 +147,7 @@ func TopicAPIResponseToTFModel(ctx context.Context, am *model.TopicResponse) (*t
 		}
 		t.Status = statusTfObject
 	} else {
-		t.Status = types.ObjectNull(tfconv.GetAttributesTypes(new(tfcommon.ResourceStatus).GetSchema().Attributes))
+		t.Status = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.TopicStatus).GetSchema().Attributes))
 	}
 
 	if am.Spec.PartitionCount != nil {

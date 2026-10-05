@@ -113,7 +113,7 @@ func (m *CryptoKeyRoleBindingResource) Configure(ctx context.Context, req resour
 func (m *CryptoKeyRoleBindingResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "CryptoKeyRoleBindingResource.Create")
 
-	var plan tfmodel.CryptoKeyRoleBindingModel
+	var plan tfmodel.CryptoKeyRoleBindingResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -179,7 +179,7 @@ func (m *CryptoKeyRoleBindingResource) Create(ctx context.Context, req resource.
 func (m *CryptoKeyRoleBindingResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "CryptoKeyRoleBindingResource.Read")
 
-	var state tfmodel.CryptoKeyRoleBindingModel
+	var state tfmodel.CryptoKeyRoleBindingResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -229,13 +229,13 @@ func (m *CryptoKeyRoleBindingResource) Read(ctx context.Context, req resource.Re
 func (m *CryptoKeyRoleBindingResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "CryptoKeyRoleBindingResource.Update")
 
-	var plan tfmodel.CryptoKeyRoleBindingModel
+	var plan tfmodel.CryptoKeyRoleBindingResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.CryptoKeyRoleBindingModel
+	var state tfmodel.CryptoKeyRoleBindingResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -301,7 +301,7 @@ func (m *CryptoKeyRoleBindingResource) Update(ctx context.Context, req resource.
 func (m *CryptoKeyRoleBindingResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "CryptoKeyRoleBindingResource.Delete")
 
-	var state tfmodel.CryptoKeyRoleBindingModel
+	var state tfmodel.CryptoKeyRoleBindingResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -346,7 +346,7 @@ func (m *CryptoKeyRoleBindingResource) Delete(ctx context.Context, req resource.
 func (m *CryptoKeyRoleBindingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "CryptoKeyRoleBindingResource.ImportState")
 
-	var state tfmodel.CryptoKeyRoleBindingModel
+	var state tfmodel.CryptoKeyRoleBindingResourceModel
 
 	ref, err := kmsref.ParseCryptoKeyRoleBindingRef(ctx, req.ID)
 	if err != nil {

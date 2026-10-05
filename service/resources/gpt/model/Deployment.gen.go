@@ -23,7 +23,7 @@ type Deployment struct {
 
 func (s *Deployment) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Деплоймент модели – это выделенный доступ к модели у пользователя, имеющий собственную конфигурацию`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				MarkdownDescription: `Указание на тип ресурса`,

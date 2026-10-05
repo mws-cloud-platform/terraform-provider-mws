@@ -84,6 +84,24 @@ func NodeGroupAPIOptionalResponseToTFModel(ctx context.Context, am *model.NodeGr
 	}
 	t.Subnet = subnetTfObject
 
+	if val, ok := am.Spec.Network.Get(); ok {
+		networkTmp, d := NodeGroupSpecNetworkAPIOptionalResponseToTFModel(ctx, &val)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		networkTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.NodeGroupSpecNetwork).GetSchema().Attributes),
+			*networkTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.Network = networkTfObject
+	} else {
+		t.Network = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.NodeGroupSpecNetwork).GetSchema().Attributes))
+	}
+
 	vmTypeTmp, d := NodeGroupSpecVmTypeAPIOptionalResponseToTFModel(ctx, &am.Spec.VmType)
 	diags = append(diags, d...)
 	if diags.HasError() {
@@ -298,6 +316,22 @@ func NodeGroupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroup) 
 			return nil, diags
 		}
 		am.Spec.Subnet = *subnetTmp
+	}
+
+	if !plan.Network.IsNull() && !plan.Network.IsUnknown() {
+		networkPlan := tfmodel.NodeGroupSpecNetwork{}
+		networkPlanDiag := plan.Network.As(ctx, &networkPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, networkPlanDiag...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		networkTmp, networkDiag := NodeGroupSpecNetworkTFToAPIRequestModel(ctx, &networkPlan)
+		diags = append(diags, networkDiag...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		am.Spec.Network = networkTmp
 	}
 
 	if !plan.VmType.IsNull() && !plan.VmType.IsUnknown() {
@@ -536,6 +570,41 @@ func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 				return nil, diags
 			}
 			am.Spec.Value.Subnet.SetTo(*subnetTmp)
+		}
+	}
+
+	if !plan.Network.Equal(state.Network) {
+		if !plan.Network.IsNull() && !plan.Network.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(model.UpdateNodeGroupSpecRequest{})
+			}
+			networkPlan := tfmodel.NodeGroupSpecNetwork{}
+			networkPlanDiag := plan.Network.As(ctx, &networkPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, networkPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			networkState := tfmodel.NodeGroupSpecNetwork{}
+			if !state.Network.IsNull() && !state.Network.IsUnknown() {
+				networkStateDiag := state.Network.As(ctx, &networkState, basetypes.ObjectAsOptions{})
+				diags = append(diags, networkStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			networkTmp, networkDiag := NodeGroupSpecNetworkTFToAPIUpdateRequestModel(ctx, &networkPlan, &networkState)
+			diags = append(diags, networkDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Spec.Value.Network.SetTo(*networkTmp)
+		} else if plan.Network.IsNull() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(model.UpdateNodeGroupSpecRequest{})
+			}
+			am.Spec.Value.Network.SetToNull()
 		}
 	}
 

@@ -106,7 +106,7 @@ func (m *NetworkResource) Configure(ctx context.Context, req resource.ConfigureR
 func (m *NetworkResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "NetworkResource.Create")
 
-	var plan tfmodel.NetworkModel
+	var plan tfmodel.NetworkResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -171,7 +171,7 @@ func (m *NetworkResource) Create(ctx context.Context, req resource.CreateRequest
 func (m *NetworkResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "NetworkResource.Read")
 
-	var state tfmodel.NetworkModel
+	var state tfmodel.NetworkResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -220,13 +220,13 @@ func (m *NetworkResource) Read(ctx context.Context, req resource.ReadRequest, re
 func (m *NetworkResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "NetworkResource.Update")
 
-	var plan tfmodel.NetworkModel
+	var plan tfmodel.NetworkResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.NetworkModel
+	var state tfmodel.NetworkResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -291,7 +291,7 @@ func (m *NetworkResource) Update(ctx context.Context, req resource.UpdateRequest
 func (m *NetworkResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "NetworkResource.Delete")
 
-	var state tfmodel.NetworkModel
+	var state tfmodel.NetworkResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -335,7 +335,7 @@ func (m *NetworkResource) Delete(ctx context.Context, req resource.DeleteRequest
 func (m *NetworkResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "NetworkResource.ImportState")
 
-	var state tfmodel.NetworkModel
+	var state tfmodel.NetworkResourceModel
 
 	ref, err := vpcref.ParseNetworkRef(ctx, req.ID)
 	if err != nil {

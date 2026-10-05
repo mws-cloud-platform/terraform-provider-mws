@@ -112,7 +112,7 @@ func (m *SecretRoleBindingResource) Configure(ctx context.Context, req resource.
 func (m *SecretRoleBindingResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "SecretRoleBindingResource.Create")
 
-	var plan tfmodel.SecretRoleBindingModel
+	var plan tfmodel.SecretRoleBindingResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -178,7 +178,7 @@ func (m *SecretRoleBindingResource) Create(ctx context.Context, req resource.Cre
 func (m *SecretRoleBindingResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "SecretRoleBindingResource.Read")
 
-	var state tfmodel.SecretRoleBindingModel
+	var state tfmodel.SecretRoleBindingResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -228,13 +228,13 @@ func (m *SecretRoleBindingResource) Read(ctx context.Context, req resource.ReadR
 func (m *SecretRoleBindingResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "SecretRoleBindingResource.Update")
 
-	var plan tfmodel.SecretRoleBindingModel
+	var plan tfmodel.SecretRoleBindingResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.SecretRoleBindingModel
+	var state tfmodel.SecretRoleBindingResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -300,7 +300,7 @@ func (m *SecretRoleBindingResource) Update(ctx context.Context, req resource.Upd
 func (m *SecretRoleBindingResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "SecretRoleBindingResource.Delete")
 
-	var state tfmodel.SecretRoleBindingModel
+	var state tfmodel.SecretRoleBindingResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -345,7 +345,7 @@ func (m *SecretRoleBindingResource) Delete(ctx context.Context, req resource.Del
 func (m *SecretRoleBindingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "SecretRoleBindingResource.ImportState")
 
-	var state tfmodel.SecretRoleBindingModel
+	var state tfmodel.SecretRoleBindingResourceModel
 
 	ref, err := secretmanagerref.ParseSecretRoleBindingRef(ctx, req.ID)
 	if err != nil {

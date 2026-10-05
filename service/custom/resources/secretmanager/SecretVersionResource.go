@@ -112,7 +112,7 @@ func (m *SecretVersionResource) Configure(ctx context.Context, req resource.Conf
 func (m *SecretVersionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "SecretVersionResource.Create")
 
-	var data tfmodel.SecretVersionModel
+	var data tfmodel.SecretVersionResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -136,7 +136,7 @@ func (m *SecretVersionResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
-	var config tfmodel.SecretVersionModel
+	var config tfmodel.SecretVersionResourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		tflog.Debug(ctx, "SecretVersionResource.Config")
@@ -207,7 +207,7 @@ func (m *SecretVersionResource) Create(ctx context.Context, req resource.CreateR
 func (m *SecretVersionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "SecretVersionResource.Read")
 
-	var data tfmodel.SecretVersionModel
+	var data tfmodel.SecretVersionResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -257,7 +257,7 @@ func (m *SecretVersionResource) Read(ctx context.Context, req resource.ReadReque
 func (m *SecretVersionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "SecretVersionResource.Update")
 
-	var data tfmodel.SecretVersionModel
+	var data tfmodel.SecretVersionResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -323,7 +323,7 @@ func (m *SecretVersionResource) Update(ctx context.Context, req resource.UpdateR
 func (m *SecretVersionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "SecretVersionResource.Delete")
 
-	var data tfmodel.SecretVersionModel
+	var data tfmodel.SecretVersionResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -368,7 +368,7 @@ func (m *SecretVersionResource) Delete(ctx context.Context, req resource.DeleteR
 func (m *SecretVersionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "SecretVersionResource.ImportState")
 
-	var data tfmodel.SecretVersionModel
+	var data tfmodel.SecretVersionResourceModel
 
 	ref, err := secretmanagerref.ParseSecretVersionRef(ctx, req.ID)
 	if err != nil {

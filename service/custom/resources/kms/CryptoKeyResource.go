@@ -18,7 +18,8 @@ func Read(ctx context.Context,
 	req resource.ReadRequest,
 	resp *resource.ReadResponse,
 	sdk *resourcesdk.CryptoKey,
-	data tfmodel.CryptoKeyModel) (*model.CryptoKeyOptionalResponse, error) {
+	data tfmodel.CryptoKeyResourceModel,
+) (*model.CryptoKeyOptionalResponse, error) {
 	apiRes, err := sdk.GetCryptoKey(
 		ctx,
 		client.GetCryptoKeyRequest{
@@ -42,9 +43,10 @@ func Delete(ctx context.Context,
 	req resource.DeleteRequest,
 	resp *resource.DeleteResponse,
 	sdk *resourcesdk.CryptoKey,
-	data tfmodel.CryptoKeyModel,
+	data tfmodel.CryptoKeyResourceModel,
 	diags *tfdiag.Diagnostics,
-	resourceWaiterTimeout time.Duration) error {
+	resourceWaiterTimeout time.Duration,
+) error {
 	_, err := sdk.ScheduleDestructionOfCryptoKey(ctx,
 		client.ScheduleDestructionOfCryptoKeyRequest{
 			Project: data.ProjectParam.ValueString(),

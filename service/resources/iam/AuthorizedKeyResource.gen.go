@@ -112,7 +112,7 @@ func (m *AuthorizedKeyResource) Configure(ctx context.Context, req resource.Conf
 func (m *AuthorizedKeyResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "AuthorizedKeyResource.Create")
 
-	var plan tfmodel.AuthorizedKeyModel
+	var plan tfmodel.AuthorizedKeyResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -215,7 +215,7 @@ func (m *AuthorizedKeyResource) Create(ctx context.Context, req resource.CreateR
 func (m *AuthorizedKeyResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "AuthorizedKeyResource.Read")
 
-	var state tfmodel.AuthorizedKeyModel
+	var state tfmodel.AuthorizedKeyResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -272,13 +272,13 @@ func (m *AuthorizedKeyResource) Read(ctx context.Context, req resource.ReadReque
 func (m *AuthorizedKeyResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "AuthorizedKeyResource.Update")
 
-	var plan tfmodel.AuthorizedKeyModel
+	var plan tfmodel.AuthorizedKeyResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.AuthorizedKeyModel
+	var state tfmodel.AuthorizedKeyResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -380,7 +380,7 @@ func (m *AuthorizedKeyResource) Update(ctx context.Context, req resource.UpdateR
 func (m *AuthorizedKeyResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "AuthorizedKeyResource.Delete")
 
-	var state tfmodel.AuthorizedKeyModel
+	var state tfmodel.AuthorizedKeyResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -425,7 +425,7 @@ func (m *AuthorizedKeyResource) Delete(ctx context.Context, req resource.DeleteR
 func (m *AuthorizedKeyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "AuthorizedKeyResource.ImportState")
 
-	var state tfmodel.AuthorizedKeyModel
+	var state tfmodel.AuthorizedKeyResourceModel
 
 	ref, err := iamref.ParseAuthorizedKeyRef(ctx, req.ID)
 	if err != nil {

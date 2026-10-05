@@ -83,7 +83,7 @@ func (m *CryptoKeyVersionDataSource) Configure(ctx context.Context, req datasour
 func (m *CryptoKeyVersionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "CryptoKeyVersionDataSource.Read")
 
-	var config tfmodel.CryptoKeyVersionModel
+	var config tfmodel.CryptoKeyVersionDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

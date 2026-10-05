@@ -106,7 +106,7 @@ func (m *ClusterResource) Configure(ctx context.Context, req resource.ConfigureR
 func (m *ClusterResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "ClusterResource.Create")
 
-	var plan tfmodel.ClusterModel
+	var plan tfmodel.ClusterResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -171,7 +171,7 @@ func (m *ClusterResource) Create(ctx context.Context, req resource.CreateRequest
 func (m *ClusterResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "ClusterResource.Read")
 
-	var state tfmodel.ClusterModel
+	var state tfmodel.ClusterResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -220,13 +220,13 @@ func (m *ClusterResource) Read(ctx context.Context, req resource.ReadRequest, re
 func (m *ClusterResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "ClusterResource.Update")
 
-	var plan tfmodel.ClusterModel
+	var plan tfmodel.ClusterResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.ClusterModel
+	var state tfmodel.ClusterResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -291,7 +291,7 @@ func (m *ClusterResource) Update(ctx context.Context, req resource.UpdateRequest
 func (m *ClusterResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "ClusterResource.Delete")
 
-	var state tfmodel.ClusterModel
+	var state tfmodel.ClusterResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -335,7 +335,7 @@ func (m *ClusterResource) Delete(ctx context.Context, req resource.DeleteRequest
 func (m *ClusterResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "ClusterResource.ImportState")
 
-	var state tfmodel.ClusterModel
+	var state tfmodel.ClusterResourceModel
 
 	ref, err := mkafkaref.ParseKafkaClusterRef(ctx, req.ID)
 	if err != nil {

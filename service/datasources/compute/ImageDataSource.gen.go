@@ -79,7 +79,7 @@ func (m *ImageDataSource) Configure(ctx context.Context, req datasource.Configur
 func (m *ImageDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "ImageDataSource.Read")
 
-	var config tfmodel.ImageModel
+	var config tfmodel.ImageDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

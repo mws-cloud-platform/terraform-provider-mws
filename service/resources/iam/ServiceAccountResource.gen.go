@@ -105,7 +105,7 @@ func (m *ServiceAccountResource) Configure(ctx context.Context, req resource.Con
 func (m *ServiceAccountResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "ServiceAccountResource.Create")
 
-	var plan tfmodel.ServiceAccountModel
+	var plan tfmodel.ServiceAccountResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -170,7 +170,7 @@ func (m *ServiceAccountResource) Create(ctx context.Context, req resource.Create
 func (m *ServiceAccountResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "ServiceAccountResource.Read")
 
-	var state tfmodel.ServiceAccountModel
+	var state tfmodel.ServiceAccountResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -219,13 +219,13 @@ func (m *ServiceAccountResource) Read(ctx context.Context, req resource.ReadRequ
 func (m *ServiceAccountResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "ServiceAccountResource.Update")
 
-	var plan tfmodel.ServiceAccountModel
+	var plan tfmodel.ServiceAccountResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.ServiceAccountModel
+	var state tfmodel.ServiceAccountResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -290,7 +290,7 @@ func (m *ServiceAccountResource) Update(ctx context.Context, req resource.Update
 func (m *ServiceAccountResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "ServiceAccountResource.Delete")
 
-	var state tfmodel.ServiceAccountModel
+	var state tfmodel.ServiceAccountResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -334,7 +334,7 @@ func (m *ServiceAccountResource) Delete(ctx context.Context, req resource.Delete
 func (m *ServiceAccountResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "ServiceAccountResource.ImportState")
 
-	var state tfmodel.ServiceAccountModel
+	var state tfmodel.ServiceAccountResourceModel
 
 	ref, err := iamref.ParseServiceAccountRef(ctx, req.ID)
 	if err != nil {

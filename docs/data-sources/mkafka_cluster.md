@@ -42,7 +42,7 @@ data "mws_mkafka_cluster" "mkafka_kafka" {
 - `endpoints` (Attributes List) Описание эндпойнтов в сетях пользователя (VPC) для подключения к брокерам кластера (see [below for nested schema](#nestedatt--endpoints))
 - `instances` (Attributes) Описание ресурсов хостов брокеров и контроллеров (see [below for nested schema](#nestedatt--instances))
 - `kind` (String)
-- `maintenance_window` (Attributes) (see [below for nested schema](#nestedatt--maintenance_window))
+- `maintenance_window` (Attributes) Сервисное окно Maintenance API (see [below for nested schema](#nestedatt--maintenance_window))
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
 - `product_config` (String) Настройки Kafka. Если не указаны, будут использованы настройки по умолчанию
 - `region` (String) Регион, которому принадлежит кластер
@@ -287,6 +287,7 @@ Read-Only:
   * "DELETED"      - Удалён;
   * "UNIDENTIFIED" - Не удаётся определить статус;
   * "RESTORING"    - Восстанавливается
+- `version` (String) Версия Kafka
 
 <a id="nestedatt--status--balancer"></a>
 ### Nested Schema for `status.balancer`

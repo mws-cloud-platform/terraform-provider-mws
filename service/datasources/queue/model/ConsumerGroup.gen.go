@@ -17,7 +17,7 @@ type ConsumerGroup struct {
 
 func (s *ConsumerGroup) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Группа потребителей — это потребители, которые совместно обрабатывают сообщения из топика`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,

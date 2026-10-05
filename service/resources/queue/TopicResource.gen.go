@@ -106,7 +106,7 @@ func (m *TopicResource) Configure(ctx context.Context, req resource.ConfigureReq
 func (m *TopicResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	tflog.Info(ctx, "TopicResource.Create")
 
-	var plan tfmodel.TopicModel
+	var plan tfmodel.TopicResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -171,7 +171,7 @@ func (m *TopicResource) Create(ctx context.Context, req resource.CreateRequest, 
 func (m *TopicResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	tflog.Info(ctx, "TopicResource.Read")
 
-	var state tfmodel.TopicModel
+	var state tfmodel.TopicResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -220,13 +220,13 @@ func (m *TopicResource) Read(ctx context.Context, req resource.ReadRequest, resp
 func (m *TopicResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	tflog.Info(ctx, "TopicResource.Update")
 
-	var plan tfmodel.TopicModel
+	var plan tfmodel.TopicResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.TopicModel
+	var state tfmodel.TopicResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -291,7 +291,7 @@ func (m *TopicResource) Update(ctx context.Context, req resource.UpdateRequest, 
 func (m *TopicResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	tflog.Info(ctx, "TopicResource.Delete")
 
-	var state tfmodel.TopicModel
+	var state tfmodel.TopicResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -335,7 +335,7 @@ func (m *TopicResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 func (m *TopicResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	tflog.Info(ctx, "TopicResource.ImportState")
 
-	var state tfmodel.TopicModel
+	var state tfmodel.TopicResourceModel
 
 	ref, err := queueref.ParseTopicRef(ctx, req.ID)
 	if err != nil {

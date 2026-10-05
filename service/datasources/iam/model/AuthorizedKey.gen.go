@@ -21,7 +21,7 @@ type AuthorizedKey struct {
 
 func (s *AuthorizedKey) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Авторизованный ключ (authorized key) — это ключ с алгоритмом шифрования ES256, применяемый для аутентификации во всех сервисах MWS (исключая Object Storage, Artifact Registry и GPT)`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,

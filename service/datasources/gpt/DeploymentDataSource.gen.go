@@ -79,7 +79,7 @@ func (m *DeploymentDataSource) Configure(ctx context.Context, req datasource.Con
 func (m *DeploymentDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	tflog.Info(ctx, "DeploymentDataSource.Read")
 
-	var config tfmodel.DeploymentModel
+	var config tfmodel.DeploymentDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return

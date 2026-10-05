@@ -48,6 +48,7 @@ data "mws_mk8s_node_group" "example" {
 - `labels` (Attributes List) (see [below for nested schema](#nestedatt--labels))
 - `local_disks` (Attributes List) Параметры локальных дисков для каждого узла в группе узлов (see [below for nested schema](#nestedatt--local_disks))
 - `metadata` (Attributes) Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров (see [below for nested schema](#nestedatt--metadata))
+- `network` (Attributes) Настройки сети группы узлов (see [below for nested schema](#nestedatt--network))
 - `rollout_strategy` (Attributes) Стратегия обновления (rollout) узлов в группе узлов (see [below for nested schema](#nestedatt--rollout_strategy))
 - `scale` (Attributes) Режим скалирования группы узлов. Необходимо заполнить одно из полей — "fixed" или "autoscaling" (see [below for nested schema](#nestedatt--scale))
 - `service_account` (Attributes) Сервисный аккаунт для выполнения функций:
@@ -118,6 +119,30 @@ Read-Only:
 
 
 
+<a id="nestedatt--network"></a>
+### Nested Schema for `network`
+
+Read-Only:
+
+- `primary_interface` (Attributes) Основной сетевой интерфейс группы узлов (see [below for nested schema](#nestedatt--network--primary_interface))
+
+<a id="nestedatt--network--primary_interface"></a>
+### Nested Schema for `network.primary_interface`
+
+Read-Only:
+
+- `external_i_pv4` (Attributes) Настройка внешнего IPv4-адреса (see [below for nested schema](#nestedatt--network--primary_interface--external_i_pv4))
+
+<a id="nestedatt--network--primary_interface--external_i_pv4"></a>
+### Nested Schema for `network.primary_interface.external_i_pv4`
+
+Read-Only:
+
+- `enabled` (Boolean) Признак включения внешнего IPv4-адреса
+
+
+
+
 <a id="nestedatt--rollout_strategy"></a>
 ### Nested Schema for `rollout_strategy`
 
@@ -175,6 +200,7 @@ Read-Only:
 Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
 Значение базовой единицы измерения (в байтах) должно оставаться целым.
 Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
+- `network` (Attributes) Сетевые настройки группы узлов (see [below for nested schema](#nestedatt--status--network))
 - `node_group_status` (Attributes) (see [below for nested schema](#nestedatt--status--node_group_status))
 - `nodes_ready` (Number) Текущее количество узлов, готовых для работы
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
@@ -210,6 +236,30 @@ Read-Only:
 Допустимые значения — положительные целые числа и дробные числа с ненулевой целой частью.
 Значение базовой единицы измерения (в байтах) должно оставаться целым.
 Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
+
+
+<a id="nestedatt--status--network"></a>
+### Nested Schema for `status.network`
+
+Read-Only:
+
+- `primary_interface` (Attributes) Основной сетевой интерфейс группы узлов (see [below for nested schema](#nestedatt--status--network--primary_interface))
+
+<a id="nestedatt--status--network--primary_interface"></a>
+### Nested Schema for `status.network.primary_interface`
+
+Read-Only:
+
+- `external_i_pv4` (Attributes) Состояние внешнего IPv4-адреса (see [below for nested schema](#nestedatt--status--network--primary_interface--external_i_pv4))
+
+<a id="nestedatt--status--network--primary_interface--external_i_pv4"></a>
+### Nested Schema for `status.network.primary_interface.external_i_pv4`
+
+Read-Only:
+
+- `enabled` (Boolean) Состояние внешнего IPv4-адреса
+
+
 
 
 <a id="nestedatt--status--node_group_status"></a>
