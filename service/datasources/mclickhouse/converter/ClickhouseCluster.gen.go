@@ -252,27 +252,27 @@ func ClickhouseClusterMetadataAPIOptionalResponseToTFModel(ctx context.Context, 
 	var t tfmodel.ClickhouseClusterMetadata
 
 	if val, ok := am.DisplayName.Get(); ok {
-		t.DisplayName = types.StringValue(val)
+		t.TypedResourceMetadata.DisplayName = types.StringValue(val)
 	} else {
-		t.DisplayName = types.StringNull()
+		t.TypedResourceMetadata.DisplayName = types.StringNull()
 	}
 
 	if am.CreateTime != nil {
-		t.CreateTime = types.StringPointerValue(ptr.Get(am.CreateTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.CreateTime = types.StringPointerValue(ptr.Get(am.CreateTime.Format(time.RFC3339)))
 	} else {
-		t.CreateTime = types.StringNull()
+		t.TypedResourceMetadata.CreateTime = types.StringNull()
 	}
 
 	if am.DeleteTime != nil {
-		t.DeleteTime = types.StringPointerValue(ptr.Get(am.DeleteTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.DeleteTime = types.StringPointerValue(ptr.Get(am.DeleteTime.Format(time.RFC3339)))
 	} else {
-		t.DeleteTime = types.StringNull()
+		t.TypedResourceMetadata.DeleteTime = types.StringNull()
 	}
 
 	if am.PurgeTime != nil {
-		t.PurgeTime = types.StringPointerValue(ptr.Get(am.PurgeTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.PurgeTime = types.StringPointerValue(ptr.Get(am.PurgeTime.Format(time.RFC3339)))
 	} else {
-		t.PurgeTime = types.StringNull()
+		t.TypedResourceMetadata.PurgeTime = types.StringNull()
 	}
 
 	if val, ok := am.Usages.Get(); ok {
@@ -295,17 +295,17 @@ func ClickhouseClusterMetadataAPIOptionalResponseToTFModel(ctx context.Context, 
 			return nil, diags
 		}
 
-		t.Usages = usagesList
+		t.TypedResourceMetadata.Usages = usagesList
 	} else {
-		t.Usages = types.ListNull(types.ObjectType{
+		t.TypedResourceMetadata.Usages = types.ListNull(types.ObjectType{
 			AttrTypes: tfconv.GetAttributesTypes(new(tfcommon.TypedUsage).GetSchema().Attributes),
 		})
 	}
 
 	if val, ok := am.Description.Get(); ok {
-		t.Description = types.StringValue(val)
+		t.TypedResourceMetadata.Description = types.StringValue(val)
 	} else {
-		t.Description = types.StringNull()
+		t.TypedResourceMetadata.Description = types.StringNull()
 	}
 
 	if am.Id != nil {

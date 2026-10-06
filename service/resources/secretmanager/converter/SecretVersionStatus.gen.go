@@ -35,7 +35,7 @@ func SecretVersionStatusAPIResponseToTFModel(ctx context.Context, am *model.Secr
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.Active != nil {
 		t.Active = types.BoolPointerValue(am.Active)

@@ -391,10 +391,10 @@ Optional:
 
 Optional:
 
-- `external_i_pv4` (Attributes) Настройка внешнего IPv4-адреса (see [below for nested schema](#nestedatt--network--primary_interface--external_i_pv4))
+- `external_ipv4` (Attributes) Настройка внешнего IPv4-адреса (see [below for nested schema](#nestedatt--network--primary_interface--external_ipv4))
 
-<a id="nestedatt--network--primary_interface--external_i_pv4"></a>
-### Nested Schema for `network.primary_interface.external_i_pv4`
+<a id="nestedatt--network--primary_interface--external_ipv4"></a>
+### Nested Schema for `network.primary_interface.external_ipv4`
 
 Optional:
 
@@ -497,10 +497,10 @@ Read-Only:
 
 Read-Only:
 
-- `external_i_pv4` (Attributes) Состояние внешнего IPv4-адреса (see [below for nested schema](#nestedatt--status--network--primary_interface--external_i_pv4))
+- `external_ipv4` (Attributes) Состояние внешнего IPv4-адреса (see [below for nested schema](#nestedatt--status--network--primary_interface--external_ipv4))
 
-<a id="nestedatt--status--network--primary_interface--external_i_pv4"></a>
-### Nested Schema for `status.network.primary_interface.external_i_pv4`
+<a id="nestedatt--status--network--primary_interface--external_ipv4"></a>
+### Nested Schema for `status.network.primary_interface.external_ipv4`
 
 Read-Only:
 

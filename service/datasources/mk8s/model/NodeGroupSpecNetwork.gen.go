@@ -25,15 +25,15 @@ func (s *NodeGroupSpecNetwork) GetSchema() schema.Schema {
 }
 
 type NodeGroupSpecNetworkPrimaryInterface struct {
-	ExternalIPv4 types.Object `tfsdk:"external_i_pv4"`
+	ExternalIpv4 types.Object `tfsdk:"external_ipv4"`
 }
 
 func (s *NodeGroupSpecNetworkPrimaryInterface) GetSchema() schema.Schema {
 	return schema.Schema{
 		MarkdownDescription: `Представление поля PrimaryInterface анонимного типа структуры NodeGroupSpecNetwork`,
 		Attributes: map[string]schema.Attribute{
-			"external_i_pv4": schema.SingleNestedAttribute{
-				Attributes:          new(NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4).GetSchema().Attributes,
+			"external_ipv4": schema.SingleNestedAttribute{
+				Attributes:          new(NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4).GetSchema().Attributes,
 				MarkdownDescription: `Настройка внешнего IPv4-адреса`,
 				Computed:            true,
 			},
@@ -41,13 +41,13 @@ func (s *NodeGroupSpecNetworkPrimaryInterface) GetSchema() schema.Schema {
 	}
 }
 
-type NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4 struct {
+type NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4 struct {
 	Enabled types.Bool `tfsdk:"enabled"`
 }
 
-func (s *NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4) GetSchema() schema.Schema {
+func (s *NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Представление поля ExternalIPv4 анонимного типа структуры NodeGroupSpecNetworkPrimaryInterface`,
+		MarkdownDescription: `Представление поля ExternalIpv4 анонимного типа структуры NodeGroupSpecNetworkPrimaryInterface`,
 		Attributes: map[string]schema.Attribute{
 			"enabled": schema.BoolAttribute{
 				MarkdownDescription: `Признак включения внешнего IPv4-адреса`,

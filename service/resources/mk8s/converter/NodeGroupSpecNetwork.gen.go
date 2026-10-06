@@ -121,22 +121,22 @@ func NodeGroupSpecNetworkPrimaryInterfaceAPIOptionalResponseToTFModel(ctx contex
 	var diags tfdiag.Diagnostics
 	var t tfmodel.NodeGroupSpecNetworkPrimaryInterface
 
-	if val, ok := am.ExternalIPv4.Get(); ok {
-		externalIPv4Tmp, d := NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4APIOptionalResponseToTFModel(ctx, &val)
+	if val, ok := am.ExternalIpv4.Get(); ok {
+		externalIpv4Tmp, d := NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4APIOptionalResponseToTFModel(ctx, &val)
 		diags = append(diags, d...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		externalIPv4TfObject, d := types.ObjectValueFrom(ctx,
-			tfconv.GetAttributesTypes(new(tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4).GetSchema().Attributes),
-			*externalIPv4Tmp)
+		externalIpv4TfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4).GetSchema().Attributes),
+			*externalIpv4Tmp)
 		diags = append(diags, d...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		t.ExternalIPv4 = externalIPv4TfObject
+		t.ExternalIpv4 = externalIpv4TfObject
 	} else {
-		t.ExternalIPv4 = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4).GetSchema().Attributes))
+		t.ExternalIpv4 = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4).GetSchema().Attributes))
 	}
 
 	return &t, diags
@@ -150,20 +150,20 @@ func NodeGroupSpecNetworkPrimaryInterfaceTFToAPIRequestModel(ctx context.Context
 	var diags tfdiag.Diagnostics
 	var am model.NodeGroupSpecNetworkPrimaryInterfaceRequest
 
-	if !plan.ExternalIPv4.IsNull() && !plan.ExternalIPv4.IsUnknown() {
-		externalIPv4Plan := tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4{}
-		externalIPv4PlanDiag := plan.ExternalIPv4.As(ctx, &externalIPv4Plan, basetypes.ObjectAsOptions{})
-		diags = append(diags, externalIPv4PlanDiag...)
+	if !plan.ExternalIpv4.IsNull() && !plan.ExternalIpv4.IsUnknown() {
+		externalIpv4Plan := tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4{}
+		externalIpv4PlanDiag := plan.ExternalIpv4.As(ctx, &externalIpv4Plan, basetypes.ObjectAsOptions{})
+		diags = append(diags, externalIpv4PlanDiag...)
 		if diags.HasError() {
 			return nil, diags
 		}
 
-		externalIPv4Tmp, externalIPv4Diag := NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4TFToAPIRequestModel(ctx, &externalIPv4Plan)
-		diags = append(diags, externalIPv4Diag...)
+		externalIpv4Tmp, externalIpv4Diag := NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4TFToAPIRequestModel(ctx, &externalIpv4Plan)
+		diags = append(diags, externalIpv4Diag...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.ExternalIPv4 = externalIPv4Tmp
+		am.ExternalIpv4 = externalIpv4Tmp
 	}
 
 	return &am, diags
@@ -180,45 +180,45 @@ func NodeGroupSpecNetworkPrimaryInterfaceTFToAPIUpdateRequestModel(ctx context.C
 	var diags tfdiag.Diagnostics
 	var am model.UpdateNodeGroupSpecNetworkPrimaryInterfaceRequest
 
-	if !plan.ExternalIPv4.Equal(state.ExternalIPv4) {
-		if !plan.ExternalIPv4.IsNull() && !plan.ExternalIPv4.IsUnknown() {
-			externalIPv4Plan := tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4{}
-			externalIPv4PlanDiag := plan.ExternalIPv4.As(ctx, &externalIPv4Plan, basetypes.ObjectAsOptions{})
-			diags = append(diags, externalIPv4PlanDiag...)
+	if !plan.ExternalIpv4.Equal(state.ExternalIpv4) {
+		if !plan.ExternalIpv4.IsNull() && !plan.ExternalIpv4.IsUnknown() {
+			externalIpv4Plan := tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4{}
+			externalIpv4PlanDiag := plan.ExternalIpv4.As(ctx, &externalIpv4Plan, basetypes.ObjectAsOptions{})
+			diags = append(diags, externalIpv4PlanDiag...)
 			if diags.HasError() {
 				return nil, diags
 			}
 
-			externalIPv4State := tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4{}
-			if !state.ExternalIPv4.IsNull() && !state.ExternalIPv4.IsUnknown() {
-				externalIPv4StateDiag := state.ExternalIPv4.As(ctx, &externalIPv4State, basetypes.ObjectAsOptions{})
-				diags = append(diags, externalIPv4StateDiag...)
+			externalIpv4State := tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4{}
+			if !state.ExternalIpv4.IsNull() && !state.ExternalIpv4.IsUnknown() {
+				externalIpv4StateDiag := state.ExternalIpv4.As(ctx, &externalIpv4State, basetypes.ObjectAsOptions{})
+				diags = append(diags, externalIpv4StateDiag...)
 				if diags.HasError() {
 					return nil, diags
 				}
 			}
 
-			externalIPv4Tmp, externalIPv4Diag := NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4TFToAPIUpdateRequestModel(ctx, &externalIPv4Plan, &externalIPv4State)
-			diags = append(diags, externalIPv4Diag...)
+			externalIpv4Tmp, externalIpv4Diag := NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4TFToAPIUpdateRequestModel(ctx, &externalIpv4Plan, &externalIpv4State)
+			diags = append(diags, externalIpv4Diag...)
 			if diags.HasError() {
 				return nil, diags
 			}
-			am.ExternalIPv4.SetTo(*externalIPv4Tmp)
-		} else if plan.ExternalIPv4.IsNull() {
-			am.ExternalIPv4.SetToNull()
+			am.ExternalIpv4.SetTo(*externalIpv4Tmp)
+		} else if plan.ExternalIpv4.IsNull() {
+			am.ExternalIpv4.SetToNull()
 		}
 	}
 
 	return &am, diags
 }
 
-func NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4APIOptionalResponseToTFModel(ctx context.Context, am *model.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4OptionalResponse) (*tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4, tfdiag.Diagnostics) {
+func NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4APIOptionalResponseToTFModel(ctx context.Context, am *model.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4OptionalResponse) (*tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var t tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4
+	var t tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4
 
 	if val, ok := am.Enabled.Get(); ok {
 		t.Enabled = types.BoolValue(val)
@@ -229,13 +229,13 @@ func NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4APIOptionalResponseToTFMode
 	return &t, diags
 }
 
-func NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4TFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4) (*model.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4Request, tfdiag.Diagnostics) {
+func NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4TFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4) (*model.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4Request, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var am model.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4Request
+	var am model.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4Request
 
 	if !plan.Enabled.IsNull() && !plan.Enabled.IsUnknown() {
 		am.Enabled = plan.Enabled.ValueBoolPointer()
@@ -244,16 +244,16 @@ func NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4TFToAPIRequestModel(ctx con
 	return &am, diags
 }
 
-func NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4TFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4) (*model.UpdateNodeGroupSpecNetworkPrimaryInterfaceExternalIPv4Request, tfdiag.Diagnostics) {
+func NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4TFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4) (*model.UpdateNodeGroupSpecNetworkPrimaryInterfaceExternalIpv4Request, tfdiag.Diagnostics) {
 	if plan == nil {
 		return nil, nil
 	}
 	if state == nil {
-		state = &tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4{}
+		state = &tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4{}
 	}
 
 	var diags tfdiag.Diagnostics
-	var am model.UpdateNodeGroupSpecNetworkPrimaryInterfaceExternalIPv4Request
+	var am model.UpdateNodeGroupSpecNetworkPrimaryInterfaceExternalIpv4Request
 
 	if !plan.Enabled.Equal(state.Enabled) {
 		if !plan.Enabled.IsNull() && !plan.Enabled.IsUnknown() {

@@ -36,7 +36,7 @@ func DiskStatusAPIResponseToTFModel(ctx context.Context, am *model.DiskStatusRes
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.SourceExists != nil {
 		t.SourceExists = types.BoolPointerValue(am.SourceExists)

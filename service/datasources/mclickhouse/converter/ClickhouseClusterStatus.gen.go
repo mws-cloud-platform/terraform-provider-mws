@@ -35,7 +35,7 @@ func ClickhouseClusterStatusAPIResponseToTFModel(ctx context.Context, am *model.
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.Health != nil {
 		healthTmp, d := ClusterHealthAPIToTFModel(ctx, am.Health)

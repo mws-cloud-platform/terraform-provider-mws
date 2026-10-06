@@ -35,7 +35,7 @@ func PostgresRoleBindingStatusAPIResponseToTFModel(ctx context.Context, am *mode
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	return &t, diags
 }

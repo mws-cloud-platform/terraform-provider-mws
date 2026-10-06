@@ -36,7 +36,7 @@ func NodeGroupStatusAPIResponseToTFModel(ctx context.Context, am *model.NodeGrou
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.Network != nil {
 		networkTmp, d := NodeGroupStatusNetworkAPIResponseToTFModel(ctx, am.Network)

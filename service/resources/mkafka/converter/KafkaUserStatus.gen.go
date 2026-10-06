@@ -35,7 +35,7 @@ func KafkaUserStatusAPIResponseToTFModel(ctx context.Context, am *model.KafkaUse
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	return &t, diags
 }

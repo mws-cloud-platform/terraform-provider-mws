@@ -35,7 +35,7 @@ func EnabledServiceStatusAPIResponseToTFModel(ctx context.Context, am *model.Ena
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	return &t, diags
 }

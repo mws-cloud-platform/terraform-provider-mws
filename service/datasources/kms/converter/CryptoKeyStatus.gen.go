@@ -37,7 +37,7 @@ func CryptoKeyStatusAPIResponseToTFModel(ctx context.Context, am *model.CryptoKe
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.Rotation != nil {
 		rotationTmp, d := CryptoKeyStatusRotationAPIResponseToTFModel(ctx, am.Rotation)

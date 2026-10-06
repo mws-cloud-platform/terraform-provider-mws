@@ -37,12 +37,18 @@ func ApiKeyStatusAPIResponseToTFModel(ctx context.Context, am *model.ApiKeyStatu
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.LastAuthTime != nil {
 		t.LastAuthTime = types.StringPointerValue(ptr.Get(am.LastAuthTime.Format(time.RFC3339)))
 	} else {
 		t.LastAuthTime = types.StringNull()
+	}
+
+	if am.Active != nil {
+		t.Active = types.BoolPointerValue(am.Active)
+	} else {
+		t.Active = types.BoolNull()
 	}
 
 	return &t, diags

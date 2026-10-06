@@ -23,21 +23,21 @@ func PostgresStatusDirectAddressAPIResponseToTFModel(ctx context.Context, am *mo
 	var t tfmodel.PostgresStatusDirectAddress
 
 	if am.Address != nil {
-		t.Address = types.StringPointerValue(ptr.Get(am.Address.Path()))
+		t.PostgresStatusAddress.Address = types.StringPointerValue(ptr.Get(am.Address.Path()))
 	} else {
-		t.Address = types.StringNull()
+		t.PostgresStatusAddress.Address = types.StringNull()
 	}
 
 	if am.Subnet != nil {
-		t.Subnet = types.StringPointerValue(ptr.Get(am.Subnet.Path()))
+		t.PostgresStatusAddress.Subnet = types.StringPointerValue(ptr.Get(am.Subnet.Path()))
 	} else {
-		t.Subnet = types.StringNull()
+		t.PostgresStatusAddress.Subnet = types.StringNull()
 	}
 
 	if am.Ip != nil {
-		t.Ip = types.StringValue(ptr.Value(am.Ip.RawValue()))
+		t.PostgresStatusAddress.Ip = types.StringValue(ptr.Value(am.Ip.RawValue()))
 	} else {
-		t.Ip = types.StringNull()
+		t.PostgresStatusAddress.Ip = types.StringNull()
 	}
 
 	if am.External != nil {
@@ -53,9 +53,9 @@ func PostgresStatusDirectAddressAPIResponseToTFModel(ctx context.Context, am *mo
 		if diags.HasError() {
 			return nil, diags
 		}
-		t.External = externalTfObject
+		t.PostgresStatusAddress.External = externalTfObject
 	} else {
-		t.External = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.PostgresStatusExternalAddress).GetSchema().Attributes))
+		t.PostgresStatusAddress.External = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.PostgresStatusExternalAddress).GetSchema().Attributes))
 	}
 
 	if am.Zone != nil {

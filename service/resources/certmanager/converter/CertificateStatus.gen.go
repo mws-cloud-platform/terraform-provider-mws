@@ -37,7 +37,7 @@ func CertificateStatusAPIResponseToTFModel(ctx context.Context, am *model.Certif
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.Details != nil {
 		detailsTmp, d := CertificateStatusDetailsAPIResponseToTFModel(ctx, am.Details)

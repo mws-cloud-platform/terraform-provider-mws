@@ -35,7 +35,7 @@ func RegionalImageStatusAPIResponseToTFModel(ctx context.Context, am *model.Regi
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	t.RegionId = types.StringValue(am.RegionId.Path())
 

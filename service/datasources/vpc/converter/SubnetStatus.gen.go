@@ -36,7 +36,7 @@ func SubnetStatusAPIResponseToTFModel(ctx context.Context, am *model.SubnetStatu
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.DhcpOptions != nil {
 		dhcpOptionsTmp, d := SubnetDhcpOptionsAPIResponseToTFModel(ctx, am.DhcpOptions)

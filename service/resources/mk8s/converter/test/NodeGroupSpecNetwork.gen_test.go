@@ -78,10 +78,10 @@ func TestUpdateNodeGroupSpecNetworkPrimaryInterfaceRequestConverters(t *testing.
 
 	var nullPlanTfModel tfmodel.NodeGroupSpecNetworkPrimaryInterface
 	var stateTfModel tfmodel.NodeGroupSpecNetworkPrimaryInterface
-	stateTfModel.ExternalIPv4 = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4).GetSchema().Attributes))
+	stateTfModel.ExternalIpv4 = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4).GetSchema().Attributes))
 
 	expectedUpdateModel := &model.UpdateNodeGroupSpecNetworkPrimaryInterfaceRequest{
-		ExternalIPv4: optional.OptionalNil[model.UpdateNodeGroupSpecNetworkPrimaryInterfaceExternalIPv4Request]{
+		ExternalIpv4: optional.OptionalNil[model.UpdateNodeGroupSpecNetworkPrimaryInterfaceExternalIpv4Request]{
 			Set:  true,
 			Null: true,
 		},
@@ -93,34 +93,34 @@ func TestUpdateNodeGroupSpecNetworkPrimaryInterfaceRequestConverters(t *testing.
 	require.Equal(t, expectedUpdateModel, result)
 }
 
-func TestNodeGroupSpecNetworkPrimaryInterfaceExternalIPv4OptionalResponseConverters(t *testing.T) {
+func TestNodeGroupSpecNetworkPrimaryInterfaceExternalIpv4OptionalResponseConverters(t *testing.T) {
 	t.Parallel()
-	apiModelRequest := model.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4Request{}
+	apiModelRequest := model.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4Request{}
 
-	apiModelResponse, err := model.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4RequestToOptionalResponse(&apiModelRequest)
+	apiModelResponse, err := model.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4RequestToOptionalResponse(&apiModelRequest)
 	require.NoError(t, err)
 
-	tfModel, diags := conv.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4APIOptionalResponseToTFModel(context.Background(), apiModelResponse)
+	tfModel, diags := conv.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4APIOptionalResponseToTFModel(context.Background(), apiModelResponse)
 	require.False(t, diags.HasError())
 
-	filledApiModelRequest, diags := conv.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4TFToAPIRequestModel(context.Background(), tfModel)
+	filledApiModelRequest, diags := conv.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4TFToAPIRequestModel(context.Background(), tfModel)
 	require.False(t, diags.HasError())
 
-	result, err := model.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4RequestToOptionalResponse(filledApiModelRequest)
+	result, err := model.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4RequestToOptionalResponse(filledApiModelRequest)
 	require.NoError(t, err)
 
 	require.Equal(t, *apiModelResponse, *result)
 }
 
-func TestUpdateNodeGroupSpecNetworkPrimaryInterfaceExternalIPv4RequestConverters(t *testing.T) {
+func TestUpdateNodeGroupSpecNetworkPrimaryInterfaceExternalIpv4RequestConverters(t *testing.T) {
 	t.Parallel()
 
-	var nullPlanTfModel tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4
-	var stateTfModel tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4
+	var nullPlanTfModel tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4
+	var stateTfModel tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4
 
-	expectedUpdateModel := &model.UpdateNodeGroupSpecNetworkPrimaryInterfaceExternalIPv4Request{}
+	expectedUpdateModel := &model.UpdateNodeGroupSpecNetworkPrimaryInterfaceExternalIpv4Request{}
 
-	result, diags := conv.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4TFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
+	result, diags := conv.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4TFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())
 
 	require.Equal(t, expectedUpdateModel, result)

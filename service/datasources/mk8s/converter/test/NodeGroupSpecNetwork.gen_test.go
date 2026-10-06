@@ -26,9 +26,9 @@ func TestNodeGroupSpecNetworkPrimaryInterfaceAPIOptionalResponseToTFModel(t *tes
 	require.False(t, diags.HasError())
 }
 
-func TestNodeGroupSpecNetworkPrimaryInterfaceExternalIPv4APIOptionalResponseToTFModel(t *testing.T) {
+func TestNodeGroupSpecNetworkPrimaryInterfaceExternalIpv4APIOptionalResponseToTFModel(t *testing.T) {
 	t.Parallel()
-	apiModel := model.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4OptionalResponse{}
-	_, diags := conv.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4APIOptionalResponseToTFModel(context.Background(), &apiModel)
+	apiModel := model.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4OptionalResponse{}
+	_, diags := conv.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4APIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }

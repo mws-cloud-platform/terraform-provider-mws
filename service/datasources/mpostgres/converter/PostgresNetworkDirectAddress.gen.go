@@ -23,9 +23,9 @@ func PostgresNetworkDirectAddressAPIResponseToTFModel(ctx context.Context, am *m
 	var t tfmodel.PostgresNetworkDirectAddress
 
 	if am.Ref != nil {
-		t.Ref = types.StringPointerValue(ptr.Get(am.Ref.Path()))
+		t.PostgresNetworkAddress.Ref = types.StringPointerValue(ptr.Get(am.Ref.Path()))
 	} else {
-		t.Ref = types.StringNull()
+		t.PostgresNetworkAddress.Ref = types.StringNull()
 	}
 
 	if am.Spec != nil {
@@ -41,9 +41,9 @@ func PostgresNetworkDirectAddressAPIResponseToTFModel(ctx context.Context, am *m
 		if diags.HasError() {
 			return nil, diags
 		}
-		t.Spec = specTfObject
+		t.PostgresNetworkAddress.Spec = specTfObject
 	} else {
-		t.Spec = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.PostgresNetworkAddressSpec).GetSchema().Attributes))
+		t.PostgresNetworkAddress.Spec = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.PostgresNetworkAddressSpec).GetSchema().Attributes))
 	}
 
 	if am.ExternalAccess != nil {
@@ -59,9 +59,9 @@ func PostgresNetworkDirectAddressAPIResponseToTFModel(ctx context.Context, am *m
 		if diags.HasError() {
 			return nil, diags
 		}
-		t.ExternalAccess = externalAccessTfObject
+		t.PostgresNetworkAddress.ExternalAccess = externalAccessTfObject
 	} else {
-		t.ExternalAccess = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.PostgresExternalAccessSpec).GetSchema().Attributes))
+		t.PostgresNetworkAddress.ExternalAccess = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.PostgresExternalAccessSpec).GetSchema().Attributes))
 	}
 
 	if am.Zone != nil {

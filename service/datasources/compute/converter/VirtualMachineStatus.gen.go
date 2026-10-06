@@ -35,7 +35,7 @@ func VirtualMachineStatusAPIResponseToTFModel(ctx context.Context, am *model.Vir
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	t.Id = types.StringValue(am.Id)
 

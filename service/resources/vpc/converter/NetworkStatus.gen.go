@@ -36,7 +36,7 @@ func NetworkStatusAPIResponseToTFModel(ctx context.Context, am *model.NetworkSta
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.Mtu != nil {
 		t.Mtu = types.Int64PointerValue(ptr.Get(int64(*am.Mtu)))

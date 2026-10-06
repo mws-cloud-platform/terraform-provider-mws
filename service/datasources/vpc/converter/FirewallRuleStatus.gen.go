@@ -36,7 +36,7 @@ func FirewallRuleStatusAPIResponseToTFModel(ctx context.Context, am *model.Firew
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.Priority != nil {
 		t.Priority = types.Int64PointerValue(ptr.Get(int64(*am.Priority)))

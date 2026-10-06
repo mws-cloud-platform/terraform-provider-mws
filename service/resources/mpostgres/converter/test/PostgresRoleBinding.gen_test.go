@@ -22,7 +22,7 @@ func TestPostgresRoleBindingResponseConverters(t *testing.T) {
 	t.Parallel()
 	apiModelRequest := model.PostgresRoleBindingRequest{
 		Spec: model.PostgresRoleBindingSpecRequest{
-			UserId: mpostgres.NewMustPostgresClusterUserRef("projectID", "lg", "U"),
+			UserId: mpostgres.NewMustPostgresClusterUserRef("projectID", "kd5veic", "y6cV3gUxcffy"),
 			Role:   "",
 		},
 	}

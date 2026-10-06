@@ -34,7 +34,7 @@ func CommonRoleBindingStatusAPIToTFModel(ctx context.Context, am *commonmodel.Co
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	return &t, diags
 }
@@ -59,7 +59,7 @@ func CommonRoleBindingStatusAPIResponseToTFModel(ctx context.Context, am *common
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	return &t, diags
 }
@@ -84,7 +84,7 @@ func CommonRoleBindingStatusAPIOptionalResponseToTFModel(ctx context.Context, am
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	return &t, diags
 }

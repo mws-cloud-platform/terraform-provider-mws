@@ -36,7 +36,7 @@ func OneToOneNatStatusAPIResponseToTFModel(ctx context.Context, am *model.OneToO
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.Internal != nil {
 		internalTmp, d := OneToOneNatStatusInternalAPIResponseToTFModel(ctx, am.Internal)

@@ -13,6 +13,7 @@ type ApiKeyStatus struct {
 	tfcommon.ResourceStatus
 	ApiKey       types.String `tfsdk:"api_key"`
 	LastAuthTime types.String `tfsdk:"last_auth_time"`
+	Active       types.Bool   `tfsdk:"active"`
 }
 
 func (s *ApiKeyStatus) GetSchema() schema.Schema {
@@ -34,6 +35,10 @@ func (s *ApiKeyStatus) GetSchema() schema.Schema {
 
 Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00`,
 				Computed: true,
+			},
+			"active": schema.BoolAttribute{
+				MarkdownDescription: `Флаг, указывающий на текущее состояние API‑ключа. Активный ключ может использоваться для аутентификации, деактивированный — нет`,
+				Computed:            true,
 			},
 		},
 	}

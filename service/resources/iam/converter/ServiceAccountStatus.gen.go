@@ -37,7 +37,7 @@ func ServiceAccountStatusAPIResponseToTFModel(ctx context.Context, am *model.Ser
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.LastAuthDateTime != nil {
 		t.LastAuthDateTime = types.StringPointerValue(ptr.Get(am.LastAuthDateTime.Format(time.RFC3339)))

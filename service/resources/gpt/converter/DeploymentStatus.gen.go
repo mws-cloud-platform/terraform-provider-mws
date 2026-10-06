@@ -36,7 +36,7 @@ func DeploymentStatusAPIResponseToTFModel(ctx context.Context, am *model.Deploym
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.ContextWindowSize != nil {
 		t.ContextWindowSize = types.Int64PointerValue(ptr.Get(int64(*am.ContextWindowSize)))

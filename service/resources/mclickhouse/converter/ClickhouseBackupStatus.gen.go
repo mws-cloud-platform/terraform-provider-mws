@@ -37,7 +37,7 @@ func ClickhouseBackupStatusAPIResponseToTFModel(ctx context.Context, am *model.C
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.Backup != nil {
 		backupTmp, d := ClickhouseBackupStatusBackupAPIResponseToTFModel(ctx, am.Backup)

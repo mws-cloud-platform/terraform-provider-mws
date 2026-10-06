@@ -35,7 +35,7 @@ func RoleStatusAPIResponseToTFModel(ctx context.Context, am *model.RoleStatusRes
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	stageTmp, d := RoleStageAPIResponseToTFModel(ctx, &am.Stage)
 	diags = append(diags, d...)

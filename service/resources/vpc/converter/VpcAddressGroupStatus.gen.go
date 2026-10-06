@@ -36,7 +36,7 @@ func VpcAddressGroupStatusAPIResponseToTFModel(ctx context.Context, am *model.Vp
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.Addresses != nil {
 		addresses := make([]tfcommon.ResourceAddressStatus, 0, len(am.Addresses))

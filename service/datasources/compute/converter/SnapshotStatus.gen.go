@@ -36,7 +36,7 @@ func SnapshotStatusAPIResponseToTFModel(ctx context.Context, am *model.SnapshotS
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.StorageSize != nil {
 		t.StorageSize = types.StringValue(ptr.Value(am.StorageSize.RawValue()))

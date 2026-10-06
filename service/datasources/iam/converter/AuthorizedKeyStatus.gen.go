@@ -37,7 +37,7 @@ func AuthorizedKeyStatusAPIResponseToTFModel(ctx context.Context, am *model.Auth
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.PublicKey != nil {
 		t.PublicKey = types.StringPointerValue(am.PublicKey)

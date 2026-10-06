@@ -35,7 +35,7 @@ func RouteStatusAPIResponseToTFModel(ctx context.Context, am *model.RouteStatusR
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.NextHop != nil {
 		nextHopTmp, d := RouteStatusNextHopAPIResponseToTFModel(ctx, am.NextHop)

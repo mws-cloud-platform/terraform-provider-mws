@@ -37,7 +37,7 @@ func PostgresUserRoleBindingStatusAPIResponseToTFModel(ctx context.Context, am *
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.RoleBindingId != nil {
 		t.RoleBindingId = types.StringPointerValue(ptr.Get(am.RoleBindingId.Path()))

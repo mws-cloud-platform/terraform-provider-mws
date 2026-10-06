@@ -36,7 +36,7 @@ func DiskBackupStatusAPIResponseToTFModel(ctx context.Context, am *model.DiskBac
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.StorageSize != nil {
 		t.StorageSize = types.StringValue(ptr.Value(am.StorageSize.RawValue()))

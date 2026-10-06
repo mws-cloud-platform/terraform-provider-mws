@@ -36,7 +36,7 @@ func ImageStatusAPIResponseToTFModel(ctx context.Context, am *model.ImageStatusR
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.RegionalImageStatuses != nil {
 		regionalImageStatuses := make([]tfmodel.RegionalImageStatus, 0, len(am.RegionalImageStatuses))

@@ -50,34 +50,34 @@ func NodeGroupSpecNetworkPrimaryInterfaceAPIOptionalResponseToTFModel(ctx contex
 	var diags tfdiag.Diagnostics
 	var t tfmodel.NodeGroupSpecNetworkPrimaryInterface
 
-	if val, ok := am.ExternalIPv4.Get(); ok {
-		externalIPv4Tmp, d := NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4APIOptionalResponseToTFModel(ctx, &val)
+	if val, ok := am.ExternalIpv4.Get(); ok {
+		externalIpv4Tmp, d := NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4APIOptionalResponseToTFModel(ctx, &val)
 		diags = append(diags, d...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		externalIPv4TfObject, d := types.ObjectValueFrom(ctx,
-			tfconv.GetAttributesTypes(new(tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4).GetSchema().Attributes),
-			*externalIPv4Tmp)
+		externalIpv4TfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4).GetSchema().Attributes),
+			*externalIpv4Tmp)
 		diags = append(diags, d...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		t.ExternalIPv4 = externalIPv4TfObject
+		t.ExternalIpv4 = externalIpv4TfObject
 	} else {
-		t.ExternalIPv4 = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4).GetSchema().Attributes))
+		t.ExternalIpv4 = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4).GetSchema().Attributes))
 	}
 
 	return &t, diags
 }
 
-func NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4APIOptionalResponseToTFModel(ctx context.Context, am *model.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4OptionalResponse) (*tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4, tfdiag.Diagnostics) {
+func NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4APIOptionalResponseToTFModel(ctx context.Context, am *model.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4OptionalResponse) (*tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var t tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIPv4
+	var t tfmodel.NodeGroupSpecNetworkPrimaryInterfaceExternalIpv4
 
 	if val, ok := am.Enabled.Get(); ok {
 		t.Enabled = types.BoolValue(val)

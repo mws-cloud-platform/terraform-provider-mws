@@ -35,7 +35,7 @@ func TopicStatusAPIResponseToTFModel(ctx context.Context, am *model.TopicStatusR
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.Config != nil {
 		config := make(map[string]types.String, len(am.Config))

@@ -36,7 +36,7 @@ func ExternalAddressStatusAPIResponseToTFModel(ctx context.Context, am *model.Ex
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.IpAddress != nil {
 		t.IpAddress = types.StringValue(ptr.Value(am.IpAddress.RawValue()))

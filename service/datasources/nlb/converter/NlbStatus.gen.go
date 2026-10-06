@@ -36,7 +36,7 @@ func NlbStatusAPIResponseToTFModel(ctx context.Context, am *model.NlbStatusRespo
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.Listener != nil {
 		listenerTmp, d := NlbStatusListenerAPIResponseToTFModel(ctx, am.Listener)

@@ -36,7 +36,7 @@ func SecretStatusAPIResponseToTFModel(ctx context.Context, am *model.SecretStatu
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	t.Active = types.BoolValue(am.Active)
 

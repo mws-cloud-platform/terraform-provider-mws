@@ -36,7 +36,7 @@ func KafkaClusterStatusAPIResponseToTFModel(ctx context.Context, am *model.Kafka
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.State != nil {
 		stateTmp, d := ClusterStateAPIToTFModel(ctx, am.State)

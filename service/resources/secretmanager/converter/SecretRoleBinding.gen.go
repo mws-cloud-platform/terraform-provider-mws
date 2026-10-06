@@ -141,7 +141,7 @@ func SecretRoleBindingTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Sec
 	}
 
 	if !plan.SupportRequestId.IsNull() && !plan.SupportRequestId.IsUnknown() {
-		supportRequestIdRef, err := support.ParseRequestIDRef(ctx, plan.SupportRequestId.ValueString())
+		supportRequestIdRef, err := support.ParseRequestRef(ctx, plan.SupportRequestId.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -241,7 +241,7 @@ func SecretRoleBindingTFToAPIUpdateRequestModel(ctx context.Context, plan, state
 			if !am.Spec.IsSet() {
 				am.Spec.SetTo(commonmodel.UpdateCommonRoleBindingSpecRequest{})
 			}
-			supportRequestIdRef, err := support.ParseRequestIDRef(ctx, plan.SupportRequestId.ValueString())
+			supportRequestIdRef, err := support.ParseRequestRef(ctx, plan.SupportRequestId.ValueString())
 			if err != nil {
 				diags.AddError("reference parsing", err.Error())
 				return nil, diags

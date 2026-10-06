@@ -50,34 +50,34 @@ func NodeGroupStatusNetworkPrimaryInterfaceAPIResponseToTFModel(ctx context.Cont
 	var diags tfdiag.Diagnostics
 	var t tfmodel.NodeGroupStatusNetworkPrimaryInterface
 
-	if am.ExternalIPv4 != nil {
-		externalIPv4Tmp, d := NodeGroupStatusNetworkPrimaryInterfaceExternalIPv4APIResponseToTFModel(ctx, am.ExternalIPv4)
+	if am.ExternalIpv4 != nil {
+		externalIpv4Tmp, d := NodeGroupStatusNetworkPrimaryInterfaceExternalIpv4APIResponseToTFModel(ctx, am.ExternalIpv4)
 		diags = append(diags, d...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		externalIPv4TfObject, d := types.ObjectValueFrom(ctx,
-			tfconv.GetAttributesTypes(new(tfmodel.NodeGroupStatusNetworkPrimaryInterfaceExternalIPv4).GetSchema().Attributes),
-			*externalIPv4Tmp)
+		externalIpv4TfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.NodeGroupStatusNetworkPrimaryInterfaceExternalIpv4).GetSchema().Attributes),
+			*externalIpv4Tmp)
 		diags = append(diags, d...)
 		if diags.HasError() {
 			return nil, diags
 		}
-		t.ExternalIPv4 = externalIPv4TfObject
+		t.ExternalIpv4 = externalIpv4TfObject
 	} else {
-		t.ExternalIPv4 = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.NodeGroupStatusNetworkPrimaryInterfaceExternalIPv4).GetSchema().Attributes))
+		t.ExternalIpv4 = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.NodeGroupStatusNetworkPrimaryInterfaceExternalIpv4).GetSchema().Attributes))
 	}
 
 	return &t, diags
 }
 
-func NodeGroupStatusNetworkPrimaryInterfaceExternalIPv4APIResponseToTFModel(ctx context.Context, am *model.NodeGroupStatusNetworkPrimaryInterfaceExternalIPv4Response) (*tfmodel.NodeGroupStatusNetworkPrimaryInterfaceExternalIPv4, tfdiag.Diagnostics) {
+func NodeGroupStatusNetworkPrimaryInterfaceExternalIpv4APIResponseToTFModel(ctx context.Context, am *model.NodeGroupStatusNetworkPrimaryInterfaceExternalIpv4Response) (*tfmodel.NodeGroupStatusNetworkPrimaryInterfaceExternalIpv4, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
 	}
 
 	var diags tfdiag.Diagnostics
-	var t tfmodel.NodeGroupStatusNetworkPrimaryInterfaceExternalIPv4
+	var t tfmodel.NodeGroupStatusNetworkPrimaryInterfaceExternalIpv4
 
 	if am.Enabled != nil {
 		t.Enabled = types.BoolPointerValue(am.Enabled)

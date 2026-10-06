@@ -36,7 +36,7 @@ func ClusterStatusAPIResponseToTFModel(ctx context.Context, am *model.ClusterSta
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.ClusterCaCertificate != nil {
 		t.ClusterCaCertificate = types.StringValue(string(am.ClusterCaCertificate))

@@ -35,7 +35,7 @@ func PostgresClusterUserStatusAPIResponseToTFModel(ctx context.Context, am *mode
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.RoleBindings != nil {
 		roleBindings := make([]tfmodel.PostgresUserRoleBindingStatus, 0, len(am.RoleBindings))

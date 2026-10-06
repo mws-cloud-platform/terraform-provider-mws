@@ -141,7 +141,7 @@ func CertificateRoleBindingTFToAPIRequestModel(ctx context.Context, plan *tfmode
 	}
 
 	if !plan.SupportRequestId.IsNull() && !plan.SupportRequestId.IsUnknown() {
-		supportRequestIdRef, err := support.ParseRequestIDRef(ctx, plan.SupportRequestId.ValueString())
+		supportRequestIdRef, err := support.ParseRequestRef(ctx, plan.SupportRequestId.ValueString())
 		if err != nil {
 			diags.AddError("reference parsing", err.Error())
 			return nil, diags
@@ -241,7 +241,7 @@ func CertificateRoleBindingTFToAPIUpdateRequestModel(ctx context.Context, plan, 
 			if !am.Spec.IsSet() {
 				am.Spec.SetTo(commonmodel.UpdateCommonRoleBindingSpecRequest{})
 			}
-			supportRequestIdRef, err := support.ParseRequestIDRef(ctx, plan.SupportRequestId.ValueString())
+			supportRequestIdRef, err := support.ParseRequestRef(ctx, plan.SupportRequestId.ValueString())
 			if err != nil {
 				diags.AddError("reference parsing", err.Error())
 				return nil, diags

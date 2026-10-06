@@ -36,7 +36,7 @@ func ServiceAccountStatusAPIResponseToTFModel(ctx context.Context, am *model.Ser
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.Ref != nil {
 		t.Ref = types.StringPointerValue(ptr.Get(am.Ref.Path()))

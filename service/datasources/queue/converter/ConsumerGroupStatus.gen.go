@@ -36,7 +36,7 @@ func ConsumerGroupStatusAPIResponseToTFModel(ctx context.Context, am *model.Cons
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.State != nil {
 		stateTmp, d := ConsumerGroupStateAPIToTFModel(ctx, am.State)

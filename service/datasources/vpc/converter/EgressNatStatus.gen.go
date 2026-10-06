@@ -36,7 +36,7 @@ func EgressNatStatusAPIResponseToTFModel(ctx context.Context, am *model.EgressNa
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.Internal != nil {
 		internalTmp, d := EgressNatStatusInternalAPIResponseToTFModel(ctx, am.Internal)

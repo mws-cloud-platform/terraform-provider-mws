@@ -35,7 +35,7 @@ func ServiceEndpointStatusAPIResponseToTFModel(ctx context.Context, am *model.Se
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	if am.EndpointAddress != nil {
 		endpointAddressTmp, d := commonconv.ResourceAddressStatusAPIResponseToTFModel(ctx, am.EndpointAddress)

@@ -35,7 +35,7 @@ func PostgresClusterDatabaseStatusAPIResponseToTFModel(ctx context.Context, am *
 	if diags.HasError() {
 		return nil, diags
 	}
-	t.Ready = readyTfObject
+	t.ResourceStatus.Ready = readyTfObject
 
 	return &t, diags
 }
