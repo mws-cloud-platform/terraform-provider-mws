@@ -226,6 +226,7 @@ Read-Only:
 
 - `domains` (List of String) Домены, к которым относится сертификат
 - `issuer` (String) Издатель сертификата
+- `key_algorithm` (String) Алгоритм ключа сертификата
 - `not_after` (String) Дата окончания срока действия сертификата
 
 Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
@@ -234,6 +235,9 @@ Read-Only:
 Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `serial` (String) Серийный номер сертификата
 - `subject` (String) Владелец сертификата
+- `supported_private_key_formats` (List of String) Форматы экспорта закрытого ключа, доступные для параметра "privateKeyFormat" при скачивании сертификата.
+Для ключей "RSA": "PKCS1" и "PKCS8"; для ключей "EC": "SEC1" и "PKCS8";
+для ключей "ED25519" и "ED448": только "PKCS8"
 
 
 <a id="nestedatt--status--ready"></a>

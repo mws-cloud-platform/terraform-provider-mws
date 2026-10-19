@@ -4,7 +4,9 @@ package iam
 
 import (
 	"context"
+	"time"
 
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -41,6 +43,7 @@ func (m *RoleDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 	resp.Schema.Attributes["role"] = schema.StringAttribute{
 		Required: true,
 	}
+	resp.Schema.Attributes["timeouts"] = timeouts.Attributes(ctx)
 }
 
 func (m *RoleDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
@@ -76,6 +79,16 @@ func (m *RoleDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	readTimeout, diags := config.Timeouts.Read(ctx, 300*time.Second)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		tflog.Debug(ctx, "RoleDataSource.Timeouts")
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, readTimeout)
+	defer cancel()
 
 	apiRes, err := m.sdk.GetGlobalRoleV2(
 		ctx,

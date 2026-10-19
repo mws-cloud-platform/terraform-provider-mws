@@ -212,6 +212,7 @@ variable "services_cidr" {
 - `kind` (String)
 - `labels` (Attributes List) (see [below for nested schema](#nestedatt--labels))
 - `local_disks` (Attributes List) Параметры локальных дисков для каждого узла в группе узлов (see [below for nested schema](#nestedatt--local_disks))
+- `max_pods` (Number) Максимальное число подов, которые могут быть запущены на каждом узле группы
 - `metadata` (Attributes) Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров (see [below for nested schema](#nestedatt--metadata))
 - `network` (Attributes) Настройки сети группы узлов (see [below for nested schema](#nestedatt--network))
 - `project` (String) Путь к проекту.
@@ -440,6 +441,7 @@ Read-Only:
 Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
 - `labels` (Attributes List) (see [below for nested schema](#nestedatt--status--labels))
 - `local_disks` (Attributes List) Параметры локальных дисков для каждого узла в группе узлов (see [below for nested schema](#nestedatt--status--local_disks))
+- `max_pods` (Number) Максимальное количество Pod, которые можно запланировать на каждом узле группы
 - `memory` (String) Объем оперативной памяти на узле
 
 Размер в байтах. Формат: <число> [единица измерения].

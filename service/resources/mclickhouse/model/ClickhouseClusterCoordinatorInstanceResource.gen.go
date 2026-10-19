@@ -28,6 +28,7 @@ func (s *ClickhouseClusterCoordinatorInstanceResource) GetSchema() schema.Schema
 				Computed:            true,
 			},
 			"health": schema.StringAttribute{
+				MarkdownDescription: `Исправность узла`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"ALIVE",

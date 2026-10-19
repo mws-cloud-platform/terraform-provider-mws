@@ -21,6 +21,36 @@ func CertificateStatusDetailsAPIResponseToTFModel(ctx context.Context, am *model
 	var diags tfdiag.Diagnostics
 	var t tfmodel.CertificateStatusDetails
 
+	keyAlgorithmTmp, d := CertificateKeyAlgorithmAPIToTFModel(ctx, &am.KeyAlgorithm)
+	diags = append(diags, d...)
+	if diags.HasError() {
+		return nil, diags
+	}
+	t.KeyAlgorithm = keyAlgorithmTmp
+
+	if am.SupportedPrivateKeyFormats != nil {
+		supportedPrivateKeyFormats := make([]tfmodel.PrivateKeyFormat, 0, len(am.SupportedPrivateKeyFormats))
+
+		for _, entity := range am.SupportedPrivateKeyFormats {
+			tmp, d := PrivateKeyFormatAPIToTFModel(ctx, &entity)
+			diags = append(diags, d...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			supportedPrivateKeyFormats = append(supportedPrivateKeyFormats, tmp)
+		}
+
+		supportedPrivateKeyFormatsList, d := types.ListValueFrom(ctx, types.StringType, supportedPrivateKeyFormats)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		t.SupportedPrivateKeyFormats = supportedPrivateKeyFormatsList
+	} else {
+		t.SupportedPrivateKeyFormats = types.ListNull(types.StringType)
+	}
+
 	t.Serial = types.StringValue(am.Serial)
 
 	t.Issuer = types.StringValue(am.Issuer)

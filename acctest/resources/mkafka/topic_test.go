@@ -55,7 +55,7 @@ func (s *TopicSuite) SetupSuite() {
 	s.kafkaSDK, err = mkafkasdk.NewKafka(ctx, s.SDK)
 	s.Require().NoError(err)
 	s.topicName = utils.RandResourceName("topic")
-	networkRef, err := vpcref.ParseNetworkRef(ctx, s.network.GetMetadata().GetId().ID())
+	networkRef, err := vpcref.ParseNetworkRef(ctx, s.Network.GetMetadata().GetId().ID())
 	s.Require().NoError(err)
 	addressRef, err := vpcref.ParseAddressRef(ctx, s.address1ID)
 	s.Require().NoError(err)

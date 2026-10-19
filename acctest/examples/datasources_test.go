@@ -13,11 +13,16 @@ import (
 )
 
 var existingResources = map[string]bool{
-	"mws_resmanager_region": true,
-	"mws_resmanager_zone":   true,
-	"mws_gpt_model":         true,
-	"mws_compute_vm_type":   true,
-	"mws_iam_role":          true,
+	"mws_resmanager_region":     true,
+	"mws_resmanager_regions":    true,
+	"mws_resmanager_zone":       true,
+	"mws_resmanager_zones":      true,
+	"mws_gpt_model":             true,
+	"mws_compute_vm_type":       true,
+	"mws_compute_vm_types":      true,
+	"mws_iam_role":              true,
+	"mws_mk8s_release_channels": true,
+	"mws_mk8s_versions":         true,
 }
 
 func TestDataSourcesExamples(t *testing.T) {

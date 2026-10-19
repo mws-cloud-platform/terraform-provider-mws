@@ -4,7 +4,9 @@ package rm
 
 import (
 	"context"
+	"time"
 
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -48,6 +50,7 @@ func (m *EnabledServiceDataSource) Schema(ctx context.Context, req datasource.Sc
 	resp.Schema.Attributes["service"] = schema.StringAttribute{
 		Required: true,
 	}
+	resp.Schema.Attributes["timeouts"] = timeouts.Attributes(ctx)
 }
 
 func (m *EnabledServiceDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
@@ -94,6 +97,16 @@ func (m *EnabledServiceDataSource) Read(ctx context.Context, req datasource.Read
 	}
 	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
+
+	readTimeout, diags := config.Timeouts.Read(ctx, 300*time.Second)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		tflog.Debug(ctx, "EnabledServiceDataSource.Timeouts")
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, readTimeout)
+	defer cancel()
 
 	apiRes, err := m.sdk.GetEnabledService(
 		ctx,

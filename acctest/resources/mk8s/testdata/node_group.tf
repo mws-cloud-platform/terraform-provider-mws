@@ -24,7 +24,7 @@ resource "mws_mk8s_node_group" "node_group" {
   }
 
   service_account = {
-    ref = "iam/projects/mws-terraform-testing/serviceAccounts/gitlab-acctest"
+    ref = "iam/projects/terraform-provider-mws-acctest/serviceAccounts/gitlab-acctest"
   }
 
   rollout_strategy = {

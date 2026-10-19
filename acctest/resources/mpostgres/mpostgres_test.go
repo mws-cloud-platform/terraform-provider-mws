@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"go.mws.cloud/go-sdk/mws/wait"
-	"go.mws.cloud/go-sdk/pkg/apimodels/cidraddress"
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 	"go.mws.cloud/go-sdk/service/common/model"
 	mpostgresclient "go.mws.cloud/go-sdk/service/mpostgres/client"
@@ -18,21 +17,17 @@ import (
 	vpcsdk "go.mws.cloud/go-sdk/service/vpc/sdk"
 	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
+	"go.mws.cloud/terraform-provider-mws/acctest/resources/vpc"
 	"go.mws.cloud/terraform-provider-mws/acctest/utils"
 )
 
 const clusterCreateTimeout = 15 * time.Minute
 
 type BaseSuite struct {
-	utils.ResourceSuite
-	networkSDK *vpcsdk.Network
-	subnetSDK  *vpcsdk.Subnet
+	vpc.BaseSubnetSuite
+
 	addressSDK *vpcsdk.Address
 
-	networkName                string
-	network                    *vpcmodel.NetworkOptionalResponse
-	subnetName                 string
-	subnet                     *vpcmodel.SubnetOptionalResponse
 	primaryEndpointAddressName string
 	primaryEndpointAddress     *vpcmodel.AddressOptionalResponse
 }
@@ -41,42 +36,18 @@ func (s *BaseSuite) SetupSuite() {
 	var err error
 
 	ctx := s.T().Context()
-	s.ResourceSuite.SetupSuite()
+	s.BaseSubnetSuite.SetupSuite()
 
-	s.networkName = utils.RandResourceName("mpostgres-network")
-	s.subnetName = s.networkName + "-subnet"
 	s.primaryEndpointAddressName = utils.RandResourceName("mpostgres-primary-endpoint-address")
 
-	s.networkSDK, err = vpcsdk.NewNetwork(ctx, s.SDK)
-	s.Require().NoError(err)
-	s.subnetSDK, err = vpcsdk.NewSubnet(ctx, s.SDK)
-	s.Require().NoError(err)
 	s.addressSDK, err = vpcsdk.NewAddress(ctx, s.SDK)
 	s.Require().NoError(err)
 
-	s.network, err = s.networkSDK.CreateNetwork(ctx, vpcclient.UpsertNetworkRequest{
-		Network: s.networkName,
-	})
-	s.Require().NoError(err)
-	s.T().Logf("network %q created", s.networkName)
-
-	s.subnet, err = s.subnetSDK.CreateSubnet(ctx, vpcclient.UpsertSubnetRequest{
-		Network: s.networkName,
-		Subnet:  s.subnetName,
-		Body: vpcmodel.SubnetRequest{
-			Spec: vpcmodel.SubnetSpecRequest{
-				Cidr: cidraddress.MustParseCIDR4AddressString("10.243.0.0/18"),
-			},
-		},
-	})
-	s.Require().NoError(err)
-	s.T().Logf("subnet %q created", s.subnetName)
-
-	subnetRef, err := vpcref.ParseSubnetRef(ctx, s.subnet.GetMetadata().GetId().ID())
+	subnetRef, err := vpcref.ParseSubnetRef(ctx, s.Subnet.GetMetadata().GetId().ID())
 	s.Require().NoError(err)
 
 	s.primaryEndpointAddress, err = s.addressSDK.CreateAddress(ctx, vpcclient.UpsertAddressRequest{
-		Network: s.networkName,
+		Network: s.NetworkName,
 		Address: s.primaryEndpointAddressName,
 		Body: &vpcmodel.AddressRequest{
 			Spec: vpcmodel.VpcAddressSpecRequest{
@@ -92,7 +63,7 @@ func (s *BaseSuite) TearDownSuite() {
 	ctx := s.T().Context()
 
 	if err := s.addressSDK.DeleteAddress(ctx, vpcclient.DeleteAddressRequest{
-		Network: s.networkName,
+		Network: s.NetworkName,
 		Address: s.primaryEndpointAddressName,
 	}, vpcclient.WithWait()); err != nil {
 		s.T().Logf(
@@ -107,38 +78,7 @@ func (s *BaseSuite) TearDownSuite() {
 		)
 	}
 
-	if err := s.subnetSDK.DeleteSubnet(ctx, vpcclient.DeleteSubnetRequest{
-		Network: s.networkName,
-		Subnet:  s.subnetName,
-	}, vpcclient.WithWait()); err != nil {
-		s.T().Logf(
-			"subnet %q deletion failed: %v",
-			s.subnetName,
-			err,
-		)
-	} else {
-		s.T().Logf(
-			"subnet %q deleted",
-			s.subnetName,
-		)
-	}
-
-	if err := s.networkSDK.DeleteNetwork(ctx, vpcclient.DeleteNetworkRequest{
-		Network: s.networkName,
-	}, vpcclient.WithWait()); err != nil {
-		s.T().Logf(
-			"network %q deletion failed: %v",
-			s.networkName,
-			err,
-		)
-	} else {
-		s.T().Logf(
-			"network %q deleted",
-			s.networkName,
-		)
-	}
-
-	s.ResourceSuite.TearDownSuite()
+	s.BaseSubnetSuite.TearDownSuite()
 }
 
 type BaseClusterSuite struct {
@@ -157,7 +97,7 @@ func (s *BaseClusterSuite) SetupSuite() {
 
 	s.clusterName = utils.RandResourceName("cluster")
 
-	networkRef, err := vpcref.ParseNetworkRef(ctx, s.network.GetMetadata().GetId().ID())
+	networkRef, err := vpcref.ParseNetworkRef(ctx, s.Network.GetMetadata().GetId().ID())
 	s.Require().NoError(err)
 
 	primaryEndpointAddressRef, err := vpcref.ParseAddressRef(ctx, s.primaryEndpointAddress.GetMetadata().GetId().ID())

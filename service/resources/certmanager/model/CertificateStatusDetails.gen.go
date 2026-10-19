@@ -3,23 +3,46 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type CertificateStatusDetails struct {
-	Serial    types.String `tfsdk:"serial"`
-	Issuer    types.String `tfsdk:"issuer"`
-	Subject   types.String `tfsdk:"subject"`
-	NotAfter  types.String `tfsdk:"not_after"`
-	NotBefore types.String `tfsdk:"not_before"`
-	Domains   types.List   `tfsdk:"domains"`
+	KeyAlgorithm               CertificateKeyAlgorithm `tfsdk:"key_algorithm"`
+	SupportedPrivateKeyFormats types.List              `tfsdk:"supported_private_key_formats"`
+	Serial                     types.String            `tfsdk:"serial"`
+	Issuer                     types.String            `tfsdk:"issuer"`
+	Subject                    types.String            `tfsdk:"subject"`
+	NotAfter                   types.String            `tfsdk:"not_after"`
+	NotBefore                  types.String            `tfsdk:"not_before"`
+	Domains                    types.List              `tfsdk:"domains"`
 }
 
 func (s *CertificateStatusDetails) GetSchema() schema.Schema {
 	return schema.Schema{
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
+			"key_algorithm": schema.StringAttribute{
+				MarkdownDescription: `Алгоритм ключа сертификата`,
+				Validators: []validator.String{
+					stringvalidator.OneOf(
+						"RSA",
+						"EC",
+						"ED25519",
+						"ED448",
+					),
+				},
+				Computed: true,
+			},
+			"supported_private_key_formats": schema.ListAttribute{
+				ElementType: types.StringType,
+				MarkdownDescription: `Форматы экспорта закрытого ключа, доступные для параметра "privateKeyFormat" при скачивании сертификата.
+Для ключей "RSA": "PKCS1" и "PKCS8"; для ключей "EC": "SEC1" и "PKCS8";
+для ключей "ED25519" и "ED448": только "PKCS8"`,
+				Computed: true,
+			},
 			"serial": schema.StringAttribute{
 				MarkdownDescription: `Серийный номер сертификата`,
 				Computed:            true,

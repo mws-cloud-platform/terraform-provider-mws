@@ -4,7 +4,9 @@ package kms
 
 import (
 	"context"
+	"time"
 
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -53,6 +55,7 @@ func (m *CryptoKeyRoleBindingDataSource) Schema(ctx context.Context, req datasou
 		MarkdownDescription: `Название биндинга роли для крипто-ключа`,
 		Required:            true,
 	}
+	resp.Schema.Attributes["timeouts"] = timeouts.Attributes(ctx)
 }
 
 func (m *CryptoKeyRoleBindingDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
@@ -99,6 +102,16 @@ func (m *CryptoKeyRoleBindingDataSource) Read(ctx context.Context, req datasourc
 	}
 	config.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
+
+	readTimeout, diags := config.Timeouts.Read(ctx, 300*time.Second)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		tflog.Debug(ctx, "CryptoKeyRoleBindingDataSource.Timeouts")
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, readTimeout)
+	defer cancel()
 
 	apiRes, err := m.sdk.GetCryptoKeyRoleBinding(
 		ctx,

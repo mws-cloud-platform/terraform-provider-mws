@@ -3,11 +3,13 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ExternalAddressDataSourceModel struct {
-	ProjectParam         types.String `tfsdk:"project"`
-	ExternalAddressParam types.String `tfsdk:"external_address"`
+	ProjectParam         types.String   `tfsdk:"project"`
+	ExternalAddressParam types.String   `tfsdk:"external_address"`
+	Timeouts             timeouts.Value `tfsdk:"timeouts"`
 	ExternalAddress
 }

@@ -4,7 +4,9 @@ package rm
 
 import (
 	"context"
+	"time"
 
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -45,6 +47,7 @@ func (m *ZoneDataSource) Schema(ctx context.Context, req datasource.SchemaReques
 		Optional:            true,
 		Computed:            true,
 	}
+	resp.Schema.Attributes["timeouts"] = timeouts.Attributes(ctx)
 }
 
 func (m *ZoneDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
@@ -91,6 +94,16 @@ func (m *ZoneDataSource) Read(ctx context.Context, req datasource.ReadRequest, r
 	}
 	config.ZoneParam = zoneParam
 	ctx = ctxvalues.With(ctx, "zone", zoneParam.String())
+
+	readTimeout, diags := config.Timeouts.Read(ctx, 300*time.Second)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		tflog.Debug(ctx, "ZoneDataSource.Timeouts")
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, readTimeout)
+	defer cancel()
 
 	apiRes, err := m.sdk.GetZone(
 		ctx,

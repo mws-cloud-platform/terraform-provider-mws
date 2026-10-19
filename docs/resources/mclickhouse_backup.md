@@ -154,7 +154,7 @@ variable "backup_name" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
-- `status` (Attributes) (see [below for nested schema](#nestedatt--status))
+- `status` (Attributes) Текущее состояние резервной копии (see [below for nested schema](#nestedatt--status))
 
 <a id="nestedatt--metadata"></a>
 ### Nested Schema for `metadata`
@@ -233,7 +233,7 @@ Read-Only:
 Значение базовой единицы измерения (в байтах) должно оставаться целым.
 Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
 - `trigger` (String) Причина создания резервной копии в CPL
-- `type` (String) Причина создания резервной копии в CPL
+- `type` (String) Тип резервной копии
 
 
 <a id="nestedatt--status--ready"></a>

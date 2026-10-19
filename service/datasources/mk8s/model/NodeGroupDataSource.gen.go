@@ -3,12 +3,14 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type NodeGroupDataSourceModel struct {
-	ProjectParam       types.String `tfsdk:"project"`
-	ClusterNameParam   types.String `tfsdk:"cluster_name"`
-	NodeGroupNameParam types.String `tfsdk:"node_group_name"`
+	ProjectParam       types.String   `tfsdk:"project"`
+	ClusterNameParam   types.String   `tfsdk:"cluster_name"`
+	NodeGroupNameParam types.String   `tfsdk:"node_group_name"`
+	Timeouts           timeouts.Value `tfsdk:"timeouts"`
 	NodeGroup
 }

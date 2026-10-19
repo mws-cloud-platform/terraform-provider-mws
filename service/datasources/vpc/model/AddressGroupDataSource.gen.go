@@ -3,12 +3,14 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type AddressGroupDataSourceModel struct {
-	ProjectParam      types.String `tfsdk:"project"`
-	NetworkParam      types.String `tfsdk:"network"`
-	AddressGroupParam types.String `tfsdk:"address_group"`
+	ProjectParam      types.String   `tfsdk:"project"`
+	NetworkParam      types.String   `tfsdk:"network"`
+	AddressGroupParam types.String   `tfsdk:"address_group"`
+	Timeouts          timeouts.Value `tfsdk:"timeouts"`
 	VpcAddressGroup
 }

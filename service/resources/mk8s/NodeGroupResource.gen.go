@@ -216,6 +216,16 @@ func (m *NodeGroupResource) Read(ctx context.Context, req resource.ReadRequest, 
 	}
 	state.Zone = zoneParam
 
+	readTimeout, diags := state.Timeouts.Read(ctx, 300*time.Second)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		tflog.Debug(ctx, "NodeGroupResource.Timeouts")
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, readTimeout)
+	defer cancel()
+
 	apiRes, err := m.sdk.GetMk8sNodeGroup(
 		ctx,
 		client.GetMk8sNodeGroupRequest{

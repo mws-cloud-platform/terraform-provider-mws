@@ -3,13 +3,15 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ProjectsListDataSourceModel struct {
-	FilterParam                types.String `tfsdk:"filter"`
-	OnlyAvailableProjectsParam types.Bool   `tfsdk:"only_available_projects"`
-	OrderByParam               types.String `tfsdk:"order_by"`
-	OrganizationParam          types.String `tfsdk:"organization"`
+	FilterParam                types.String   `tfsdk:"filter"`
+	OnlyAvailableProjectsParam types.Bool     `tfsdk:"only_available_projects"`
+	OrderByParam               types.String   `tfsdk:"order_by"`
+	OrganizationParam          types.String   `tfsdk:"organization"`
+	Timeouts                   timeouts.Value `tfsdk:"timeouts"`
 	ProjectList
 }

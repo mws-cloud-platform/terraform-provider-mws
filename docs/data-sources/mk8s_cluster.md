@@ -32,6 +32,7 @@ data "mws_mk8s_cluster" "example_cluster" {
 ### Optional
 
 - `project` (String) Путь к проекту.
+- `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 
 ### Read-Only
 
@@ -43,6 +44,14 @@ data "mws_mk8s_cluster" "example_cluster" {
 - `security_posture` (Attributes) Настройка KSP для кластера (see [below for nested schema](#nestedatt--security_posture))
 - `status` (Attributes) Статусная модель кластера Kubernetes (see [below for nested schema](#nestedatt--status))
 - `version_control` (Attributes) (see [below for nested schema](#nestedatt--version_control))
+
+<a id="nestedatt--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `read` (String) A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+
 
 <a id="nestedatt--availability"></a>
 ### Nested Schema for `availability`

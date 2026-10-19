@@ -3,10 +3,12 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type RegionDataSourceModel struct {
-	RegionParam types.String `tfsdk:"region"`
+	RegionParam types.String   `tfsdk:"region"`
+	Timeouts    timeouts.Value `tfsdk:"timeouts"`
 	Region
 }

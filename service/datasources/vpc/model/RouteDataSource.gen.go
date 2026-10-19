@@ -3,12 +3,14 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type RouteDataSourceModel struct {
-	ProjectParam types.String `tfsdk:"project"`
-	NetworkParam types.String `tfsdk:"network"`
-	RouteParam   types.String `tfsdk:"route"`
+	ProjectParam types.String   `tfsdk:"project"`
+	NetworkParam types.String   `tfsdk:"network"`
+	RouteParam   types.String   `tfsdk:"route"`
+	Timeouts     timeouts.Value `tfsdk:"timeouts"`
 	Route
 }

@@ -3,12 +3,14 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type NlbDataSourceModel struct {
-	ProjectParam types.String `tfsdk:"project"`
-	NetworkParam types.String `tfsdk:"network"`
-	NlbParam     types.String `tfsdk:"nlb"`
+	ProjectParam types.String   `tfsdk:"project"`
+	NetworkParam types.String   `tfsdk:"network"`
+	NlbParam     types.String   `tfsdk:"nlb"`
+	Timeouts     timeouts.Value `tfsdk:"timeouts"`
 	Nlb
 }

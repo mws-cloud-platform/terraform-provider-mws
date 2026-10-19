@@ -28,6 +28,7 @@ data "mws_gpt_model" "model" {
 ### Optional
 
 - `project` (String) Путь к проекту.
+- `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 
 ### Read-Only
 
@@ -42,6 +43,14 @@ data "mws_gpt_model" "model" {
 - `output_modalities` (Attributes) (see [below for nested schema](#nestedatt--output_modalities))
 - `size` (Number) Размер модели в миллиардах параметров
 - `status` (Attributes) Текущее состояние ресурса, вычисляемое системой (see [below for nested schema](#nestedatt--status))
+
+<a id="nestedatt--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `read` (String) A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+
 
 <a id="nestedatt--capabilities"></a>
 ### Nested Schema for `capabilities`
@@ -118,12 +127,13 @@ Read-Only:
 
 Read-Only:
 
-- `audio` (Boolean)
-- `embedding` (Boolean)
-- `image` (Boolean)
-- `reranking` (Boolean)
-- `text` (Boolean)
-- `transcription` (Boolean)
+- `audio` (Boolean) Признак того, что модель поддерживает аудиовывод
+- `decision` (Boolean) Признак того, что модель поддерживает принятие решений
+- `embedding` (Boolean) Признак того, что модель поддерживает вывод эмбеддингов
+- `image` (Boolean) Признак того, что модель поддерживает вывод изображений
+- `reranking` (Boolean) Признак того, что модель поддерживает переранжирование результатов
+- `text` (Boolean) Признак того, что модель поддерживает текстовый вывод
+- `transcription` (Boolean) Признак того, что модель поддерживает транскрипцию
 
 
 <a id="nestedatt--status"></a>

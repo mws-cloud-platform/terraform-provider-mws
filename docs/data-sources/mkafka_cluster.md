@@ -34,6 +34,7 @@ data "mws_mkafka_cluster" "mkafka_kafka" {
 ### Optional
 
 - `project` (String) Путь к проекту.
+- `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 
 ### Read-Only
 
@@ -49,6 +50,14 @@ data "mws_mkafka_cluster" "mkafka_kafka" {
 - `schema_registry` (Attributes) Настройка Schema Registry для кластера (see [below for nested schema](#nestedatt--schema_registry))
 - `status` (Attributes) (see [below for nested schema](#nestedatt--status))
 - `version` (String) Версия продукта
+
+<a id="nestedatt--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `read` (String) A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+
 
 <a id="nestedatt--balancer"></a>
 ### Nested Schema for `balancer`

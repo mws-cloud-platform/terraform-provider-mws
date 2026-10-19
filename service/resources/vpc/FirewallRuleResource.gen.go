@@ -196,6 +196,16 @@ func (m *FirewallRuleResource) Read(ctx context.Context, req resource.ReadReques
 	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
+	readTimeout, diags := state.Timeouts.Read(ctx, 300*time.Second)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		tflog.Debug(ctx, "FirewallRuleResource.Timeouts")
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, readTimeout)
+	defer cancel()
+
 	apiRes, err := m.sdk.GetFirewallRule(
 		ctx,
 		client.GetFirewallRuleRequest{

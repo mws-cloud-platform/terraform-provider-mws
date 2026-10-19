@@ -3,11 +3,13 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type VirtualMachineDataSourceModel struct {
-	ProjectParam        types.String `tfsdk:"project"`
-	VirtualMachineParam types.String `tfsdk:"virtual_machine"`
+	ProjectParam        types.String   `tfsdk:"project"`
+	VirtualMachineParam types.String   `tfsdk:"virtual_machine"`
+	Timeouts            timeouts.Value `tfsdk:"timeouts"`
 	VirtualMachine
 }

@@ -128,6 +128,12 @@ func NodeGroupAPIOptionalResponseToTFModel(ctx context.Context, am *model.NodeGr
 		t.ImageStorageIops = types.Int64Null()
 	}
 
+	if val, ok := am.Spec.MaxPods.Get(); ok {
+		t.MaxPods = types.Int64Value(int64(val))
+	} else {
+		t.MaxPods = types.Int64Null()
+	}
+
 	if val, ok := am.Spec.LocalDisks.Get(); ok {
 		localDisks := make([]tfmodel.LocalDiskSpec, 0, len(val))
 
@@ -361,6 +367,10 @@ func NodeGroupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroup) 
 
 	if !plan.ImageStorageIops.IsNull() && !plan.ImageStorageIops.IsUnknown() {
 		am.Spec.ImageStorageIops = plan.ImageStorageIops.ValueInt64Pointer()
+	}
+
+	if !plan.MaxPods.IsNull() && !plan.MaxPods.IsUnknown() {
+		am.Spec.MaxPods = ptr.Get(int(plan.MaxPods.ValueInt64()))
 	}
 
 	if !plan.LocalDisks.IsNull() && !plan.LocalDisks.IsUnknown() {
@@ -658,6 +668,15 @@ func NodeGroupTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmode
 				am.Spec.SetTo(model.UpdateNodeGroupSpecRequest{})
 			}
 			am.Spec.Value.ImageStorageIops.SetTo(plan.ImageStorageIops.ValueInt64())
+		}
+	}
+
+	if !plan.MaxPods.Equal(state.MaxPods) {
+		if !plan.MaxPods.IsNull() && !plan.MaxPods.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(model.UpdateNodeGroupSpecRequest{})
+			}
+			am.Spec.Value.MaxPods.SetTo(int(plan.MaxPods.ValueInt64()))
 		}
 	}
 

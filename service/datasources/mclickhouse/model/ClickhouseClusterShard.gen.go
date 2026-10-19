@@ -43,7 +43,8 @@ func (s *ClickhouseClusterShard) GetSchema() schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(ClickhouseClusterInstance).GetSchema().Attributes,
 				},
-				Computed: true,
+				MarkdownDescription: `Описание узла кластера`,
+				Computed:            true,
 			},
 		},
 	}

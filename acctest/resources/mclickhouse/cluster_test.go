@@ -8,6 +8,7 @@ import (
 	helper "github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	"github.com/stretchr/testify/suite"
 
+	"go.mws.cloud/terraform-provider-mws/acctest/resources/vpc"
 	"go.mws.cloud/terraform-provider-mws/acctest/utils"
 	mclickhousetest "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/acctest"
 )
@@ -25,7 +26,7 @@ func TestStandaloneClusterSuite(t *testing.T) {
 }
 
 type StandaloneClusterSuite struct {
-	BaseSuite
+	vpc.BaseSubnetSuite
 }
 
 func (s *StandaloneClusterSuite) TestStandaloneCluster() {
@@ -39,7 +40,7 @@ func (s *StandaloneClusterSuite) TestStandaloneCluster() {
 
 	tc.ResourceConfig = fmt.Sprintf(clusterTF,
 		clusterName,
-		s.subnet.GetMetadata().GetId().ID(),
+		s.Subnet.GetMetadata().GetId().ID(),
 		adminPassword,
 	)
 	tc.DataSourceConfig = fmt.Sprintf(clusterDataSourceTF, clusterName)

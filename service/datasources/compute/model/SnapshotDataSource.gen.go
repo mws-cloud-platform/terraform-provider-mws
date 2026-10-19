@@ -3,11 +3,13 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type SnapshotDataSourceModel struct {
-	ProjectParam  types.String `tfsdk:"project"`
-	SnapshotParam types.String `tfsdk:"snapshot"`
+	ProjectParam  types.String   `tfsdk:"project"`
+	SnapshotParam types.String   `tfsdk:"snapshot"`
+	Timeouts      timeouts.Value `tfsdk:"timeouts"`
 	Snapshot
 }

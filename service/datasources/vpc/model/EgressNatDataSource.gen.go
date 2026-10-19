@@ -3,12 +3,14 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type EgressNatDataSourceModel struct {
-	ProjectParam   types.String `tfsdk:"project"`
-	NetworkParam   types.String `tfsdk:"network"`
-	EgressNatParam types.String `tfsdk:"egress_nat"`
+	ProjectParam   types.String   `tfsdk:"project"`
+	NetworkParam   types.String   `tfsdk:"network"`
+	EgressNatParam types.String   `tfsdk:"egress_nat"`
+	Timeouts       timeouts.Value `tfsdk:"timeouts"`
 	EgressNat
 }

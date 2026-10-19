@@ -98,6 +98,12 @@ func NodeGroupStatusAPIResponseToTFModel(ctx context.Context, am *model.NodeGrou
 		t.ImageStorageIops = types.Int64Null()
 	}
 
+	if am.MaxPods != nil {
+		t.MaxPods = types.Int64PointerValue(ptr.Get(int64(*am.MaxPods)))
+	} else {
+		t.MaxPods = types.Int64Null()
+	}
+
 	if am.LocalDisks != nil {
 		localDisks := make([]tfmodel.LocalDiskStatus, 0, len(am.LocalDisks))
 

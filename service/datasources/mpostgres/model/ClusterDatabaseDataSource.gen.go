@@ -3,12 +3,14 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ClusterDatabaseDataSourceModel struct {
-	ProjectParam  types.String `tfsdk:"project"`
-	ClusterParam  types.String `tfsdk:"cluster"`
-	DatabaseParam types.String `tfsdk:"database"`
+	ProjectParam  types.String   `tfsdk:"project"`
+	ClusterParam  types.String   `tfsdk:"cluster"`
+	DatabaseParam types.String   `tfsdk:"database"`
+	Timeouts      timeouts.Value `tfsdk:"timeouts"`
 	PostgresClusterDatabase
 }

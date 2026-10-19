@@ -196,6 +196,16 @@ func (m *TopicResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
+	readTimeout, diags := state.Timeouts.Read(ctx, 300*time.Second)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		tflog.Debug(ctx, "TopicResource.Timeouts")
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, readTimeout)
+	defer cancel()
+
 	apiRes, err := m.sdk.GetKafkaTopic(
 		ctx,
 		client.GetKafkaTopicRequest{

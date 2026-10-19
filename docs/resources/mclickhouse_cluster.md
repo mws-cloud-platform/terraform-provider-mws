@@ -169,7 +169,7 @@ Optional:
 
 Required:
 
-- `instances` (Attributes List) (see [below for nested schema](#nestedatt--shards--instances))
+- `instances` (Attributes List) Описание узла кластера (see [below for nested schema](#nestedatt--shards--instances))
 - `name` (String) -> Имя шарда, которому будут принадлежать узлы. В случае с несколькими шардами имя формируется как "name-{shardIndex}"
 - `resources` (Attributes) Ресурсы одного узла ClickHouse (see [below for nested schema](#nestedatt--shards--resources))
 
@@ -320,7 +320,7 @@ Optional:
 
 Required:
 
-- `instances` (Attributes List) (see [below for nested schema](#nestedatt--coordinator--instances))
+- `instances` (Attributes List) Описание узлов координатора (see [below for nested schema](#nestedatt--coordinator--instances))
 - `resources` (Attributes) Параметры виртуальной машины, на которой будет работать ClickHouse Keeper. Необязательный параметр в standalone-конфигурации (see [below for nested schema](#nestedatt--coordinator--resources))
 
 Optional:
@@ -572,7 +572,7 @@ Read-Only:
 
 Read-Only:
 
-- `health` (String)
+- `health` (String) Исправность узла
 - `id` (String) Идентификатор узла координатора
 - `zone` (String) Зона доступности
 
@@ -738,7 +738,7 @@ IPv4- или IPv6-адрес
 Read-Only:
 
 - `endpoints` (Attributes List) Список эндпойнтов для подключения к узлу (see [below for nested schema](#nestedatt--status--cluster--shards--instances--endpoints))
-- `health` (String)
+- `health` (String) Исправность узла
 - `id` (String) Идентификатор узла шарда
 - `index` (Number) Индекс реплики в шарде в кластере ClickHouse, который будет указан в настройках кластера в макросе "replica". Влияет на очередность исполнения распределенных запросов в кластере
 - `zone` (String) Зона доступности

@@ -17,7 +17,7 @@ import (
 func TestClickhouseClusterInstanceResourceAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
 	apiModel := model.ClickhouseClusterInstanceResourceResponse{
-		Id:   mclickhouse.NewMustClickhouseClusterShardInstanceID("projectID", "clusterID", "shardID", "instanceID"),
+		Id:   mclickhouse.NewMustClickhouseClusterShardInstanceID("projectID", "c", "b", "tht1xig"),
 		Zone: rm.NewMustZoneRef("zoneID"),
 	}
 	_, diags := conv.ClickhouseClusterInstanceResourceAPIResponseToTFModel(context.Background(), &apiModel)

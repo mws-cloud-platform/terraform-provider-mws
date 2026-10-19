@@ -19,7 +19,8 @@ func (s *ClickhouseClusterUserPage) GetSchema() schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(ClickhouseClusterUser).GetSchema().Attributes,
 				},
-				Computed: true,
+				MarkdownDescription: `Пользователи ClickHouse на текущей странице`,
+				Computed:            true,
 			},
 		},
 	}

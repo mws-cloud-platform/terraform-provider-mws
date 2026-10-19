@@ -7,19 +7,15 @@ import (
 	vpcmodel "go.mws.cloud/go-sdk/service/vpc/model"
 	vpcsdk "go.mws.cloud/go-sdk/service/vpc/sdk"
 
+	"go.mws.cloud/terraform-provider-mws/acctest/resources/vpc"
 	"go.mws.cloud/terraform-provider-mws/acctest/utils"
 )
 
 type MkafkaTestSuite struct {
-	utils.ResourceSuite
-	networkSDK *vpcsdk.Network
-	subnetSDK  *vpcsdk.Subnet
+	vpc.BaseSubnetSuite
+
 	addressSDK *vpcsdk.Address
 
-	networkName                        string
-	network                            *vpcmodel.NetworkOptionalResponse
-	subnetName                         string
-	subnet                             *vpcmodel.SubnetOptionalResponse
 	subnetBroker1Name                  string
 	subnetBroker1                      *vpcmodel.SubnetOptionalResponse
 	addressName                        string
@@ -35,57 +31,31 @@ func (s *MkafkaTestSuite) SetupSuite() {
 	var err error
 
 	ctx := s.T().Context()
-	s.ResourceSuite.SetupSuite()
+	s.BaseSubnetSuite.SetupSuite()
 
-	s.networkName = utils.RandResourceName("network")
-	s.subnetName = s.networkName + "-subnet"
-	s.subnetBroker1Name = s.networkName + "-subnet-broker1"
-	s.addressName = s.subnetName + "-address"
-	s.primaryNetworkInterfaceAddressName = s.networkName + "-primary-network-interface-address"
+	s.subnetBroker1Name = s.NetworkName + "-subnet-broker1"
+	s.addressName = s.SubnetName + "-address"
+	s.primaryNetworkInterfaceAddressName = s.NetworkName + "-primary-network-interface-address"
 
-	s.networkSDK, err = vpcsdk.NewNetwork(ctx, s.SDK)
-	s.Require().NoError(err)
-	s.subnetSDK, err = vpcsdk.NewSubnet(ctx, s.SDK)
-	s.Require().NoError(err)
 	s.addressSDK, err = vpcsdk.NewAddress(ctx, s.SDK)
 	s.Require().NoError(err)
 
-	s.network, err = s.networkSDK.CreateNetwork(ctx, vpcclient.UpsertNetworkRequest{
-		Network: s.networkName,
-	})
-	s.Require().NoError(err)
-	s.T().Logf("network %q created", s.networkName)
-
-	s.subnetBroker1, err = s.subnetSDK.CreateSubnet(ctx, vpcclient.UpsertSubnetRequest{
-		Network: s.networkName,
+	s.subnetBroker1, err = s.SubnetSDK.CreateSubnet(ctx, vpcclient.UpsertSubnetRequest{
+		Network: s.NetworkName,
 		Subnet:  s.subnetBroker1Name,
-		Body: vpcmodel.SubnetRequest{
-			Spec: vpcmodel.SubnetSpecRequest{
-				Cidr: cidraddress.MustParseCIDR4AddressString("192.168.0.0/18"),
-			},
-		},
-	}, vpcclient.WithWait())
-
-	s.Require().NoError(err)
-	s.T().Logf("subnet %q created", s.subnetBroker1Name)
-
-	s.subnet, err = s.subnetSDK.CreateSubnet(ctx, vpcclient.UpsertSubnetRequest{
-		Network: s.networkName,
-		Subnet:  s.subnetName,
 		Body: vpcmodel.SubnetRequest{
 			Spec: vpcmodel.SubnetSpecRequest{
 				Cidr: cidraddress.MustParseCIDR4AddressString("10.243.0.0/18"),
 			},
 		},
 	}, vpcclient.WithWait())
-
 	s.Require().NoError(err)
-	s.T().Logf("subnet %q created", s.subnetName)
+	s.T().Logf("subnet %q created", s.subnetBroker1Name)
 
-	subnetRef, err := vpcref.ParseSubnetRef(s.T().Context(), s.subnet.GetMetadata().GetId().ID())
+	subnetRef, err := vpcref.ParseSubnetRef(s.T().Context(), s.Subnet.GetMetadata().GetId().ID())
 	s.Require().NoError(err)
 	s.primaryNetworkInterfaceAddress, err = s.addressSDK.CreateAddress(ctx, vpcclient.UpsertAddressRequest{
-		Network: s.networkName,
+		Network: s.NetworkName,
 		Address: s.primaryNetworkInterfaceAddressName,
 		Body: &vpcmodel.AddressRequest{
 			Spec: vpcmodel.VpcAddressSpecRequest{
@@ -103,7 +73,7 @@ func (s *MkafkaTestSuite) SetupSuite() {
 	subnetBroker1Ref, err := vpcref.ParseSubnetRef(ctx, s.subnetBroker1.GetMetadata().GetId().ID())
 	s.Require().NoError(err)
 	brokerAddr1, err := s.addressSDK.UpsertAddress(ctx, vpcclient.UpsertAddressRequest{
-		Network: s.networkName,
+		Network: s.NetworkName,
 		Address: s.address1Name,
 		Body: &vpcmodel.AddressRequest{
 			Spec: vpcmodel.VpcAddressSpecRequest{
@@ -119,7 +89,7 @@ func (s *MkafkaTestSuite) SetupSuite() {
 func (s *MkafkaTestSuite) TearDownSuite() {
 	ctx := s.T().Context()
 	if err := s.addressSDK.DeleteAddress(ctx, vpcclient.DeleteAddressRequest{
-		Network: s.networkName,
+		Network: s.NetworkName,
 		Address: s.address1Name,
 	}, vpcclient.WithWait()); err != nil {
 		s.T().Logf("address %q deletion failed: %v", s.address1Name, err)
@@ -127,7 +97,7 @@ func (s *MkafkaTestSuite) TearDownSuite() {
 		s.T().Logf("address %q deleted", s.address1Name)
 	}
 	if err := s.addressSDK.DeleteAddress(ctx, vpcclient.DeleteAddressRequest{
-		Network: s.networkName,
+		Network: s.NetworkName,
 		Address: s.primaryNetworkInterfaceAddressName,
 	}, vpcclient.WithWait()); err != nil {
 		s.T().Logf(
@@ -142,23 +112,8 @@ func (s *MkafkaTestSuite) TearDownSuite() {
 		)
 	}
 
-	if err := s.subnetSDK.DeleteSubnet(ctx, vpcclient.DeleteSubnetRequest{
-		Network: s.networkName,
-		Subnet:  s.subnetName,
-	}, vpcclient.WithWait()); err != nil {
-		s.T().Logf(
-			"subnet %q deletion failed: %v",
-			s.subnetName,
-			err,
-		)
-	} else {
-		s.T().Logf(
-			"subnet %q deleted",
-			s.subnetName,
-		)
-	}
-	if err := s.subnetSDK.DeleteSubnet(ctx, vpcclient.DeleteSubnetRequest{
-		Network: s.networkName,
+	if err := s.SubnetSDK.DeleteSubnet(ctx, vpcclient.DeleteSubnetRequest{
+		Network: s.NetworkName,
 		Subnet:  s.subnetBroker1Name,
 	}, vpcclient.WithWait()); err != nil {
 		s.T().Logf(
@@ -173,20 +128,5 @@ func (s *MkafkaTestSuite) TearDownSuite() {
 		)
 	}
 
-	if err := s.networkSDK.DeleteNetwork(ctx, vpcclient.DeleteNetworkRequest{
-		Network: s.networkName,
-	}, vpcclient.WithWait()); err != nil {
-		s.T().Logf(
-			"network %q deletion failed: %v",
-			s.networkName,
-			err,
-		)
-	} else {
-		s.T().Logf(
-			"network %q deleted",
-			s.networkName,
-		)
-	}
-
-	s.ResourceSuite.TearDownSuite()
+	s.BaseSubnetSuite.TearDownSuite()
 }

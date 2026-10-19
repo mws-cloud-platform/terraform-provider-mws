@@ -3,12 +3,14 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type TopicDataSourceModel struct {
-	ProjectParam types.String `tfsdk:"project"`
-	ClusterParam types.String `tfsdk:"cluster"`
-	TopicParam   types.String `tfsdk:"topic"`
+	ProjectParam types.String   `tfsdk:"project"`
+	ClusterParam types.String   `tfsdk:"cluster"`
+	TopicParam   types.String   `tfsdk:"topic"`
+	Timeouts     timeouts.Value `tfsdk:"timeouts"`
 	KafkaTopic
 }

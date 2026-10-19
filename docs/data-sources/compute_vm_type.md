@@ -25,6 +25,10 @@ data "mws_compute_vm_type" "vm_type" {
 
 - `vm_type` (String)
 
+### Optional
+
+- `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
+
 ### Read-Only
 
 - `cpu` (Attributes) Спецификация процессора, который доступен для ВМ указанного типа (see [below for nested schema](#nestedatt--cpu))
@@ -34,6 +38,14 @@ data "mws_compute_vm_type" "vm_type" {
 - `memory` (Attributes) Спецификация RAM, которая доступна для ВМ указанного типа (see [below for nested schema](#nestedatt--memory))
 - `metadata` (Attributes) Метаданные типа ВМ (see [below for nested schema](#nestedatt--metadata))
 - `status` (Attributes) Статус типа ВМ (see [below for nested schema](#nestedatt--status))
+
+<a id="nestedatt--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `read` (String) A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+
 
 <a id="nestedatt--cpu"></a>
 ### Nested Schema for `cpu`

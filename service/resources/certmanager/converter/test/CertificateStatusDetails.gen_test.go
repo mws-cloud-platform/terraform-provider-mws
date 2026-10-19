@@ -16,12 +16,14 @@ import (
 func TestCertificateStatusDetailsAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
 	apiModel := model.CertificateStatusDetailsResponse{
-		Serial:    "serial",
-		Issuer:    "issuer",
-		Subject:   "subject",
-		NotAfter:  time.Unix(0, 0).UTC(),
-		NotBefore: time.Unix(0, 0).UTC(),
-		Domains:   []model.CertificateDomain{},
+		KeyAlgorithm:               "",
+		SupportedPrivateKeyFormats: []model.PrivateKeyFormat{},
+		Serial:                     "serial",
+		Issuer:                     "issuer",
+		Subject:                    "subject",
+		NotAfter:                   time.Unix(0, 0).UTC(),
+		NotBefore:                  time.Unix(0, 0).UTC(),
+		Domains:                    []model.CertificateDomain{},
 	}
 	_, diags := conv.CertificateStatusDetailsAPIResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())

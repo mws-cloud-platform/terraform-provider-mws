@@ -13,6 +13,7 @@ type OutputModalities struct {
 	Audio         types.Bool `tfsdk:"audio"`
 	Image         types.Bool `tfsdk:"image"`
 	Reranking     types.Bool `tfsdk:"reranking"`
+	Decision      types.Bool `tfsdk:"decision"`
 	Transcription types.Bool `tfsdk:"transcription"`
 }
 
@@ -21,22 +22,32 @@ func (s *OutputModalities) GetSchema() schema.Schema {
 		MarkdownDescription: ``,
 		Attributes: map[string]schema.Attribute{
 			"text": schema.BoolAttribute{
-				Computed: true,
+				MarkdownDescription: `Признак того, что модель поддерживает текстовый вывод`,
+				Computed:            true,
 			},
 			"embedding": schema.BoolAttribute{
-				Computed: true,
+				MarkdownDescription: `Признак того, что модель поддерживает вывод эмбеддингов`,
+				Computed:            true,
 			},
 			"audio": schema.BoolAttribute{
-				Computed: true,
+				MarkdownDescription: `Признак того, что модель поддерживает аудиовывод`,
+				Computed:            true,
 			},
 			"image": schema.BoolAttribute{
-				Computed: true,
+				MarkdownDescription: `Признак того, что модель поддерживает вывод изображений`,
+				Computed:            true,
 			},
 			"reranking": schema.BoolAttribute{
-				Computed: true,
+				MarkdownDescription: `Признак того, что модель поддерживает переранжирование результатов`,
+				Computed:            true,
+			},
+			"decision": schema.BoolAttribute{
+				MarkdownDescription: `Признак того, что модель поддерживает принятие решений`,
+				Computed:            true,
 			},
 			"transcription": schema.BoolAttribute{
-				Computed: true,
+				MarkdownDescription: `Признак того, что модель поддерживает транскрипцию`,
+				Computed:            true,
 			},
 		},
 	}

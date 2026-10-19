@@ -3,15 +3,17 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/datasources/common/model"
 )
 
 type TopicRoleBindingsListDataSourceModel struct {
-	ProjectParam types.String `tfsdk:"project"`
-	TopicParam   types.String `tfsdk:"topic"`
-	FilterParam  types.String `tfsdk:"filter"`
-	OrderByParam types.String `tfsdk:"order_by"`
+	ProjectParam types.String   `tfsdk:"project"`
+	TopicParam   types.String   `tfsdk:"topic"`
+	FilterParam  types.String   `tfsdk:"filter"`
+	OrderByParam types.String   `tfsdk:"order_by"`
+	Timeouts     timeouts.Value `tfsdk:"timeouts"`
 	tfcommon.CommonRoleBindingList
 }

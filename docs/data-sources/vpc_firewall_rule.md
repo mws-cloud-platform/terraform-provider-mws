@@ -30,6 +30,7 @@ data "mws_vpc_firewall_rule" "firewall_rule" {
 ### Optional
 
 - `project` (String) Путь к проекту.
+- `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 
 ### Read-Only
 
@@ -43,6 +44,14 @@ data "mws_vpc_firewall_rule" "firewall_rule" {
 - `proto_ports` (List of String) Критерий применимости правила. Определяет список протоколов и соответствующих портов (если применимо) назначения пакета. Значение по умолчанию - пустое значение. Означает любой протокол и порт
 - `source` (Attributes) Критерий применимости правила, описывает источник отправления пакета (see [below for nested schema](#nestedatt--source))
 - `status` (Attributes) Статус правила файрвола (see [below for nested schema](#nestedatt--status))
+
+<a id="nestedatt--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `read` (String) A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+
 
 <a id="nestedatt--destination"></a>
 ### Nested Schema for `destination`

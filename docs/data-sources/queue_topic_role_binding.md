@@ -30,6 +30,7 @@ data "mws_queue_topic_role_binding" "queue_topic_role_binding" {
 ### Optional
 
 - `project` (String) Путь к проекту.
+- `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 
 ### Read-Only
 
@@ -39,6 +40,14 @@ data "mws_queue_topic_role_binding" "queue_topic_role_binding" {
 - `status` (Attributes) Текущее состояние привязки роли, вычисляемое системой (see [below for nested schema](#nestedatt--status))
 - `subject` (Attributes) Субъект привязки роли — пользователь, сервисный аккаунт, группа пользователей или другая сущность, которой выдаются права. Должно быть заполнено ровно одно из полей (see [below for nested schema](#nestedatt--subject))
 - `support_request_id` (String) Идентификатор запроса в службу поддержки, в рамках которого был создан биндинг
+
+<a id="nestedatt--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `read` (String) A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+
 
 <a id="nestedatt--metadata"></a>
 ### Nested Schema for `metadata`
@@ -75,7 +84,17 @@ Read-Only:
 
 Read-Only:
 
+- `active` (Attributes) Состояние активности привязки роли (see [below for nested schema](#nestedatt--status--active))
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
+- `role_binding` (Attributes) Состояние обработки привязки роли системой (see [below for nested schema](#nestedatt--status--role_binding))
+
+<a id="nestedatt--status--active"></a>
+### Nested Schema for `status.active`
+
+Read-Only:
+
+- `role_binding_state` (Boolean) Привязка роли активна/не активна
+
 
 <a id="nestedatt--status--ready"></a>
 ### Nested Schema for `status.ready`
@@ -84,6 +103,23 @@ Read-Only:
 
 - `message` (String) Описание статуса
 - `state` (String) Состояние ресурса
+
+
+<a id="nestedatt--status--role_binding"></a>
+### Nested Schema for `status.role_binding`
+
+Read-Only:
+
+- `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--role_binding--ready))
+
+<a id="nestedatt--status--role_binding--ready"></a>
+### Nested Schema for `status.role_binding.ready`
+
+Read-Only:
+
+- `message` (String) Описание статуса
+- `state` (String) Состояние ресурса
+
 
 
 

@@ -207,6 +207,16 @@ func (m *VirtualMachineResource) Read(ctx context.Context, req resource.ReadRequ
 	}
 	state.Zone = zoneParam
 
+	readTimeout, diags := state.Timeouts.Read(ctx, 300*time.Second)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		tflog.Debug(ctx, "VirtualMachineResource.Timeouts")
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, readTimeout)
+	defer cancel()
+
 	apiRes, err := m.sdk.GetVirtualMachine(
 		ctx,
 		client.GetVirtualMachineRequest{

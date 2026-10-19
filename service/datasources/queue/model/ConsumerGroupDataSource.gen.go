@@ -3,11 +3,13 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ConsumerGroupDataSourceModel struct {
-	ProjectParam       types.String `tfsdk:"project"`
-	ConsumerGroupParam types.String `tfsdk:"consumer_group"`
+	ProjectParam       types.String   `tfsdk:"project"`
+	ConsumerGroupParam types.String   `tfsdk:"consumer_group"`
+	Timeouts           timeouts.Value `tfsdk:"timeouts"`
 	ConsumerGroup
 }

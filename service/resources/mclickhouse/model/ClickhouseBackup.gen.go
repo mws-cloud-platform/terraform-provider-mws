@@ -37,8 +37,9 @@ func (s *ClickhouseBackup) GetSchema() schema.Schema {
 				Optional:   true,
 			},
 			"status": schema.SingleNestedAttribute{
-				Attributes: new(ClickhouseBackupStatus).GetSchema().Attributes,
-				Computed:   true,
+				Attributes:          new(ClickhouseBackupStatus).GetSchema().Attributes,
+				MarkdownDescription: `Текущее состояние резервной копии`,
+				Computed:            true,
 			},
 		},
 	}

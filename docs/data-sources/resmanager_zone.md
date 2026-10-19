@@ -23,6 +23,7 @@ data "mws_resmanager_zone" "example_zone" {
 
 ### Optional
 
+- `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 - `zone` (String) Зона (ЦОД).
 
 ### Read-Only
@@ -31,6 +32,14 @@ data "mws_resmanager_zone" "example_zone" {
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
 - `region` (String) Регион, в котором расположена зона
 - `status` (Attributes) Текущее состояние ресурса, вычисляемое системой (see [below for nested schema](#nestedatt--status))
+
+<a id="nestedatt--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `read` (String) A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+
 
 <a id="nestedatt--metadata"></a>
 ### Nested Schema for `metadata`

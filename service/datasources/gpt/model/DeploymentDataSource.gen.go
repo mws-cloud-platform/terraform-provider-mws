@@ -3,11 +3,13 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type DeploymentDataSourceModel struct {
-	ProjectParam        types.String `tfsdk:"project"`
-	DeploymentNameParam types.String `tfsdk:"deployment_name"`
+	ProjectParam        types.String   `tfsdk:"project"`
+	DeploymentNameParam types.String   `tfsdk:"deployment_name"`
+	Timeouts            timeouts.Value `tfsdk:"timeouts"`
 	Deployment
 }

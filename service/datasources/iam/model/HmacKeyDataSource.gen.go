@@ -3,12 +3,14 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type HmacKeyDataSourceModel struct {
-	ProjectParam        types.String `tfsdk:"project"`
-	ServiceAccountParam types.String `tfsdk:"service_account"`
-	KeyNameParam        types.String `tfsdk:"key_name"`
+	ProjectParam        types.String   `tfsdk:"project"`
+	ServiceAccountParam types.String   `tfsdk:"service_account"`
+	KeyNameParam        types.String   `tfsdk:"key_name"`
+	Timeouts            timeouts.Value `tfsdk:"timeouts"`
 	HmacKey
 }

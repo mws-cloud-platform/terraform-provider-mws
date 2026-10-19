@@ -28,6 +28,7 @@ data "mws_compute_disk_backup" "compute_disk_backup_name" {
 ### Optional
 
 - `project` (String) Путь к проекту.
+- `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 
 ### Read-Only
 
@@ -36,6 +37,14 @@ data "mws_compute_disk_backup" "compute_disk_backup_name" {
 - `os_type` (String) Тип операционной системы
 - `source` (Attributes) Источник для создания резервной копии диска (На текущий момент поддерживается только диск, но в будущем будут и другие источники) (see [below for nested schema](#nestedatt--source))
 - `status` (Attributes) Статус глобальной резервной копии диска (see [below for nested schema](#nestedatt--status))
+
+<a id="nestedatt--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `read` (String) A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+
 
 <a id="nestedatt--metadata"></a>
 ### Nested Schema for `metadata`

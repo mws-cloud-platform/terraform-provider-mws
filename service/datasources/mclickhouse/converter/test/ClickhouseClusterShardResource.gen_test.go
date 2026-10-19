@@ -17,7 +17,7 @@ import (
 func TestClickhouseClusterShardResourceAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
 	apiModel := model.ClickhouseClusterShardResourceResponse{
-		Id:     mclickhouse.NewMustClickhouseClusterShardID("projectID", "clusterID", "shardID"),
+		Id:     mclickhouse.NewMustClickhouseClusterShardID("projectID", "b", "x"),
 		Weight: 0,
 		Resources: model.ClickhouseInstanceHWResourcesResponse{
 			VmType: mclickhouse.NewMustClickhouseVmTypeRef("vmTypeID"),

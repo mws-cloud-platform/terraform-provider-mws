@@ -3,12 +3,14 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type RolesListDataSourceModel struct {
-	FilterParam  types.String `tfsdk:"filter"`
-	OrderByParam types.String `tfsdk:"order_by"`
-	TypeParam    types.String `tfsdk:"type"`
+	FilterParam  types.String   `tfsdk:"filter"`
+	OrderByParam types.String   `tfsdk:"order_by"`
+	TypeParam    types.String   `tfsdk:"type"`
+	Timeouts     timeouts.Value `tfsdk:"timeouts"`
 	GlobalRoleListV2
 }

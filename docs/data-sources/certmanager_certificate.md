@@ -28,6 +28,7 @@ data "mws_certmanager_certificate" "certificate" {
 ### Optional
 
 - `project` (String) Путь к проекту.
+- `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 
 ### Read-Only
 
@@ -35,6 +36,14 @@ data "mws_certmanager_certificate" "certificate" {
 - `managed` (Attributes) (see [below for nested schema](#nestedatt--managed))
 - `metadata` (Attributes) Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров (see [below for nested schema](#nestedatt--metadata))
 - `status` (Attributes) (see [below for nested schema](#nestedatt--status))
+
+<a id="nestedatt--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `read` (String) A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+
 
 <a id="nestedatt--managed"></a>
 ### Nested Schema for `managed`
@@ -170,6 +179,7 @@ Read-Only:
 
 - `domains` (List of String) Домены, к которым относится сертификат
 - `issuer` (String) Издатель сертификата
+- `key_algorithm` (String) Алгоритм ключа сертификата
 - `not_after` (String) Дата окончания срока действия сертификата
 
 Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
@@ -178,6 +188,9 @@ Read-Only:
 Дата в формате RFC3339. Пример: 2006-01-02T15:04:05Z07:00
 - `serial` (String) Серийный номер сертификата
 - `subject` (String) Владелец сертификата
+- `supported_private_key_formats` (List of String) Форматы экспорта закрытого ключа, доступные для параметра "privateKeyFormat" при скачивании сертификата.
+Для ключей "RSA": "PKCS1" и "PKCS8"; для ключей "EC": "SEC1" и "PKCS8";
+для ключей "ED25519" и "ED448": только "PKCS8"
 
 
 <a id="nestedatt--status--ready"></a>

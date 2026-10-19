@@ -3,11 +3,13 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ImageDataSourceModel struct {
-	ProjectParam types.String `tfsdk:"project"`
-	ImageParam   types.String `tfsdk:"image"`
+	ProjectParam types.String   `tfsdk:"project"`
+	ImageParam   types.String   `tfsdk:"image"`
+	Timeouts     timeouts.Value `tfsdk:"timeouts"`
 	Image
 }

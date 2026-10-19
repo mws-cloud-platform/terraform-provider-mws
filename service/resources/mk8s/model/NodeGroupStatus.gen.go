@@ -19,6 +19,7 @@ type NodeGroupStatus struct {
 	Memory           types.String `tfsdk:"memory"`
 	ImageStorageSize types.String `tfsdk:"image_storage_size"`
 	ImageStorageIops types.Int64  `tfsdk:"image_storage_iops"`
+	MaxPods          types.Int64  `tfsdk:"max_pods"`
 	LocalDisks       types.List   `tfsdk:"local_disks"`
 	DataCache        types.Bool   `tfsdk:"data_cache"`
 	Scale            types.Object `tfsdk:"scale"`
@@ -73,6 +74,10 @@ func (s *NodeGroupStatus) GetSchema() schema.Schema {
 			},
 			"image_storage_iops": schema.Int64Attribute{
 				MarkdownDescription: `Количество операций ввода-вывода в секунду (IOPS) для хранилища образов и контейнеров`,
+				Computed:            true,
+			},
+			"max_pods": schema.Int64Attribute{
+				MarkdownDescription: `Максимальное количество Pod, которые можно запланировать на каждом узле группы`,
 				Computed:            true,
 			},
 			"local_disks": schema.ListNestedAttribute{

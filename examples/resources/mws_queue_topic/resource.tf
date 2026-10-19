@@ -9,7 +9,7 @@ resource "mws_queue_topic" "example" {
   partition_count = 3
 
   config = {
-    "cleanup.policy" = "compact"
+    "cleanup.policy" = "delete"
     "retention.ms"   = "86400000"
   }
 }

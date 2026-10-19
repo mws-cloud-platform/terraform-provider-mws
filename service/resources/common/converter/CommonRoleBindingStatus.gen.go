@@ -36,6 +36,42 @@ func CommonRoleBindingStatusAPIToTFModel(ctx context.Context, am *commonmodel.Co
 	}
 	t.ResourceStatus.Ready = readyTfObject
 
+	if am.RoleBinding != nil {
+		roleBindingTmp, d := CommonRoleBindingStatusSpecAPIToTFModel(ctx, am.RoleBinding)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		roleBindingTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingStatusSpec).GetSchema().Attributes),
+			*roleBindingTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.RoleBinding = roleBindingTfObject
+	} else {
+		t.RoleBinding = types.ObjectNull(tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingStatusSpec).GetSchema().Attributes))
+	}
+
+	if am.Active != nil {
+		activeTmp, d := CommonRoleBindingActiveStatusAPIToTFModel(ctx, am.Active)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		activeTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingActiveStatus).GetSchema().Attributes),
+			*activeTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.Active = activeTfObject
+	} else {
+		t.Active = types.ObjectNull(tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingActiveStatus).GetSchema().Attributes))
+	}
+
 	return &t, diags
 }
 
@@ -61,6 +97,42 @@ func CommonRoleBindingStatusAPIResponseToTFModel(ctx context.Context, am *common
 	}
 	t.ResourceStatus.Ready = readyTfObject
 
+	if am.RoleBinding != nil {
+		roleBindingTmp, d := CommonRoleBindingStatusSpecAPIResponseToTFModel(ctx, am.RoleBinding)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		roleBindingTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingStatusSpec).GetSchema().Attributes),
+			*roleBindingTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.RoleBinding = roleBindingTfObject
+	} else {
+		t.RoleBinding = types.ObjectNull(tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingStatusSpec).GetSchema().Attributes))
+	}
+
+	if am.Active != nil {
+		activeTmp, d := CommonRoleBindingActiveStatusAPIResponseToTFModel(ctx, am.Active)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		activeTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingActiveStatus).GetSchema().Attributes),
+			*activeTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.Active = activeTfObject
+	} else {
+		t.Active = types.ObjectNull(tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingActiveStatus).GetSchema().Attributes))
+	}
+
 	return &t, diags
 }
 
@@ -85,6 +157,42 @@ func CommonRoleBindingStatusAPIOptionalResponseToTFModel(ctx context.Context, am
 		return nil, diags
 	}
 	t.ResourceStatus.Ready = readyTfObject
+
+	if val, ok := am.RoleBinding.Get(); ok {
+		roleBindingTmp, d := CommonRoleBindingStatusSpecAPIOptionalResponseToTFModel(ctx, &val)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		roleBindingTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingStatusSpec).GetSchema().Attributes),
+			*roleBindingTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.RoleBinding = roleBindingTfObject
+	} else {
+		t.RoleBinding = types.ObjectNull(tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingStatusSpec).GetSchema().Attributes))
+	}
+
+	if am.Active != nil {
+		activeTmp, d := CommonRoleBindingActiveStatusAPIResponseToTFModel(ctx, am.Active)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		activeTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingActiveStatus).GetSchema().Attributes),
+			*activeTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.Active = activeTfObject
+	} else {
+		t.Active = types.ObjectNull(tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingActiveStatus).GetSchema().Attributes))
+	}
 
 	return &t, diags
 }
@@ -113,6 +221,38 @@ func CommonRoleBindingStatusTFToAPIModel(ctx context.Context, plan *tfcommon.Com
 		am.Ready = *readyTmp
 	}
 
+	if !plan.RoleBinding.IsNull() && !plan.RoleBinding.IsUnknown() {
+		roleBindingPlan := tfcommon.CommonRoleBindingStatusSpec{}
+		roleBindingPlanDiag := plan.RoleBinding.As(ctx, &roleBindingPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, roleBindingPlanDiag...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		roleBindingTmp, roleBindingDiag := CommonRoleBindingStatusSpecTFToAPIModel(ctx, &roleBindingPlan)
+		diags = append(diags, roleBindingDiag...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		am.RoleBinding = roleBindingTmp
+	}
+
+	if !plan.Active.IsNull() && !plan.Active.IsUnknown() {
+		activePlan := tfcommon.CommonRoleBindingActiveStatus{}
+		activePlanDiag := plan.Active.As(ctx, &activePlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, activePlanDiag...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		activeTmp, activeDiag := CommonRoleBindingActiveStatusTFToAPIModel(ctx, &activePlan)
+		diags = append(diags, activeDiag...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		am.Active = activeTmp
+	}
+
 	return &am, diags
 }
 
@@ -138,6 +278,22 @@ func CommonRoleBindingStatusTFToAPIRequestModel(ctx context.Context, plan *tfcom
 			return nil, diags
 		}
 		am.Ready = *readyTmp
+	}
+
+	if !plan.RoleBinding.IsNull() && !plan.RoleBinding.IsUnknown() {
+		roleBindingPlan := tfcommon.CommonRoleBindingStatusSpec{}
+		roleBindingPlanDiag := plan.RoleBinding.As(ctx, &roleBindingPlan, basetypes.ObjectAsOptions{})
+		diags = append(diags, roleBindingPlanDiag...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		roleBindingTmp, roleBindingDiag := CommonRoleBindingStatusSpecTFToAPIRequestModel(ctx, &roleBindingPlan)
+		diags = append(diags, roleBindingDiag...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		am.RoleBinding = roleBindingTmp
 	}
 
 	return &am, diags
@@ -181,6 +337,64 @@ func CommonRoleBindingStatusTFToAPIUpdateModel(ctx context.Context, plan, state 
 		}
 	}
 
+	if !plan.RoleBinding.Equal(state.RoleBinding) {
+		if !plan.RoleBinding.IsNull() && !plan.RoleBinding.IsUnknown() {
+			roleBindingPlan := tfcommon.CommonRoleBindingStatusSpec{}
+			roleBindingPlanDiag := plan.RoleBinding.As(ctx, &roleBindingPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, roleBindingPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			roleBindingState := tfcommon.CommonRoleBindingStatusSpec{}
+			if !state.RoleBinding.IsNull() && !state.RoleBinding.IsUnknown() {
+				roleBindingStateDiag := state.RoleBinding.As(ctx, &roleBindingState, basetypes.ObjectAsOptions{})
+				diags = append(diags, roleBindingStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			roleBindingTmp, roleBindingDiag := CommonRoleBindingStatusSpecTFToAPIUpdateModel(ctx, &roleBindingPlan, &roleBindingState)
+			diags = append(diags, roleBindingDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.RoleBinding.SetTo(*roleBindingTmp)
+		} else if plan.RoleBinding.IsNull() {
+			am.RoleBinding.SetToNull()
+		}
+	}
+
+	if !plan.Active.Equal(state.Active) {
+		if !plan.Active.IsNull() && !plan.Active.IsUnknown() {
+			activePlan := tfcommon.CommonRoleBindingActiveStatus{}
+			activePlanDiag := plan.Active.As(ctx, &activePlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, activePlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			activeState := tfcommon.CommonRoleBindingActiveStatus{}
+			if !state.Active.IsNull() && !state.Active.IsUnknown() {
+				activeStateDiag := state.Active.As(ctx, &activeState, basetypes.ObjectAsOptions{})
+				diags = append(diags, activeStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			activeTmp, activeDiag := CommonRoleBindingActiveStatusTFToAPIUpdateModel(ctx, &activePlan, &activeState)
+			diags = append(diags, activeDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.Active.SetTo(*activeTmp)
+		} else if plan.Active.IsNull() {
+			am.Active.SetToNull()
+		}
+	}
+
 	return &am, diags
 }
 
@@ -219,6 +433,35 @@ func CommonRoleBindingStatusTFToAPIUpdateRequestModel(ctx context.Context, plan,
 				return nil, diags
 			}
 			am.Ready.SetTo(*readyTmp)
+		}
+	}
+
+	if !plan.RoleBinding.Equal(state.RoleBinding) {
+		if !plan.RoleBinding.IsNull() && !plan.RoleBinding.IsUnknown() {
+			roleBindingPlan := tfcommon.CommonRoleBindingStatusSpec{}
+			roleBindingPlanDiag := plan.RoleBinding.As(ctx, &roleBindingPlan, basetypes.ObjectAsOptions{})
+			diags = append(diags, roleBindingPlanDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+
+			roleBindingState := tfcommon.CommonRoleBindingStatusSpec{}
+			if !state.RoleBinding.IsNull() && !state.RoleBinding.IsUnknown() {
+				roleBindingStateDiag := state.RoleBinding.As(ctx, &roleBindingState, basetypes.ObjectAsOptions{})
+				diags = append(diags, roleBindingStateDiag...)
+				if diags.HasError() {
+					return nil, diags
+				}
+			}
+
+			roleBindingTmp, roleBindingDiag := CommonRoleBindingStatusSpecTFToAPIUpdateRequestModel(ctx, &roleBindingPlan, &roleBindingState)
+			diags = append(diags, roleBindingDiag...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			am.RoleBinding.SetTo(*roleBindingTmp)
+		} else if plan.RoleBinding.IsNull() {
+			am.RoleBinding.SetToNull()
 		}
 	}
 

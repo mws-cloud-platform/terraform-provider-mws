@@ -30,6 +30,12 @@ func OutputModalitiesAPIResponseToTFModel(ctx context.Context, am *model.OutputM
 
 	t.Reranking = types.BoolValue(am.Reranking)
 
+	if am.Decision != nil {
+		t.Decision = types.BoolPointerValue(am.Decision)
+	} else {
+		t.Decision = types.BoolNull()
+	}
+
 	t.Transcription = types.BoolValue(am.Transcription)
 
 	return &t, diags

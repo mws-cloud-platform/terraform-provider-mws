@@ -3,11 +3,13 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type CertificateDataSourceModel struct {
-	ProjectParam types.String `tfsdk:"project"`
-	NameParam    types.String `tfsdk:"name"`
+	ProjectParam types.String   `tfsdk:"project"`
+	NameParam    types.String   `tfsdk:"name"`
+	Timeouts     timeouts.Value `tfsdk:"timeouts"`
 	Certificate
 }

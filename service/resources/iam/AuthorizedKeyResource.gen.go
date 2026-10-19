@@ -235,6 +235,16 @@ func (m *AuthorizedKeyResource) Read(ctx context.Context, req resource.ReadReque
 	state.ProjectParam = projectParam
 	ctx = ctxvalues.With(ctx, "project", projectParam.String())
 
+	readTimeout, diags := state.Timeouts.Read(ctx, 300*time.Second)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		tflog.Debug(ctx, "AuthorizedKeyResource.Timeouts")
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, readTimeout)
+	defer cancel()
+
 	apiRes, err := m.sdk.GetAuthorizedKeyV2(
 		ctx,
 		client.GetAuthorizedKeyV2Request{

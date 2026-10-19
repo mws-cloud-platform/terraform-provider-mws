@@ -18,7 +18,7 @@ type ClickhouseBackupStatus struct {
 
 func (s *ClickhouseBackupStatus) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Текущее состояние резервной копии.`,
 		Attributes: map[string]schema.Attribute{
 			"ready": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.ResourceStatusReady).GetSchema().Attributes,
@@ -57,7 +57,7 @@ func (s *ClickhouseBackupStatusBackup) GetSchema() schema.Schema {
 				Computed: true,
 			},
 			"type": schema.StringAttribute{
-				MarkdownDescription: `Причина создания резервной копии в CPL`,
+				MarkdownDescription: `Тип резервной копии`,
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"FULL",

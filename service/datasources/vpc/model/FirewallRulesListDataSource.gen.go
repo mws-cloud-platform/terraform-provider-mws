@@ -3,13 +3,15 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type FirewallRulesListDataSourceModel struct {
-	ProjectParam types.String `tfsdk:"project"`
-	NetworkParam types.String `tfsdk:"network"`
-	FilterParam  types.String `tfsdk:"filter"`
-	OrderByParam types.String `tfsdk:"order_by"`
+	ProjectParam types.String   `tfsdk:"project"`
+	NetworkParam types.String   `tfsdk:"network"`
+	FilterParam  types.String   `tfsdk:"filter"`
+	OrderByParam types.String   `tfsdk:"order_by"`
+	Timeouts     timeouts.Value `tfsdk:"timeouts"`
 	ListFirewallRulesResponse
 }

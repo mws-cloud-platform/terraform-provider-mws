@@ -28,6 +28,7 @@ data "mws_mclickhouse_cluster" "mclickhouse_cluster_name" {
 ### Optional
 
 - `project` (String) Путь к проекту.
+- `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 
 ### Read-Only
 
@@ -45,6 +46,14 @@ data "mws_mclickhouse_cluster" "mclickhouse_cluster_name" {
 - `status` (Attributes) (see [below for nested schema](#nestedatt--status))
 - `storage` (Attributes) Конфигурация схемы хранилищ ClickHouse (see [below for nested schema](#nestedatt--storage))
 - `version` (String) Версия продукта
+
+<a id="nestedatt--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `read` (String) A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+
 
 <a id="nestedatt--backup"></a>
 ### Nested Schema for `backup`
@@ -68,7 +77,7 @@ Read-Only:
 
 Read-Only:
 
-- `instances` (Attributes List) (see [below for nested schema](#nestedatt--coordinator--instances))
+- `instances` (Attributes List) Описание узлов координатора (see [below for nested schema](#nestedatt--coordinator--instances))
 - `resources` (Attributes) Параметры виртуальной машины, на которой будет работать ClickHouse Keeper. Необязательный параметр в standalone-конфигурации (see [below for nested schema](#nestedatt--coordinator--resources))
 - `type` (String) Тип координатора. Если не указано, то при наличии более одного узла, используется ClickHouse Keeper
 
@@ -210,7 +219,7 @@ Read-Only:
 Read-Only:
 
 - `endpoints` (Attributes List) Описание эндпоинтов шардов (see [below for nested schema](#nestedatt--shards--endpoints))
-- `instances` (Attributes List) (see [below for nested schema](#nestedatt--shards--instances))
+- `instances` (Attributes List) Описание узла кластера (see [below for nested schema](#nestedatt--shards--instances))
 - `name` (String) -> Имя шарда, которому будут принадлежать узлы. В случае с несколькими шардами имя формируется как "name-{shardIndex}"
 - `resources` (Attributes) Ресурсы одного узла ClickHouse (see [below for nested schema](#nestedatt--shards--resources))
 - `weight` (Number) Вес шарда
@@ -395,7 +404,7 @@ Read-Only:
 
 Read-Only:
 
-- `health` (String)
+- `health` (String) Исправность узла
 - `id` (String) Идентификатор узла координатора
 - `zone` (String) Зона доступности
 
@@ -555,7 +564,7 @@ IPv4- или IPv6-адрес
 Read-Only:
 
 - `endpoints` (Attributes List) Список эндпойнтов для подключения к узлу (see [below for nested schema](#nestedatt--status--cluster--shards--instances--endpoints))
-- `health` (String)
+- `health` (String) Исправность узла
 - `id` (String) Идентификатор узла шарда
 - `index` (Number) Индекс реплики в шарде в кластере ClickHouse, который будет указан в настройках кластера в макросе "replica". Влияет на очередность исполнения распределенных запросов в кластере
 - `zone` (String) Зона доступности

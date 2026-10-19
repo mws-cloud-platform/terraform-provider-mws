@@ -3,12 +3,14 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type AuthorizedKeyDataSourceModel struct {
-	ProjectParam        types.String `tfsdk:"project"`
-	ServiceAccountParam types.String `tfsdk:"service_account"`
-	AuthorizedKeyParam  types.String `tfsdk:"authorized_key"`
+	ProjectParam        types.String   `tfsdk:"project"`
+	ServiceAccountParam types.String   `tfsdk:"service_account"`
+	AuthorizedKeyParam  types.String   `tfsdk:"authorized_key"`
+	Timeouts            timeouts.Value `tfsdk:"timeouts"`
 	AuthorizedKey
 }

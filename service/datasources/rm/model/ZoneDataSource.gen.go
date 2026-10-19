@@ -3,10 +3,12 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ZoneDataSourceModel struct {
-	ZoneParam types.String `tfsdk:"zone"`
+	ZoneParam types.String   `tfsdk:"zone"`
+	Timeouts  timeouts.Value `tfsdk:"timeouts"`
 	Zone
 }

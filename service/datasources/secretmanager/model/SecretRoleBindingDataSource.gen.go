@@ -3,12 +3,14 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type SecretRoleBindingDataSourceModel struct {
-	ProjectParam     types.String `tfsdk:"project"`
-	NameParam        types.String `tfsdk:"name"`
-	RoleBindingParam types.String `tfsdk:"role_binding"`
+	ProjectParam     types.String   `tfsdk:"project"`
+	NameParam        types.String   `tfsdk:"name"`
+	RoleBindingParam types.String   `tfsdk:"role_binding"`
+	Timeouts         timeouts.Value `tfsdk:"timeouts"`
 	SecretRoleBinding
 }

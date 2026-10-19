@@ -4,10 +4,13 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type CommonRoleBindingStatus struct {
 	ResourceStatus
+	RoleBinding types.Object `tfsdk:"role_binding"`
+	Active      types.Object `tfsdk:"active"`
 }
 
 func (s *CommonRoleBindingStatus) GetSchema() schema.Schema {
@@ -17,6 +20,16 @@ func (s *CommonRoleBindingStatus) GetSchema() schema.Schema {
 			"ready": schema.SingleNestedAttribute{
 				Attributes:          new(ResourceStatusReady).GetSchema().Attributes,
 				MarkdownDescription: `Информация о статусе реконсиляции`,
+				Computed:            true,
+			},
+			"role_binding": schema.SingleNestedAttribute{
+				Attributes:          new(CommonRoleBindingStatusSpec).GetSchema().Attributes,
+				MarkdownDescription: `Состояние обработки привязки роли системой`,
+				Computed:            true,
+			},
+			"active": schema.SingleNestedAttribute{
+				Attributes:          new(CommonRoleBindingActiveStatus).GetSchema().Attributes,
+				MarkdownDescription: `Состояние активности привязки роли`,
 				Computed:            true,
 			},
 		},

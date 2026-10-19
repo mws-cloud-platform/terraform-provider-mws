@@ -155,12 +155,13 @@ Read-Only:
 
 Read-Only:
 
-- `audio` (Boolean)
-- `embedding` (Boolean)
-- `image` (Boolean)
-- `reranking` (Boolean)
-- `text` (Boolean)
-- `transcription` (Boolean)
+- `audio` (Boolean) Признак того, что модель поддерживает аудиовывод
+- `decision` (Boolean) Признак того, что модель поддерживает принятие решений
+- `embedding` (Boolean) Признак того, что модель поддерживает вывод эмбеддингов
+- `image` (Boolean) Признак того, что модель поддерживает вывод изображений
+- `reranking` (Boolean) Признак того, что модель поддерживает переранжирование результатов
+- `text` (Boolean) Признак того, что модель поддерживает текстовый вывод
+- `transcription` (Boolean) Признак того, что модель поддерживает транскрипцию
 
 
 <a id="nestedatt--status--ready"></a>

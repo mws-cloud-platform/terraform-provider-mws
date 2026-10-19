@@ -41,7 +41,7 @@ func (s *StandaloneClusterSuite) TestStandaloneCluster() {
 	clusterName := utils.RandResourceName("cluster")
 	tc.ResourceConfig = fmt.Sprintf(clusterTF,
 		clusterName,
-		s.network.GetMetadata().GetId().ID(),
+		s.Network.GetMetadata().GetId().ID(),
 		s.primaryEndpointAddress.GetMetadata().GetId().ID(),
 	)
 	tc.DataSourceConfig = fmt.Sprintf(clusterDataSourceTF, clusterName)

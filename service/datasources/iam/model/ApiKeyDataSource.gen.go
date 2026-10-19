@@ -3,12 +3,14 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ApiKeyDataSourceModel struct {
-	ProjectParam        types.String `tfsdk:"project"`
-	ServiceAccountParam types.String `tfsdk:"service_account"`
-	ApiKeyParam         types.String `tfsdk:"api_key"`
+	ProjectParam        types.String   `tfsdk:"project"`
+	ServiceAccountParam types.String   `tfsdk:"service_account"`
+	ApiKeyParam         types.String   `tfsdk:"api_key"`
+	Timeouts            timeouts.Value `tfsdk:"timeouts"`
 	ApiKey
 }

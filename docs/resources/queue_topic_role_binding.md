@@ -32,7 +32,7 @@ resource "mws_queue_topic" "example" {
   partition_count = 3
 
   config = {
-    "cleanup.policy" = "compact"
+    "cleanup.policy" = "delete"
     "retention.ms"   = "86400000"
   }
 }
@@ -185,10 +185,36 @@ Optional:
 
 Read-Only:
 
+- `active` (Attributes) Состояние активности привязки роли (see [below for nested schema](#nestedatt--status--active))
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
+- `role_binding` (Attributes) Состояние обработки привязки роли системой (see [below for nested schema](#nestedatt--status--role_binding))
+
+<a id="nestedatt--status--active"></a>
+### Nested Schema for `status.active`
+
+Read-Only:
+
+- `role_binding_state` (Boolean) Привязка роли активна/не активна
+
 
 <a id="nestedatt--status--ready"></a>
 ### Nested Schema for `status.ready`
+
+Read-Only:
+
+- `message` (String) Описание статуса
+- `state` (String) Состояние ресурса
+
+
+<a id="nestedatt--status--role_binding"></a>
+### Nested Schema for `status.role_binding`
+
+Read-Only:
+
+- `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--role_binding--ready))
+
+<a id="nestedatt--status--role_binding--ready"></a>
+### Nested Schema for `status.role_binding.ready`
 
 Read-Only:
 

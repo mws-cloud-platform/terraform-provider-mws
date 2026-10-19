@@ -28,6 +28,7 @@ data "mws_mpostgres_cluster" "mpostgres_cluster" {
 ### Optional
 
 - `project` (String) Путь к проекту.
+- `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 
 ### Read-Only
 
@@ -43,6 +44,14 @@ data "mws_mpostgres_cluster" "mpostgres_cluster" {
 - `postgres_parameters` (Map of String) Параметры PostgreSQL. Если не указаны, будут использованы параметры по умолчанию
 - `status` (Attributes) (see [below for nested schema](#nestedatt--status))
 - `version` (String) Версия продукта
+
+<a id="nestedatt--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `read` (String) A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+
 
 <a id="nestedatt--backup"></a>
 ### Nested Schema for `backup`

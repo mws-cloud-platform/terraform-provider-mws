@@ -78,7 +78,7 @@ func (s *BaseSubnetSuite) SetupSuite() {
 				Cidr: cidraddress.MustParseCIDR4AddressString("192.168.0.0/16"),
 			},
 		},
-	})
+	}, vpcclient.WithWait())
 	s.Require().NoError(err)
 	s.T().Logf("subnet %q created", s.SubnetName)
 }

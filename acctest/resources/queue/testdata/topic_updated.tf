@@ -10,6 +10,6 @@ resource "mws_queue_topic" "topic" {
 
   config = {
     "retention.ms"   = "604800000"
-    "cleanup.policy" = "compact"
+    "cleanup.policy" = "delete"
   }
 }

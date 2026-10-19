@@ -29,6 +29,7 @@ data "mws_compute_image" "image" {
 ### Optional
 
 - `project` (String) Путь к проекту.
+- `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 
 ### Read-Only
 
@@ -48,6 +49,14 @@ data "mws_compute_image" "image" {
 - `regions` (List of String) Список регионов, в которых будет создана физическая копия образа
 - `source` (Attributes) Источник для создания образа (see [below for nested schema](#nestedatt--source))
 - `status` (Attributes) Статус образа (see [below for nested schema](#nestedatt--status))
+
+<a id="nestedatt--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `read` (String) A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+
 
 <a id="nestedatt--encryption"></a>
 ### Nested Schema for `encryption`

@@ -13,13 +13,14 @@ type ClickhouseBackupPage struct {
 
 func (s *ClickhouseBackupPage) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Список резервных копий кластеров ClickHouse`,
 		Attributes: map[string]schema.Attribute{
 			"items": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(ClickhouseBackup).GetSchema().Attributes,
 				},
-				Computed: true,
+				MarkdownDescription: `Резервные копии кластеров ClickHouse на текущей странице`,
+				Computed:            true,
 			},
 		},
 	}

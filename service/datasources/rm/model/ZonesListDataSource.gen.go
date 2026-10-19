@@ -3,12 +3,14 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type ZonesListDataSourceModel struct {
-	FilterParam  types.String `tfsdk:"filter"`
-	OrderByParam types.String `tfsdk:"order_by"`
-	RegionParam  types.String `tfsdk:"region"`
+	FilterParam  types.String   `tfsdk:"filter"`
+	OrderByParam types.String   `tfsdk:"order_by"`
+	RegionParam  types.String   `tfsdk:"region"`
+	Timeouts     timeouts.Value `tfsdk:"timeouts"`
 	ZoneList
 }

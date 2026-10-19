@@ -3,12 +3,14 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type CryptoKeyRoleBindingsListDataSourceModel struct {
-	ProjectParam types.String `tfsdk:"project"`
-	KeyParam     types.String `tfsdk:"key"`
-	FilterParam  types.String `tfsdk:"filter"`
+	ProjectParam types.String   `tfsdk:"project"`
+	KeyParam     types.String   `tfsdk:"key"`
+	FilterParam  types.String   `tfsdk:"filter"`
+	Timeouts     timeouts.Value `tfsdk:"timeouts"`
 	CryptoKeyRoleBindingList
 }

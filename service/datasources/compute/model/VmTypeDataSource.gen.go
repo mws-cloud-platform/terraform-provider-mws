@@ -3,10 +3,12 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type VmTypeDataSourceModel struct {
-	VmTypeParam types.String `tfsdk:"vm_type"`
+	VmTypeParam types.String   `tfsdk:"vm_type"`
+	Timeouts    timeouts.Value `tfsdk:"timeouts"`
 	VmType
 }

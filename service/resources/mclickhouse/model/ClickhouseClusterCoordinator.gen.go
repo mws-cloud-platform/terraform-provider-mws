@@ -38,7 +38,8 @@ func (s *ClickhouseClusterCoordinator) GetSchema() schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(ClickhouseClusterCoordinatorInstance).GetSchema().Attributes,
 				},
-				Required: true,
+				MarkdownDescription: `Описание узлов координатора`,
+				Required:            true,
 			},
 		},
 	}

@@ -32,6 +32,7 @@ data "mws_mk8s_node_group" "example" {
 ### Optional
 
 - `project` (String) Путь к проекту.
+- `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 
 ### Read-Only
 
@@ -47,6 +48,7 @@ data "mws_mk8s_node_group" "example" {
 - `kind` (String)
 - `labels` (Attributes List) (see [below for nested schema](#nestedatt--labels))
 - `local_disks` (Attributes List) Параметры локальных дисков для каждого узла в группе узлов (see [below for nested schema](#nestedatt--local_disks))
+- `max_pods` (Number) Максимальное число подов, которые могут быть запущены на каждом узле группы
 - `metadata` (Attributes) Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров (see [below for nested schema](#nestedatt--metadata))
 - `network` (Attributes) Настройки сети группы узлов (see [below for nested schema](#nestedatt--network))
 - `rollout_strategy` (Attributes) Стратегия обновления (rollout) узлов в группе узлов (see [below for nested schema](#nestedatt--rollout_strategy))
@@ -60,6 +62,14 @@ data "mws_mk8s_node_group" "example" {
 - `version_control` (Attributes) (see [below for nested schema](#nestedatt--version_control))
 - `vm_type` (Attributes) Тип ВМ (see [below for nested schema](#nestedatt--vm_type))
 - `zone` (String)
+
+<a id="nestedatt--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `read` (String) A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+
 
 <a id="nestedatt--labels"></a>
 ### Nested Schema for `labels`
@@ -193,6 +203,7 @@ Read-Only:
 Регистр и лишние пробелы перед строкой, после строки и между ее частями игнорируются
 - `labels` (Attributes List) (see [below for nested schema](#nestedatt--status--labels))
 - `local_disks` (Attributes List) Параметры локальных дисков для каждого узла в группе узлов (see [below for nested schema](#nestedatt--status--local_disks))
+- `max_pods` (Number) Максимальное количество Pod, которые можно запланировать на каждом узле группы
 - `memory` (String) Объем оперативной памяти на узле
 
 Размер в байтах. Формат: <число> [единица измерения].

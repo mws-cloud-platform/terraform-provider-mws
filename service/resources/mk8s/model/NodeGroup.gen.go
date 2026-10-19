@@ -24,6 +24,7 @@ type NodeGroup struct {
 	VmType           types.Object `tfsdk:"vm_type"`
 	ImageStorageSize types.String `tfsdk:"image_storage_size"`
 	ImageStorageIops types.Int64  `tfsdk:"image_storage_iops"`
+	MaxPods          types.Int64  `tfsdk:"max_pods"`
 	LocalDisks       types.List   `tfsdk:"local_disks"`
 	DataCache        types.Bool   `tfsdk:"data_cache"`
 	Scale            types.Object `tfsdk:"scale"`
@@ -92,6 +93,13 @@ Compute, на которых запускаются контейнеры с пр
 			},
 			"image_storage_iops": schema.Int64Attribute{
 				MarkdownDescription: `Количество операций ввода-вывода в секунду (IOPS) для хранилища образов и контейнеров`,
+				Optional:            true,
+				PlanModifiers: []planmodifier.Int64{
+					localint64planmodifier.RequiresReplaceIfRemoved(),
+				},
+			},
+			"max_pods": schema.Int64Attribute{
+				MarkdownDescription: `Максимальное число подов, которые могут быть запущены на каждом узле группы`,
 				Optional:            true,
 				PlanModifiers: []planmodifier.Int64{
 					localint64planmodifier.RequiresReplaceIfRemoved(),

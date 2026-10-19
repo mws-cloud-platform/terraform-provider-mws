@@ -3,13 +3,15 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type PostgresBackupsListDataSourceModel struct {
-	ProjectParam types.String `tfsdk:"project"`
-	ClusterParam types.String `tfsdk:"cluster"`
-	FilterParam  types.String `tfsdk:"filter"`
-	OrderByParam types.String `tfsdk:"order_by"`
+	ProjectParam types.String   `tfsdk:"project"`
+	ClusterParam types.String   `tfsdk:"cluster"`
+	FilterParam  types.String   `tfsdk:"filter"`
+	OrderByParam types.String   `tfsdk:"order_by"`
+	Timeouts     timeouts.Value `tfsdk:"timeouts"`
 	PostgresBackupPage
 }

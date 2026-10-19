@@ -3,11 +3,13 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type CryptoKeyDataSourceModel struct {
-	ProjectParam types.String `tfsdk:"project"`
-	KeyParam     types.String `tfsdk:"key"`
+	ProjectParam types.String   `tfsdk:"project"`
+	KeyParam     types.String   `tfsdk:"key"`
+	Timeouts     timeouts.Value `tfsdk:"timeouts"`
 	CryptoKey
 }

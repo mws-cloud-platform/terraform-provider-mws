@@ -3,11 +3,13 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type DiskBackupDataSourceModel struct {
-	ProjectParam    types.String `tfsdk:"project"`
-	DiskBackupParam types.String `tfsdk:"disk_backup"`
+	ProjectParam    types.String   `tfsdk:"project"`
+	DiskBackupParam types.String   `tfsdk:"disk_backup"`
+	Timeouts        timeouts.Value `tfsdk:"timeouts"`
 	DiskBackup
 }

@@ -126,6 +126,12 @@ func NodeGroupAPIOptionalResponseToTFModel(ctx context.Context, am *model.NodeGr
 		t.ImageStorageIops = types.Int64Null()
 	}
 
+	if val, ok := am.Spec.MaxPods.Get(); ok {
+		t.MaxPods = types.Int64Value(int64(val))
+	} else {
+		t.MaxPods = types.Int64Null()
+	}
+
 	if val, ok := am.Spec.LocalDisks.Get(); ok {
 		localDisks := make([]tfmodel.LocalDiskSpec, 0, len(val))
 

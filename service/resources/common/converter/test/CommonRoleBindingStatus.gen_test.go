@@ -8,7 +8,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"go.mws.cloud/go-sdk/pkg/optional"
 	commonmodel "go.mws.cloud/go-sdk/service/common/model"
+	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
@@ -87,8 +89,19 @@ func TestUpdateCommonRoleBindingStatusConverters(t *testing.T) {
 
 	var nullPlanTfModel tfcommon.CommonRoleBindingStatus
 	var stateTfModel tfcommon.CommonRoleBindingStatus
+	stateTfModel.RoleBinding = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingStatusSpec).GetSchema().Attributes))
+	stateTfModel.Active = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingActiveStatus).GetSchema().Attributes))
 
-	expectedUpdateModel := &commonmodel.UpdateCommonRoleBindingStatus{}
+	expectedUpdateModel := &commonmodel.UpdateCommonRoleBindingStatus{
+		RoleBinding: optional.OptionalNil[commonmodel.UpdateCommonRoleBindingStatusSpec]{
+			Set:  true,
+			Null: true,
+		},
+		Active: optional.OptionalNil[commonmodel.UpdateCommonRoleBindingActiveStatus]{
+			Set:  true,
+			Null: true,
+		},
+	}
 
 	result, diags := commonconv.CommonRoleBindingStatusTFToAPIUpdateModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())
@@ -101,8 +114,14 @@ func TestUpdateCommonRoleBindingStatusRequestConverters(t *testing.T) {
 
 	var nullPlanTfModel tfcommon.CommonRoleBindingStatus
 	var stateTfModel tfcommon.CommonRoleBindingStatus
+	stateTfModel.RoleBinding = tfconv.MustKnownObjectValue(tfconv.GetAttributesTypes(new(tfcommon.CommonRoleBindingStatusSpec).GetSchema().Attributes))
 
-	expectedUpdateModel := &commonmodel.UpdateCommonRoleBindingStatusRequest{}
+	expectedUpdateModel := &commonmodel.UpdateCommonRoleBindingStatusRequest{
+		RoleBinding: optional.OptionalNil[commonmodel.UpdateCommonRoleBindingStatusSpecRequest]{
+			Set:  true,
+			Null: true,
+		},
+	}
 
 	result, diags := commonconv.CommonRoleBindingStatusTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

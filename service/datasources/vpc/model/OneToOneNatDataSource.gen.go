@@ -3,12 +3,14 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type OneToOneNatDataSourceModel struct {
-	ProjectParam     types.String `tfsdk:"project"`
-	NetworkParam     types.String `tfsdk:"network"`
-	OneToOneNatParam types.String `tfsdk:"one_to_one_nat"`
+	ProjectParam     types.String   `tfsdk:"project"`
+	NetworkParam     types.String   `tfsdk:"network"`
+	OneToOneNatParam types.String   `tfsdk:"one_to_one_nat"`
+	Timeouts         timeouts.Value `tfsdk:"timeouts"`
 	OneToOneNat
 }

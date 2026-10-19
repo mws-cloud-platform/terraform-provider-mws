@@ -3,10 +3,12 @@
 package model
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/datasource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type RoleDataSourceModel struct {
-	RoleParam types.String `tfsdk:"role"`
+	RoleParam types.String   `tfsdk:"role"`
+	Timeouts  timeouts.Value `tfsdk:"timeouts"`
 	GlobalRoleV2
 }

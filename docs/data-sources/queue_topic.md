@@ -28,6 +28,7 @@ data "mws_queue_topic" "queue_topic" {
 ### Optional
 
 - `project` (String) Путь к проекту.
+- `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 
 ### Read-Only
 
@@ -40,6 +41,14 @@ data "mws_queue_topic" "queue_topic" {
 - `partition_count` (Number) Кол-во партиций топика
 - `status` (Attributes) Наблюдаемое состояние топика (see [below for nested schema](#nestedatt--status))
 - `topic_id` (String) Идентификатор топика
+
+<a id="nestedatt--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `read` (String) A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+
 
 <a id="nestedatt--metadata"></a>
 ### Nested Schema for `metadata`

@@ -48,7 +48,7 @@ func (s *KafkaSuite) TestKafka() {
 	s.Require().NoError(err)
 	data := KafkaData{
 		Name:              s.kafkaName,
-		NetworkID:         s.network.GetMetadata().GetId().ID(),
+		NetworkID:         s.Network.GetMetadata().GetId().ID(),
 		Broker1AddressRef: s.address1ID,
 	}
 	tpl := template.Must(template.New("kafkaTF").Parse(kafkaTF))
