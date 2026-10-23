@@ -223,3 +223,22 @@ Read-Only:
 
 - `message` (String) Описание статуса
 - `state` (String) Состояние ресурса
+
+## Import
+
+Import is supported using the following syntax:
+
+In Terraform v1.5.0 and later, the [`import` block](https://developer.hashicorp.com/terraform/language/import) can be used with the `id` attribute, for example:
+
+```terraform
+import {
+  to = mws_mkafka_cluster_user.example_user
+  id = "mkafka/projects/<project>/clusters/<cluster>/users/<user>"
+}
+```
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
+```shell
+terraform import mws_mkafka_cluster_user.example_user "mkafka/projects/<project>/clusters/<cluster>/users/<user>"
+```

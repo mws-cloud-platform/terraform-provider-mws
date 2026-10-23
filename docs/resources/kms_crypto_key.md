@@ -199,3 +199,22 @@ Read-Only:
 - `primary_key_version_ref` (String) Идентификатор основной версии криптографического ключа.
 Это значение представляет номер версии ключа, который в данный момент
 установлен как основной для криптографических операций
+
+## Import
+
+Import is supported using the following syntax:
+
+In Terraform v1.5.0 and later, the [`import` block](https://developer.hashicorp.com/terraform/language/import) can be used with the `id` attribute, for example:
+
+```terraform
+import {
+  to = mws_kms_crypto_key.example
+  id = "kms/projects/<project>/cryptoKeys/<key>"
+}
+```
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
+```shell
+terraform import mws_kms_crypto_key.example "kms/projects/<project>/cryptoKeys/<key>"
+```

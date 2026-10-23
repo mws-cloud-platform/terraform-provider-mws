@@ -619,3 +619,22 @@ Read-Only:
 Optional:
 
 - `enabled` (Boolean) Включить Schema Registry в кластере
+
+## Import
+
+Import is supported using the following syntax:
+
+In Terraform v1.5.0 and later, the [`import` block](https://developer.hashicorp.com/terraform/language/import) can be used with the `id` attribute, for example:
+
+```terraform
+import {
+  to = mws_mkafka_cluster.example
+  id = "mkafka/projects/<project>/clusters/<cluster>"
+}
+```
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
+```shell
+terraform import mws_mkafka_cluster.example "mkafka/projects/<project>/clusters/<cluster>"
+```

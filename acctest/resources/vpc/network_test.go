@@ -17,7 +17,7 @@ var (
 	//go:embed testdata/network.tf
 	networkTF string
 	//go:embed testdata/datasource/network.tf
-	networkDataSource string
+	networkDataSourceTF string
 )
 
 func TestNetworkDefaultsSuite(t *testing.T) {
@@ -52,7 +52,7 @@ func (s *NetworkDefaultsSuite) TestNetworkDefaults() {
 
 	networkName := utils.RandResourceName("network")
 	tc.ResourceConfig = fmt.Sprintf(networkDefaultsTF, networkName)
-	tc.DataSourceConfig = fmt.Sprintf(networkDataSource, networkName)
+	tc.DataSourceConfig = fmt.Sprintf(networkDataSourceTF, networkName)
 
 	s.BuildAndRun(ctx, tc)
 }
@@ -73,7 +73,7 @@ func (s *NetworkSuite) TestNetwork() {
 	tc.ResourceConfig = fmt.Sprintf(networkTF,
 		networkName, mtu, internetAccessDisabled,
 	)
-	tc.DataSourceConfig = fmt.Sprintf(networkDataSource, networkName)
+	tc.DataSourceConfig = fmt.Sprintf(networkDataSourceTF, networkName)
 
 	s.BuildAndRun(ctx, tc)
 }
@@ -95,7 +95,7 @@ func (s *NetworkEnableInternetAccessSuite) TestNetworkEnableInternetAccess() {
 	tc.ResourceConfig = fmt.Sprintf(networkTF,
 		networkName, mtu, internetAccessDisabled,
 	)
-	tc.DataSourceConfig = fmt.Sprintf(networkDataSource, networkName)
+	tc.DataSourceConfig = fmt.Sprintf(networkDataSourceTF, networkName)
 
 	tc.UpdatedResourceConfig = fmt.Sprintf(networkTF,
 		networkName, mtu, internetAccessEnabled,
@@ -122,7 +122,7 @@ func (s *NetworkRemoveFieldsWithDefaultsSuite) TestNetworkRemoveFieldsWithDefaul
 	)
 	tc.UpdatedResourceConfig = fmt.Sprintf(networkDefaultsTF, networkName)
 	tc.RecreateOnUpdate = true
-	tc.DataSourceConfig = fmt.Sprintf(networkDataSource, networkName)
+	tc.DataSourceConfig = fmt.Sprintf(networkDataSourceTF, networkName)
 
 	s.BuildAndRun(ctx, tc)
 }

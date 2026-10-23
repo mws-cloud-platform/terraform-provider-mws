@@ -3,6 +3,7 @@ package vpc
 import (
 	"bytes"
 	_ "embed"
+	"fmt"
 	"testing"
 	"text/template"
 
@@ -15,8 +16,12 @@ import (
 	vpctest "go.mws.cloud/terraform-provider-mws/service/resources/vpc/acctest"
 )
 
-//go:embed testdata/egress_nat.tf
-var egressNatTF string
+var (
+	//go:embed testdata/egress_nat.tf
+	egressNatTF string
+	//go:embed testdata/datasource/egress_nat.tf
+	egressNatDataSourceTF string
+)
 
 func TestEgressNatSuite(t *testing.T) {
 	t.Parallel()
@@ -98,6 +103,7 @@ func (s *EgressNatSuite) TestEgressNat() {
 	s.Require().NoError(err)
 
 	tc.ResourceConfig = buf.String()
+	tc.DataSourceConfig = fmt.Sprintf(egressNatDataSourceTF, s.egressNatName, s.NetworkName)
 	s.T().Log(tc.ResourceConfig)
 	s.BuildAndRun(ctx, tc)
 }

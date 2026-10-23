@@ -491,3 +491,22 @@ Optional:
 
 Отрицательные значения обозначаются префиксом "-", в простом формате могут быть ограничены скобками.
 Регистр и пробелы игнорируются
+
+## Import
+
+Import is supported using the following syntax:
+
+In Terraform v1.5.0 and later, the [`import` block](https://developer.hashicorp.com/terraform/language/import) can be used with the `id` attribute, for example:
+
+```terraform
+import {
+  to = mws_mk8s_cluster.example
+  id = "mk8s/projects/<project>/clusters/<cluster>"
+}
+```
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
+```shell
+terraform import mws_mk8s_cluster.example "mk8s/projects/<project>/clusters/<cluster>"
+```

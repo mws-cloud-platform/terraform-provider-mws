@@ -258,3 +258,22 @@ Read-Only:
 
 - `message` (String) Описание статуса
 - `state` (String) Состояние ресурса
+
+## Import
+
+Import is supported using the following syntax:
+
+In Terraform v1.5.0 and later, the [`import` block](https://developer.hashicorp.com/terraform/language/import) can be used with the `id` attribute, for example:
+
+```terraform
+import {
+  to = mws_vpc_egress_nat.example_egress_nat
+  id = "vpc/projects/<project>/networks/<network>/egressNats/<egress_nat>"
+}
+```
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
+```shell
+terraform import mws_vpc_egress_nat.example_egress_nat "vpc/projects/<project>/networks/<network>/egressNats/<egress_nat>"
+```

@@ -687,3 +687,22 @@ Read-Only:
 Read-Only:
 
 - `ref` (String) Ссылка на группу адресов
+
+## Import
+
+Import is supported using the following syntax:
+
+In Terraform v1.5.0 and later, the [`import` block](https://developer.hashicorp.com/terraform/language/import) can be used with the `id` attribute, for example:
+
+```terraform
+import {
+  to = mws_nlb_nlb.example
+  id = "nlb/projects/<project>/networks/<network>/nlbs/<nlb>"
+}
+```
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
+```shell
+terraform import mws_nlb_nlb.example "nlb/projects/<project>/networks/<network>/nlbs/<nlb>"
+```

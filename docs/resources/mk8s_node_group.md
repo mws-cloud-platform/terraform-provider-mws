@@ -622,3 +622,22 @@ Optional:
 Read-Only:
 
 - `ref` (String)
+
+## Import
+
+Import is supported using the following syntax:
+
+In Terraform v1.5.0 and later, the [`import` block](https://developer.hashicorp.com/terraform/language/import) can be used with the `id` attribute, for example:
+
+```terraform
+import {
+  to = mws_mk8s_node_group.example
+  id = "mk8s/projects/<project>/clusters/<cluster>/nodeGroups/<node_group>"
+}
+```
+
+The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/commands/import) can be used, for example:
+
+```shell
+terraform import mws_mk8s_node_group.example "mk8s/projects/<project>/clusters/<cluster>/nodeGroups/<node_group>"
+```
