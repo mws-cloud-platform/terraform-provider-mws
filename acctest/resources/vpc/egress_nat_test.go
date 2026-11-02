@@ -59,7 +59,7 @@ func (s *EgressNatSuite) SetupSuite() {
 
 	addr, err := s.addressSDK.CreateExternalAddress(ctx, vpcclient.UpsertExternalAddressRequest{
 		ExternalAddress: s.externalAddressName,
-		Body: &vpcmodel.ExternalAddressRequest{
+		Body: vpcmodel.ExternalAddressRequest{
 			Spec: vpcmodel.VpcExternalAddressSpecRequest{},
 		},
 	})

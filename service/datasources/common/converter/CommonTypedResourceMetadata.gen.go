@@ -8,7 +8,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -24,7 +23,7 @@ func CommonTypedResourceMetadataAPIToTFModel(ctx context.Context, am *commonmode
 	var t tfcommon.CommonTypedResourceMetadata
 
 	if am.Id != nil {
-		t.Id = types.StringPointerValue(ptr.Get(am.Id.ID()))
+		t.Id = types.StringPointerValue(new(am.Id.ID()))
 	} else {
 		t.Id = types.StringNull()
 	}
@@ -42,19 +41,19 @@ func CommonTypedResourceMetadataAPIToTFModel(ctx context.Context, am *commonmode
 	}
 
 	if am.CreateTime != nil {
-		t.CreateTime = types.StringPointerValue(ptr.Get(am.CreateTime.Format(time.RFC3339)))
+		t.CreateTime = types.StringPointerValue(new(am.CreateTime.Format(time.RFC3339)))
 	} else {
 		t.CreateTime = types.StringNull()
 	}
 
 	if am.DeleteTime != nil {
-		t.DeleteTime = types.StringPointerValue(ptr.Get(am.DeleteTime.Format(time.RFC3339)))
+		t.DeleteTime = types.StringPointerValue(new(am.DeleteTime.Format(time.RFC3339)))
 	} else {
 		t.DeleteTime = types.StringNull()
 	}
 
 	if am.PurgeTime != nil {
-		t.PurgeTime = types.StringPointerValue(ptr.Get(am.PurgeTime.Format(time.RFC3339)))
+		t.PurgeTime = types.StringPointerValue(new(am.PurgeTime.Format(time.RFC3339)))
 	} else {
 		t.PurgeTime = types.StringNull()
 	}
@@ -104,7 +103,7 @@ func CommonTypedResourceMetadataAPIResponseToTFModel(ctx context.Context, am *co
 	var t tfcommon.CommonTypedResourceMetadata
 
 	if am.Id != nil {
-		t.Id = types.StringPointerValue(ptr.Get(am.Id.ID()))
+		t.Id = types.StringPointerValue(new(am.Id.ID()))
 	} else {
 		t.Id = types.StringNull()
 	}
@@ -122,19 +121,19 @@ func CommonTypedResourceMetadataAPIResponseToTFModel(ctx context.Context, am *co
 	}
 
 	if am.CreateTime != nil {
-		t.CreateTime = types.StringPointerValue(ptr.Get(am.CreateTime.Format(time.RFC3339)))
+		t.CreateTime = types.StringPointerValue(new(am.CreateTime.Format(time.RFC3339)))
 	} else {
 		t.CreateTime = types.StringNull()
 	}
 
 	if am.DeleteTime != nil {
-		t.DeleteTime = types.StringPointerValue(ptr.Get(am.DeleteTime.Format(time.RFC3339)))
+		t.DeleteTime = types.StringPointerValue(new(am.DeleteTime.Format(time.RFC3339)))
 	} else {
 		t.DeleteTime = types.StringNull()
 	}
 
 	if am.PurgeTime != nil {
-		t.PurgeTime = types.StringPointerValue(ptr.Get(am.PurgeTime.Format(time.RFC3339)))
+		t.PurgeTime = types.StringPointerValue(new(am.PurgeTime.Format(time.RFC3339)))
 	} else {
 		t.PurgeTime = types.StringNull()
 	}
@@ -184,7 +183,7 @@ func CommonTypedResourceMetadataAPIOptionalResponseToTFModel(ctx context.Context
 	var t tfcommon.CommonTypedResourceMetadata
 
 	if am.Id != nil {
-		t.Id = types.StringPointerValue(ptr.Get(am.Id.ID()))
+		t.Id = types.StringPointerValue(new(am.Id.ID()))
 	} else {
 		t.Id = types.StringNull()
 	}
@@ -202,19 +201,19 @@ func CommonTypedResourceMetadataAPIOptionalResponseToTFModel(ctx context.Context
 	}
 
 	if am.CreateTime != nil {
-		t.CreateTime = types.StringPointerValue(ptr.Get(am.CreateTime.Format(time.RFC3339)))
+		t.CreateTime = types.StringPointerValue(new(am.CreateTime.Format(time.RFC3339)))
 	} else {
 		t.CreateTime = types.StringNull()
 	}
 
 	if am.DeleteTime != nil {
-		t.DeleteTime = types.StringPointerValue(ptr.Get(am.DeleteTime.Format(time.RFC3339)))
+		t.DeleteTime = types.StringPointerValue(new(am.DeleteTime.Format(time.RFC3339)))
 	} else {
 		t.DeleteTime = types.StringNull()
 	}
 
 	if am.PurgeTime != nil {
-		t.PurgeTime = types.StringPointerValue(ptr.Get(am.PurgeTime.Format(time.RFC3339)))
+		t.PurgeTime = types.StringPointerValue(new(am.PurgeTime.Format(time.RFC3339)))
 	} else {
 		t.PurgeTime = types.StringNull()
 	}

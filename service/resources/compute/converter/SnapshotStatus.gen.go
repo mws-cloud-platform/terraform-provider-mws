@@ -63,7 +63,7 @@ func SnapshotStatusAPIResponseToTFModel(ctx context.Context, am *model.SnapshotS
 	}
 
 	if am.InitialSourceImage != nil {
-		t.InitialSourceImage = types.StringPointerValue(ptr.Get(am.InitialSourceImage.ID()))
+		t.InitialSourceImage = types.StringPointerValue(new(am.InitialSourceImage.ID()))
 	} else {
 		t.InitialSourceImage = types.StringNull()
 	}

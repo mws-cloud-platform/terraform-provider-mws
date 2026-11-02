@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -30,7 +29,7 @@ func RouteNextHopAPIOptionalResponseToTFModel(ctx context.Context, am *model.Rou
 	}
 
 	if val, ok := am.NatGateway.Get(); ok {
-		t.NatGateway = types.StringPointerValue(ptr.Get(val.Path()))
+		t.NatGateway = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.NatGateway = types.StringNull()
 	}

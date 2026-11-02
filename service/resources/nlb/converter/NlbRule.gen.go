@@ -8,7 +8,6 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/nlb/model"
@@ -95,7 +94,7 @@ func NlbRuleTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbRule) (*mo
 	}
 
 	if !plan.TargetPort.IsNull() && !plan.TargetPort.IsUnknown() {
-		am.TargetPort = ptr.Get(int32(plan.TargetPort.ValueInt64()))
+		am.TargetPort = new(int32(plan.TargetPort.ValueInt64()))
 	}
 
 	if !plan.TargetAddressGroups.IsNull() && !plan.TargetAddressGroups.IsUnknown() {

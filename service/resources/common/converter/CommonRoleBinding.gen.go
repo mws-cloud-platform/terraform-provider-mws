@@ -9,7 +9,6 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	resmodels "go.mws.cloud/go-sdk/pkg/resources/models"
 	commonmodel "go.mws.cloud/go-sdk/service/common/model"
@@ -86,7 +85,7 @@ func CommonRoleBindingAPIToTFModel(ctx context.Context, am *commonmodel.CommonRo
 	t.Role = types.StringValue(am.Spec.Role.Path())
 
 	if am.Spec.SupportRequestId != nil {
-		t.SupportRequestId = types.StringPointerValue(ptr.Get(am.Spec.SupportRequestId.Path()))
+		t.SupportRequestId = types.StringPointerValue(new(am.Spec.SupportRequestId.Path()))
 	} else {
 		t.SupportRequestId = types.StringNull()
 	}
@@ -161,7 +160,7 @@ func CommonRoleBindingAPIResponseToTFModel(ctx context.Context, am *commonmodel.
 	t.Role = types.StringValue(am.Spec.Role.Path())
 
 	if am.Spec.SupportRequestId != nil {
-		t.SupportRequestId = types.StringPointerValue(ptr.Get(am.Spec.SupportRequestId.Path()))
+		t.SupportRequestId = types.StringPointerValue(new(am.Spec.SupportRequestId.Path()))
 	} else {
 		t.SupportRequestId = types.StringNull()
 	}
@@ -236,7 +235,7 @@ func CommonRoleBindingAPIOptionalResponseToTFModel(ctx context.Context, am *comm
 	t.Role = types.StringValue(am.Spec.Role.Path())
 
 	if val, ok := am.Spec.SupportRequestId.Get(); ok {
-		t.SupportRequestId = types.StringPointerValue(ptr.Get(val.Path()))
+		t.SupportRequestId = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.SupportRequestId = types.StringNull()
 	}
@@ -638,19 +637,19 @@ func CommonRoleBindingMetadataAPIToTFModel(ctx context.Context, am *commonmodel.
 	}
 
 	if am.CreateTime != nil {
-		t.TypedResourceMetadata.CreateTime = types.StringPointerValue(ptr.Get(am.CreateTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.CreateTime = types.StringPointerValue(new(am.CreateTime.Format(time.RFC3339)))
 	} else {
 		t.TypedResourceMetadata.CreateTime = types.StringNull()
 	}
 
 	if am.DeleteTime != nil {
-		t.TypedResourceMetadata.DeleteTime = types.StringPointerValue(ptr.Get(am.DeleteTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.DeleteTime = types.StringPointerValue(new(am.DeleteTime.Format(time.RFC3339)))
 	} else {
 		t.TypedResourceMetadata.DeleteTime = types.StringNull()
 	}
 
 	if am.PurgeTime != nil {
-		t.TypedResourceMetadata.PurgeTime = types.StringPointerValue(ptr.Get(am.PurgeTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.PurgeTime = types.StringPointerValue(new(am.PurgeTime.Format(time.RFC3339)))
 	} else {
 		t.TypedResourceMetadata.PurgeTime = types.StringNull()
 	}
@@ -689,7 +688,7 @@ func CommonRoleBindingMetadataAPIToTFModel(ctx context.Context, am *commonmodel.
 	}
 
 	if am.Id != nil {
-		t.Id = types.StringPointerValue(ptr.Get(am.Id.ID()))
+		t.Id = types.StringPointerValue(new(am.Id.ID()))
 	} else {
 		t.Id = types.StringNull()
 	}
@@ -712,19 +711,19 @@ func CommonRoleBindingMetadataAPIResponseToTFModel(ctx context.Context, am *comm
 	}
 
 	if am.CreateTime != nil {
-		t.TypedResourceMetadata.CreateTime = types.StringPointerValue(ptr.Get(am.CreateTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.CreateTime = types.StringPointerValue(new(am.CreateTime.Format(time.RFC3339)))
 	} else {
 		t.TypedResourceMetadata.CreateTime = types.StringNull()
 	}
 
 	if am.DeleteTime != nil {
-		t.TypedResourceMetadata.DeleteTime = types.StringPointerValue(ptr.Get(am.DeleteTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.DeleteTime = types.StringPointerValue(new(am.DeleteTime.Format(time.RFC3339)))
 	} else {
 		t.TypedResourceMetadata.DeleteTime = types.StringNull()
 	}
 
 	if am.PurgeTime != nil {
-		t.TypedResourceMetadata.PurgeTime = types.StringPointerValue(ptr.Get(am.PurgeTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.PurgeTime = types.StringPointerValue(new(am.PurgeTime.Format(time.RFC3339)))
 	} else {
 		t.TypedResourceMetadata.PurgeTime = types.StringNull()
 	}
@@ -763,7 +762,7 @@ func CommonRoleBindingMetadataAPIResponseToTFModel(ctx context.Context, am *comm
 	}
 
 	if am.Id != nil {
-		t.Id = types.StringPointerValue(ptr.Get(am.Id.ID()))
+		t.Id = types.StringPointerValue(new(am.Id.ID()))
 	} else {
 		t.Id = types.StringNull()
 	}
@@ -786,19 +785,19 @@ func CommonRoleBindingMetadataAPIOptionalResponseToTFModel(ctx context.Context, 
 	}
 
 	if am.CreateTime != nil {
-		t.TypedResourceMetadata.CreateTime = types.StringPointerValue(ptr.Get(am.CreateTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.CreateTime = types.StringPointerValue(new(am.CreateTime.Format(time.RFC3339)))
 	} else {
 		t.TypedResourceMetadata.CreateTime = types.StringNull()
 	}
 
 	if am.DeleteTime != nil {
-		t.TypedResourceMetadata.DeleteTime = types.StringPointerValue(ptr.Get(am.DeleteTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.DeleteTime = types.StringPointerValue(new(am.DeleteTime.Format(time.RFC3339)))
 	} else {
 		t.TypedResourceMetadata.DeleteTime = types.StringNull()
 	}
 
 	if am.PurgeTime != nil {
-		t.TypedResourceMetadata.PurgeTime = types.StringPointerValue(ptr.Get(am.PurgeTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.PurgeTime = types.StringPointerValue(new(am.PurgeTime.Format(time.RFC3339)))
 	} else {
 		t.TypedResourceMetadata.PurgeTime = types.StringNull()
 	}
@@ -837,7 +836,7 @@ func CommonRoleBindingMetadataAPIOptionalResponseToTFModel(ctx context.Context, 
 	}
 
 	if am.Id != nil {
-		t.Id = types.StringPointerValue(ptr.Get(am.Id.ID()))
+		t.Id = types.StringPointerValue(new(am.Id.ID()))
 	} else {
 		t.Id = types.StringNull()
 	}

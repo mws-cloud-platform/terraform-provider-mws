@@ -31,7 +31,7 @@ func PostgresClusterStatusInstanceTemplateDataDiskAPIResponseToTFModel(ctx conte
 	t.Type = typeTmp
 
 	if am.Iops != nil {
-		t.Iops = types.Int64PointerValue(ptr.Get(int64(*am.Iops)))
+		t.Iops = types.Int64PointerValue(new(int64(*am.Iops)))
 	} else {
 		t.Iops = types.Int64Null()
 	}

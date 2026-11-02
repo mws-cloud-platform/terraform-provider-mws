@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/compute/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
@@ -30,7 +29,7 @@ func OsStatusAPIResponseToTFModel(ctx context.Context, am *model.OsStatusRespons
 	}
 
 	if am.OsType != nil {
-		t.OsType = types.StringPointerValue(ptr.Get(string(*am.OsType)))
+		t.OsType = types.StringPointerValue(new(string(*am.OsType)))
 	} else {
 		t.OsType = types.StringNull()
 	}

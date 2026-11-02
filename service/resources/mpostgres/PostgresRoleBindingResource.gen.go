@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &PostgresRoleBindingResource{}
 	_ resource.ResourceWithImportState = &PostgresRoleBindingResource{}
+	_ resource.ResourceWithIdentity    = &PostgresRoleBindingResource{}
 )
 
 type PostgresRoleBindingResource struct {
@@ -81,6 +83,32 @@ func (m *PostgresRoleBindingResource) Schema(ctx context.Context, req resource.S
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type postgresRoleBindingResourceIdentityModel struct {
+	Project     types.String `tfsdk:"project"`
+	Cluster     types.String `tfsdk:"cluster"`
+	RoleBinding types.String `tfsdk:"role_binding"`
+}
+
+func (m *PostgresRoleBindingResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "PostgresRoleBindingResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"cluster": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Название или идентификатор кластера.",
+			},
+			"role_binding": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Идентификатор привязки роли, определяющей права доступа пользователя к базе данных.",
+			},
 		},
 	}
 }
@@ -174,6 +202,11 @@ func (m *PostgresRoleBindingResource) Create(ctx context.Context, req resource.C
 	plan.PostgresRoleBinding = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, postgresRoleBindingResourceIdentityModel{
+		Project:     plan.ProjectParam,
+		Cluster:     plan.ClusterParam,
+		RoleBinding: plan.RoleBindingParam,
+	})...)
 }
 
 func (m *PostgresRoleBindingResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -234,6 +267,11 @@ func (m *PostgresRoleBindingResource) Read(ctx context.Context, req resource.Rea
 	state.PostgresRoleBinding = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, postgresRoleBindingResourceIdentityModel{
+		Project:     state.ProjectParam,
+		Cluster:     state.ClusterParam,
+		RoleBinding: state.RoleBindingParam,
+	})...)
 }
 
 func (m *PostgresRoleBindingResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -306,6 +344,11 @@ func (m *PostgresRoleBindingResource) Update(ctx context.Context, req resource.U
 	plan.PostgresRoleBinding = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, postgresRoleBindingResourceIdentityModel{
+		Project:     plan.ProjectParam,
+		Cluster:     plan.ClusterParam,
+		RoleBinding: plan.RoleBindingParam,
+	})...)
 }
 
 func (m *PostgresRoleBindingResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -358,7 +401,25 @@ func (m *PostgresRoleBindingResource) ImportState(ctx context.Context, req resou
 
 	var state tfmodel.PostgresRoleBindingResourceModel
 
-	ref, err := mpostgresref.ParsePostgresRoleBindingRef(ctx, req.ID)
+	var (
+		ref mpostgresref.PostgresRoleBindingRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = mpostgresref.ParsePostgresRoleBindingRef(ctx, req.ID)
+	} else {
+		var identity postgresRoleBindingResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = mpostgresref.NewPostgresRoleBindingRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Cluster.ValueString(),
+			identity.RoleBinding.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for PostgresRoleBinding",
@@ -406,4 +467,9 @@ func (m *PostgresRoleBindingResource) ImportState(ctx context.Context, req resou
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, postgresRoleBindingResourceIdentityModel{
+		Project:     state.ProjectParam,
+		Cluster:     state.ClusterParam,
+		RoleBinding: state.RoleBindingParam,
+	})...)
 }

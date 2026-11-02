@@ -63,7 +63,7 @@ func DiskBackupStatusAPIResponseToTFModel(ctx context.Context, am *model.DiskBac
 	}
 
 	if am.InitialSourceImage != nil {
-		t.InitialSourceImage = types.StringPointerValue(ptr.Get(am.InitialSourceImage.ID()))
+		t.InitialSourceImage = types.StringPointerValue(new(am.InitialSourceImage.ID()))
 	} else {
 		t.InitialSourceImage = types.StringNull()
 	}

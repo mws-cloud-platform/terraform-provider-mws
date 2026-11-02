@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/rm/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -51,7 +50,7 @@ func ProjectStatusAPIResponseToTFModel(ctx context.Context, am *model.ProjectSta
 	}
 
 	if am.Organization != nil {
-		t.Organization = types.StringPointerValue(ptr.Get(am.Organization.Path()))
+		t.Organization = types.StringPointerValue(new(am.Organization.Path()))
 	} else {
 		t.Organization = types.StringNull()
 	}

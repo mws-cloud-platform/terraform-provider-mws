@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -39,7 +38,7 @@ func ServiceAccountStatusAPIResponseToTFModel(ctx context.Context, am *model.Ser
 	t.ResourceStatus.Ready = readyTfObject
 
 	if am.Ref != nil {
-		t.Ref = types.StringPointerValue(ptr.Get(am.Ref.Path()))
+		t.Ref = types.StringPointerValue(new(am.Ref.Path()))
 	} else {
 		t.Ref = types.StringNull()
 	}

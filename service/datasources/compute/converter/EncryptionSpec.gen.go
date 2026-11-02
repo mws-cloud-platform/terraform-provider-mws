@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/compute/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
@@ -22,7 +21,7 @@ func EncryptionSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.E
 	var t tfmodel.EncryptionSpec
 
 	if val, ok := am.CryptoKeyId.Get(); ok {
-		t.CryptoKeyId = types.StringPointerValue(ptr.Get(val.Path()))
+		t.CryptoKeyId = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.CryptoKeyId = types.StringNull()
 	}

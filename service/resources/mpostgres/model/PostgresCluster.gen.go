@@ -17,6 +17,7 @@ type PostgresCluster struct {
 	Kind               types.String `tfsdk:"kind"`
 	Metadata           types.Object `tfsdk:"metadata"`
 	Status             types.Object `tfsdk:"status"`
+	Region             types.String `tfsdk:"region"`
 	Version            types.String `tfsdk:"version"`
 	Active             types.Bool   `tfsdk:"active"`
 	Endpoints          types.List   `tfsdk:"endpoints"`
@@ -48,6 +49,10 @@ func (s *PostgresCluster) GetSchema() schema.Schema {
 			"status": schema.SingleNestedAttribute{
 				Attributes: new(PostgresClusterStatus).GetSchema().Attributes,
 				Computed:   true,
+			},
+			"region": schema.StringAttribute{
+				MarkdownDescription: `Регион, которому принадлежит кластер`,
+				Optional:            true,
 			},
 			"version": schema.StringAttribute{
 				MarkdownDescription: `Версия продукта`,

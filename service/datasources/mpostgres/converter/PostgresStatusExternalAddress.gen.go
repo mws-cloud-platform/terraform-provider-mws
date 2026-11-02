@@ -22,7 +22,7 @@ func PostgresStatusExternalAddressAPIResponseToTFModel(ctx context.Context, am *
 	var t tfmodel.PostgresStatusExternalAddress
 
 	if am.Address != nil {
-		t.Address = types.StringPointerValue(ptr.Get(am.Address.Path()))
+		t.Address = types.StringPointerValue(new(am.Address.Path()))
 	} else {
 		t.Address = types.StringNull()
 	}

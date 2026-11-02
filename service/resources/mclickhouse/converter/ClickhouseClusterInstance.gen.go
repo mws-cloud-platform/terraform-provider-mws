@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	"go.mws.cloud/go-sdk/service/resources/references/rm"
@@ -76,7 +75,7 @@ func ClickhouseClusterInstanceTFToAPIRequestModel(ctx context.Context, plan *tfm
 	}
 
 	if !plan.Count.IsNull() && !plan.Count.IsUnknown() {
-		am.Count = ptr.Get(int(plan.Count.ValueInt64()))
+		am.Count = new(int(plan.Count.ValueInt64()))
 	}
 
 	if !plan.Zone.IsNull() && !plan.Zone.IsUnknown() {

@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &DiskBackupResource{}
 	_ resource.ResourceWithImportState = &DiskBackupResource{}
+	_ resource.ResourceWithIdentity    = &DiskBackupResource{}
 )
 
 type DiskBackupResource struct {
@@ -74,6 +76,27 @@ func (m *DiskBackupResource) Schema(ctx context.Context, req resource.SchemaRequ
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type diskBackupResourceIdentityModel struct {
+	Project    types.String `tfsdk:"project"`
+	DiskBackup types.String `tfsdk:"disk_backup"`
+}
+
+func (m *DiskBackupResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "DiskBackupResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"disk_backup": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Путь к резервной копии диска",
+			},
 		},
 	}
 }
@@ -166,6 +189,10 @@ func (m *DiskBackupResource) Create(ctx context.Context, req resource.CreateRequ
 	plan.DiskBackup = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, diskBackupResourceIdentityModel{
+		Project:    plan.ProjectParam,
+		DiskBackup: plan.DiskBackupParam,
+	})...)
 }
 
 func (m *DiskBackupResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -225,6 +252,10 @@ func (m *DiskBackupResource) Read(ctx context.Context, req resource.ReadRequest,
 	state.DiskBackup = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, diskBackupResourceIdentityModel{
+		Project:    state.ProjectParam,
+		DiskBackup: state.DiskBackupParam,
+	})...)
 }
 
 func (m *DiskBackupResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -296,6 +327,10 @@ func (m *DiskBackupResource) Update(ctx context.Context, req resource.UpdateRequ
 	plan.DiskBackup = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, diskBackupResourceIdentityModel{
+		Project:    plan.ProjectParam,
+		DiskBackup: plan.DiskBackupParam,
+	})...)
 }
 
 func (m *DiskBackupResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -347,7 +382,24 @@ func (m *DiskBackupResource) ImportState(ctx context.Context, req resource.Impor
 
 	var state tfmodel.DiskBackupResourceModel
 
-	ref, err := computeref.ParseDiskBackupRef(ctx, req.ID)
+	var (
+		ref computeref.DiskBackupRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = computeref.ParseDiskBackupRef(ctx, req.ID)
+	} else {
+		var identity diskBackupResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = computeref.NewDiskBackupRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.DiskBackup.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for DiskBackup",
@@ -393,4 +445,8 @@ func (m *DiskBackupResource) ImportState(ctx context.Context, req resource.Impor
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, diskBackupResourceIdentityModel{
+		Project:    state.ProjectParam,
+		DiskBackup: state.DiskBackupParam,
+	})...)
 }

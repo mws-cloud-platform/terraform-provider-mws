@@ -8,7 +8,6 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/mkafka/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
@@ -25,7 +24,7 @@ func KafkaEndpointExternalAddressSpecOrRefAPIResponseToTFModel(ctx context.Conte
 	var t tfmodel.KafkaEndpointExternalAddressSpecOrRef
 
 	if am.Ref != nil {
-		t.Ref = types.StringPointerValue(ptr.Get(am.Ref.Path()))
+		t.Ref = types.StringPointerValue(new(am.Ref.Path()))
 	} else {
 		t.Ref = types.StringNull()
 	}

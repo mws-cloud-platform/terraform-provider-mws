@@ -9,10 +9,10 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/mpostgres/model"
+	"go.mws.cloud/go-sdk/service/resources/references/rm"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	commonconv "go.mws.cloud/terraform-provider-mws/service/resources/common/converter"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
@@ -67,6 +67,12 @@ func PostgresClusterAPIResponseToTFModel(ctx context.Context, am *model.Postgres
 		t.Status = statusTfObject
 	} else {
 		t.Status = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.PostgresClusterStatus).GetSchema().Attributes))
+	}
+
+	if am.Spec.Region != nil {
+		t.Region = types.StringPointerValue(new(am.Spec.Region.Path()))
+	} else {
+		t.Region = types.StringNull()
 	}
 
 	t.Version = types.StringValue(am.Spec.Version)
@@ -228,6 +234,15 @@ func PostgresClusterTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Postg
 		am.Metadata = metadataTmp
 	}
 
+	if !plan.Region.IsNull() && !plan.Region.IsUnknown() {
+		regionRef, err := rm.ParseRegionRef(ctx, plan.Region.ValueString())
+		if err != nil {
+			diags.AddError("reference parsing", err.Error())
+			return nil, diags
+		}
+		am.Spec.Region = &regionRef
+	}
+
 	if !plan.Version.IsNull() && !plan.Version.IsUnknown() {
 		am.Spec.Version = plan.Version.ValueString()
 	}
@@ -383,6 +398,20 @@ func PostgresClusterTFToAPIUpdateRequestModel(ctx context.Context, plan, state *
 			am.Metadata.SetTo(*metadataTmp)
 		} else if plan.Metadata.IsNull() {
 			am.Metadata.SetToNull()
+		}
+	}
+
+	if !plan.Region.Equal(state.Region) {
+		if !plan.Region.IsNull() && !plan.Region.IsUnknown() {
+			if !am.Spec.IsSet() {
+				am.Spec.SetTo(model.UpdatePostgresClusterSpecRequest{})
+			}
+			regionRef, err := rm.ParseRegionRef(ctx, plan.Region.ValueString())
+			if err != nil {
+				diags.AddError("reference parsing", err.Error())
+				return nil, diags
+			}
+			am.Spec.Value.Region.SetTo(regionRef)
 		}
 	}
 
@@ -606,19 +635,19 @@ func PostgresClusterMetadataAPIResponseToTFModel(ctx context.Context, am *model.
 	}
 
 	if am.CreateTime != nil {
-		t.TypedResourceMetadata.CreateTime = types.StringPointerValue(ptr.Get(am.CreateTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.CreateTime = types.StringPointerValue(new(am.CreateTime.Format(time.RFC3339)))
 	} else {
 		t.TypedResourceMetadata.CreateTime = types.StringNull()
 	}
 
 	if am.DeleteTime != nil {
-		t.TypedResourceMetadata.DeleteTime = types.StringPointerValue(ptr.Get(am.DeleteTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.DeleteTime = types.StringPointerValue(new(am.DeleteTime.Format(time.RFC3339)))
 	} else {
 		t.TypedResourceMetadata.DeleteTime = types.StringNull()
 	}
 
 	if am.PurgeTime != nil {
-		t.TypedResourceMetadata.PurgeTime = types.StringPointerValue(ptr.Get(am.PurgeTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.PurgeTime = types.StringPointerValue(new(am.PurgeTime.Format(time.RFC3339)))
 	} else {
 		t.TypedResourceMetadata.PurgeTime = types.StringNull()
 	}
@@ -657,7 +686,7 @@ func PostgresClusterMetadataAPIResponseToTFModel(ctx context.Context, am *model.
 	}
 
 	if am.Id != nil {
-		t.Id = types.StringPointerValue(ptr.Get(am.Id.ID()))
+		t.Id = types.StringPointerValue(new(am.Id.ID()))
 	} else {
 		t.Id = types.StringNull()
 	}

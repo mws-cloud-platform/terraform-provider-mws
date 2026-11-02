@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &SubnetResource{}
 	_ resource.ResourceWithImportState = &SubnetResource{}
+	_ resource.ResourceWithIdentity    = &SubnetResource{}
 )
 
 type SubnetResource struct {
@@ -81,6 +83,32 @@ func (m *SubnetResource) Schema(ctx context.Context, req resource.SchemaRequest,
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type subnetResourceIdentityModel struct {
+	Project types.String `tfsdk:"project"`
+	Network types.String `tfsdk:"network"`
+	Subnet  types.String `tfsdk:"subnet"`
+}
+
+func (m *SubnetResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "SubnetResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"network": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя сети",
+			},
+			"subnet": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя подсети",
+			},
 		},
 	}
 }
@@ -174,6 +202,11 @@ func (m *SubnetResource) Create(ctx context.Context, req resource.CreateRequest,
 	plan.Subnet = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, subnetResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Network: plan.NetworkParam,
+		Subnet:  plan.SubnetParam,
+	})...)
 }
 
 func (m *SubnetResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -234,6 +267,11 @@ func (m *SubnetResource) Read(ctx context.Context, req resource.ReadRequest, res
 	state.Subnet = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, subnetResourceIdentityModel{
+		Project: state.ProjectParam,
+		Network: state.NetworkParam,
+		Subnet:  state.SubnetParam,
+	})...)
 }
 
 func (m *SubnetResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -306,6 +344,11 @@ func (m *SubnetResource) Update(ctx context.Context, req resource.UpdateRequest,
 	plan.Subnet = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, subnetResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Network: plan.NetworkParam,
+		Subnet:  plan.SubnetParam,
+	})...)
 }
 
 func (m *SubnetResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -358,7 +401,25 @@ func (m *SubnetResource) ImportState(ctx context.Context, req resource.ImportSta
 
 	var state tfmodel.SubnetResourceModel
 
-	ref, err := vpcref.ParseSubnetRef(ctx, req.ID)
+	var (
+		ref vpcref.SubnetRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = vpcref.ParseSubnetRef(ctx, req.ID)
+	} else {
+		var identity subnetResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = vpcref.NewSubnetRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Network.ValueString(),
+			identity.Subnet.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for Subnet",
@@ -406,4 +467,9 @@ func (m *SubnetResource) ImportState(ctx context.Context, req resource.ImportSta
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, subnetResourceIdentityModel{
+		Project: state.ProjectParam,
+		Network: state.NetworkParam,
+		Subnet:  state.SubnetParam,
+	})...)
 }

@@ -129,7 +129,7 @@ func (m *ApiKeyDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		return
 	}
 
-	tfRes, diags := conv.ApiKeyAPIResponseToTFModel(ctx, apiRes)
+	tfRes, diags := conv.ApiKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfRes == nil {
 		tflog.Debug(ctx, "ApiKeyDataSource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})

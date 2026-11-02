@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &NodeGroupResource{}
 	_ resource.ResourceWithImportState = &NodeGroupResource{}
+	_ resource.ResourceWithIdentity    = &NodeGroupResource{}
 )
 
 type NodeGroupResource struct {
@@ -81,6 +83,32 @@ func (m *NodeGroupResource) Schema(ctx context.Context, req resource.SchemaReque
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type nodeGroupResourceIdentityModel struct {
+	Project       types.String `tfsdk:"project"`
+	ClusterName   types.String `tfsdk:"cluster_name"`
+	NodeGroupName types.String `tfsdk:"node_group_name"`
+}
+
+func (m *NodeGroupResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "NodeGroupResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"cluster_name": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя кластера",
+			},
+			"node_group_name": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя группы узлов",
+			},
 		},
 	}
 }
@@ -184,6 +212,11 @@ func (m *NodeGroupResource) Create(ctx context.Context, req resource.CreateReque
 	plan.NodeGroup = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, nodeGroupResourceIdentityModel{
+		Project:       plan.ProjectParam,
+		ClusterName:   plan.ClusterNameParam,
+		NodeGroupName: plan.NodeGroupNameParam,
+	})...)
 }
 
 func (m *NodeGroupResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -254,6 +287,11 @@ func (m *NodeGroupResource) Read(ctx context.Context, req resource.ReadRequest, 
 	state.NodeGroup = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, nodeGroupResourceIdentityModel{
+		Project:       state.ProjectParam,
+		ClusterName:   state.ClusterNameParam,
+		NodeGroupName: state.NodeGroupNameParam,
+	})...)
 }
 
 func (m *NodeGroupResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -336,6 +374,11 @@ func (m *NodeGroupResource) Update(ctx context.Context, req resource.UpdateReque
 	plan.NodeGroup = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, nodeGroupResourceIdentityModel{
+		Project:       plan.ProjectParam,
+		ClusterName:   plan.ClusterNameParam,
+		NodeGroupName: plan.NodeGroupNameParam,
+	})...)
 }
 
 func (m *NodeGroupResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -398,7 +441,25 @@ func (m *NodeGroupResource) ImportState(ctx context.Context, req resource.Import
 
 	var state tfmodel.NodeGroupResourceModel
 
-	ref, err := mk8sref.ParseNodeGroupRef(ctx, req.ID)
+	var (
+		ref mk8sref.NodeGroupRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = mk8sref.ParseNodeGroupRef(ctx, req.ID)
+	} else {
+		var identity nodeGroupResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = mk8sref.NewNodeGroupRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.ClusterName.ValueString(),
+			identity.NodeGroupName.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for NodeGroup",
@@ -446,4 +507,9 @@ func (m *NodeGroupResource) ImportState(ctx context.Context, req resource.Import
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, nodeGroupResourceIdentityModel{
+		Project:       state.ProjectParam,
+		ClusterName:   state.ClusterNameParam,
+		NodeGroupName: state.NodeGroupNameParam,
+	})...)
 }

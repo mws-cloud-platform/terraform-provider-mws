@@ -96,7 +96,7 @@ func DiskAPIOptionalResponseToTFModel(ctx context.Context, am *model.DiskOptiona
 	}
 
 	if val, ok := am.Spec.DiskType.Get(); ok {
-		t.DiskType = types.StringPointerValue(ptr.Get(val.Path()))
+		t.DiskType = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.DiskType = types.StringNull()
 	}

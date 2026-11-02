@@ -10,6 +10,7 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -32,6 +33,7 @@ import (
 var (
 	_ resource.Resource                = &KafkaConnectorResource{}
 	_ resource.ResourceWithImportState = &KafkaConnectorResource{}
+	_ resource.ResourceWithIdentity    = &KafkaConnectorResource{}
 )
 
 type KafkaConnectorResource struct {
@@ -83,6 +85,32 @@ func (m *KafkaConnectorResource) Schema(ctx context.Context, req resource.Schema
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type kafkaConnectorResourceIdentityModel struct {
+	Project   types.String `tfsdk:"project"`
+	Cluster   types.String `tfsdk:"cluster"`
+	Connector types.String `tfsdk:"connector"`
+}
+
+func (m *KafkaConnectorResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "KafkaConnectorResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"cluster": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Название или идентификатор кластера.",
+			},
+			"connector": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя коннектора.",
+			},
 		},
 	}
 }
@@ -208,6 +236,11 @@ func (m *KafkaConnectorResource) Create(ctx context.Context, req resource.Create
 	plan.KafkaConnector = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, kafkaConnectorResourceIdentityModel{
+		Project:   plan.ProjectParam,
+		Cluster:   plan.ClusterParam,
+		Connector: plan.ConnectorParam,
+	})...)
 	if !specS3SinkConnectorS3PropertiesSecretAccessKeyVersion.IsNull() && !specS3SinkConnectorS3PropertiesSecretAccessKeyVersion.IsUnknown() {
 		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("s3_sink_connector").AtName("s3_properties").AtName("secret_access_key_version"), specS3SinkConnectorS3PropertiesSecretAccessKeyVersion)...)
 	}
@@ -273,6 +306,11 @@ func (m *KafkaConnectorResource) Read(ctx context.Context, req resource.ReadRequ
 	state.KafkaConnector = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, kafkaConnectorResourceIdentityModel{
+		Project:   state.ProjectParam,
+		Cluster:   state.ClusterParam,
+		Connector: state.ConnectorParam,
+	})...)
 	resp.Diagnostics.Append(req.State.GetAttribute(ctx, tfpath.Root("s3_sink_connector").AtName("s3_properties").AtName("secret_access_key_version"), &specS3SinkConnectorS3PropertiesSecretAccessKeyVersion)...)
 	if !specS3SinkConnectorS3PropertiesSecretAccessKeyVersion.IsNull() && !specS3SinkConnectorS3PropertiesSecretAccessKeyVersion.IsUnknown() {
 		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("s3_sink_connector").AtName("s3_properties").AtName("secret_access_key_version"), specS3SinkConnectorS3PropertiesSecretAccessKeyVersion)...)
@@ -381,6 +419,11 @@ func (m *KafkaConnectorResource) Update(ctx context.Context, req resource.Update
 	plan.KafkaConnector = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, kafkaConnectorResourceIdentityModel{
+		Project:   plan.ProjectParam,
+		Cluster:   plan.ClusterParam,
+		Connector: plan.ConnectorParam,
+	})...)
 	if !specS3SinkConnectorS3PropertiesSecretAccessKeyVersion.IsNull() && !specS3SinkConnectorS3PropertiesSecretAccessKeyVersion.IsUnknown() {
 		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("s3_sink_connector").AtName("s3_properties").AtName("secret_access_key_version"), specS3SinkConnectorS3PropertiesSecretAccessKeyVersion)...)
 	}
@@ -436,7 +479,25 @@ func (m *KafkaConnectorResource) ImportState(ctx context.Context, req resource.I
 
 	var state tfmodel.KafkaConnectorResourceModel
 
-	ref, err := mkafkaref.ParseKafkaConnectorRef(ctx, req.ID)
+	var (
+		ref mkafkaref.KafkaConnectorRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = mkafkaref.ParseKafkaConnectorRef(ctx, req.ID)
+	} else {
+		var identity kafkaConnectorResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = mkafkaref.NewKafkaConnectorRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Cluster.ValueString(),
+			identity.Connector.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for KafkaConnector",
@@ -484,4 +545,9 @@ func (m *KafkaConnectorResource) ImportState(ctx context.Context, req resource.I
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, kafkaConnectorResourceIdentityModel{
+		Project:   state.ProjectParam,
+		Cluster:   state.ClusterParam,
+		Connector: state.ConnectorParam,
+	})...)
 }

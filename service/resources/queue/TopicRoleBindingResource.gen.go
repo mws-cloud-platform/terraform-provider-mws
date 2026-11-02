@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -31,6 +32,7 @@ import (
 var (
 	_ resource.Resource                = &TopicRoleBindingResource{}
 	_ resource.ResourceWithImportState = &TopicRoleBindingResource{}
+	_ resource.ResourceWithIdentity    = &TopicRoleBindingResource{}
 )
 
 type TopicRoleBindingResource struct {
@@ -82,6 +84,32 @@ func (m *TopicRoleBindingResource) Schema(ctx context.Context, req resource.Sche
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type topicRoleBindingResourceIdentityModel struct {
+	Project     types.String `tfsdk:"project"`
+	Topic       types.String `tfsdk:"topic"`
+	RoleBinding types.String `tfsdk:"role_binding"`
+}
+
+func (m *TopicRoleBindingResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "TopicRoleBindingResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"topic": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя топика",
+			},
+			"role_binding": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Название привязки роли для топика",
+			},
 		},
 	}
 }
@@ -175,6 +203,11 @@ func (m *TopicRoleBindingResource) Create(ctx context.Context, req resource.Crea
 	plan.CommonRoleBinding = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, topicRoleBindingResourceIdentityModel{
+		Project:     plan.ProjectParam,
+		Topic:       plan.TopicParam,
+		RoleBinding: plan.RoleBindingParam,
+	})...)
 }
 
 func (m *TopicRoleBindingResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -235,6 +268,11 @@ func (m *TopicRoleBindingResource) Read(ctx context.Context, req resource.ReadRe
 	state.CommonRoleBinding = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, topicRoleBindingResourceIdentityModel{
+		Project:     state.ProjectParam,
+		Topic:       state.TopicParam,
+		RoleBinding: state.RoleBindingParam,
+	})...)
 }
 
 func (m *TopicRoleBindingResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -307,6 +345,11 @@ func (m *TopicRoleBindingResource) Update(ctx context.Context, req resource.Upda
 	plan.CommonRoleBinding = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, topicRoleBindingResourceIdentityModel{
+		Project:     plan.ProjectParam,
+		Topic:       plan.TopicParam,
+		RoleBinding: plan.RoleBindingParam,
+	})...)
 }
 
 func (m *TopicRoleBindingResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -359,7 +402,25 @@ func (m *TopicRoleBindingResource) ImportState(ctx context.Context, req resource
 
 	var state tfmodel.TopicRoleBindingResourceModel
 
-	ref, err := queueref.ParseTopicRoleBindingRef(ctx, req.ID)
+	var (
+		ref queueref.TopicRoleBindingRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = queueref.ParseTopicRoleBindingRef(ctx, req.ID)
+	} else {
+		var identity topicRoleBindingResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = queueref.NewTopicRoleBindingRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Topic.ValueString(),
+			identity.RoleBinding.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for TopicRoleBinding",
@@ -407,4 +468,9 @@ func (m *TopicRoleBindingResource) ImportState(ctx context.Context, req resource
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, topicRoleBindingResourceIdentityModel{
+		Project:     state.ProjectParam,
+		Topic:       state.TopicParam,
+		RoleBinding: state.RoleBindingParam,
+	})...)
 }

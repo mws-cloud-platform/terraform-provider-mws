@@ -80,7 +80,7 @@ func DiskStatusAPIResponseToTFModel(ctx context.Context, am *model.DiskStatusRes
 	}
 
 	if am.DiskType != nil {
-		t.DiskType = types.StringPointerValue(ptr.Get(am.DiskType.Path()))
+		t.DiskType = types.StringPointerValue(new(am.DiskType.Path()))
 	} else {
 		t.DiskType = types.StringNull()
 	}
@@ -119,7 +119,7 @@ func DiskStatusAPIResponseToTFModel(ctx context.Context, am *model.DiskStatusRes
 	}
 
 	if am.InitialSourceImage != nil {
-		t.InitialSourceImage = types.StringPointerValue(ptr.Get(am.InitialSourceImage.ID()))
+		t.InitialSourceImage = types.StringPointerValue(new(am.InitialSourceImage.ID()))
 	} else {
 		t.InitialSourceImage = types.StringNull()
 	}

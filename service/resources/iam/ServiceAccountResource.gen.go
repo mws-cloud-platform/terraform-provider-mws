@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &ServiceAccountResource{}
 	_ resource.ResourceWithImportState = &ServiceAccountResource{}
+	_ resource.ResourceWithIdentity    = &ServiceAccountResource{}
 )
 
 type ServiceAccountResource struct {
@@ -73,6 +75,26 @@ func (m *ServiceAccountResource) Schema(ctx context.Context, req resource.Schema
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type serviceAccountResourceIdentityModel struct {
+	Project        types.String `tfsdk:"project"`
+	ServiceAccount types.String `tfsdk:"service_account"`
+}
+
+func (m *ServiceAccountResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "ServiceAccountResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"service_account": identityschema.StringAttribute{
+				RequiredForImport: true,
+			},
 		},
 	}
 }
@@ -165,6 +187,10 @@ func (m *ServiceAccountResource) Create(ctx context.Context, req resource.Create
 	plan.ServiceAccount = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, serviceAccountResourceIdentityModel{
+		Project:        plan.ProjectParam,
+		ServiceAccount: plan.ServiceAccountParam,
+	})...)
 }
 
 func (m *ServiceAccountResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -224,6 +250,10 @@ func (m *ServiceAccountResource) Read(ctx context.Context, req resource.ReadRequ
 	state.ServiceAccount = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, serviceAccountResourceIdentityModel{
+		Project:        state.ProjectParam,
+		ServiceAccount: state.ServiceAccountParam,
+	})...)
 }
 
 func (m *ServiceAccountResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -295,6 +325,10 @@ func (m *ServiceAccountResource) Update(ctx context.Context, req resource.Update
 	plan.ServiceAccount = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, serviceAccountResourceIdentityModel{
+		Project:        plan.ProjectParam,
+		ServiceAccount: plan.ServiceAccountParam,
+	})...)
 }
 
 func (m *ServiceAccountResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -346,7 +380,24 @@ func (m *ServiceAccountResource) ImportState(ctx context.Context, req resource.I
 
 	var state tfmodel.ServiceAccountResourceModel
 
-	ref, err := iamref.ParseServiceAccountRef(ctx, req.ID)
+	var (
+		ref iamref.ServiceAccountRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = iamref.ParseServiceAccountRef(ctx, req.ID)
+	} else {
+		var identity serviceAccountResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = iamref.NewServiceAccountRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.ServiceAccount.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for ServiceAccount",
@@ -392,4 +443,8 @@ func (m *ServiceAccountResource) ImportState(ctx context.Context, req resource.I
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, serviceAccountResourceIdentityModel{
+		Project:        state.ProjectParam,
+		ServiceAccount: state.ServiceAccountParam,
+	})...)
 }

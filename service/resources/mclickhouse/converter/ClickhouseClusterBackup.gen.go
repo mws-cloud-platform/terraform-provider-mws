@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse/model"
@@ -45,11 +44,11 @@ func ClickhouseClusterBackupTFToAPIRequestModel(ctx context.Context, plan *tfmod
 	var am model.ClickhouseClusterBackupRequest
 
 	if !plan.Hour.IsNull() && !plan.Hour.IsUnknown() {
-		am.Hour = ptr.Get(int(plan.Hour.ValueInt64()))
+		am.Hour = new(int(plan.Hour.ValueInt64()))
 	}
 
 	if !plan.RetainPeriodDays.IsNull() && !plan.RetainPeriodDays.IsUnknown() {
-		am.RetainPeriodDays = ptr.Get(int(plan.RetainPeriodDays.ValueInt64()))
+		am.RetainPeriodDays = new(int(plan.RetainPeriodDays.ValueInt64()))
 	}
 
 	return &am, diags

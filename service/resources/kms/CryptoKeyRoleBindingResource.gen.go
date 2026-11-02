@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &CryptoKeyRoleBindingResource{}
 	_ resource.ResourceWithImportState = &CryptoKeyRoleBindingResource{}
+	_ resource.ResourceWithIdentity    = &CryptoKeyRoleBindingResource{}
 )
 
 type CryptoKeyRoleBindingResource struct {
@@ -81,6 +83,32 @@ func (m *CryptoKeyRoleBindingResource) Schema(ctx context.Context, req resource.
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type cryptoKeyRoleBindingResourceIdentityModel struct {
+	Project     types.String `tfsdk:"project"`
+	Key         types.String `tfsdk:"key"`
+	RoleBinding types.String `tfsdk:"role_binding"`
+}
+
+func (m *CryptoKeyRoleBindingResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "CryptoKeyRoleBindingResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"key": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Название крипто-ключа",
+			},
+			"role_binding": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Название биндинга роли для крипто-ключа",
+			},
 		},
 	}
 }
@@ -174,6 +202,11 @@ func (m *CryptoKeyRoleBindingResource) Create(ctx context.Context, req resource.
 	plan.CryptoKeyRoleBinding = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, cryptoKeyRoleBindingResourceIdentityModel{
+		Project:     plan.ProjectParam,
+		Key:         plan.KeyParam,
+		RoleBinding: plan.RoleBindingParam,
+	})...)
 }
 
 func (m *CryptoKeyRoleBindingResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -234,6 +267,11 @@ func (m *CryptoKeyRoleBindingResource) Read(ctx context.Context, req resource.Re
 	state.CryptoKeyRoleBinding = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, cryptoKeyRoleBindingResourceIdentityModel{
+		Project:     state.ProjectParam,
+		Key:         state.KeyParam,
+		RoleBinding: state.RoleBindingParam,
+	})...)
 }
 
 func (m *CryptoKeyRoleBindingResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -306,6 +344,11 @@ func (m *CryptoKeyRoleBindingResource) Update(ctx context.Context, req resource.
 	plan.CryptoKeyRoleBinding = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, cryptoKeyRoleBindingResourceIdentityModel{
+		Project:     plan.ProjectParam,
+		Key:         plan.KeyParam,
+		RoleBinding: plan.RoleBindingParam,
+	})...)
 }
 
 func (m *CryptoKeyRoleBindingResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -358,7 +401,25 @@ func (m *CryptoKeyRoleBindingResource) ImportState(ctx context.Context, req reso
 
 	var state tfmodel.CryptoKeyRoleBindingResourceModel
 
-	ref, err := kmsref.ParseCryptoKeyRoleBindingRef(ctx, req.ID)
+	var (
+		ref kmsref.CryptoKeyRoleBindingRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = kmsref.ParseCryptoKeyRoleBindingRef(ctx, req.ID)
+	} else {
+		var identity cryptoKeyRoleBindingResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = kmsref.NewCryptoKeyRoleBindingRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Key.ValueString(),
+			identity.RoleBinding.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for CryptoKeyRoleBinding",
@@ -406,4 +467,9 @@ func (m *CryptoKeyRoleBindingResource) ImportState(ctx context.Context, req reso
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, cryptoKeyRoleBindingResourceIdentityModel{
+		Project:     state.ProjectParam,
+		Key:         state.KeyParam,
+		RoleBinding: state.RoleBindingParam,
+	})...)
 }

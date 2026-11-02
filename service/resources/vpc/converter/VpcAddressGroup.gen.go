@@ -8,7 +8,6 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/rm"
@@ -70,7 +69,7 @@ func VpcAddressGroupAPIOptionalResponseToTFModel(ctx context.Context, am *model.
 	}
 
 	if val, ok := am.Spec.Region.Get(); ok {
-		t.Region = types.StringPointerValue(ptr.Get(val.Path()))
+		t.Region = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.Region = types.StringNull()
 	}

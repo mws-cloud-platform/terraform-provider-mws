@@ -10,6 +10,7 @@ import (
 	tfattr "github.com/hashicorp/terraform-plugin-framework/attr"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -31,6 +32,7 @@ import (
 var (
 	_ resource.Resource                = &ApiKeyResource{}
 	_ resource.ResourceWithImportState = &ApiKeyResource{}
+	_ resource.ResourceWithIdentity    = &ApiKeyResource{}
 )
 
 type ApiKeyResource struct {
@@ -82,6 +84,32 @@ func (m *ApiKeyResource) Schema(ctx context.Context, req resource.SchemaRequest,
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type apiKeyResourceIdentityModel struct {
+	Project        types.String `tfsdk:"project"`
+	ServiceAccount types.String `tfsdk:"service_account"`
+	ApiKey         types.String `tfsdk:"api_key"`
+}
+
+func (m *ApiKeyResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "ApiKeyResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"service_account": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Идентификатор сервисного аккаунта.",
+			},
+			"api_key": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Идентификатор API-ключа",
+			},
 		},
 	}
 }
@@ -164,9 +192,9 @@ func (m *ApiKeyResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
-	tfRes, diags := conv.ApiKeyAPIResponseToTFModel(ctx, apiRes)
+	tfRes, diags := conv.ApiKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfRes == nil {
 		tflog.Debug(ctx, "ApiKeyResource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})
@@ -176,6 +204,11 @@ func (m *ApiKeyResource) Create(ctx context.Context, req resource.CreateRequest,
 	plan.ApiKey = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, apiKeyResourceIdentityModel{
+		Project:        plan.ProjectParam,
+		ServiceAccount: plan.ServiceAccountParam,
+		ApiKey:         plan.ApiKeyParam,
+	})...)
 
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("status").AtName("api_key"), &statusApiKey)...)
 
@@ -196,9 +229,9 @@ func (m *ApiKeyResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
-	tfFinalRes, diags := conv.ApiKeyAPIResponseToTFModel(ctx, apiRes)
+	tfFinalRes, diags := conv.ApiKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfFinalRes == nil {
 		tflog.Debug(ctx, "ApiKeyResource.ApiToTfConvert.tfFinalRes", map[string]any{"res": tfFinalRes})
@@ -259,9 +292,9 @@ func (m *ApiKeyResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
-	state.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
-	tfRes, diags := conv.ApiKeyAPIResponseToTFModel(ctx, apiRes)
+	tfRes, diags := conv.ApiKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfRes == nil {
 		tflog.Debug(ctx, "ApiKeyResource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})
@@ -271,6 +304,11 @@ func (m *ApiKeyResource) Read(ctx context.Context, req resource.ReadRequest, res
 	state.ApiKey = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, apiKeyResourceIdentityModel{
+		Project:        state.ProjectParam,
+		ServiceAccount: state.ServiceAccountParam,
+		ApiKey:         state.ApiKeyParam,
+	})...)
 	resp.Diagnostics.Append(req.State.GetAttribute(ctx, tfpath.Root("status").AtName("api_key"), &statusApiKey)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("status").AtName("api_key"), statusApiKey)...)
 }
@@ -334,9 +372,9 @@ func (m *ApiKeyResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
-	tfRes, diags := conv.ApiKeyAPIResponseToTFModel(ctx, apiRes)
+	tfRes, diags := conv.ApiKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfRes == nil {
 		tflog.Debug(ctx, "ApiKeyResource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})
@@ -346,6 +384,11 @@ func (m *ApiKeyResource) Update(ctx context.Context, req resource.UpdateRequest,
 	plan.ApiKey = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, apiKeyResourceIdentityModel{
+		Project:        plan.ProjectParam,
+		ServiceAccount: plan.ServiceAccountParam,
+		ApiKey:         plan.ApiKeyParam,
+	})...)
 
 	apiRes, err = m.sdk.GetApiKey(
 		ctx,
@@ -364,9 +407,9 @@ func (m *ApiKeyResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
-	tfFinalRes, diags := conv.ApiKeyAPIResponseToTFModel(ctx, apiRes)
+	tfFinalRes, diags := conv.ApiKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfFinalRes == nil {
 		tflog.Debug(ctx, "ApiKeyResource.ApiToTfConvert.tfFinalRes", map[string]any{"res": tfFinalRes})
@@ -430,7 +473,25 @@ func (m *ApiKeyResource) ImportState(ctx context.Context, req resource.ImportSta
 
 	var state tfmodel.ApiKeyResourceModel
 
-	ref, err := iamref.ParseApiKeyRef(ctx, req.ID)
+	var (
+		ref iamref.ApiKeyRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = iamref.ParseApiKeyRef(ctx, req.ID)
+	} else {
+		var identity apiKeyResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = iamref.NewApiKeyRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.ServiceAccount.ValueString(),
+			identity.ApiKey.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for ApiKey",
@@ -454,9 +515,9 @@ func (m *ApiKeyResource) ImportState(ctx context.Context, req resource.ImportSta
 		return
 	}
 
-	state.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
-	tfRes, diags := conv.ApiKeyAPIResponseToTFModel(ctx, apiRes)
+	tfRes, diags := conv.ApiKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfRes == nil {
 		tflog.Debug(ctx, "ApiKeyResource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})
@@ -478,4 +539,9 @@ func (m *ApiKeyResource) ImportState(ctx context.Context, req resource.ImportSta
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, apiKeyResourceIdentityModel{
+		Project:        state.ProjectParam,
+		ServiceAccount: state.ServiceAccountParam,
+		ApiKey:         state.ApiKeyParam,
+	})...)
 }

@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/queue/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/queue/model"
@@ -45,7 +44,7 @@ func TopicItemCommonAPIResponseToTFModel(ctx context.Context, am *model.TopicIte
 	var t tfmodel.TopicItemCommon
 
 	if am.PartitionCount != nil {
-		t.PartitionCount = types.Int64PointerValue(ptr.Get(int64(*am.PartitionCount)))
+		t.PartitionCount = types.Int64PointerValue(new(int64(*am.PartitionCount)))
 	} else {
 		t.PartitionCount = types.Int64Null()
 	}
@@ -68,7 +67,7 @@ func TopicItemCommonTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Topic
 	var am model.TopicItemCommonRequest
 
 	if !plan.PartitionCount.IsNull() && !plan.PartitionCount.IsUnknown() {
-		am.PartitionCount = ptr.Get(int32(plan.PartitionCount.ValueInt64()))
+		am.PartitionCount = new(int32(plan.PartitionCount.ValueInt64()))
 	}
 
 	return &am, diags

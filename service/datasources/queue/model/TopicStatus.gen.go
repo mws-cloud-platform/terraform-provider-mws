@@ -11,7 +11,8 @@ import (
 
 type TopicStatus struct {
 	tfcommon.ResourceStatus
-	Config types.Map `tfsdk:"config"`
+	SizeBytes types.Int64 `tfsdk:"size_bytes"`
+	Config    types.Map   `tfsdk:"config"`
 }
 
 func (s *TopicStatus) GetSchema() schema.Schema {
@@ -21,6 +22,10 @@ func (s *TopicStatus) GetSchema() schema.Schema {
 			"ready": schema.SingleNestedAttribute{
 				Attributes:          new(tfcommon.ResourceStatusReady).GetSchema().Attributes,
 				MarkdownDescription: `Информация о статусе реконсиляции`,
+				Computed:            true,
+			},
+			"size_bytes": schema.Int64Attribute{
+				MarkdownDescription: `Размер данных топика в байтах (суммарный размер всех партиций)`,
 				Computed:            true,
 			},
 			"config": schema.MapAttribute{

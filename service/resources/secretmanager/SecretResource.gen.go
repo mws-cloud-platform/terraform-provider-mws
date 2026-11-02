@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &SecretResource{}
 	_ resource.ResourceWithImportState = &SecretResource{}
+	_ resource.ResourceWithIdentity    = &SecretResource{}
 )
 
 type SecretResource struct {
@@ -74,6 +76,27 @@ func (m *SecretResource) Schema(ctx context.Context, req resource.SchemaRequest,
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type secretResourceIdentityModel struct {
+	Project types.String `tfsdk:"project"`
+	Name    types.String `tfsdk:"name"`
+}
+
+func (m *SecretResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "SecretResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"name": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя секрета.",
+			},
 		},
 	}
 }
@@ -166,6 +189,10 @@ func (m *SecretResource) Create(ctx context.Context, req resource.CreateRequest,
 	plan.Secret = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, secretResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Name:    plan.NameParam,
+	})...)
 }
 
 func (m *SecretResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -225,6 +252,10 @@ func (m *SecretResource) Read(ctx context.Context, req resource.ReadRequest, res
 	state.Secret = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, secretResourceIdentityModel{
+		Project: state.ProjectParam,
+		Name:    state.NameParam,
+	})...)
 }
 
 func (m *SecretResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -296,6 +327,10 @@ func (m *SecretResource) Update(ctx context.Context, req resource.UpdateRequest,
 	plan.Secret = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, secretResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Name:    plan.NameParam,
+	})...)
 }
 
 func (m *SecretResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -347,7 +382,24 @@ func (m *SecretResource) ImportState(ctx context.Context, req resource.ImportSta
 
 	var state tfmodel.SecretResourceModel
 
-	ref, err := secretmanagerref.ParseSecretRef(ctx, req.ID)
+	var (
+		ref secretmanagerref.SecretRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = secretmanagerref.ParseSecretRef(ctx, req.ID)
+	} else {
+		var identity secretResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = secretmanagerref.NewSecretRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Name.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for Secret",
@@ -393,4 +445,8 @@ func (m *SecretResource) ImportState(ctx context.Context, req resource.ImportSta
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, secretResourceIdentityModel{
+		Project: state.ProjectParam,
+		Name:    state.NameParam,
+	})...)
 }

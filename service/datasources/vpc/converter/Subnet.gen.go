@@ -67,7 +67,7 @@ func SubnetAPIOptionalResponseToTFModel(ctx context.Context, am *model.SubnetOpt
 	}
 
 	if val, ok := am.Spec.Region.Get(); ok {
-		t.Region = types.StringPointerValue(ptr.Get(val.Path()))
+		t.Region = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.Region = types.StringNull()
 	}

@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/compute/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/compute/model"
@@ -28,13 +27,13 @@ func ImageSpecSourceAPIOptionalResponseToTFModel(ctx context.Context, am *model.
 	}
 
 	if val, ok := am.DiskId.Get(); ok {
-		t.DiskId = types.StringPointerValue(ptr.Get(val.Path()))
+		t.DiskId = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.DiskId = types.StringNull()
 	}
 
 	if val, ok := am.ImageId.Get(); ok {
-		t.ImageId = types.StringPointerValue(ptr.Get(val.Path()))
+		t.ImageId = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.ImageId = types.StringNull()
 	}

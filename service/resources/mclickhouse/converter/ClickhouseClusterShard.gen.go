@@ -8,7 +8,6 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -131,7 +130,7 @@ func ClickhouseClusterShardTFToAPIRequestModel(ctx context.Context, plan *tfmode
 	}
 
 	if !plan.Weight.IsNull() && !plan.Weight.IsUnknown() {
-		am.Weight = ptr.Get(int(plan.Weight.ValueInt64()))
+		am.Weight = new(int(plan.Weight.ValueInt64()))
 	}
 
 	if !plan.Endpoints.IsNull() && !plan.Endpoints.IsUnknown() {

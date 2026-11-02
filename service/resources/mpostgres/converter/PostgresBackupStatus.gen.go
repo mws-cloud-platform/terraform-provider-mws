@@ -40,13 +40,13 @@ func PostgresBackupStatusAPIResponseToTFModel(ctx context.Context, am *model.Pos
 	t.ResourceStatus.Ready = readyTfObject
 
 	if am.StartTime != nil {
-		t.StartTime = types.StringPointerValue(ptr.Get(am.StartTime.Format(time.RFC3339)))
+		t.StartTime = types.StringPointerValue(new(am.StartTime.Format(time.RFC3339)))
 	} else {
 		t.StartTime = types.StringNull()
 	}
 
 	if am.FinishTime != nil {
-		t.FinishTime = types.StringPointerValue(ptr.Get(am.FinishTime.Format(time.RFC3339)))
+		t.FinishTime = types.StringPointerValue(new(am.FinishTime.Format(time.RFC3339)))
 	} else {
 		t.FinishTime = types.StringNull()
 	}

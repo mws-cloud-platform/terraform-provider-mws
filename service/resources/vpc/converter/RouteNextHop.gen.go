@@ -9,7 +9,6 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
 	"go.mws.cloud/go-sdk/service/vpc/model"
@@ -32,7 +31,7 @@ func RouteNextHopAPIOptionalResponseToTFModel(ctx context.Context, am *model.Rou
 	}
 
 	if val, ok := am.NatGateway.Get(); ok {
-		t.NatGateway = types.StringPointerValue(ptr.Get(val.Path()))
+		t.NatGateway = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.NatGateway = types.StringNull()
 	}

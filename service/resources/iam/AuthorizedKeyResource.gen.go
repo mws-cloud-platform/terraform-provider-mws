@@ -10,6 +10,7 @@ import (
 	tfattr "github.com/hashicorp/terraform-plugin-framework/attr"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -31,6 +32,7 @@ import (
 var (
 	_ resource.Resource                = &AuthorizedKeyResource{}
 	_ resource.ResourceWithImportState = &AuthorizedKeyResource{}
+	_ resource.ResourceWithIdentity    = &AuthorizedKeyResource{}
 )
 
 type AuthorizedKeyResource struct {
@@ -80,6 +82,30 @@ func (m *AuthorizedKeyResource) Schema(ctx context.Context, req resource.SchemaR
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type authorizedKeyResourceIdentityModel struct {
+	Project        types.String `tfsdk:"project"`
+	ServiceAccount types.String `tfsdk:"service_account"`
+	AuthorizedKey  types.String `tfsdk:"authorized_key"`
+}
+
+func (m *AuthorizedKeyResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "AuthorizedKeyResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"service_account": identityschema.StringAttribute{
+				RequiredForImport: true,
+			},
+			"authorized_key": identityschema.StringAttribute{
+				RequiredForImport: true,
+			},
 		},
 	}
 }
@@ -175,6 +201,11 @@ func (m *AuthorizedKeyResource) Create(ctx context.Context, req resource.CreateR
 	plan.AuthorizedKey = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, authorizedKeyResourceIdentityModel{
+		Project:        plan.ProjectParam,
+		ServiceAccount: plan.ServiceAccountParam,
+		AuthorizedKey:  plan.AuthorizedKeyParam,
+	})...)
 
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("status").AtName("private_key"), &statusPrivateKey)...)
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("status").AtName("private_key_file"), &statusPrivateKeyFile)...)
@@ -273,6 +304,11 @@ func (m *AuthorizedKeyResource) Read(ctx context.Context, req resource.ReadReque
 	state.AuthorizedKey = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, authorizedKeyResourceIdentityModel{
+		Project:        state.ProjectParam,
+		ServiceAccount: state.ServiceAccountParam,
+		AuthorizedKey:  state.AuthorizedKeyParam,
+	})...)
 	resp.Diagnostics.Append(req.State.GetAttribute(ctx, tfpath.Root("status").AtName("private_key"), &statusPrivateKey)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("status").AtName("private_key"), statusPrivateKey)...)
 	resp.Diagnostics.Append(req.State.GetAttribute(ctx, tfpath.Root("status").AtName("private_key_file"), &statusPrivateKeyFile)...)
@@ -351,6 +387,11 @@ func (m *AuthorizedKeyResource) Update(ctx context.Context, req resource.UpdateR
 	plan.AuthorizedKey = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, authorizedKeyResourceIdentityModel{
+		Project:        plan.ProjectParam,
+		ServiceAccount: plan.ServiceAccountParam,
+		AuthorizedKey:  plan.AuthorizedKeyParam,
+	})...)
 
 	apiRes, err = m.sdk.GetAuthorizedKeyV2(
 		ctx,
@@ -437,7 +478,25 @@ func (m *AuthorizedKeyResource) ImportState(ctx context.Context, req resource.Im
 
 	var state tfmodel.AuthorizedKeyResourceModel
 
-	ref, err := iamref.ParseAuthorizedKeyRef(ctx, req.ID)
+	var (
+		ref iamref.AuthorizedKeyRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = iamref.ParseAuthorizedKeyRef(ctx, req.ID)
+	} else {
+		var identity authorizedKeyResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = iamref.NewAuthorizedKeyRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.ServiceAccount.ValueString(),
+			identity.AuthorizedKey.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for AuthorizedKey",
@@ -485,4 +544,9 @@ func (m *AuthorizedKeyResource) ImportState(ctx context.Context, req resource.Im
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, authorizedKeyResourceIdentityModel{
+		Project:        state.ProjectParam,
+		ServiceAccount: state.ServiceAccountParam,
+		AuthorizedKey:  state.AuthorizedKeyParam,
+	})...)
 }

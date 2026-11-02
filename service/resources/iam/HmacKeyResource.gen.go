@@ -10,6 +10,7 @@ import (
 	tfattr "github.com/hashicorp/terraform-plugin-framework/attr"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -31,6 +32,7 @@ import (
 var (
 	_ resource.Resource                = &HmacKeyResource{}
 	_ resource.ResourceWithImportState = &HmacKeyResource{}
+	_ resource.ResourceWithIdentity    = &HmacKeyResource{}
 )
 
 type HmacKeyResource struct {
@@ -80,6 +82,30 @@ func (m *HmacKeyResource) Schema(ctx context.Context, req resource.SchemaRequest
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type hmacKeyResourceIdentityModel struct {
+	Project        types.String `tfsdk:"project"`
+	ServiceAccount types.String `tfsdk:"service_account"`
+	KeyName        types.String `tfsdk:"key_name"`
+}
+
+func (m *HmacKeyResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "HmacKeyResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"service_account": identityschema.StringAttribute{
+				RequiredForImport: true,
+			},
+			"key_name": identityschema.StringAttribute{
+				RequiredForImport: true,
+			},
 		},
 	}
 }
@@ -174,6 +200,11 @@ func (m *HmacKeyResource) Create(ctx context.Context, req resource.CreateRequest
 	plan.HmacKey = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, hmacKeyResourceIdentityModel{
+		Project:        plan.ProjectParam,
+		ServiceAccount: plan.ServiceAccountParam,
+		KeyName:        plan.KeyNameParam,
+	})...)
 
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("status").AtName("secret_access_key"), &statusSecretAccessKey)...)
 
@@ -269,6 +300,11 @@ func (m *HmacKeyResource) Read(ctx context.Context, req resource.ReadRequest, re
 	state.HmacKey = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, hmacKeyResourceIdentityModel{
+		Project:        state.ProjectParam,
+		ServiceAccount: state.ServiceAccountParam,
+		KeyName:        state.KeyNameParam,
+	})...)
 	resp.Diagnostics.Append(req.State.GetAttribute(ctx, tfpath.Root("status").AtName("secret_access_key"), &statusSecretAccessKey)...)
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("status").AtName("secret_access_key"), statusSecretAccessKey)...)
 }
@@ -344,6 +380,11 @@ func (m *HmacKeyResource) Update(ctx context.Context, req resource.UpdateRequest
 	plan.HmacKey = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, hmacKeyResourceIdentityModel{
+		Project:        plan.ProjectParam,
+		ServiceAccount: plan.ServiceAccountParam,
+		KeyName:        plan.KeyNameParam,
+	})...)
 
 	apiRes, err = m.sdk.GetHmacKey(
 		ctx,
@@ -428,7 +469,25 @@ func (m *HmacKeyResource) ImportState(ctx context.Context, req resource.ImportSt
 
 	var state tfmodel.HmacKeyResourceModel
 
-	ref, err := iamref.ParseHmacKeyRef(ctx, req.ID)
+	var (
+		ref iamref.HmacKeyRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = iamref.ParseHmacKeyRef(ctx, req.ID)
+	} else {
+		var identity hmacKeyResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = iamref.NewHmacKeyRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.ServiceAccount.ValueString(),
+			identity.KeyName.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for HmacKey",
@@ -476,4 +535,9 @@ func (m *HmacKeyResource) ImportState(ctx context.Context, req resource.ImportSt
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, hmacKeyResourceIdentityModel{
+		Project:        state.ProjectParam,
+		ServiceAccount: state.ServiceAccountParam,
+		KeyName:        state.KeyNameParam,
+	})...)
 }

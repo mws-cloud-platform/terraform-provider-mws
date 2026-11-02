@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/kms/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -120,7 +119,7 @@ func CryptoKeyAPIOptionalResponseToTFModel(ctx context.Context, am *model.Crypto
 	}
 
 	if val, ok := am.Spec.PrimaryKeyVersionRef.Get(); ok {
-		t.PrimaryKeyVersionRef = types.StringPointerValue(ptr.Get(val.Path()))
+		t.PrimaryKeyVersionRef = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.PrimaryKeyVersionRef = types.StringNull()
 	}

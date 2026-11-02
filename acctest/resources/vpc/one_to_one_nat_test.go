@@ -74,7 +74,7 @@ func (s *OneToOneNatSuite) SetupSuite() {
 
 	externalAddress, err := s.externalAddressSDK.CreateExternalAddress(ctx, vpcclient.UpsertExternalAddressRequest{
 		ExternalAddress: s.externalAddressName,
-		Body: &vpcmodel.ExternalAddressRequest{
+		Body: vpcmodel.ExternalAddressRequest{
 			Spec: vpcmodel.VpcExternalAddressSpecRequest{},
 		},
 	})

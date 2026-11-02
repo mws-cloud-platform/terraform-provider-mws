@@ -8,7 +8,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/compute/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/compute/model"
@@ -23,25 +22,25 @@ func EncryptionStatusAPIResponseToTFModel(ctx context.Context, am *model.Encrypt
 	var t tfmodel.EncryptionStatus
 
 	if am.CryptoKeyId != nil {
-		t.CryptoKeyId = types.StringPointerValue(ptr.Get(am.CryptoKeyId.Path()))
+		t.CryptoKeyId = types.StringPointerValue(new(am.CryptoKeyId.Path()))
 	} else {
 		t.CryptoKeyId = types.StringNull()
 	}
 
 	if am.Version != nil {
-		t.Version = types.Int64PointerValue(ptr.Get(int64(*am.Version)))
+		t.Version = types.Int64PointerValue(new(int64(*am.Version)))
 	} else {
 		t.Version = types.Int64Null()
 	}
 
 	if am.KeyActivity != nil {
-		t.KeyActivity = types.StringPointerValue(ptr.Get(string(*am.KeyActivity)))
+		t.KeyActivity = types.StringPointerValue(new(string(*am.KeyActivity)))
 	} else {
 		t.KeyActivity = types.StringNull()
 	}
 
 	if am.ScheduledDestructionTime != nil {
-		t.ScheduledDestructionTime = types.StringPointerValue(ptr.Get(am.ScheduledDestructionTime.Format(time.RFC3339)))
+		t.ScheduledDestructionTime = types.StringPointerValue(new(am.ScheduledDestructionTime.Format(time.RFC3339)))
 	} else {
 		t.ScheduledDestructionTime = types.StringNull()
 	}

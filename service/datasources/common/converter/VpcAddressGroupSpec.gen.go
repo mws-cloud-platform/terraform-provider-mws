@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -23,7 +22,7 @@ func VpcAddressGroupSpecAPIToTFModel(ctx context.Context, am *commonmodel.VpcAdd
 	var t tfcommon.VpcAddressGroupSpec
 
 	if am.Region != nil {
-		t.Region = types.StringPointerValue(ptr.Get(am.Region.Path()))
+		t.Region = types.StringPointerValue(new(am.Region.Path()))
 	} else {
 		t.Region = types.StringNull()
 	}
@@ -67,7 +66,7 @@ func VpcAddressGroupSpecAPIResponseToTFModel(ctx context.Context, am *commonmode
 	var t tfcommon.VpcAddressGroupSpec
 
 	if am.Region != nil {
-		t.Region = types.StringPointerValue(ptr.Get(am.Region.Path()))
+		t.Region = types.StringPointerValue(new(am.Region.Path()))
 	} else {
 		t.Region = types.StringNull()
 	}
@@ -111,7 +110,7 @@ func VpcAddressGroupSpecAPIOptionalResponseToTFModel(ctx context.Context, am *co
 	var t tfcommon.VpcAddressGroupSpec
 
 	if val, ok := am.Region.Get(); ok {
-		t.Region = types.StringPointerValue(ptr.Get(val.Path()))
+		t.Region = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.Region = types.StringNull()
 	}

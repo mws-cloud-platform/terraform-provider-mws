@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/queue/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -50,7 +49,7 @@ func ConsumerGroupStatusAPIResponseToTFModel(ctx context.Context, am *model.Cons
 	}
 
 	if am.GenerationId != nil {
-		t.GenerationId = types.Int64PointerValue(ptr.Get(int64(*am.GenerationId)))
+		t.GenerationId = types.Int64PointerValue(new(int64(*am.GenerationId)))
 	} else {
 		t.GenerationId = types.Int64Null()
 	}

@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &BackupResource{}
 	_ resource.ResourceWithImportState = &BackupResource{}
+	_ resource.ResourceWithIdentity    = &BackupResource{}
 )
 
 type BackupResource struct {
@@ -81,6 +83,32 @@ func (m *BackupResource) Schema(ctx context.Context, req resource.SchemaRequest,
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type backupResourceIdentityModel struct {
+	Project types.String `tfsdk:"project"`
+	Cluster types.String `tfsdk:"cluster"`
+	Backup  types.String `tfsdk:"backup"`
+}
+
+func (m *BackupResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "BackupResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"cluster": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Название или идентификатор кластера.",
+			},
+			"backup": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Резервная копия базы данных.",
+			},
 		},
 	}
 }
@@ -174,6 +202,11 @@ func (m *BackupResource) Create(ctx context.Context, req resource.CreateRequest,
 	plan.PostgresBackup = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, backupResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Cluster: plan.ClusterParam,
+		Backup:  plan.BackupParam,
+	})...)
 }
 
 func (m *BackupResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -234,6 +267,11 @@ func (m *BackupResource) Read(ctx context.Context, req resource.ReadRequest, res
 	state.PostgresBackup = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, backupResourceIdentityModel{
+		Project: state.ProjectParam,
+		Cluster: state.ClusterParam,
+		Backup:  state.BackupParam,
+	})...)
 }
 
 func (m *BackupResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -306,6 +344,11 @@ func (m *BackupResource) Update(ctx context.Context, req resource.UpdateRequest,
 	plan.PostgresBackup = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, backupResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Cluster: plan.ClusterParam,
+		Backup:  plan.BackupParam,
+	})...)
 }
 
 func (m *BackupResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -358,7 +401,25 @@ func (m *BackupResource) ImportState(ctx context.Context, req resource.ImportSta
 
 	var state tfmodel.BackupResourceModel
 
-	ref, err := mpostgresref.ParsePostgresBackupRef(ctx, req.ID)
+	var (
+		ref mpostgresref.PostgresBackupRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = mpostgresref.ParsePostgresBackupRef(ctx, req.ID)
+	} else {
+		var identity backupResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = mpostgresref.NewPostgresBackupRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Cluster.ValueString(),
+			identity.Backup.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for Backup",
@@ -406,4 +467,9 @@ func (m *BackupResource) ImportState(ctx context.Context, req resource.ImportSta
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, backupResourceIdentityModel{
+		Project: state.ProjectParam,
+		Cluster: state.ClusterParam,
+		Backup:  state.BackupParam,
+	})...)
 }

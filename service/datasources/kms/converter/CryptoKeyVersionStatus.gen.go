@@ -8,7 +8,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/kms/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -40,7 +39,7 @@ func CryptoKeyVersionStatusAPIResponseToTFModel(ctx context.Context, am *model.C
 	t.ResourceStatus.Ready = readyTfObject
 
 	if am.Version != nil {
-		t.Version = types.Int64PointerValue(ptr.Get(int64(*am.Version)))
+		t.Version = types.Int64PointerValue(new(int64(*am.Version)))
 	} else {
 		t.Version = types.Int64Null()
 	}
@@ -87,25 +86,25 @@ func CryptoKeyVersionStatusDestructionAPIResponseToTFModel(ctx context.Context, 
 	var t tfmodel.CryptoKeyVersionStatusDestruction
 
 	if am.Status != nil {
-		t.Status = types.StringPointerValue(ptr.Get(string(*am.Status)))
+		t.Status = types.StringPointerValue(new(string(*am.Status)))
 	} else {
 		t.Status = types.StringNull()
 	}
 
 	if am.ScheduledDestructionTime != nil {
-		t.ScheduledDestructionTime = types.StringPointerValue(ptr.Get(am.ScheduledDestructionTime.Format(time.RFC3339)))
+		t.ScheduledDestructionTime = types.StringPointerValue(new(am.ScheduledDestructionTime.Format(time.RFC3339)))
 	} else {
 		t.ScheduledDestructionTime = types.StringNull()
 	}
 
 	if am.DestroyedAt != nil {
-		t.DestroyedAt = types.StringPointerValue(ptr.Get(am.DestroyedAt.Format(time.RFC3339)))
+		t.DestroyedAt = types.StringPointerValue(new(am.DestroyedAt.Format(time.RFC3339)))
 	} else {
 		t.DestroyedAt = types.StringNull()
 	}
 
 	if am.DestroyTime != nil {
-		t.DestroyTime = types.StringPointerValue(ptr.Get(am.DestroyTime.Format(time.RFC3339)))
+		t.DestroyTime = types.StringPointerValue(new(am.DestroyTime.Format(time.RFC3339)))
 	} else {
 		t.DestroyTime = types.StringNull()
 	}

@@ -46,7 +46,7 @@ func HardwareSpecTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Hardware
 	var am model.HardwareSpecRequest
 
 	if !plan.Power.IsNull() && !plan.Power.IsUnknown() {
-		am.Power = ptr.Get(model.HardwareSpecPowerRequest(plan.Power.ValueString()))
+		am.Power = new(model.HardwareSpecPowerRequest(plan.Power.ValueString()))
 	}
 
 	if !plan.GracefulShutdownTimeout.IsNull() && !plan.GracefulShutdownTimeout.IsUnknown() {

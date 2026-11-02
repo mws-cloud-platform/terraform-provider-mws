@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/compute/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -23,7 +22,7 @@ func StorageDiskSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *m
 	var t tfmodel.StorageDiskSpecOrRef
 
 	if val, ok := am.Ref.Get(); ok {
-		t.Ref = types.StringPointerValue(ptr.Get(val.Path()))
+		t.Ref = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.Ref = types.StringNull()
 	}

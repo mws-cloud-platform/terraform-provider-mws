@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres/model"
@@ -22,7 +21,7 @@ func PostgresClusterBackupDailyAPIResponseToTFModel(ctx context.Context, am *mod
 	var t tfmodel.PostgresClusterBackupDaily
 
 	if am.Hour != nil {
-		t.Hour = types.Int64PointerValue(ptr.Get(int64(*am.Hour)))
+		t.Hour = types.Int64PointerValue(new(int64(*am.Hour)))
 	} else {
 		t.Hour = types.Int64Null()
 	}
@@ -39,7 +38,7 @@ func PostgresClusterBackupDailyTFToAPIRequestModel(ctx context.Context, plan *tf
 	var am model.PostgresClusterBackupDailyRequest
 
 	if !plan.Hour.IsNull() && !plan.Hour.IsUnknown() {
-		am.Hour = ptr.Get(int(plan.Hour.ValueInt64()))
+		am.Hour = new(int(plan.Hour.ValueInt64()))
 	}
 
 	return &am, diags

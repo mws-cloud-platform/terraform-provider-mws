@@ -8,7 +8,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/gpt/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -74,7 +73,7 @@ func DeploymentAPIResponseToTFModel(ctx context.Context, am *model.DeploymentRes
 	}
 
 	if am.Spec.Model != nil {
-		t.Model = types.StringPointerValue(ptr.Get(am.Spec.Model.Path()))
+		t.Model = types.StringPointerValue(new(am.Spec.Model.Path()))
 	} else {
 		t.Model = types.StringNull()
 	}
@@ -97,19 +96,19 @@ func DeploymentMetadataAPIResponseToTFModel(ctx context.Context, am *model.Deplo
 	}
 
 	if am.CreateTime != nil {
-		t.TypedResourceMetadata.CreateTime = types.StringPointerValue(ptr.Get(am.CreateTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.CreateTime = types.StringPointerValue(new(am.CreateTime.Format(time.RFC3339)))
 	} else {
 		t.TypedResourceMetadata.CreateTime = types.StringNull()
 	}
 
 	if am.DeleteTime != nil {
-		t.TypedResourceMetadata.DeleteTime = types.StringPointerValue(ptr.Get(am.DeleteTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.DeleteTime = types.StringPointerValue(new(am.DeleteTime.Format(time.RFC3339)))
 	} else {
 		t.TypedResourceMetadata.DeleteTime = types.StringNull()
 	}
 
 	if am.PurgeTime != nil {
-		t.TypedResourceMetadata.PurgeTime = types.StringPointerValue(ptr.Get(am.PurgeTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.PurgeTime = types.StringPointerValue(new(am.PurgeTime.Format(time.RFC3339)))
 	} else {
 		t.TypedResourceMetadata.PurgeTime = types.StringNull()
 	}
@@ -148,7 +147,7 @@ func DeploymentMetadataAPIResponseToTFModel(ctx context.Context, am *model.Deplo
 	}
 
 	if am.Id != nil {
-		t.Id = types.StringPointerValue(ptr.Get(am.Id.ID()))
+		t.Id = types.StringPointerValue(new(am.Id.ID()))
 	} else {
 		t.Id = types.StringNull()
 	}

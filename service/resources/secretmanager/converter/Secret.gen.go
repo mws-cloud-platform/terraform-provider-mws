@@ -8,7 +8,6 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/resources/references/secretmanager"
 	"go.mws.cloud/go-sdk/service/secretmanager/model"
@@ -63,7 +62,7 @@ func SecretAPIOptionalResponseToTFModel(ctx context.Context, am *model.SecretOpt
 	}
 
 	if val, ok := am.Spec.CurrentSecretVersion.Get(); ok {
-		t.CurrentSecretVersion = types.StringPointerValue(ptr.Get(val.Path()))
+		t.CurrentSecretVersion = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.CurrentSecretVersion = types.StringNull()
 	}

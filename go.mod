@@ -1,6 +1,6 @@
 module go.mws.cloud/terraform-provider-mws
 
-go 1.26.0
+go 1.27
 
 require (
 	github.com/google/go-cmp v0.7.0
@@ -14,7 +14,7 @@ require (
 	github.com/hashicorp/terraform-plugin-sdk v1.17.2
 	github.com/hashicorp/terraform-plugin-testing v1.16.0
 	github.com/stretchr/testify v1.12.1
-	go.mws.cloud/go-sdk v0.28.0
+	go.mws.cloud/go-sdk v0.29.0
 	go.mws.cloud/util-toolset v0.15.1
 	go.opentelemetry.io/otel/sdk v1.47.0
 	go.uber.org/zap v1.28.0

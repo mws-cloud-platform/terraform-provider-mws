@@ -8,7 +8,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -40,13 +39,13 @@ func PostgresUserRoleBindingStatusAPIResponseToTFModel(ctx context.Context, am *
 	t.ResourceStatus.Ready = readyTfObject
 
 	if am.RoleBindingId != nil {
-		t.RoleBindingId = types.StringPointerValue(ptr.Get(am.RoleBindingId.Path()))
+		t.RoleBindingId = types.StringPointerValue(new(am.RoleBindingId.Path()))
 	} else {
 		t.RoleBindingId = types.StringNull()
 	}
 
 	if am.DatabaseId != nil {
-		t.DatabaseId = types.StringPointerValue(ptr.Get(am.DatabaseId.Path()))
+		t.DatabaseId = types.StringPointerValue(new(am.DatabaseId.Path()))
 	} else {
 		t.DatabaseId = types.StringNull()
 	}
@@ -63,7 +62,7 @@ func PostgresUserRoleBindingStatusAPIResponseToTFModel(ctx context.Context, am *
 	}
 
 	if am.ExpiresAt != nil {
-		t.ExpiresAt = types.StringPointerValue(ptr.Get(am.ExpiresAt.Format(time.RFC3339)))
+		t.ExpiresAt = types.StringPointerValue(new(am.ExpiresAt.Format(time.RFC3339)))
 	} else {
 		t.ExpiresAt = types.StringNull()
 	}

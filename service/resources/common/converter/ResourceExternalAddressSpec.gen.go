@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
@@ -23,7 +22,7 @@ func ResourceExternalAddressSpecAPIToTFModel(ctx context.Context, am *commonmode
 	var t tfcommon.ResourceExternalAddressSpec
 
 	if am.NatGateway != nil {
-		t.NatGateway = types.StringPointerValue(ptr.Get(am.NatGateway.Path()))
+		t.NatGateway = types.StringPointerValue(new(am.NatGateway.Path()))
 	} else {
 		t.NatGateway = types.StringNull()
 	}
@@ -40,7 +39,7 @@ func ResourceExternalAddressSpecAPIResponseToTFModel(ctx context.Context, am *co
 	var t tfcommon.ResourceExternalAddressSpec
 
 	if am.NatGateway != nil {
-		t.NatGateway = types.StringPointerValue(ptr.Get(am.NatGateway.Path()))
+		t.NatGateway = types.StringPointerValue(new(am.NatGateway.Path()))
 	} else {
 		t.NatGateway = types.StringNull()
 	}
@@ -57,7 +56,7 @@ func ResourceExternalAddressSpecAPIOptionalResponseToTFModel(ctx context.Context
 	var t tfcommon.ResourceExternalAddressSpec
 
 	if val, ok := am.NatGateway.Get(); ok {
-		t.NatGateway = types.StringPointerValue(ptr.Get(val.Path()))
+		t.NatGateway = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.NatGateway = types.StringNull()
 	}

@@ -13,12 +13,30 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/iam/converter"
 )
 
+func TestApiKeyAPIOptionalResponseToTFModel(t *testing.T) {
+	t.Parallel()
+	apiModel := model.ApiKeyOptionalResponse{
+		Spec: model.ApiKeySpecOptionalResponse{},
+	}
+	_, diags := conv.ApiKeyAPIOptionalResponseToTFModel(context.Background(), &apiModel)
+	require.False(t, diags.HasError())
+}
+
 func TestApiKeyAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
 	apiModel := model.ApiKeyResponse{
 		Spec: model.ApiKeySpecResponse{},
 	}
 	_, diags := conv.ApiKeyAPIResponseToTFModel(context.Background(), &apiModel)
+	require.False(t, diags.HasError())
+}
+
+func TestApiKeyMetadataAPIOptionalResponseToTFModel(t *testing.T) {
+	t.Parallel()
+	apiModel := model.ApiKeyMetadataOptionalResponse{
+		TypedResourceMetadataOptionalResponse: commonmodel.TypedResourceMetadataOptionalResponse{},
+	}
+	_, diags := conv.ApiKeyMetadataAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 

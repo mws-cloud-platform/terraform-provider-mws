@@ -8,7 +8,6 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -161,7 +160,7 @@ func FirewallRuleTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Firewall
 	}
 
 	if !plan.Priority.IsNull() && !plan.Priority.IsUnknown() {
-		am.Spec.Priority = ptr.Get(int32(plan.Priority.ValueInt64()))
+		am.Spec.Priority = new(int32(plan.Priority.ValueInt64()))
 	}
 
 	if !plan.Action.IsNull() && !plan.Action.IsUnknown() {

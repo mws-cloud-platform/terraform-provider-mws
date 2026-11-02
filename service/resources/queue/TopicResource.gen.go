@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &TopicResource{}
 	_ resource.ResourceWithImportState = &TopicResource{}
+	_ resource.ResourceWithIdentity    = &TopicResource{}
 )
 
 type TopicResource struct {
@@ -74,6 +76,27 @@ func (m *TopicResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type topicResourceIdentityModel struct {
+	Project types.String `tfsdk:"project"`
+	Topic   types.String `tfsdk:"topic"`
+}
+
+func (m *TopicResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "TopicResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"topic": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя топика",
+			},
 		},
 	}
 }
@@ -166,6 +189,10 @@ func (m *TopicResource) Create(ctx context.Context, req resource.CreateRequest, 
 	plan.Topic = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, topicResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Topic:   plan.TopicParam,
+	})...)
 }
 
 func (m *TopicResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -225,6 +252,10 @@ func (m *TopicResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	state.Topic = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, topicResourceIdentityModel{
+		Project: state.ProjectParam,
+		Topic:   state.TopicParam,
+	})...)
 }
 
 func (m *TopicResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -296,6 +327,10 @@ func (m *TopicResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	plan.Topic = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, topicResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Topic:   plan.TopicParam,
+	})...)
 }
 
 func (m *TopicResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -347,7 +382,24 @@ func (m *TopicResource) ImportState(ctx context.Context, req resource.ImportStat
 
 	var state tfmodel.TopicResourceModel
 
-	ref, err := queueref.ParseTopicRef(ctx, req.ID)
+	var (
+		ref queueref.TopicRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = queueref.ParseTopicRef(ctx, req.ID)
+	} else {
+		var identity topicResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = queueref.NewTopicRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Topic.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for Topic",
@@ -393,4 +445,8 @@ func (m *TopicResource) ImportState(ctx context.Context, req resource.ImportStat
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, topicResourceIdentityModel{
+		Project: state.ProjectParam,
+		Topic:   state.TopicParam,
+	})...)
 }

@@ -99,7 +99,7 @@ func NodeGroupStatusAPIResponseToTFModel(ctx context.Context, am *model.NodeGrou
 	}
 
 	if am.MaxPods != nil {
-		t.MaxPods = types.Int64PointerValue(ptr.Get(int64(*am.MaxPods)))
+		t.MaxPods = types.Int64PointerValue(new(int64(*am.MaxPods)))
 	} else {
 		t.MaxPods = types.Int64Null()
 	}
@@ -156,7 +156,7 @@ func NodeGroupStatusAPIResponseToTFModel(ctx context.Context, am *model.NodeGrou
 	}
 
 	if am.NodesReady != nil {
-		t.NodesReady = types.Int64PointerValue(ptr.Get(int64(*am.NodesReady)))
+		t.NodesReady = types.Int64PointerValue(new(int64(*am.NodesReady)))
 	} else {
 		t.NodesReady = types.Int64Null()
 	}
@@ -299,7 +299,7 @@ func NodeGroupStatusNodeGroupStatusAPIResponseToTFModel(ctx context.Context, am 
 	var t tfmodel.NodeGroupStatusNodeGroupStatus
 
 	if am.State != nil {
-		t.State = types.StringPointerValue(ptr.Get(string(*am.State)))
+		t.State = types.StringPointerValue(new(string(*am.State)))
 	} else {
 		t.State = types.StringNull()
 	}
@@ -337,7 +337,7 @@ func NodeGroupStatusScaleAPIResponseToTFModel(ctx context.Context, am *model.Nod
 	var t tfmodel.NodeGroupStatusScale
 
 	if am.Fixed != nil {
-		t.Fixed = types.Int64PointerValue(ptr.Get(int64(*am.Fixed)))
+		t.Fixed = types.Int64PointerValue(new(int64(*am.Fixed)))
 	} else {
 		t.Fixed = types.Int64Null()
 	}

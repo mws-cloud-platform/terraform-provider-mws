@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &ExternalAddressResource{}
 	_ resource.ResourceWithImportState = &ExternalAddressResource{}
+	_ resource.ResourceWithIdentity    = &ExternalAddressResource{}
 )
 
 type ExternalAddressResource struct {
@@ -74,6 +76,27 @@ func (m *ExternalAddressResource) Schema(ctx context.Context, req resource.Schem
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type externalAddressResourceIdentityModel struct {
+	Project         types.String `tfsdk:"project"`
+	ExternalAddress types.String `tfsdk:"external_address"`
+}
+
+func (m *ExternalAddressResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "ExternalAddressResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"external_address": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя внешнего IP-адреса",
+			},
 		},
 	}
 }
@@ -142,7 +165,7 @@ func (m *ExternalAddressResource) Create(ctx context.Context, req resource.Creat
 		client.UpsertExternalAddressRequest{
 			Project:         plan.ProjectParam.ValueString(),
 			ExternalAddress: plan.ExternalAddressParam.ValueString(),
-			Body:            body,
+			Body:            *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -166,6 +189,10 @@ func (m *ExternalAddressResource) Create(ctx context.Context, req resource.Creat
 	plan.ExternalAddress = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, externalAddressResourceIdentityModel{
+		Project:         plan.ProjectParam,
+		ExternalAddress: plan.ExternalAddressParam,
+	})...)
 }
 
 func (m *ExternalAddressResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -225,6 +252,10 @@ func (m *ExternalAddressResource) Read(ctx context.Context, req resource.ReadReq
 	state.ExternalAddress = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, externalAddressResourceIdentityModel{
+		Project:         state.ProjectParam,
+		ExternalAddress: state.ExternalAddressParam,
+	})...)
 }
 
 func (m *ExternalAddressResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -272,7 +303,7 @@ func (m *ExternalAddressResource) Update(ctx context.Context, req resource.Updat
 		client.UpdateExternalAddressRequest{
 			Project:         plan.ProjectParam.ValueString(),
 			ExternalAddress: plan.ExternalAddressParam.ValueString(),
-			Body:            body,
+			Body:            *body,
 		},
 		client.WithWait(wait.WithTimeout(resourceWaiterTimeout)),
 	)
@@ -296,6 +327,10 @@ func (m *ExternalAddressResource) Update(ctx context.Context, req resource.Updat
 	plan.ExternalAddress = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, externalAddressResourceIdentityModel{
+		Project:         plan.ProjectParam,
+		ExternalAddress: plan.ExternalAddressParam,
+	})...)
 }
 
 func (m *ExternalAddressResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -347,7 +382,24 @@ func (m *ExternalAddressResource) ImportState(ctx context.Context, req resource.
 
 	var state tfmodel.ExternalAddressResourceModel
 
-	ref, err := vpcref.ParseExternalAddressRef(ctx, req.ID)
+	var (
+		ref vpcref.ExternalAddressRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = vpcref.ParseExternalAddressRef(ctx, req.ID)
+	} else {
+		var identity externalAddressResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = vpcref.NewExternalAddressRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.ExternalAddress.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for ExternalAddress",
@@ -393,4 +445,8 @@ func (m *ExternalAddressResource) ImportState(ctx context.Context, req resource.
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, externalAddressResourceIdentityModel{
+		Project:         state.ProjectParam,
+		ExternalAddress: state.ExternalAddressParam,
+	})...)
 }

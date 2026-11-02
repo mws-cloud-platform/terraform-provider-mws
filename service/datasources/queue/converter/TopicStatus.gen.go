@@ -37,6 +37,12 @@ func TopicStatusAPIResponseToTFModel(ctx context.Context, am *model.TopicStatusR
 	}
 	t.ResourceStatus.Ready = readyTfObject
 
+	if am.SizeBytes != nil {
+		t.SizeBytes = types.Int64PointerValue(am.SizeBytes)
+	} else {
+		t.SizeBytes = types.Int64Null()
+	}
+
 	if am.Config != nil {
 		config := make(map[string]types.String, len(am.Config))
 

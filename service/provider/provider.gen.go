@@ -17,6 +17,7 @@ import (
 	dsiam "go.mws.cloud/terraform-provider-mws/service/datasources/iam"
 	dskms "go.mws.cloud/terraform-provider-mws/service/datasources/kms"
 	dsmclickhouse "go.mws.cloud/terraform-provider-mws/service/datasources/mclickhouse"
+	dsmetastore "go.mws.cloud/terraform-provider-mws/service/datasources/metastore"
 	dsmk8s "go.mws.cloud/terraform-provider-mws/service/datasources/mk8s"
 	dsmkafka "go.mws.cloud/terraform-provider-mws/service/datasources/mkafka"
 	dsmpostgres "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres"
@@ -31,11 +32,13 @@ import (
 	rsiam "go.mws.cloud/terraform-provider-mws/service/resources/iam"
 	rskms "go.mws.cloud/terraform-provider-mws/service/resources/kms"
 	rsmclickhouse "go.mws.cloud/terraform-provider-mws/service/resources/mclickhouse"
+	rsmetastore "go.mws.cloud/terraform-provider-mws/service/resources/metastore"
 	rsmk8s "go.mws.cloud/terraform-provider-mws/service/resources/mk8s"
 	rsmkafka "go.mws.cloud/terraform-provider-mws/service/resources/mkafka"
 	rsmpostgres "go.mws.cloud/terraform-provider-mws/service/resources/mpostgres"
 	rsnlb "go.mws.cloud/terraform-provider-mws/service/resources/nlb"
 	rsqueue "go.mws.cloud/terraform-provider-mws/service/resources/queue"
+	rsrm "go.mws.cloud/terraform-provider-mws/service/resources/rm"
 	rssecretmanager "go.mws.cloud/terraform-provider-mws/service/resources/secretmanager"
 	rsvpc "go.mws.cloud/terraform-provider-mws/service/resources/vpc"
 )
@@ -65,6 +68,8 @@ func resources() []func() resource.Resource {
 		rskms.NewCryptoKeyResource,
 		rsmclickhouse.NewClusterResource,
 		rsmclickhouse.NewBackupResource,
+		rsmetastore.NewIcebergRoleBindingResource,
+		rsmetastore.NewIcebergResource,
 		rsmk8s.NewClusterResource,
 		rsmk8s.NewNodeGroupResource,
 		rsmkafka.NewClusterResource,
@@ -77,6 +82,7 @@ func resources() []func() resource.Resource {
 		rsnlb.NewNlbResource,
 		rsqueue.NewTopicResource,
 		rsqueue.NewTopicRoleBindingResource,
+		rsrm.NewProjectRoleBindingResource,
 		crsrm.NewEnabledServiceResource,
 		rssecretmanager.NewSecretResource,
 		crssecretmanager.NewSecretVersionResource,
@@ -112,6 +118,8 @@ func dataSources() []func() datasource.DataSource {
 		dskms.NewCryptoKeyDataSource,
 		dsmclickhouse.NewClusterDataSource,
 		dsmclickhouse.NewBackupDataSource,
+		dsmetastore.NewIcebergRoleBindingDataSource,
+		dsmetastore.NewIcebergDataSource,
 		dsmk8s.NewClusterDataSource,
 		dsmk8s.NewNodeGroupDataSource,
 		dsmk8s.NewReleaseChannelsListDataSource,
@@ -129,8 +137,10 @@ func dataSources() []func() datasource.DataSource {
 		dsqueue.NewTopicRoleBindingDataSource,
 		dsrm.NewZoneDataSource,
 		dsrm.NewRegionDataSource,
+		dsrm.NewProjectRoleBindingDataSource,
 		dsrm.NewZonesListDataSource,
 		dsrm.NewRegionsListDataSource,
+		dsrm.NewProjectRoleBindingsListDataSource,
 		dssecretmanager.NewSecretDataSource,
 		dssecretmanager.NewSecretVersionDataSource,
 		dsvpc.NewNetworkDataSource,

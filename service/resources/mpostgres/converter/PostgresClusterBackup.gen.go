@@ -8,7 +8,6 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -42,7 +41,7 @@ func PostgresClusterBackupAPIResponseToTFModel(ctx context.Context, am *model.Po
 	}
 
 	if am.RetainPeriodDays != nil {
-		t.RetainPeriodDays = types.Int64PointerValue(ptr.Get(int64(*am.RetainPeriodDays)))
+		t.RetainPeriodDays = types.Int64PointerValue(new(int64(*am.RetainPeriodDays)))
 	} else {
 		t.RetainPeriodDays = types.Int64Null()
 	}
@@ -75,7 +74,7 @@ func PostgresClusterBackupTFToAPIRequestModel(ctx context.Context, plan *tfmodel
 	}
 
 	if !plan.RetainPeriodDays.IsNull() && !plan.RetainPeriodDays.IsUnknown() {
-		am.RetainPeriodDays = ptr.Get(int(plan.RetainPeriodDays.ValueInt64()))
+		am.RetainPeriodDays = new(int(plan.RetainPeriodDays.ValueInt64()))
 	}
 
 	return &am, diags

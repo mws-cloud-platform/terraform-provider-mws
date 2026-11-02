@@ -8,7 +8,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/mpostgres/model"
@@ -23,13 +22,13 @@ func PostgresUserAdditionalRoleAPIResponseToTFModel(ctx context.Context, am *mod
 	var t tfmodel.PostgresUserAdditionalRole
 
 	if am.Name != nil {
-		t.Name = types.StringPointerValue(ptr.Get(string(*am.Name)))
+		t.Name = types.StringPointerValue(new(string(*am.Name)))
 	} else {
 		t.Name = types.StringNull()
 	}
 
 	if am.ExpiresAt != nil {
-		t.ExpiresAt = types.StringPointerValue(ptr.Get(am.ExpiresAt.Format(time.RFC3339)))
+		t.ExpiresAt = types.StringPointerValue(new(am.ExpiresAt.Format(time.RFC3339)))
 	} else {
 		t.ExpiresAt = types.StringNull()
 	}

@@ -42,6 +42,7 @@ data "mws_mpostgres_cluster" "mpostgres_cluster" {
 - `maintenance_window` (Attributes) (see [below for nested schema](#nestedatt--maintenance_window))
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
 - `postgres_parameters` (Map of String) Параметры PostgreSQL. Если не указаны, будут использованы параметры по умолчанию
+- `region` (String) Регион, которому принадлежит кластер
 - `status` (Attributes) (see [below for nested schema](#nestedatt--status))
 - `version` (String) Версия продукта
 

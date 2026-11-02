@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -39,7 +38,7 @@ func FirewallRuleStatusAPIResponseToTFModel(ctx context.Context, am *model.Firew
 	t.ResourceStatus.Ready = readyTfObject
 
 	if am.Priority != nil {
-		t.Priority = types.Int64PointerValue(ptr.Get(int64(*am.Priority)))
+		t.Priority = types.Int64PointerValue(new(int64(*am.Priority)))
 	} else {
 		t.Priority = types.Int64Null()
 	}

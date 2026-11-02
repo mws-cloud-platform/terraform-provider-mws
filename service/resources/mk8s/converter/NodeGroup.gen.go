@@ -370,7 +370,7 @@ func NodeGroupTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NodeGroup) 
 	}
 
 	if !plan.MaxPods.IsNull() && !plan.MaxPods.IsUnknown() {
-		am.Spec.MaxPods = ptr.Get(int(plan.MaxPods.ValueInt64()))
+		am.Spec.MaxPods = new(int(plan.MaxPods.ValueInt64()))
 	}
 
 	if !plan.LocalDisks.IsNull() && !plan.LocalDisks.IsUnknown() {

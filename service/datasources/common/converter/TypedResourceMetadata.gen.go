@@ -8,7 +8,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -30,19 +29,19 @@ func TypedResourceMetadataAPIToTFModel(ctx context.Context, am *commonmodel.Type
 	}
 
 	if am.CreateTime != nil {
-		t.CreateTime = types.StringPointerValue(ptr.Get(am.CreateTime.Format(time.RFC3339)))
+		t.CreateTime = types.StringPointerValue(new(am.CreateTime.Format(time.RFC3339)))
 	} else {
 		t.CreateTime = types.StringNull()
 	}
 
 	if am.DeleteTime != nil {
-		t.DeleteTime = types.StringPointerValue(ptr.Get(am.DeleteTime.Format(time.RFC3339)))
+		t.DeleteTime = types.StringPointerValue(new(am.DeleteTime.Format(time.RFC3339)))
 	} else {
 		t.DeleteTime = types.StringNull()
 	}
 
 	if am.PurgeTime != nil {
-		t.PurgeTime = types.StringPointerValue(ptr.Get(am.PurgeTime.Format(time.RFC3339)))
+		t.PurgeTime = types.StringPointerValue(new(am.PurgeTime.Format(time.RFC3339)))
 	} else {
 		t.PurgeTime = types.StringNull()
 	}
@@ -98,19 +97,19 @@ func TypedResourceMetadataAPIResponseToTFModel(ctx context.Context, am *commonmo
 	}
 
 	if am.CreateTime != nil {
-		t.CreateTime = types.StringPointerValue(ptr.Get(am.CreateTime.Format(time.RFC3339)))
+		t.CreateTime = types.StringPointerValue(new(am.CreateTime.Format(time.RFC3339)))
 	} else {
 		t.CreateTime = types.StringNull()
 	}
 
 	if am.DeleteTime != nil {
-		t.DeleteTime = types.StringPointerValue(ptr.Get(am.DeleteTime.Format(time.RFC3339)))
+		t.DeleteTime = types.StringPointerValue(new(am.DeleteTime.Format(time.RFC3339)))
 	} else {
 		t.DeleteTime = types.StringNull()
 	}
 
 	if am.PurgeTime != nil {
-		t.PurgeTime = types.StringPointerValue(ptr.Get(am.PurgeTime.Format(time.RFC3339)))
+		t.PurgeTime = types.StringPointerValue(new(am.PurgeTime.Format(time.RFC3339)))
 	} else {
 		t.PurgeTime = types.StringNull()
 	}
@@ -166,19 +165,19 @@ func TypedResourceMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *
 	}
 
 	if am.CreateTime != nil {
-		t.CreateTime = types.StringPointerValue(ptr.Get(am.CreateTime.Format(time.RFC3339)))
+		t.CreateTime = types.StringPointerValue(new(am.CreateTime.Format(time.RFC3339)))
 	} else {
 		t.CreateTime = types.StringNull()
 	}
 
 	if am.DeleteTime != nil {
-		t.DeleteTime = types.StringPointerValue(ptr.Get(am.DeleteTime.Format(time.RFC3339)))
+		t.DeleteTime = types.StringPointerValue(new(am.DeleteTime.Format(time.RFC3339)))
 	} else {
 		t.DeleteTime = types.StringNull()
 	}
 
 	if am.PurgeTime != nil {
-		t.PurgeTime = types.StringPointerValue(ptr.Get(am.PurgeTime.Format(time.RFC3339)))
+		t.PurgeTime = types.StringPointerValue(new(am.PurgeTime.Format(time.RFC3339)))
 	} else {
 		t.PurgeTime = types.StringNull()
 	}

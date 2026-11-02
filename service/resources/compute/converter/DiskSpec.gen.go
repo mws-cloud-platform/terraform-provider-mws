@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/compute/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
@@ -23,19 +22,19 @@ func DiskSpecSourceAPIOptionalResponseToTFModel(ctx context.Context, am *model.D
 	var t tfmodel.DiskSpecSource
 
 	if val, ok := am.Image.Get(); ok {
-		t.Image = types.StringPointerValue(ptr.Get(val.Path()))
+		t.Image = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.Image = types.StringNull()
 	}
 
 	if val, ok := am.Snapshot.Get(); ok {
-		t.Snapshot = types.StringPointerValue(ptr.Get(val.Path()))
+		t.Snapshot = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.Snapshot = types.StringNull()
 	}
 
 	if val, ok := am.DiskBackup.Get(); ok {
-		t.DiskBackup = types.StringPointerValue(ptr.Get(val.Path()))
+		t.DiskBackup = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.DiskBackup = types.StringNull()
 	}

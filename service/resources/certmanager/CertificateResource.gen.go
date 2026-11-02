@@ -10,6 +10,7 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -32,6 +33,7 @@ import (
 var (
 	_ resource.Resource                = &CertificateResource{}
 	_ resource.ResourceWithImportState = &CertificateResource{}
+	_ resource.ResourceWithIdentity    = &CertificateResource{}
 )
 
 type CertificateResource struct {
@@ -76,6 +78,27 @@ func (m *CertificateResource) Schema(ctx context.Context, req resource.SchemaReq
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type certificateResourceIdentityModel struct {
+	Project types.String `tfsdk:"project"`
+	Name    types.String `tfsdk:"name"`
+}
+
+func (m *CertificateResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "CertificateResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"name": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя сертификата",
+			},
 		},
 	}
 }
@@ -200,6 +223,10 @@ func (m *CertificateResource) Create(ctx context.Context, req resource.CreateReq
 	plan.Certificate = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, certificateResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Name:    plan.NameParam,
+	})...)
 	if !specSelfManagedVersion.IsNull() && !specSelfManagedVersion.IsUnknown() {
 		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("self_managed_version"), specSelfManagedVersion)...)
 	}
@@ -264,6 +291,10 @@ func (m *CertificateResource) Read(ctx context.Context, req resource.ReadRequest
 	state.Certificate = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, certificateResourceIdentityModel{
+		Project: state.ProjectParam,
+		Name:    state.NameParam,
+	})...)
 	resp.Diagnostics.Append(req.State.GetAttribute(ctx, tfpath.Root("self_managed_version"), &specSelfManagedVersion)...)
 	if !specSelfManagedVersion.IsNull() && !specSelfManagedVersion.IsUnknown() {
 		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("self_managed_version"), specSelfManagedVersion)...)
@@ -371,6 +402,10 @@ func (m *CertificateResource) Update(ctx context.Context, req resource.UpdateReq
 	plan.Certificate = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, certificateResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Name:    plan.NameParam,
+	})...)
 	if !specSelfManagedVersion.IsNull() && !specSelfManagedVersion.IsUnknown() {
 		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("self_managed_version"), specSelfManagedVersion)...)
 	}
@@ -425,7 +460,24 @@ func (m *CertificateResource) ImportState(ctx context.Context, req resource.Impo
 
 	var state tfmodel.CertificateResourceModel
 
-	ref, err := certmanagerref.ParseCertificateRef(ctx, req.ID)
+	var (
+		ref certmanagerref.CertificateRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = certmanagerref.ParseCertificateRef(ctx, req.ID)
+	} else {
+		var identity certificateResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = certmanagerref.NewCertificateRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Name.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for Certificate",
@@ -471,4 +523,8 @@ func (m *CertificateResource) ImportState(ctx context.Context, req resource.Impo
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, certificateResourceIdentityModel{
+		Project: state.ProjectParam,
+		Name:    state.NameParam,
+	})...)
 }

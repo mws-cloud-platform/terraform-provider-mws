@@ -8,7 +8,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/certmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -112,13 +111,13 @@ func CertificateStatusAPIResponseToTFModel(ctx context.Context, am *model.Certif
 	}
 
 	if am.RenewalAt != nil {
-		t.RenewalAt = types.StringPointerValue(ptr.Get(am.RenewalAt.Format(time.RFC3339)))
+		t.RenewalAt = types.StringPointerValue(new(am.RenewalAt.Format(time.RFC3339)))
 	} else {
 		t.RenewalAt = types.StringNull()
 	}
 
 	if am.ChallengesDeadline != nil {
-		t.ChallengesDeadline = types.StringPointerValue(ptr.Get(am.ChallengesDeadline.Format(time.RFC3339)))
+		t.ChallengesDeadline = types.StringPointerValue(new(am.ChallengesDeadline.Format(time.RFC3339)))
 	} else {
 		t.ChallengesDeadline = types.StringNull()
 	}

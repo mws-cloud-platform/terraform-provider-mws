@@ -25,13 +25,13 @@ func VirtualMachineAddressStatusAPIResponseToTFModel(ctx context.Context, am *mo
 	var t tfmodel.VirtualMachineAddressStatus
 
 	if am.Subnet != nil {
-		t.Subnet = types.StringPointerValue(ptr.Get(am.Subnet.Path()))
+		t.Subnet = types.StringPointerValue(new(am.Subnet.Path()))
 	} else {
 		t.Subnet = types.StringNull()
 	}
 
 	if am.Network != nil {
-		t.Network = types.StringPointerValue(ptr.Get(am.Network.Path()))
+		t.Network = types.StringPointerValue(new(am.Network.Path()))
 	} else {
 		t.Network = types.StringNull()
 	}

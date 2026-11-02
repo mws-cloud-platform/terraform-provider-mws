@@ -104,11 +104,11 @@ func NlbHealthCheckTFToAPIRequestModel(ctx context.Context, plan *tfmodel.NlbHea
 	}
 
 	if !plan.UnhealthyThreshold.IsNull() && !plan.UnhealthyThreshold.IsUnknown() {
-		am.UnhealthyThreshold = ptr.Get(int(plan.UnhealthyThreshold.ValueInt64()))
+		am.UnhealthyThreshold = new(int(plan.UnhealthyThreshold.ValueInt64()))
 	}
 
 	if !plan.HealthyThreshold.IsNull() && !plan.HealthyThreshold.IsUnknown() {
-		am.HealthyThreshold = ptr.Get(int(plan.HealthyThreshold.ValueInt64()))
+		am.HealthyThreshold = new(int(plan.HealthyThreshold.ValueInt64()))
 	}
 
 	return &am, diags

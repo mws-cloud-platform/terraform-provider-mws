@@ -16,6 +16,27 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/iam/model"
 )
 
+func TestApiKeyOptionalResponseConverters(t *testing.T) {
+	t.Parallel()
+	apiModelRequest := model.ApiKeyRequest{
+		Spec: model.ApiKeySpecRequest{},
+	}
+
+	apiModelResponse, err := model.ApiKeyRequestToOptionalResponse(&apiModelRequest)
+	require.NoError(t, err)
+
+	tfModel, diags := conv.ApiKeyAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
+	require.False(t, diags.HasError())
+
+	filledApiModelRequest, diags := conv.ApiKeyTFToAPIRequestModel(context.Background(), tfModel)
+	require.False(t, diags.HasError())
+
+	result, err := model.ApiKeyRequestToOptionalResponse(filledApiModelRequest)
+	require.NoError(t, err)
+
+	require.Equal(t, *apiModelResponse, *result)
+}
+
 func TestApiKeyResponseConverters(t *testing.T) {
 	t.Parallel()
 	apiModelRequest := model.ApiKeyRequest{
@@ -55,6 +76,27 @@ func TestUpdateApiKeyRequestConverters(t *testing.T) {
 	require.False(t, diags.HasError())
 
 	require.Equal(t, expectedUpdateModel, result)
+}
+
+func TestApiKeyMetadataOptionalResponseConverters(t *testing.T) {
+	t.Parallel()
+	apiModelRequest := model.ApiKeyMetadataRequest{
+		TypedResourceMetadataRequest: commonmodel.TypedResourceMetadataRequest{},
+	}
+
+	apiModelResponse, err := model.ApiKeyMetadataRequestToOptionalResponse(&apiModelRequest)
+	require.NoError(t, err)
+
+	tfModel, diags := conv.ApiKeyMetadataAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
+	require.False(t, diags.HasError())
+
+	filledApiModelRequest, diags := conv.ApiKeyMetadataTFToAPIRequestModel(context.Background(), tfModel)
+	require.False(t, diags.HasError())
+
+	result, err := model.ApiKeyMetadataRequestToOptionalResponse(filledApiModelRequest)
+	require.NoError(t, err)
+
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestApiKeyMetadataResponseConverters(t *testing.T) {

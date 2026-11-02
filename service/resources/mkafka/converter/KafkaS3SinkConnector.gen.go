@@ -8,7 +8,6 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -154,19 +153,19 @@ func KafkaS3SinkConnectorTFToAPIRequestModel(ctx context.Context, plan *tfmodel.
 	}
 
 	if !plan.TasksMax.IsNull() && !plan.TasksMax.IsUnknown() {
-		am.TasksMax = ptr.Get(int32(plan.TasksMax.ValueInt64()))
+		am.TasksMax = new(int32(plan.TasksMax.ValueInt64()))
 	}
 
 	if !plan.InputFormat.IsNull() && !plan.InputFormat.IsUnknown() {
-		am.InputFormat = ptr.Get(model.KafkaS3SinkConnectorInputFormatRequest(plan.InputFormat.ValueString()))
+		am.InputFormat = new(model.KafkaS3SinkConnectorInputFormatRequest(plan.InputFormat.ValueString()))
 	}
 
 	if !plan.OutputFormat.IsNull() && !plan.OutputFormat.IsUnknown() {
-		am.OutputFormat = ptr.Get(model.KafkaS3SinkConnectorOutputFormatRequest(plan.OutputFormat.ValueString()))
+		am.OutputFormat = new(model.KafkaS3SinkConnectorOutputFormatRequest(plan.OutputFormat.ValueString()))
 	}
 
 	if !plan.FileCompressionType.IsNull() && !plan.FileCompressionType.IsUnknown() {
-		am.FileCompressionType = ptr.Get(model.KafkaS3SinkConnectorFileCompressionTypeRequest(plan.FileCompressionType.ValueString()))
+		am.FileCompressionType = new(model.KafkaS3SinkConnectorFileCompressionTypeRequest(plan.FileCompressionType.ValueString()))
 	}
 
 	if !plan.OutputFields.IsNull() && !plan.OutputFields.IsUnknown() {
@@ -194,7 +193,7 @@ func KafkaS3SinkConnectorTFToAPIRequestModel(ctx context.Context, plan *tfmodel.
 	}
 
 	if !plan.ErrorHandling.IsNull() && !plan.ErrorHandling.IsUnknown() {
-		am.ErrorHandling = ptr.Get(model.KafkaS3SinkConnectorErrorHandlingRequest(plan.ErrorHandling.ValueString()))
+		am.ErrorHandling = new(model.KafkaS3SinkConnectorErrorHandlingRequest(plan.ErrorHandling.ValueString()))
 	}
 
 	if !plan.DlqTopic.IsNull() && !plan.DlqTopic.IsUnknown() {

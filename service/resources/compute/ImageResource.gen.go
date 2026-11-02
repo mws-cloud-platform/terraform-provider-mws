@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &ImageResource{}
 	_ resource.ResourceWithImportState = &ImageResource{}
+	_ resource.ResourceWithIdentity    = &ImageResource{}
 )
 
 type ImageResource struct {
@@ -74,6 +76,27 @@ func (m *ImageResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type imageResourceIdentityModel struct {
+	Project types.String `tfsdk:"project"`
+	Image   types.String `tfsdk:"image"`
+}
+
+func (m *ImageResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "ImageResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"image": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Путь к образу",
+			},
 		},
 	}
 }
@@ -166,6 +189,10 @@ func (m *ImageResource) Create(ctx context.Context, req resource.CreateRequest, 
 	plan.Image = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, imageResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Image:   plan.ImageParam,
+	})...)
 }
 
 func (m *ImageResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -225,6 +252,10 @@ func (m *ImageResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	state.Image = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, imageResourceIdentityModel{
+		Project: state.ProjectParam,
+		Image:   state.ImageParam,
+	})...)
 }
 
 func (m *ImageResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -296,6 +327,10 @@ func (m *ImageResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	plan.Image = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, imageResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Image:   plan.ImageParam,
+	})...)
 }
 
 func (m *ImageResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -347,7 +382,24 @@ func (m *ImageResource) ImportState(ctx context.Context, req resource.ImportStat
 
 	var state tfmodel.ImageResourceModel
 
-	ref, err := computeref.ParseImageRef(ctx, req.ID)
+	var (
+		ref computeref.ImageRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = computeref.ParseImageRef(ctx, req.ID)
+	} else {
+		var identity imageResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = computeref.NewImageRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Image.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for Image",
@@ -393,4 +445,8 @@ func (m *ImageResource) ImportState(ctx context.Context, req resource.ImportStat
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, imageResourceIdentityModel{
+		Project: state.ProjectParam,
+		Image:   state.ImageParam,
+	})...)
 }

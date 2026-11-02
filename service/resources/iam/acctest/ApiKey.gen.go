@@ -52,7 +52,7 @@ func ApiKeyTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleResourceTe
 	}, nil
 }
 
-func GetApiKey(ctx context.Context, sdk *resourcesdk.ApiKey, id string) (*model.ApiKeyResponse, error) {
+func GetApiKey(ctx context.Context, sdk *resourcesdk.ApiKey, id string) (*model.ApiKeyOptionalResponse, error) {
 	ref, err := iamref.ParseApiKeyRef(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("parse reference: %w", err)

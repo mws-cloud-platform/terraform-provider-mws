@@ -8,7 +8,6 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/mk8s/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
@@ -25,7 +24,7 @@ func ClusterPrimaryEndpointSpecOrRefAPIOptionalResponseToTFModel(ctx context.Con
 	var t tfmodel.ClusterPrimaryEndpointSpecOrRef
 
 	if val, ok := am.Ref.Get(); ok {
-		t.Ref = types.StringPointerValue(ptr.Get(val.Path()))
+		t.Ref = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.Ref = types.StringNull()
 	}

@@ -421,8 +421,8 @@ github.com/zclconf/go-cty-debug v0.0.0-20191215020915-b22d67c1ba0b/go.mod h1:ZRK
 github.com/zclconf/go-cty-debug v0.0.0-20240509010212-0d6042c53940 h1:4r45xpDWB6ZMSMNJFMOjqrGHynW3DIBuR2H9j0ug+Mo=
 github.com/zclconf/go-cty-debug v0.0.0-20240509010212-0d6042c53940/go.mod h1:CmBdvvj3nqzfzJ6nTCIwDTPZ56aVGvDrmztiO5g3qrM=
 github.com/zclconf/go-cty-yaml v1.0.2/go.mod h1:IP3Ylp0wQpYm50IHK8OZWKMu6sPJIUgKa8XhiVHura0=
-go.mws.cloud/go-sdk v0.28.0 h1:yOwzOGjihKPGHT3YyeH03WH3yClYkt1+qCeE5tggNZY=
-go.mws.cloud/go-sdk v0.28.0/go.mod h1:VaFj8fbQRo6PfSeMdR1OitUpVDc7ISuixV9Z0ko003w=
+go.mws.cloud/go-sdk v0.29.0 h1:095HELx887f3xOlLhYbjP3sbwIgjflTh6EEYACcNAWk=
+go.mws.cloud/go-sdk v0.29.0/go.mod h1:VaFj8fbQRo6PfSeMdR1OitUpVDc7ISuixV9Z0ko003w=
 go.mws.cloud/util-toolset v0.15.1 h1:e5GhtWPwyDGSPaamax7xjRzTRsZzgNeqifBUhT8E/bE=
 go.mws.cloud/util-toolset v0.15.1/go.mod h1:PLpyuVPkrv8y0HBE5SJ8f5ZZvSVIBXYVW8CaKeZsue8=
 go.opencensus.io v0.21.0/go.mod h1:mSImk1erAIZhrmZN+AvHh14ztQfjbGwt4TtuofqLduU=

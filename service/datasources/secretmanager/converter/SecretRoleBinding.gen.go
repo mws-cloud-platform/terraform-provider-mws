@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/secretmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -79,7 +78,7 @@ func SecretRoleBindingAPIOptionalResponseToTFModel(ctx context.Context, am *mode
 	t.Role = types.StringValue(am.Spec.Role.Path())
 
 	if val, ok := am.Spec.SupportRequestId.Get(); ok {
-		t.SupportRequestId = types.StringPointerValue(ptr.Get(val.Path()))
+		t.SupportRequestId = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.SupportRequestId = types.StringNull()
 	}

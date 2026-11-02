@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -27,7 +26,7 @@ func NlbStatusRuleAPIResponseToTFModel(ctx context.Context, am *model.NlbStatusR
 	t.ProtoPort = types.StringValue(am.ProtoPort)
 
 	if am.TargetPort != nil {
-		t.TargetPort = types.Int64PointerValue(ptr.Get(int64(*am.TargetPort)))
+		t.TargetPort = types.Int64PointerValue(new(int64(*am.TargetPort)))
 	} else {
 		t.TargetPort = types.Int64Null()
 	}

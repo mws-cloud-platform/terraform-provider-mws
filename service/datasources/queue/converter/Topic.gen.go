@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/queue/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -150,7 +149,7 @@ func TopicAPIResponseToTFModel(ctx context.Context, am *model.TopicResponse) (*t
 	}
 
 	if am.Spec.PartitionCount != nil {
-		t.PartitionCount = types.Int64PointerValue(ptr.Get(int64(*am.Spec.PartitionCount)))
+		t.PartitionCount = types.Int64PointerValue(new(int64(*am.Spec.PartitionCount)))
 	} else {
 		t.PartitionCount = types.Int64Null()
 	}

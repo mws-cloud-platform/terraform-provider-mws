@@ -18,7 +18,7 @@ func TestPostgresRoleBindingAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
 	apiModel := model.PostgresRoleBindingResponse{
 		Spec: model.PostgresRoleBindingSpecResponse{
-			UserId: mpostgres.NewMustPostgresClusterUserRef("projectID", "fbr", "a"),
+			UserId: mpostgres.NewMustPostgresClusterUserRef("projectID", "y", "9vBs7"),
 			Role:   "",
 		},
 	}

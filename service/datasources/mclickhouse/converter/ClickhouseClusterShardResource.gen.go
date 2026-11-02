@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -33,7 +32,7 @@ func ClickhouseClusterShardResourceAPIResponseToTFModel(ctx context.Context, am 
 	t.Weight = types.Int64Value(int64(am.Weight))
 
 	if am.Index != nil {
-		t.Index = types.Int64PointerValue(ptr.Get(int64(*am.Index)))
+		t.Index = types.Int64PointerValue(new(int64(*am.Index)))
 	} else {
 		t.Index = types.Int64Null()
 	}

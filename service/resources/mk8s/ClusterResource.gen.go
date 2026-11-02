@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &ClusterResource{}
 	_ resource.ResourceWithImportState = &ClusterResource{}
+	_ resource.ResourceWithIdentity    = &ClusterResource{}
 )
 
 type ClusterResource struct {
@@ -74,6 +76,27 @@ func (m *ClusterResource) Schema(ctx context.Context, req resource.SchemaRequest
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type clusterResourceIdentityModel struct {
+	Project     types.String `tfsdk:"project"`
+	ClusterName types.String `tfsdk:"cluster_name"`
+}
+
+func (m *ClusterResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "ClusterResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"cluster_name": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя кластера",
+			},
 		},
 	}
 }
@@ -166,6 +189,10 @@ func (m *ClusterResource) Create(ctx context.Context, req resource.CreateRequest
 	plan.Cluster = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, clusterResourceIdentityModel{
+		Project:     plan.ProjectParam,
+		ClusterName: plan.ClusterNameParam,
+	})...)
 }
 
 func (m *ClusterResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -225,6 +252,10 @@ func (m *ClusterResource) Read(ctx context.Context, req resource.ReadRequest, re
 	state.Cluster = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, clusterResourceIdentityModel{
+		Project:     state.ProjectParam,
+		ClusterName: state.ClusterNameParam,
+	})...)
 }
 
 func (m *ClusterResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -296,6 +327,10 @@ func (m *ClusterResource) Update(ctx context.Context, req resource.UpdateRequest
 	plan.Cluster = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, clusterResourceIdentityModel{
+		Project:     plan.ProjectParam,
+		ClusterName: plan.ClusterNameParam,
+	})...)
 }
 
 func (m *ClusterResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -347,7 +382,24 @@ func (m *ClusterResource) ImportState(ctx context.Context, req resource.ImportSt
 
 	var state tfmodel.ClusterResourceModel
 
-	ref, err := mk8sref.ParseClusterRef(ctx, req.ID)
+	var (
+		ref mk8sref.ClusterRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = mk8sref.ParseClusterRef(ctx, req.ID)
+	} else {
+		var identity clusterResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = mk8sref.NewClusterRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.ClusterName.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for Cluster",
@@ -393,4 +445,8 @@ func (m *ClusterResource) ImportState(ctx context.Context, req resource.ImportSt
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, clusterResourceIdentityModel{
+		Project:     state.ProjectParam,
+		ClusterName: state.ClusterNameParam,
+	})...)
 }

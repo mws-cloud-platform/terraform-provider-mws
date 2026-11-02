@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &ServiceEndpointResource{}
 	_ resource.ResourceWithImportState = &ServiceEndpointResource{}
+	_ resource.ResourceWithIdentity    = &ServiceEndpointResource{}
 )
 
 type ServiceEndpointResource struct {
@@ -81,6 +83,32 @@ func (m *ServiceEndpointResource) Schema(ctx context.Context, req resource.Schem
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type serviceEndpointResourceIdentityModel struct {
+	Project         types.String `tfsdk:"project"`
+	Network         types.String `tfsdk:"network"`
+	ServiceEndpoint types.String `tfsdk:"service_endpoint"`
+}
+
+func (m *ServiceEndpointResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "ServiceEndpointResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"network": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя сети",
+			},
+			"service_endpoint": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя точки доступа Private Link",
+			},
 		},
 	}
 }
@@ -174,6 +202,11 @@ func (m *ServiceEndpointResource) Create(ctx context.Context, req resource.Creat
 	plan.ServiceEndpoint = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, serviceEndpointResourceIdentityModel{
+		Project:         plan.ProjectParam,
+		Network:         plan.NetworkParam,
+		ServiceEndpoint: plan.ServiceEndpointParam,
+	})...)
 }
 
 func (m *ServiceEndpointResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -234,6 +267,11 @@ func (m *ServiceEndpointResource) Read(ctx context.Context, req resource.ReadReq
 	state.ServiceEndpoint = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, serviceEndpointResourceIdentityModel{
+		Project:         state.ProjectParam,
+		Network:         state.NetworkParam,
+		ServiceEndpoint: state.ServiceEndpointParam,
+	})...)
 }
 
 func (m *ServiceEndpointResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -306,6 +344,11 @@ func (m *ServiceEndpointResource) Update(ctx context.Context, req resource.Updat
 	plan.ServiceEndpoint = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, serviceEndpointResourceIdentityModel{
+		Project:         plan.ProjectParam,
+		Network:         plan.NetworkParam,
+		ServiceEndpoint: plan.ServiceEndpointParam,
+	})...)
 }
 
 func (m *ServiceEndpointResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -358,7 +401,25 @@ func (m *ServiceEndpointResource) ImportState(ctx context.Context, req resource.
 
 	var state tfmodel.ServiceEndpointResourceModel
 
-	ref, err := vpcref.ParseServiceEndpointRef(ctx, req.ID)
+	var (
+		ref vpcref.ServiceEndpointRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = vpcref.ParseServiceEndpointRef(ctx, req.ID)
+	} else {
+		var identity serviceEndpointResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = vpcref.NewServiceEndpointRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Network.ValueString(),
+			identity.ServiceEndpoint.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for ServiceEndpoint",
@@ -406,4 +467,9 @@ func (m *ServiceEndpointResource) ImportState(ctx context.Context, req resource.
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, serviceEndpointResourceIdentityModel{
+		Project:         state.ProjectParam,
+		Network:         state.NetworkParam,
+		ServiceEndpoint: state.ServiceEndpointParam,
+	})...)
 }

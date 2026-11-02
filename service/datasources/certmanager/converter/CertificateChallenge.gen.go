@@ -8,7 +8,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/certmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -34,7 +33,7 @@ func CertificateChallengeAPIResponseToTFModel(ctx context.Context, am *model.Cer
 	t.UpdatedAt = types.StringValue(am.UpdatedAt.Format(time.RFC3339))
 
 	if am.LastValidatedAt != nil {
-		t.LastValidatedAt = types.StringPointerValue(ptr.Get(am.LastValidatedAt.Format(time.RFC3339)))
+		t.LastValidatedAt = types.StringPointerValue(new(am.LastValidatedAt.Format(time.RFC3339)))
 	} else {
 		t.LastValidatedAt = types.StringNull()
 	}

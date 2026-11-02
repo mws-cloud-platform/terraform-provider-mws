@@ -23,13 +23,13 @@ func PostgresStatusAddressAPIResponseToTFModel(ctx context.Context, am *model.Po
 	var t tfmodel.PostgresStatusAddress
 
 	if am.Address != nil {
-		t.Address = types.StringPointerValue(ptr.Get(am.Address.Path()))
+		t.Address = types.StringPointerValue(new(am.Address.Path()))
 	} else {
 		t.Address = types.StringNull()
 	}
 
 	if am.Subnet != nil {
-		t.Subnet = types.StringPointerValue(ptr.Get(am.Subnet.Path()))
+		t.Subnet = types.StringPointerValue(new(am.Subnet.Path()))
 	} else {
 		t.Subnet = types.StringNull()
 	}

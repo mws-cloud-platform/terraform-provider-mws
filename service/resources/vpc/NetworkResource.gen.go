@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &NetworkResource{}
 	_ resource.ResourceWithImportState = &NetworkResource{}
+	_ resource.ResourceWithIdentity    = &NetworkResource{}
 )
 
 type NetworkResource struct {
@@ -74,6 +76,27 @@ func (m *NetworkResource) Schema(ctx context.Context, req resource.SchemaRequest
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type networkResourceIdentityModel struct {
+	Project types.String `tfsdk:"project"`
+	Network types.String `tfsdk:"network"`
+}
+
+func (m *NetworkResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "NetworkResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"network": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя сети",
+			},
 		},
 	}
 }
@@ -166,6 +189,10 @@ func (m *NetworkResource) Create(ctx context.Context, req resource.CreateRequest
 	plan.Network = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, networkResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Network: plan.NetworkParam,
+	})...)
 }
 
 func (m *NetworkResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -225,6 +252,10 @@ func (m *NetworkResource) Read(ctx context.Context, req resource.ReadRequest, re
 	state.Network = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, networkResourceIdentityModel{
+		Project: state.ProjectParam,
+		Network: state.NetworkParam,
+	})...)
 }
 
 func (m *NetworkResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -296,6 +327,10 @@ func (m *NetworkResource) Update(ctx context.Context, req resource.UpdateRequest
 	plan.Network = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, networkResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Network: plan.NetworkParam,
+	})...)
 }
 
 func (m *NetworkResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -347,7 +382,24 @@ func (m *NetworkResource) ImportState(ctx context.Context, req resource.ImportSt
 
 	var state tfmodel.NetworkResourceModel
 
-	ref, err := vpcref.ParseNetworkRef(ctx, req.ID)
+	var (
+		ref vpcref.NetworkRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = vpcref.ParseNetworkRef(ctx, req.ID)
+	} else {
+		var identity networkResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = vpcref.NewNetworkRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Network.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for Network",
@@ -393,4 +445,8 @@ func (m *NetworkResource) ImportState(ctx context.Context, req resource.ImportSt
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, networkResourceIdentityModel{
+		Project: state.ProjectParam,
+		Network: state.NetworkParam,
+	})...)
 }

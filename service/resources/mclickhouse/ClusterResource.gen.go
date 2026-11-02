@@ -10,6 +10,7 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -32,6 +33,7 @@ import (
 var (
 	_ resource.Resource                = &ClusterResource{}
 	_ resource.ResourceWithImportState = &ClusterResource{}
+	_ resource.ResourceWithIdentity    = &ClusterResource{}
 )
 
 type ClusterResource struct {
@@ -76,6 +78,27 @@ func (m *ClusterResource) Schema(ctx context.Context, req resource.SchemaRequest
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type clusterResourceIdentityModel struct {
+	Project types.String `tfsdk:"project"`
+	Cluster types.String `tfsdk:"cluster"`
+}
+
+func (m *ClusterResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "ClusterResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"cluster": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Название или идентификатор кластера.",
+			},
 		},
 	}
 }
@@ -200,6 +223,10 @@ func (m *ClusterResource) Create(ctx context.Context, req resource.CreateRequest
 	plan.ClickhouseCluster = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, clusterResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Cluster: plan.ClusterParam,
+	})...)
 	if !specBootstrapAdminPasswordVersion.IsNull() && !specBootstrapAdminPasswordVersion.IsUnknown() {
 		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("bootstrap_admin").AtName("password_version"), specBootstrapAdminPasswordVersion)...)
 	}
@@ -264,6 +291,10 @@ func (m *ClusterResource) Read(ctx context.Context, req resource.ReadRequest, re
 	state.ClickhouseCluster = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, clusterResourceIdentityModel{
+		Project: state.ProjectParam,
+		Cluster: state.ClusterParam,
+	})...)
 	resp.Diagnostics.Append(req.State.GetAttribute(ctx, tfpath.Root("bootstrap_admin").AtName("password_version"), &specBootstrapAdminPasswordVersion)...)
 	if !specBootstrapAdminPasswordVersion.IsNull() && !specBootstrapAdminPasswordVersion.IsUnknown() {
 		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("bootstrap_admin").AtName("password_version"), specBootstrapAdminPasswordVersion)...)
@@ -371,6 +402,10 @@ func (m *ClusterResource) Update(ctx context.Context, req resource.UpdateRequest
 	plan.ClickhouseCluster = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, clusterResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Cluster: plan.ClusterParam,
+	})...)
 	if !specBootstrapAdminPasswordVersion.IsNull() && !specBootstrapAdminPasswordVersion.IsUnknown() {
 		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("bootstrap_admin").AtName("password_version"), specBootstrapAdminPasswordVersion)...)
 	}
@@ -425,7 +460,24 @@ func (m *ClusterResource) ImportState(ctx context.Context, req resource.ImportSt
 
 	var state tfmodel.ClusterResourceModel
 
-	ref, err := mclickhouseref.ParseClickhouseClusterRef(ctx, req.ID)
+	var (
+		ref mclickhouseref.ClickhouseClusterRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = mclickhouseref.ParseClickhouseClusterRef(ctx, req.ID)
+	} else {
+		var identity clusterResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = mclickhouseref.NewClickhouseClusterRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Cluster.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for Cluster",
@@ -471,4 +523,8 @@ func (m *ClusterResource) ImportState(ctx context.Context, req resource.ImportSt
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, clusterResourceIdentityModel{
+		Project: state.ProjectParam,
+		Cluster: state.ClusterParam,
+	})...)
 }

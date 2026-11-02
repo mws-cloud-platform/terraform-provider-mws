@@ -73,13 +73,13 @@ func ClickhouseBackupStatusBackupAPIResponseToTFModel(ctx context.Context, am *m
 	t.Type = types.StringValue(string(am.Type))
 
 	if am.StartTime != nil {
-		t.StartTime = types.StringPointerValue(ptr.Get(am.StartTime.Format(time.RFC3339)))
+		t.StartTime = types.StringPointerValue(new(am.StartTime.Format(time.RFC3339)))
 	} else {
 		t.StartTime = types.StringNull()
 	}
 
 	if am.EndTime != nil {
-		t.EndTime = types.StringPointerValue(ptr.Get(am.EndTime.Format(time.RFC3339)))
+		t.EndTime = types.StringPointerValue(new(am.EndTime.Format(time.RFC3339)))
 	} else {
 		t.EndTime = types.StringNull()
 	}

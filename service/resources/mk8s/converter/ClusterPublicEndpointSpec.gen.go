@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/mk8s/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
@@ -39,7 +38,7 @@ func ClusterPublicEndpointSpecTFToAPIRequestModel(ctx context.Context, plan *tfm
 	var am model.ClusterPublicEndpointSpecRequest
 
 	if !plan.Version.IsNull() && !plan.Version.IsUnknown() {
-		am.Version = ptr.Get(model.ClusterPublicEndpointSpecVersionRequest(plan.Version.ValueString()))
+		am.Version = new(model.ClusterPublicEndpointSpecVersionRequest(plan.Version.ValueString()))
 	}
 
 	return &am, diags

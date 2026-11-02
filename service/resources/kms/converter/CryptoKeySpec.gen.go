@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/kms/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/kms/model"
@@ -39,7 +38,7 @@ func CryptoKeySpecDestructionPolicyTFToAPIRequestModel(ctx context.Context, plan
 	var am model.CryptoKeySpecDestructionPolicyRequest
 
 	if !plan.DefaultDestructionIntervalDays.IsNull() && !plan.DefaultDestructionIntervalDays.IsUnknown() {
-		am.DefaultDestructionIntervalDays = ptr.Get(int32(plan.DefaultDestructionIntervalDays.ValueInt64()))
+		am.DefaultDestructionIntervalDays = new(int32(plan.DefaultDestructionIntervalDays.ValueInt64()))
 	}
 
 	return &am, diags
@@ -101,7 +100,7 @@ func CryptoKeySpecRotationPolicyTFToAPIRequestModel(ctx context.Context, plan *t
 	}
 
 	if !plan.RotationIntervalDays.IsNull() && !plan.RotationIntervalDays.IsUnknown() {
-		am.RotationIntervalDays = ptr.Get(int32(plan.RotationIntervalDays.ValueInt64()))
+		am.RotationIntervalDays = new(int32(plan.RotationIntervalDays.ValueInt64()))
 	}
 
 	return &am, diags

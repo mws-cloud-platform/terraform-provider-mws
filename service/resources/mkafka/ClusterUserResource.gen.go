@@ -10,6 +10,7 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -32,6 +33,7 @@ import (
 var (
 	_ resource.Resource                = &ClusterUserResource{}
 	_ resource.ResourceWithImportState = &ClusterUserResource{}
+	_ resource.ResourceWithIdentity    = &ClusterUserResource{}
 )
 
 type ClusterUserResource struct {
@@ -83,6 +85,32 @@ func (m *ClusterUserResource) Schema(ctx context.Context, req resource.SchemaReq
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type clusterUserResourceIdentityModel struct {
+	Project types.String `tfsdk:"project"`
+	Cluster types.String `tfsdk:"cluster"`
+	User    types.String `tfsdk:"user"`
+}
+
+func (m *ClusterUserResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "ClusterUserResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"cluster": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Название или идентификатор кластера.",
+			},
+			"user": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Пользователь кластера.",
+			},
 		},
 	}
 }
@@ -208,6 +236,11 @@ func (m *ClusterUserResource) Create(ctx context.Context, req resource.CreateReq
 	plan.KafkaUser = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, clusterUserResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Cluster: plan.ClusterParam,
+		User:    plan.UserParam,
+	})...)
 	if !specPasswordVersion.IsNull() && !specPasswordVersion.IsUnknown() {
 		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("password_version"), specPasswordVersion)...)
 	}
@@ -273,6 +306,11 @@ func (m *ClusterUserResource) Read(ctx context.Context, req resource.ReadRequest
 	state.KafkaUser = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, clusterUserResourceIdentityModel{
+		Project: state.ProjectParam,
+		Cluster: state.ClusterParam,
+		User:    state.UserParam,
+	})...)
 	resp.Diagnostics.Append(req.State.GetAttribute(ctx, tfpath.Root("password_version"), &specPasswordVersion)...)
 	if !specPasswordVersion.IsNull() && !specPasswordVersion.IsUnknown() {
 		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("password_version"), specPasswordVersion)...)
@@ -381,6 +419,11 @@ func (m *ClusterUserResource) Update(ctx context.Context, req resource.UpdateReq
 	plan.KafkaUser = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, clusterUserResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Cluster: plan.ClusterParam,
+		User:    plan.UserParam,
+	})...)
 	if !specPasswordVersion.IsNull() && !specPasswordVersion.IsUnknown() {
 		resp.Diagnostics.Append(resp.State.SetAttribute(ctx, tfpath.Root("password_version"), specPasswordVersion)...)
 	}
@@ -436,7 +479,25 @@ func (m *ClusterUserResource) ImportState(ctx context.Context, req resource.Impo
 
 	var state tfmodel.ClusterUserResourceModel
 
-	ref, err := mkafkaref.ParseKafkaClusterUserRef(ctx, req.ID)
+	var (
+		ref mkafkaref.KafkaClusterUserRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = mkafkaref.ParseKafkaClusterUserRef(ctx, req.ID)
+	} else {
+		var identity clusterUserResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = mkafkaref.NewKafkaClusterUserRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Cluster.ValueString(),
+			identity.User.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for ClusterUser",
@@ -484,4 +545,9 @@ func (m *ClusterUserResource) ImportState(ctx context.Context, req resource.Impo
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, clusterUserResourceIdentityModel{
+		Project: state.ProjectParam,
+		Cluster: state.ClusterParam,
+		User:    state.UserParam,
+	})...)
 }

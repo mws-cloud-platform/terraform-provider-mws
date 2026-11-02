@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -23,7 +22,7 @@ func ResourceExternalAddressSpecOrRefAPIToTFModel(ctx context.Context, am *commo
 	var t tfcommon.ResourceExternalAddressSpecOrRef
 
 	if am.Ref != nil {
-		t.Ref = types.StringPointerValue(ptr.Get(am.Ref.Path()))
+		t.Ref = types.StringPointerValue(new(am.Ref.Path()))
 	} else {
 		t.Ref = types.StringNull()
 	}
@@ -58,7 +57,7 @@ func ResourceExternalAddressSpecOrRefAPIResponseToTFModel(ctx context.Context, a
 	var t tfcommon.ResourceExternalAddressSpecOrRef
 
 	if am.Ref != nil {
-		t.Ref = types.StringPointerValue(ptr.Get(am.Ref.Path()))
+		t.Ref = types.StringPointerValue(new(am.Ref.Path()))
 	} else {
 		t.Ref = types.StringNull()
 	}
@@ -93,7 +92,7 @@ func ResourceExternalAddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Co
 	var t tfcommon.ResourceExternalAddressSpecOrRef
 
 	if val, ok := am.Ref.Get(); ok {
-		t.Ref = types.StringPointerValue(ptr.Get(val.Path()))
+		t.Ref = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.Ref = types.StringNull()
 	}

@@ -23,13 +23,13 @@ func PostgresStatusDirectAddressAPIResponseToTFModel(ctx context.Context, am *mo
 	var t tfmodel.PostgresStatusDirectAddress
 
 	if am.Address != nil {
-		t.PostgresStatusAddress.Address = types.StringPointerValue(ptr.Get(am.Address.Path()))
+		t.PostgresStatusAddress.Address = types.StringPointerValue(new(am.Address.Path()))
 	} else {
 		t.PostgresStatusAddress.Address = types.StringNull()
 	}
 
 	if am.Subnet != nil {
-		t.PostgresStatusAddress.Subnet = types.StringPointerValue(ptr.Get(am.Subnet.Path()))
+		t.PostgresStatusAddress.Subnet = types.StringPointerValue(new(am.Subnet.Path()))
 	} else {
 		t.PostgresStatusAddress.Subnet = types.StringNull()
 	}
@@ -59,7 +59,7 @@ func PostgresStatusDirectAddressAPIResponseToTFModel(ctx context.Context, am *mo
 	}
 
 	if am.Zone != nil {
-		t.Zone = types.StringPointerValue(ptr.Get(am.Zone.Path()))
+		t.Zone = types.StringPointerValue(new(am.Zone.Path()))
 	} else {
 		t.Zone = types.StringNull()
 	}

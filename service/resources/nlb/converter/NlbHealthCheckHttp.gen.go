@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/nlb/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/nlb/model"
@@ -51,7 +50,7 @@ func NlbHealthCheckHttpTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Nl
 	}
 
 	if !plan.ExpectedCode.IsNull() && !plan.ExpectedCode.IsUnknown() {
-		am.ExpectedCode = ptr.Get(int(plan.ExpectedCode.ValueInt64()))
+		am.ExpectedCode = new(int(plan.ExpectedCode.ValueInt64()))
 	}
 
 	return &am, diags

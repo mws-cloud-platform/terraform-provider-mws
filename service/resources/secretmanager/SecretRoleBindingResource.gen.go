@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &SecretRoleBindingResource{}
 	_ resource.ResourceWithImportState = &SecretRoleBindingResource{}
+	_ resource.ResourceWithIdentity    = &SecretRoleBindingResource{}
 )
 
 type SecretRoleBindingResource struct {
@@ -80,6 +82,31 @@ func (m *SecretRoleBindingResource) Schema(ctx context.Context, req resource.Sch
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type secretRoleBindingResourceIdentityModel struct {
+	Project     types.String `tfsdk:"project"`
+	Name        types.String `tfsdk:"name"`
+	RoleBinding types.String `tfsdk:"role_binding"`
+}
+
+func (m *SecretRoleBindingResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "SecretRoleBindingResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"name": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя секрета.",
+			},
+			"role_binding": identityschema.StringAttribute{
+				RequiredForImport: true,
+			},
 		},
 	}
 }
@@ -173,6 +200,11 @@ func (m *SecretRoleBindingResource) Create(ctx context.Context, req resource.Cre
 	plan.SecretRoleBinding = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, secretRoleBindingResourceIdentityModel{
+		Project:     plan.ProjectParam,
+		Name:        plan.NameParam,
+		RoleBinding: plan.RoleBindingParam,
+	})...)
 }
 
 func (m *SecretRoleBindingResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -233,6 +265,11 @@ func (m *SecretRoleBindingResource) Read(ctx context.Context, req resource.ReadR
 	state.SecretRoleBinding = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, secretRoleBindingResourceIdentityModel{
+		Project:     state.ProjectParam,
+		Name:        state.NameParam,
+		RoleBinding: state.RoleBindingParam,
+	})...)
 }
 
 func (m *SecretRoleBindingResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -305,6 +342,11 @@ func (m *SecretRoleBindingResource) Update(ctx context.Context, req resource.Upd
 	plan.SecretRoleBinding = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, secretRoleBindingResourceIdentityModel{
+		Project:     plan.ProjectParam,
+		Name:        plan.NameParam,
+		RoleBinding: plan.RoleBindingParam,
+	})...)
 }
 
 func (m *SecretRoleBindingResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -357,7 +399,25 @@ func (m *SecretRoleBindingResource) ImportState(ctx context.Context, req resourc
 
 	var state tfmodel.SecretRoleBindingResourceModel
 
-	ref, err := secretmanagerref.ParseSecretRoleBindingRef(ctx, req.ID)
+	var (
+		ref secretmanagerref.SecretRoleBindingRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = secretmanagerref.ParseSecretRoleBindingRef(ctx, req.ID)
+	} else {
+		var identity secretRoleBindingResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = secretmanagerref.NewSecretRoleBindingRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Name.ValueString(),
+			identity.RoleBinding.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for SecretRoleBinding",
@@ -405,4 +465,9 @@ func (m *SecretRoleBindingResource) ImportState(ctx context.Context, req resourc
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, secretRoleBindingResourceIdentityModel{
+		Project:     state.ProjectParam,
+		Name:        state.NameParam,
+		RoleBinding: state.RoleBindingParam,
+	})...)
 }

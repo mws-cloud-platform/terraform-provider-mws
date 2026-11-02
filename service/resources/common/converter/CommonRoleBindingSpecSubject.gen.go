@@ -8,7 +8,6 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/iam"
@@ -25,19 +24,19 @@ func CommonRoleBindingSpecSubjectAPIToTFModel(ctx context.Context, am *commonmod
 	var t tfcommon.CommonRoleBindingSpecSubject
 
 	if am.User != nil {
-		t.User = types.StringPointerValue(ptr.Get(am.User.Path()))
+		t.User = types.StringPointerValue(new(am.User.Path()))
 	} else {
 		t.User = types.StringNull()
 	}
 
 	if am.ServiceAccount != nil {
-		t.ServiceAccount = types.StringPointerValue(ptr.Get(am.ServiceAccount.Path()))
+		t.ServiceAccount = types.StringPointerValue(new(am.ServiceAccount.Path()))
 	} else {
 		t.ServiceAccount = types.StringNull()
 	}
 
 	if am.ServiceAgent != nil {
-		t.ServiceAgent = types.StringPointerValue(ptr.Get(am.ServiceAgent.Path()))
+		t.ServiceAgent = types.StringPointerValue(new(am.ServiceAgent.Path()))
 	} else {
 		t.ServiceAgent = types.StringNull()
 	}
@@ -61,13 +60,13 @@ func CommonRoleBindingSpecSubjectAPIToTFModel(ctx context.Context, am *commonmod
 	}
 
 	if am.UserGroup != nil {
-		t.UserGroup = types.StringPointerValue(ptr.Get(am.UserGroup.Path()))
+		t.UserGroup = types.StringPointerValue(new(am.UserGroup.Path()))
 	} else {
 		t.UserGroup = types.StringNull()
 	}
 
 	if am.Employee != nil {
-		t.Employee = types.StringPointerValue(ptr.Get(am.Employee.Path()))
+		t.Employee = types.StringPointerValue(new(am.Employee.Path()))
 	} else {
 		t.Employee = types.StringNull()
 	}
@@ -84,19 +83,19 @@ func CommonRoleBindingSpecSubjectAPIResponseToTFModel(ctx context.Context, am *c
 	var t tfcommon.CommonRoleBindingSpecSubject
 
 	if am.User != nil {
-		t.User = types.StringPointerValue(ptr.Get(am.User.Path()))
+		t.User = types.StringPointerValue(new(am.User.Path()))
 	} else {
 		t.User = types.StringNull()
 	}
 
 	if am.ServiceAccount != nil {
-		t.ServiceAccount = types.StringPointerValue(ptr.Get(am.ServiceAccount.Path()))
+		t.ServiceAccount = types.StringPointerValue(new(am.ServiceAccount.Path()))
 	} else {
 		t.ServiceAccount = types.StringNull()
 	}
 
 	if am.ServiceAgent != nil {
-		t.ServiceAgent = types.StringPointerValue(ptr.Get(am.ServiceAgent.Path()))
+		t.ServiceAgent = types.StringPointerValue(new(am.ServiceAgent.Path()))
 	} else {
 		t.ServiceAgent = types.StringNull()
 	}
@@ -120,13 +119,13 @@ func CommonRoleBindingSpecSubjectAPIResponseToTFModel(ctx context.Context, am *c
 	}
 
 	if am.UserGroup != nil {
-		t.UserGroup = types.StringPointerValue(ptr.Get(am.UserGroup.Path()))
+		t.UserGroup = types.StringPointerValue(new(am.UserGroup.Path()))
 	} else {
 		t.UserGroup = types.StringNull()
 	}
 
 	if am.Employee != nil {
-		t.Employee = types.StringPointerValue(ptr.Get(am.Employee.Path()))
+		t.Employee = types.StringPointerValue(new(am.Employee.Path()))
 	} else {
 		t.Employee = types.StringNull()
 	}
@@ -143,19 +142,19 @@ func CommonRoleBindingSpecSubjectAPIOptionalResponseToTFModel(ctx context.Contex
 	var t tfcommon.CommonRoleBindingSpecSubject
 
 	if val, ok := am.User.Get(); ok {
-		t.User = types.StringPointerValue(ptr.Get(val.Path()))
+		t.User = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.User = types.StringNull()
 	}
 
 	if val, ok := am.ServiceAccount.Get(); ok {
-		t.ServiceAccount = types.StringPointerValue(ptr.Get(val.Path()))
+		t.ServiceAccount = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.ServiceAccount = types.StringNull()
 	}
 
 	if val, ok := am.ServiceAgent.Get(); ok {
-		t.ServiceAgent = types.StringPointerValue(ptr.Get(val.Path()))
+		t.ServiceAgent = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.ServiceAgent = types.StringNull()
 	}
@@ -179,13 +178,13 @@ func CommonRoleBindingSpecSubjectAPIOptionalResponseToTFModel(ctx context.Contex
 	}
 
 	if val, ok := am.UserGroup.Get(); ok {
-		t.UserGroup = types.StringPointerValue(ptr.Get(val.Path()))
+		t.UserGroup = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.UserGroup = types.StringNull()
 	}
 
 	if val, ok := am.Employee.Get(); ok {
-		t.Employee = types.StringPointerValue(ptr.Get(val.Path()))
+		t.Employee = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.Employee = types.StringNull()
 	}

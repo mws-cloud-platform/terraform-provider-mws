@@ -8,7 +8,6 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/vpc/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -107,7 +106,7 @@ func NetworkTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Network) (*mo
 	}
 
 	if !plan.Mtu.IsNull() && !plan.Mtu.IsUnknown() {
-		am.Spec.Mtu = ptr.Get(int32(plan.Mtu.ValueInt64()))
+		am.Spec.Mtu = new(int32(plan.Mtu.ValueInt64()))
 	}
 
 	if !plan.InternetAccess.IsNull() && !plan.InternetAccess.IsUnknown() {

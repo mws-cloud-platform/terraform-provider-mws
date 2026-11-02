@@ -39,7 +39,7 @@ func AddressStatusAPIResponseToTFModel(ctx context.Context, am *model.AddressSta
 	t.ResourceStatus.Ready = readyTfObject
 
 	if am.Region != nil {
-		t.Region = types.StringPointerValue(ptr.Get(am.Region.ID()))
+		t.Region = types.StringPointerValue(new(am.Region.ID()))
 	} else {
 		t.Region = types.StringNull()
 	}

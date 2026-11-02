@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &ClusterDatabaseResource{}
 	_ resource.ResourceWithImportState = &ClusterDatabaseResource{}
+	_ resource.ResourceWithIdentity    = &ClusterDatabaseResource{}
 )
 
 type ClusterDatabaseResource struct {
@@ -81,6 +83,32 @@ func (m *ClusterDatabaseResource) Schema(ctx context.Context, req resource.Schem
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type clusterDatabaseResourceIdentityModel struct {
+	Project  types.String `tfsdk:"project"`
+	Cluster  types.String `tfsdk:"cluster"`
+	Database types.String `tfsdk:"database"`
+}
+
+func (m *ClusterDatabaseResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "ClusterDatabaseResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"cluster": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Название или идентификатор кластера.",
+			},
+			"database": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя базы данных.",
+			},
 		},
 	}
 }
@@ -174,6 +202,11 @@ func (m *ClusterDatabaseResource) Create(ctx context.Context, req resource.Creat
 	plan.PostgresClusterDatabase = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, clusterDatabaseResourceIdentityModel{
+		Project:  plan.ProjectParam,
+		Cluster:  plan.ClusterParam,
+		Database: plan.DatabaseParam,
+	})...)
 }
 
 func (m *ClusterDatabaseResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -234,6 +267,11 @@ func (m *ClusterDatabaseResource) Read(ctx context.Context, req resource.ReadReq
 	state.PostgresClusterDatabase = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, clusterDatabaseResourceIdentityModel{
+		Project:  state.ProjectParam,
+		Cluster:  state.ClusterParam,
+		Database: state.DatabaseParam,
+	})...)
 }
 
 func (m *ClusterDatabaseResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -306,6 +344,11 @@ func (m *ClusterDatabaseResource) Update(ctx context.Context, req resource.Updat
 	plan.PostgresClusterDatabase = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, clusterDatabaseResourceIdentityModel{
+		Project:  plan.ProjectParam,
+		Cluster:  plan.ClusterParam,
+		Database: plan.DatabaseParam,
+	})...)
 }
 
 func (m *ClusterDatabaseResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -358,7 +401,25 @@ func (m *ClusterDatabaseResource) ImportState(ctx context.Context, req resource.
 
 	var state tfmodel.ClusterDatabaseResourceModel
 
-	ref, err := mpostgresref.ParsePostgresClusterDatabaseRef(ctx, req.ID)
+	var (
+		ref mpostgresref.PostgresClusterDatabaseRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = mpostgresref.ParsePostgresClusterDatabaseRef(ctx, req.ID)
+	} else {
+		var identity clusterDatabaseResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = mpostgresref.NewPostgresClusterDatabaseRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Cluster.ValueString(),
+			identity.Database.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for ClusterDatabase",
@@ -406,4 +467,9 @@ func (m *ClusterDatabaseResource) ImportState(ctx context.Context, req resource.
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, clusterDatabaseResourceIdentityModel{
+		Project:  state.ProjectParam,
+		Cluster:  state.ClusterParam,
+		Database: state.DatabaseParam,
+	})...)
 }

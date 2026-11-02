@@ -22,7 +22,7 @@ func HardwareStatusAPIResponseToTFModel(ctx context.Context, am *model.HardwareS
 	var t tfmodel.HardwareStatus
 
 	if am.Power != nil {
-		t.Power = types.StringPointerValue(ptr.Get(string(*am.Power)))
+		t.Power = types.StringPointerValue(new(string(*am.Power)))
 	} else {
 		t.Power = types.StringNull()
 	}

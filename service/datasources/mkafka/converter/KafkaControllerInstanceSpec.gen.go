@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/mkafka/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -29,7 +28,7 @@ func KafkaControllerInstanceSpecAPIResponseToTFModel(ctx context.Context, am *mo
 	}
 
 	if am.VmType != nil {
-		t.VmType = types.StringPointerValue(ptr.Get(am.VmType.Path()))
+		t.VmType = types.StringPointerValue(new(am.VmType.Path()))
 	} else {
 		t.VmType = types.StringNull()
 	}

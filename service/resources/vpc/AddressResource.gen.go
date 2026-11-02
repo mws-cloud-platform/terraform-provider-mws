@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &AddressResource{}
 	_ resource.ResourceWithImportState = &AddressResource{}
+	_ resource.ResourceWithIdentity    = &AddressResource{}
 )
 
 type AddressResource struct {
@@ -81,6 +83,32 @@ func (m *AddressResource) Schema(ctx context.Context, req resource.SchemaRequest
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type addressResourceIdentityModel struct {
+	Project types.String `tfsdk:"project"`
+	Network types.String `tfsdk:"network"`
+	Address types.String `tfsdk:"address"`
+}
+
+func (m *AddressResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "AddressResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"network": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя сети",
+			},
+			"address": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "IP-адрес",
+			},
 		},
 	}
 }
@@ -174,6 +202,11 @@ func (m *AddressResource) Create(ctx context.Context, req resource.CreateRequest
 	plan.Address = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, addressResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Network: plan.NetworkParam,
+		Address: plan.AddressParam,
+	})...)
 }
 
 func (m *AddressResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -234,6 +267,11 @@ func (m *AddressResource) Read(ctx context.Context, req resource.ReadRequest, re
 	state.Address = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, addressResourceIdentityModel{
+		Project: state.ProjectParam,
+		Network: state.NetworkParam,
+		Address: state.AddressParam,
+	})...)
 }
 
 func (m *AddressResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -306,6 +344,11 @@ func (m *AddressResource) Update(ctx context.Context, req resource.UpdateRequest
 	plan.Address = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, addressResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Network: plan.NetworkParam,
+		Address: plan.AddressParam,
+	})...)
 }
 
 func (m *AddressResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -358,7 +401,25 @@ func (m *AddressResource) ImportState(ctx context.Context, req resource.ImportSt
 
 	var state tfmodel.AddressResourceModel
 
-	ref, err := vpcref.ParseAddressRef(ctx, req.ID)
+	var (
+		ref vpcref.AddressRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = vpcref.ParseAddressRef(ctx, req.ID)
+	} else {
+		var identity addressResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = vpcref.NewAddressRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Network.ValueString(),
+			identity.Address.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for Address",
@@ -406,4 +467,9 @@ func (m *AddressResource) ImportState(ctx context.Context, req resource.ImportSt
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, addressResourceIdentityModel{
+		Project: state.ProjectParam,
+		Network: state.NetworkParam,
+		Address: state.AddressParam,
+	})...)
 }

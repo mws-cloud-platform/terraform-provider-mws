@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/secretmanager/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -41,7 +40,7 @@ func SecretStatusAPIResponseToTFModel(ctx context.Context, am *model.SecretStatu
 	t.Active = types.BoolValue(am.Active)
 
 	if am.CurrentSecretVersion != nil {
-		t.CurrentSecretVersion = types.StringPointerValue(ptr.Get(am.CurrentSecretVersion.Path()))
+		t.CurrentSecretVersion = types.StringPointerValue(new(am.CurrentSecretVersion.Path()))
 	} else {
 		t.CurrentSecretVersion = types.StringNull()
 	}

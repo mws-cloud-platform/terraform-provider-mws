@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &FirewallRuleResource{}
 	_ resource.ResourceWithImportState = &FirewallRuleResource{}
+	_ resource.ResourceWithIdentity    = &FirewallRuleResource{}
 )
 
 type FirewallRuleResource struct {
@@ -81,6 +83,32 @@ func (m *FirewallRuleResource) Schema(ctx context.Context, req resource.SchemaRe
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type firewallRuleResourceIdentityModel struct {
+	Project      types.String `tfsdk:"project"`
+	Network      types.String `tfsdk:"network"`
+	FirewallRule types.String `tfsdk:"firewall_rule"`
+}
+
+func (m *FirewallRuleResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "FirewallRuleResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"network": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя сети",
+			},
+			"firewall_rule": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя правила файрвола",
+			},
 		},
 	}
 }
@@ -174,6 +202,11 @@ func (m *FirewallRuleResource) Create(ctx context.Context, req resource.CreateRe
 	plan.FirewallRule = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, firewallRuleResourceIdentityModel{
+		Project:      plan.ProjectParam,
+		Network:      plan.NetworkParam,
+		FirewallRule: plan.FirewallRuleParam,
+	})...)
 }
 
 func (m *FirewallRuleResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -234,6 +267,11 @@ func (m *FirewallRuleResource) Read(ctx context.Context, req resource.ReadReques
 	state.FirewallRule = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, firewallRuleResourceIdentityModel{
+		Project:      state.ProjectParam,
+		Network:      state.NetworkParam,
+		FirewallRule: state.FirewallRuleParam,
+	})...)
 }
 
 func (m *FirewallRuleResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -306,6 +344,11 @@ func (m *FirewallRuleResource) Update(ctx context.Context, req resource.UpdateRe
 	plan.FirewallRule = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, firewallRuleResourceIdentityModel{
+		Project:      plan.ProjectParam,
+		Network:      plan.NetworkParam,
+		FirewallRule: plan.FirewallRuleParam,
+	})...)
 }
 
 func (m *FirewallRuleResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -358,7 +401,25 @@ func (m *FirewallRuleResource) ImportState(ctx context.Context, req resource.Imp
 
 	var state tfmodel.FirewallRuleResourceModel
 
-	ref, err := vpcref.ParseFirewallRuleRef(ctx, req.ID)
+	var (
+		ref vpcref.FirewallRuleRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = vpcref.ParseFirewallRuleRef(ctx, req.ID)
+	} else {
+		var identity firewallRuleResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = vpcref.NewFirewallRuleRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Network.ValueString(),
+			identity.FirewallRule.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for FirewallRule",
@@ -406,4 +467,9 @@ func (m *FirewallRuleResource) ImportState(ctx context.Context, req resource.Imp
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, firewallRuleResourceIdentityModel{
+		Project:      state.ProjectParam,
+		Network:      state.NetworkParam,
+		FirewallRule: state.FirewallRuleParam,
+	})...)
 }

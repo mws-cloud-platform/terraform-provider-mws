@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &SnapshotResource{}
 	_ resource.ResourceWithImportState = &SnapshotResource{}
+	_ resource.ResourceWithIdentity    = &SnapshotResource{}
 )
 
 type SnapshotResource struct {
@@ -75,6 +77,27 @@ func (m *SnapshotResource) Schema(ctx context.Context, req resource.SchemaReques
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type snapshotResourceIdentityModel struct {
+	Project  types.String `tfsdk:"project"`
+	Snapshot types.String `tfsdk:"snapshot"`
+}
+
+func (m *SnapshotResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "SnapshotResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"snapshot": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Путь к снимку",
+			},
 		},
 	}
 }
@@ -167,6 +190,10 @@ func (m *SnapshotResource) Create(ctx context.Context, req resource.CreateReques
 	plan.Snapshot = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, snapshotResourceIdentityModel{
+		Project:  plan.ProjectParam,
+		Snapshot: plan.SnapshotParam,
+	})...)
 }
 
 func (m *SnapshotResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -226,6 +253,10 @@ func (m *SnapshotResource) Read(ctx context.Context, req resource.ReadRequest, r
 	state.Snapshot = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, snapshotResourceIdentityModel{
+		Project:  state.ProjectParam,
+		Snapshot: state.SnapshotParam,
+	})...)
 }
 
 func (m *SnapshotResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -297,6 +328,10 @@ func (m *SnapshotResource) Update(ctx context.Context, req resource.UpdateReques
 	plan.Snapshot = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, snapshotResourceIdentityModel{
+		Project:  plan.ProjectParam,
+		Snapshot: plan.SnapshotParam,
+	})...)
 }
 
 func (m *SnapshotResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -348,7 +383,24 @@ func (m *SnapshotResource) ImportState(ctx context.Context, req resource.ImportS
 
 	var state tfmodel.SnapshotResourceModel
 
-	ref, err := computeref.ParseSnapshotRef(ctx, req.ID)
+	var (
+		ref computeref.SnapshotRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = computeref.ParseSnapshotRef(ctx, req.ID)
+	} else {
+		var identity snapshotResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = computeref.NewSnapshotRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Snapshot.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for Snapshot",
@@ -394,4 +446,8 @@ func (m *SnapshotResource) ImportState(ctx context.Context, req resource.ImportS
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, snapshotResourceIdentityModel{
+		Project:  state.ProjectParam,
+		Snapshot: state.SnapshotParam,
+	})...)
 }

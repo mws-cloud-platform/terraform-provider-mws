@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &VirtualMachineResource{}
 	_ resource.ResourceWithImportState = &VirtualMachineResource{}
+	_ resource.ResourceWithIdentity    = &VirtualMachineResource{}
 )
 
 type VirtualMachineResource struct {
@@ -73,6 +75,26 @@ func (m *VirtualMachineResource) Schema(ctx context.Context, req resource.Schema
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type virtualMachineResourceIdentityModel struct {
+	Project        types.String `tfsdk:"project"`
+	VirtualMachine types.String `tfsdk:"virtual_machine"`
+}
+
+func (m *VirtualMachineResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "VirtualMachineResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"virtual_machine": identityschema.StringAttribute{
+				RequiredForImport: true,
+			},
 		},
 	}
 }
@@ -175,6 +197,10 @@ func (m *VirtualMachineResource) Create(ctx context.Context, req resource.Create
 	plan.VirtualMachine = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, virtualMachineResourceIdentityModel{
+		Project:        plan.ProjectParam,
+		VirtualMachine: plan.VirtualMachineParam,
+	})...)
 }
 
 func (m *VirtualMachineResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -244,6 +270,10 @@ func (m *VirtualMachineResource) Read(ctx context.Context, req resource.ReadRequ
 	state.VirtualMachine = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, virtualMachineResourceIdentityModel{
+		Project:        state.ProjectParam,
+		VirtualMachine: state.VirtualMachineParam,
+	})...)
 }
 
 func (m *VirtualMachineResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -325,6 +355,10 @@ func (m *VirtualMachineResource) Update(ctx context.Context, req resource.Update
 	plan.VirtualMachine = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, virtualMachineResourceIdentityModel{
+		Project:        plan.ProjectParam,
+		VirtualMachine: plan.VirtualMachineParam,
+	})...)
 }
 
 func (m *VirtualMachineResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -386,7 +420,24 @@ func (m *VirtualMachineResource) ImportState(ctx context.Context, req resource.I
 
 	var state tfmodel.VirtualMachineResourceModel
 
-	ref, err := computeref.ParseVirtualMachineRef(ctx, req.ID)
+	var (
+		ref computeref.VirtualMachineRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = computeref.ParseVirtualMachineRef(ctx, req.ID)
+	} else {
+		var identity virtualMachineResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = computeref.NewVirtualMachineRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.VirtualMachine.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for VirtualMachine",
@@ -432,4 +483,8 @@ func (m *VirtualMachineResource) ImportState(ctx context.Context, req resource.I
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, virtualMachineResourceIdentityModel{
+		Project:        state.ProjectParam,
+		VirtualMachine: state.VirtualMachineParam,
+	})...)
 }

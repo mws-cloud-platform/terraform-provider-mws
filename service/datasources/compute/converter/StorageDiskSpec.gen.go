@@ -47,7 +47,7 @@ func StorageDiskSpecAPIOptionalResponseToTFModel(ctx context.Context, am *model.
 	}
 
 	if val, ok := am.DiskType.Get(); ok {
-		t.DiskType = types.StringPointerValue(ptr.Get(val.Path()))
+		t.DiskType = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.DiskType = types.StringNull()
 	}
@@ -75,13 +75,13 @@ func StorageDiskSpecSourceAPIOptionalResponseToTFModel(ctx context.Context, am *
 	var t tfmodel.StorageDiskSpecSource
 
 	if val, ok := am.Image.Get(); ok {
-		t.Image = types.StringPointerValue(ptr.Get(val.Path()))
+		t.Image = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.Image = types.StringNull()
 	}
 
 	if val, ok := am.DiskBackup.Get(); ok {
-		t.DiskBackup = types.StringPointerValue(ptr.Get(val.Path()))
+		t.DiskBackup = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.DiskBackup = types.StringNull()
 	}

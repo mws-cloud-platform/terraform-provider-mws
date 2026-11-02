@@ -8,7 +8,6 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/mk8s/model"
 	"go.mws.cloud/go-sdk/service/resources/references/compute"
@@ -50,11 +49,11 @@ func NodeGroupSpecRolloutStrategyTFToAPIRequestModel(ctx context.Context, plan *
 	var am model.NodeGroupSpecRolloutStrategyRequest
 
 	if !plan.MaxSurge.IsNull() && !plan.MaxSurge.IsUnknown() {
-		am.MaxSurge = ptr.Get(int(plan.MaxSurge.ValueInt64()))
+		am.MaxSurge = new(int(plan.MaxSurge.ValueInt64()))
 	}
 
 	if !plan.MaxUnavailable.IsNull() && !plan.MaxUnavailable.IsUnknown() {
-		am.MaxUnavailable = ptr.Get(int(plan.MaxUnavailable.ValueInt64()))
+		am.MaxUnavailable = new(int(plan.MaxUnavailable.ValueInt64()))
 	}
 
 	return &am, diags
@@ -130,7 +129,7 @@ func NodeGroupSpecScaleTFToAPIRequestModel(ctx context.Context, plan *tfmodel.No
 	var am model.NodeGroupSpecScaleRequest
 
 	if !plan.Fixed.IsNull() && !plan.Fixed.IsUnknown() {
-		am.Fixed = ptr.Get(int(plan.Fixed.ValueInt64()))
+		am.Fixed = new(int(plan.Fixed.ValueInt64()))
 	}
 
 	if !plan.Autoscaling.IsNull() && !plan.Autoscaling.IsUnknown() {

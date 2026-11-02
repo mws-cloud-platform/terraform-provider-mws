@@ -8,7 +8,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/kms/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -87,25 +86,25 @@ func CryptoKeyStatusDestructionAPIResponseToTFModel(ctx context.Context, am *mod
 	var t tfmodel.CryptoKeyStatusDestruction
 
 	if am.Status != nil {
-		t.Status = types.StringPointerValue(ptr.Get(string(*am.Status)))
+		t.Status = types.StringPointerValue(new(string(*am.Status)))
 	} else {
 		t.Status = types.StringNull()
 	}
 
 	if am.ScheduledDestructionTime != nil {
-		t.ScheduledDestructionTime = types.StringPointerValue(ptr.Get(am.ScheduledDestructionTime.Format(time.RFC3339)))
+		t.ScheduledDestructionTime = types.StringPointerValue(new(am.ScheduledDestructionTime.Format(time.RFC3339)))
 	} else {
 		t.ScheduledDestructionTime = types.StringNull()
 	}
 
 	if am.DestroyedAt != nil {
-		t.DestroyedAt = types.StringPointerValue(ptr.Get(am.DestroyedAt.Format(time.RFC3339)))
+		t.DestroyedAt = types.StringPointerValue(new(am.DestroyedAt.Format(time.RFC3339)))
 	} else {
 		t.DestroyedAt = types.StringNull()
 	}
 
 	if am.DestroyTime != nil {
-		t.DestroyTime = types.StringPointerValue(ptr.Get(am.DestroyTime.Format(time.RFC3339)))
+		t.DestroyTime = types.StringPointerValue(new(am.DestroyTime.Format(time.RFC3339)))
 	} else {
 		t.DestroyTime = types.StringNull()
 	}
@@ -122,19 +121,19 @@ func CryptoKeyStatusRotationAPIResponseToTFModel(ctx context.Context, am *model.
 	var t tfmodel.CryptoKeyStatusRotation
 
 	if am.LastTime != nil {
-		t.LastTime = types.StringPointerValue(ptr.Get(am.LastTime.Format(time.RFC3339)))
+		t.LastTime = types.StringPointerValue(new(am.LastTime.Format(time.RFC3339)))
 	} else {
 		t.LastTime = types.StringNull()
 	}
 
 	if am.NextTime != nil {
-		t.NextTime = types.StringPointerValue(ptr.Get(am.NextTime.Format(time.RFC3339)))
+		t.NextTime = types.StringPointerValue(new(am.NextTime.Format(time.RFC3339)))
 	} else {
 		t.NextTime = types.StringNull()
 	}
 
 	if am.PrimaryKeyVersionRef != nil {
-		t.PrimaryKeyVersionRef = types.StringPointerValue(ptr.Get(am.PrimaryKeyVersionRef.Path()))
+		t.PrimaryKeyVersionRef = types.StringPointerValue(new(am.PrimaryKeyVersionRef.Path()))
 	} else {
 		t.PrimaryKeyVersionRef = types.StringNull()
 	}

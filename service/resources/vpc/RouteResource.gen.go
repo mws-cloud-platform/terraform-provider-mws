@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &RouteResource{}
 	_ resource.ResourceWithImportState = &RouteResource{}
+	_ resource.ResourceWithIdentity    = &RouteResource{}
 )
 
 type RouteResource struct {
@@ -81,6 +83,32 @@ func (m *RouteResource) Schema(ctx context.Context, req resource.SchemaRequest, 
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type routeResourceIdentityModel struct {
+	Project types.String `tfsdk:"project"`
+	Network types.String `tfsdk:"network"`
+	Route   types.String `tfsdk:"route"`
+}
+
+func (m *RouteResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "RouteResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"network": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя сети",
+			},
+			"route": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя маршрута",
+			},
 		},
 	}
 }
@@ -174,6 +202,11 @@ func (m *RouteResource) Create(ctx context.Context, req resource.CreateRequest, 
 	plan.Route = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, routeResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Network: plan.NetworkParam,
+		Route:   plan.RouteParam,
+	})...)
 }
 
 func (m *RouteResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -234,6 +267,11 @@ func (m *RouteResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	state.Route = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, routeResourceIdentityModel{
+		Project: state.ProjectParam,
+		Network: state.NetworkParam,
+		Route:   state.RouteParam,
+	})...)
 }
 
 func (m *RouteResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -306,6 +344,11 @@ func (m *RouteResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	plan.Route = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, routeResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Network: plan.NetworkParam,
+		Route:   plan.RouteParam,
+	})...)
 }
 
 func (m *RouteResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -358,7 +401,25 @@ func (m *RouteResource) ImportState(ctx context.Context, req resource.ImportStat
 
 	var state tfmodel.RouteResourceModel
 
-	ref, err := vpcref.ParseRouteRef(ctx, req.ID)
+	var (
+		ref vpcref.RouteRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = vpcref.ParseRouteRef(ctx, req.ID)
+	} else {
+		var identity routeResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = vpcref.NewRouteRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Network.ValueString(),
+			identity.Route.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for Route",
@@ -406,4 +467,9 @@ func (m *RouteResource) ImportState(ctx context.Context, req resource.ImportStat
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, routeResourceIdentityModel{
+		Project: state.ProjectParam,
+		Network: state.NetworkParam,
+		Route:   state.RouteParam,
+	})...)
 }

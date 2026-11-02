@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &NlbResource{}
 	_ resource.ResourceWithImportState = &NlbResource{}
+	_ resource.ResourceWithIdentity    = &NlbResource{}
 )
 
 type NlbResource struct {
@@ -81,6 +83,32 @@ func (m *NlbResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type nlbResourceIdentityModel struct {
+	Project types.String `tfsdk:"project"`
+	Network types.String `tfsdk:"network"`
+	Nlb     types.String `tfsdk:"nlb"`
+}
+
+func (m *NlbResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "NlbResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"network": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя сети",
+			},
+			"nlb": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя сетевого балансировщика нагрузки",
+			},
 		},
 	}
 }
@@ -174,6 +202,11 @@ func (m *NlbResource) Create(ctx context.Context, req resource.CreateRequest, re
 	plan.Nlb = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, nlbResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Network: plan.NetworkParam,
+		Nlb:     plan.NlbParam,
+	})...)
 }
 
 func (m *NlbResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -234,6 +267,11 @@ func (m *NlbResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 	state.Nlb = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, nlbResourceIdentityModel{
+		Project: state.ProjectParam,
+		Network: state.NetworkParam,
+		Nlb:     state.NlbParam,
+	})...)
 }
 
 func (m *NlbResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -306,6 +344,11 @@ func (m *NlbResource) Update(ctx context.Context, req resource.UpdateRequest, re
 	plan.Nlb = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, nlbResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Network: plan.NetworkParam,
+		Nlb:     plan.NlbParam,
+	})...)
 }
 
 func (m *NlbResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -358,7 +401,25 @@ func (m *NlbResource) ImportState(ctx context.Context, req resource.ImportStateR
 
 	var state tfmodel.NlbResourceModel
 
-	ref, err := nlbref.ParseNlbRef(ctx, req.ID)
+	var (
+		ref nlbref.NlbRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = nlbref.ParseNlbRef(ctx, req.ID)
+	} else {
+		var identity nlbResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = nlbref.NewNlbRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Network.ValueString(),
+			identity.Nlb.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for Nlb",
@@ -406,4 +467,9 @@ func (m *NlbResource) ImportState(ctx context.Context, req resource.ImportStateR
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, nlbResourceIdentityModel{
+		Project: state.ProjectParam,
+		Network: state.NetworkParam,
+		Nlb:     state.NlbParam,
+	})...)
 }

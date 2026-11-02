@@ -146,7 +146,7 @@ func ClusterStatusClusterStatusAPIResponseToTFModel(ctx context.Context, am *mod
 	var t tfmodel.ClusterStatusClusterStatus
 
 	if am.State != nil {
-		t.State = types.StringPointerValue(ptr.Get(string(*am.State)))
+		t.State = types.StringPointerValue(new(string(*am.State)))
 	} else {
 		t.State = types.StringNull()
 	}

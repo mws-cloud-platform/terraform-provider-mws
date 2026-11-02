@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/mclickhouse/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -77,7 +76,7 @@ func ClickhouseClusterAPIOptionalResponseToTFModel(ctx context.Context, am *mode
 	t.Version = types.StringValue(am.Spec.Version)
 
 	if val, ok := am.Spec.Region.Get(); ok {
-		t.Region = types.StringPointerValue(ptr.Get(val.Path()))
+		t.Region = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.Region = types.StringNull()
 	}
@@ -258,19 +257,19 @@ func ClickhouseClusterMetadataAPIOptionalResponseToTFModel(ctx context.Context, 
 	}
 
 	if am.CreateTime != nil {
-		t.TypedResourceMetadata.CreateTime = types.StringPointerValue(ptr.Get(am.CreateTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.CreateTime = types.StringPointerValue(new(am.CreateTime.Format(time.RFC3339)))
 	} else {
 		t.TypedResourceMetadata.CreateTime = types.StringNull()
 	}
 
 	if am.DeleteTime != nil {
-		t.TypedResourceMetadata.DeleteTime = types.StringPointerValue(ptr.Get(am.DeleteTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.DeleteTime = types.StringPointerValue(new(am.DeleteTime.Format(time.RFC3339)))
 	} else {
 		t.TypedResourceMetadata.DeleteTime = types.StringNull()
 	}
 
 	if am.PurgeTime != nil {
-		t.TypedResourceMetadata.PurgeTime = types.StringPointerValue(ptr.Get(am.PurgeTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.PurgeTime = types.StringPointerValue(new(am.PurgeTime.Format(time.RFC3339)))
 	} else {
 		t.TypedResourceMetadata.PurgeTime = types.StringNull()
 	}
@@ -309,7 +308,7 @@ func ClickhouseClusterMetadataAPIOptionalResponseToTFModel(ctx context.Context, 
 	}
 
 	if am.Id != nil {
-		t.Id = types.StringPointerValue(ptr.Get(am.Id.ID()))
+		t.Id = types.StringPointerValue(new(am.Id.ID()))
 	} else {
 		t.Id = types.StringNull()
 	}

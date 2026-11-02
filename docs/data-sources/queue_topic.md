@@ -90,6 +90,7 @@ Read-Only:
 Конфигурация, заданная пользователем и дополненная внутренними значениями по умолчанию.
 Все значения параметров конфигурации передаются как строки
 - `ready` (Attributes) Информация о статусе реконсиляции (see [below for nested schema](#nestedatt--status--ready))
+- `size_bytes` (Number) Размер данных топика в байтах (суммарный размер всех партиций)
 
 <a id="nestedatt--status--ready"></a>
 ### Nested Schema for `status.ready`

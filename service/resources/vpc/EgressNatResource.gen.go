@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &EgressNatResource{}
 	_ resource.ResourceWithImportState = &EgressNatResource{}
+	_ resource.ResourceWithIdentity    = &EgressNatResource{}
 )
 
 type EgressNatResource struct {
@@ -81,6 +83,32 @@ func (m *EgressNatResource) Schema(ctx context.Context, req resource.SchemaReque
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type egressNatResourceIdentityModel struct {
+	Project   types.String `tfsdk:"project"`
+	Network   types.String `tfsdk:"network"`
+	EgressNat types.String `tfsdk:"egress_nat"`
+}
+
+func (m *EgressNatResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "EgressNatResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"network": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя сети",
+			},
+			"egress_nat": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Имя Egress NAT",
+			},
 		},
 	}
 }
@@ -174,6 +202,11 @@ func (m *EgressNatResource) Create(ctx context.Context, req resource.CreateReque
 	plan.EgressNat = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, egressNatResourceIdentityModel{
+		Project:   plan.ProjectParam,
+		Network:   plan.NetworkParam,
+		EgressNat: plan.EgressNatParam,
+	})...)
 }
 
 func (m *EgressNatResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -234,6 +267,11 @@ func (m *EgressNatResource) Read(ctx context.Context, req resource.ReadRequest, 
 	state.EgressNat = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, egressNatResourceIdentityModel{
+		Project:   state.ProjectParam,
+		Network:   state.NetworkParam,
+		EgressNat: state.EgressNatParam,
+	})...)
 }
 
 func (m *EgressNatResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -306,6 +344,11 @@ func (m *EgressNatResource) Update(ctx context.Context, req resource.UpdateReque
 	plan.EgressNat = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, egressNatResourceIdentityModel{
+		Project:   plan.ProjectParam,
+		Network:   plan.NetworkParam,
+		EgressNat: plan.EgressNatParam,
+	})...)
 }
 
 func (m *EgressNatResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -358,7 +401,25 @@ func (m *EgressNatResource) ImportState(ctx context.Context, req resource.Import
 
 	var state tfmodel.EgressNatResourceModel
 
-	ref, err := vpcref.ParseEgressNatRef(ctx, req.ID)
+	var (
+		ref vpcref.EgressNatRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = vpcref.ParseEgressNatRef(ctx, req.ID)
+	} else {
+		var identity egressNatResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = vpcref.NewEgressNatRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Network.ValueString(),
+			identity.EgressNat.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for EgressNat",
@@ -406,4 +467,9 @@ func (m *EgressNatResource) ImportState(ctx context.Context, req resource.Import
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, egressNatResourceIdentityModel{
+		Project:   state.ProjectParam,
+		Network:   state.NetworkParam,
+		EgressNat: state.EgressNatParam,
+	})...)
 }

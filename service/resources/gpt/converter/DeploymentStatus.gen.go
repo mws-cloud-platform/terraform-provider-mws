@@ -7,7 +7,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/gpt/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -39,7 +38,7 @@ func DeploymentStatusAPIResponseToTFModel(ctx context.Context, am *model.Deploym
 	t.ResourceStatus.Ready = readyTfObject
 
 	if am.ContextWindowSize != nil {
-		t.ContextWindowSize = types.Int64PointerValue(ptr.Get(int64(*am.ContextWindowSize)))
+		t.ContextWindowSize = types.Int64PointerValue(new(int64(*am.ContextWindowSize)))
 	} else {
 		t.ContextWindowSize = types.Int64Null()
 	}
@@ -115,7 +114,7 @@ func DeploymentStatusAPIResponseToTFModel(ctx context.Context, am *model.Deploym
 	t.Deprecation = deprecationTfObject
 
 	if am.Size != nil {
-		t.Size = types.Float64PointerValue(ptr.Get(float64(*am.Size)))
+		t.Size = types.Float64PointerValue(new(float64(*am.Size)))
 	} else {
 		t.Size = types.Float64Null()
 	}

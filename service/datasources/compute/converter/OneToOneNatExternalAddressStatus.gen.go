@@ -22,7 +22,7 @@ func OneToOneNatExternalAddressStatusAPIResponseToTFModel(ctx context.Context, a
 	var t tfmodel.OneToOneNatExternalAddressStatus
 
 	if am.Ref != nil {
-		t.Ref = types.StringPointerValue(ptr.Get(am.Ref.Path()))
+		t.Ref = types.StringPointerValue(new(am.Ref.Path()))
 	} else {
 		t.Ref = types.StringNull()
 	}

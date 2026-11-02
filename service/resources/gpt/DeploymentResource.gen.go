@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &DeploymentResource{}
 	_ resource.ResourceWithImportState = &DeploymentResource{}
+	_ resource.ResourceWithIdentity    = &DeploymentResource{}
 )
 
 type DeploymentResource struct {
@@ -74,6 +76,27 @@ func (m *DeploymentResource) Schema(ctx context.Context, req resource.SchemaRequ
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type deploymentResourceIdentityModel struct {
+	Project        types.String `tfsdk:"project"`
+	DeploymentName types.String `tfsdk:"deployment_name"`
+}
+
+func (m *DeploymentResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "DeploymentResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"deployment_name": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Параметр пути для имени деплоймента, уникальный в рамках проекта.",
+			},
 		},
 	}
 }
@@ -166,6 +189,10 @@ func (m *DeploymentResource) Create(ctx context.Context, req resource.CreateRequ
 	plan.Deployment = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, deploymentResourceIdentityModel{
+		Project:        plan.ProjectParam,
+		DeploymentName: plan.DeploymentNameParam,
+	})...)
 }
 
 func (m *DeploymentResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -225,6 +252,10 @@ func (m *DeploymentResource) Read(ctx context.Context, req resource.ReadRequest,
 	state.Deployment = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, deploymentResourceIdentityModel{
+		Project:        state.ProjectParam,
+		DeploymentName: state.DeploymentNameParam,
+	})...)
 }
 
 func (m *DeploymentResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -296,6 +327,10 @@ func (m *DeploymentResource) Update(ctx context.Context, req resource.UpdateRequ
 	plan.Deployment = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, deploymentResourceIdentityModel{
+		Project:        plan.ProjectParam,
+		DeploymentName: plan.DeploymentNameParam,
+	})...)
 }
 
 func (m *DeploymentResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -347,7 +382,24 @@ func (m *DeploymentResource) ImportState(ctx context.Context, req resource.Impor
 
 	var state tfmodel.DeploymentResourceModel
 
-	ref, err := gptref.ParseDeploymentRef(ctx, req.ID)
+	var (
+		ref gptref.DeploymentRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = gptref.ParseDeploymentRef(ctx, req.ID)
+	} else {
+		var identity deploymentResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = gptref.NewDeploymentRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.DeploymentName.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for Deployment",
@@ -393,4 +445,8 @@ func (m *DeploymentResource) ImportState(ctx context.Context, req resource.Impor
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, deploymentResourceIdentityModel{
+		Project:        state.ProjectParam,
+		DeploymentName: state.DeploymentNameParam,
+	})...)
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -31,6 +32,7 @@ import (
 var (
 	_ resource.Resource                = &CryptoKeyResource{}
 	_ resource.ResourceWithImportState = &CryptoKeyResource{}
+	_ resource.ResourceWithIdentity    = &CryptoKeyResource{}
 )
 
 type CryptoKeyResource struct {
@@ -75,6 +77,27 @@ func (m *CryptoKeyResource) Schema(ctx context.Context, req resource.SchemaReque
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type cryptoKeyResourceIdentityModel struct {
+	Project types.String `tfsdk:"project"`
+	Key     types.String `tfsdk:"key"`
+}
+
+func (m *CryptoKeyResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "CryptoKeyResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"key": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Название крипто-ключа",
+			},
 		},
 	}
 }
@@ -167,6 +190,10 @@ func (m *CryptoKeyResource) Create(ctx context.Context, req resource.CreateReque
 	plan.CryptoKey = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, cryptoKeyResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Key:     plan.KeyParam,
+	})...)
 }
 
 func (m *CryptoKeyResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -220,6 +247,10 @@ func (m *CryptoKeyResource) Read(ctx context.Context, req resource.ReadRequest, 
 	state.CryptoKey = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, cryptoKeyResourceIdentityModel{
+		Project: state.ProjectParam,
+		Key:     state.KeyParam,
+	})...)
 }
 
 func (m *CryptoKeyResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -291,6 +322,10 @@ func (m *CryptoKeyResource) Update(ctx context.Context, req resource.UpdateReque
 	plan.CryptoKey = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, cryptoKeyResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Key:     plan.KeyParam,
+	})...)
 }
 
 func (m *CryptoKeyResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -335,7 +370,24 @@ func (m *CryptoKeyResource) ImportState(ctx context.Context, req resource.Import
 
 	var state tfmodel.CryptoKeyResourceModel
 
-	ref, err := kmsref.ParseCryptoKeyRef(ctx, req.ID)
+	var (
+		ref kmsref.CryptoKeyRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = kmsref.ParseCryptoKeyRef(ctx, req.ID)
+	} else {
+		var identity cryptoKeyResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = kmsref.NewCryptoKeyRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Key.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for CryptoKey",
@@ -381,4 +433,8 @@ func (m *CryptoKeyResource) ImportState(ctx context.Context, req resource.Import
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, cryptoKeyResourceIdentityModel{
+		Project: state.ProjectParam,
+		Key:     state.KeyParam,
+	})...)
 }

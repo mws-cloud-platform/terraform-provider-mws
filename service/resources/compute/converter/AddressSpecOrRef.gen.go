@@ -8,7 +8,6 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/compute/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
@@ -25,7 +24,7 @@ func AddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, am *model
 	var t tfmodel.AddressSpecOrRef
 
 	if val, ok := am.Ref.Get(); ok {
-		t.Ref = types.StringPointerValue(ptr.Get(val.Path()))
+		t.Ref = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.Ref = types.StringNull()
 	}

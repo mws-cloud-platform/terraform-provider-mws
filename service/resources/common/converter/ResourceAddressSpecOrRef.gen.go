@@ -8,7 +8,6 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/resources/references/vpc"
@@ -25,7 +24,7 @@ func ResourceAddressSpecOrRefAPIToTFModel(ctx context.Context, am *commonmodel.R
 	var t tfcommon.ResourceAddressSpecOrRef
 
 	if am.Ref != nil {
-		t.Ref = types.StringPointerValue(ptr.Get(am.Ref.Path()))
+		t.Ref = types.StringPointerValue(new(am.Ref.Path()))
 	} else {
 		t.Ref = types.StringNull()
 	}
@@ -60,7 +59,7 @@ func ResourceAddressSpecOrRefAPIResponseToTFModel(ctx context.Context, am *commo
 	var t tfcommon.ResourceAddressSpecOrRef
 
 	if am.Ref != nil {
-		t.Ref = types.StringPointerValue(ptr.Get(am.Ref.Path()))
+		t.Ref = types.StringPointerValue(new(am.Ref.Path()))
 	} else {
 		t.Ref = types.StringNull()
 	}
@@ -95,7 +94,7 @@ func ResourceAddressSpecOrRefAPIOptionalResponseToTFModel(ctx context.Context, a
 	var t tfcommon.ResourceAddressSpecOrRef
 
 	if val, ok := am.Ref.Get(); ok {
-		t.Ref = types.StringPointerValue(ptr.Get(val.Path()))
+		t.Ref = types.StringPointerValue(new(val.Path()))
 	} else {
 		t.Ref = types.StringNull()
 	}

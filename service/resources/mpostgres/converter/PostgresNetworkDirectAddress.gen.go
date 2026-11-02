@@ -8,7 +8,6 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/mpostgres/model"
 	"go.mws.cloud/go-sdk/service/resources/references/rm"
@@ -26,7 +25,7 @@ func PostgresNetworkDirectAddressAPIResponseToTFModel(ctx context.Context, am *m
 	var t tfmodel.PostgresNetworkDirectAddress
 
 	if am.Ref != nil {
-		t.PostgresNetworkAddress.Ref = types.StringPointerValue(ptr.Get(am.Ref.Path()))
+		t.PostgresNetworkAddress.Ref = types.StringPointerValue(new(am.Ref.Path()))
 	} else {
 		t.PostgresNetworkAddress.Ref = types.StringNull()
 	}
@@ -68,7 +67,7 @@ func PostgresNetworkDirectAddressAPIResponseToTFModel(ctx context.Context, am *m
 	}
 
 	if am.Zone != nil {
-		t.Zone = types.StringPointerValue(ptr.Get(am.Zone.Path()))
+		t.Zone = types.StringPointerValue(new(am.Zone.Path()))
 	} else {
 		t.Zone = types.StringNull()
 	}

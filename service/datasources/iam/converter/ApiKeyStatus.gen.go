@@ -8,7 +8,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/iam/model"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
@@ -40,7 +39,7 @@ func ApiKeyStatusAPIResponseToTFModel(ctx context.Context, am *model.ApiKeyStatu
 	t.ResourceStatus.Ready = readyTfObject
 
 	if am.LastAuthTime != nil {
-		t.LastAuthTime = types.StringPointerValue(ptr.Get(am.LastAuthTime.Format(time.RFC3339)))
+		t.LastAuthTime = types.StringPointerValue(new(am.LastAuthTime.Format(time.RFC3339)))
 	} else {
 		t.LastAuthTime = types.StringNull()
 	}

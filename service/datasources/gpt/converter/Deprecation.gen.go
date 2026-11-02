@@ -8,7 +8,6 @@ import (
 
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	"go.mws.cloud/go-sdk/service/gpt/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/datasources/gpt/model"
@@ -23,7 +22,7 @@ func DeprecationAPIResponseToTFModel(ctx context.Context, am *model.DeprecationR
 	var t tfmodel.Deprecation
 
 	if am.Inference != nil {
-		t.Inference = types.StringPointerValue(ptr.Get(am.Inference.Format(time.RFC3339)))
+		t.Inference = types.StringPointerValue(new(am.Inference.Format(time.RFC3339)))
 	} else {
 		t.Inference = types.StringNull()
 	}

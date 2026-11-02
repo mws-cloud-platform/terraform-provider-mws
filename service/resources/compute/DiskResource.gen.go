@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	tfpath "github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/identityschema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -30,6 +31,7 @@ import (
 var (
 	_ resource.Resource                = &DiskResource{}
 	_ resource.ResourceWithImportState = &DiskResource{}
+	_ resource.ResourceWithIdentity    = &DiskResource{}
 )
 
 type DiskResource struct {
@@ -74,6 +76,27 @@ func (m *DiskResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 		Computed: true,
 		PlanModifiers: []planmodifier.String{
 			stringplanmodifier.UseStateForUnknown(),
+		},
+	}
+}
+
+type diskResourceIdentityModel struct {
+	Project types.String `tfsdk:"project"`
+	Disk    types.String `tfsdk:"disk"`
+}
+
+func (m *DiskResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "DiskResource.IdentitySchema")
+	resp.IdentitySchema = identityschema.Schema{
+		Attributes: map[string]identityschema.Attribute{
+			"project": identityschema.StringAttribute{
+				OptionalForImport: true,
+				Description:       "Путь к проекту.",
+			},
+			"disk": identityschema.StringAttribute{
+				RequiredForImport: true,
+				Description:       "Путь к диску",
+			},
 		},
 	}
 }
@@ -176,6 +199,10 @@ func (m *DiskResource) Create(ctx context.Context, req resource.CreateRequest, r
 	plan.Disk = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, diskResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Disk:    plan.DiskParam,
+	})...)
 }
 
 func (m *DiskResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -245,6 +272,10 @@ func (m *DiskResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 	state.Disk = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, diskResourceIdentityModel{
+		Project: state.ProjectParam,
+		Disk:    state.DiskParam,
+	})...)
 }
 
 func (m *DiskResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -326,6 +357,10 @@ func (m *DiskResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	plan.Disk = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, diskResourceIdentityModel{
+		Project: plan.ProjectParam,
+		Disk:    plan.DiskParam,
+	})...)
 }
 
 func (m *DiskResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -387,7 +422,24 @@ func (m *DiskResource) ImportState(ctx context.Context, req resource.ImportState
 
 	var state tfmodel.DiskResourceModel
 
-	ref, err := computeref.ParseDiskRef(ctx, req.ID)
+	var (
+		ref computeref.DiskRef
+		err error
+	)
+	if req.ID != "" {
+		ref, err = computeref.ParseDiskRef(ctx, req.ID)
+	} else {
+		var identity diskResourceIdentityModel
+		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+
+		ref, err = computeref.NewDiskRef(
+			cmp.Or(identity.Project, m.config.Project).ValueString(),
+			identity.Disk.ValueString(),
+		)
+	}
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Parse reference for Disk",
@@ -433,4 +485,8 @@ func (m *DiskResource) ImportState(ctx context.Context, req resource.ImportState
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, diskResourceIdentityModel{
+		Project: state.ProjectParam,
+		Disk:    state.DiskParam,
+	})...)
 }

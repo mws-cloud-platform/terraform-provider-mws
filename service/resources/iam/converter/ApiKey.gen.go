@@ -9,7 +9,6 @@ import (
 	tfdiag "github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"go.mws.cloud/util-toolset/pkg/utils/ptr"
 
 	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/iam/model"
@@ -18,6 +17,71 @@ import (
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/iam/model"
 )
+
+func ApiKeyAPIOptionalResponseToTFModel(ctx context.Context, am *model.ApiKeyOptionalResponse) (*tfmodel.ApiKey, tfdiag.Diagnostics) {
+	if am == nil {
+		return nil, nil
+	}
+
+	var diags tfdiag.Diagnostics
+	var t tfmodel.ApiKey
+
+	if am.Kind != nil {
+		t.Kind = types.StringPointerValue(am.Kind)
+	} else {
+		t.Kind = types.StringNull()
+	}
+
+	if val, ok := am.Metadata.Get(); ok {
+		metadataTmp, d := ApiKeyMetadataAPIOptionalResponseToTFModel(ctx, &val)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		metadataTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.ApiKeyMetadata).GetSchema().Attributes),
+			*metadataTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.Metadata = metadataTfObject
+	} else {
+		t.Metadata = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.ApiKeyMetadata).GetSchema().Attributes))
+	}
+
+	if am.Status != nil {
+		statusTmp, d := ApiKeyStatusAPIResponseToTFModel(ctx, am.Status)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		statusTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.ApiKeyStatus).GetSchema().Attributes),
+			*statusTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.Status = statusTfObject
+	} else {
+		t.Status = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.ApiKeyStatus).GetSchema().Attributes))
+	}
+
+	if val, ok := am.Spec.ExpireTime.Get(); ok {
+		t.ExpireTime = types.StringPointerValue(new(val.Format(time.RFC3339)))
+	} else {
+		t.ExpireTime = types.StringNull()
+	}
+
+	if val, ok := am.Spec.Active.Get(); ok {
+		t.Active = types.BoolValue(val)
+	} else {
+		t.Active = types.BoolNull()
+	}
+
+	return &t, diags
+}
 
 func ApiKeyAPIResponseToTFModel(ctx context.Context, am *model.ApiKeyResponse) (*tfmodel.ApiKey, tfdiag.Diagnostics) {
 	if am == nil {
@@ -70,7 +134,7 @@ func ApiKeyAPIResponseToTFModel(ctx context.Context, am *model.ApiKeyResponse) (
 	}
 
 	if am.Spec.ExpireTime != nil {
-		t.ExpireTime = types.StringPointerValue(ptr.Get(am.Spec.ExpireTime.Format(time.RFC3339)))
+		t.ExpireTime = types.StringPointerValue(new(am.Spec.ExpireTime.Format(time.RFC3339)))
 	} else {
 		t.ExpireTime = types.StringNull()
 	}
@@ -190,6 +254,80 @@ func ApiKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.A
 	return &am, diags
 }
 
+func ApiKeyMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *model.ApiKeyMetadataOptionalResponse) (*tfmodel.ApiKeyMetadata, tfdiag.Diagnostics) {
+	if am == nil {
+		return nil, nil
+	}
+
+	var diags tfdiag.Diagnostics
+	var t tfmodel.ApiKeyMetadata
+
+	if val, ok := am.DisplayName.Get(); ok {
+		t.TypedResourceMetadata.DisplayName = types.StringValue(val)
+	} else {
+		t.TypedResourceMetadata.DisplayName = types.StringNull()
+	}
+
+	if am.CreateTime != nil {
+		t.TypedResourceMetadata.CreateTime = types.StringPointerValue(new(am.CreateTime.Format(time.RFC3339)))
+	} else {
+		t.TypedResourceMetadata.CreateTime = types.StringNull()
+	}
+
+	if am.DeleteTime != nil {
+		t.TypedResourceMetadata.DeleteTime = types.StringPointerValue(new(am.DeleteTime.Format(time.RFC3339)))
+	} else {
+		t.TypedResourceMetadata.DeleteTime = types.StringNull()
+	}
+
+	if am.PurgeTime != nil {
+		t.TypedResourceMetadata.PurgeTime = types.StringPointerValue(new(am.PurgeTime.Format(time.RFC3339)))
+	} else {
+		t.TypedResourceMetadata.PurgeTime = types.StringNull()
+	}
+
+	if val, ok := am.Usages.Get(); ok {
+		usages := make([]tfcommon.TypedUsage, 0, len(val))
+
+		for _, entity := range val {
+			tmp, d := commonconv.TypedUsageAPIOptionalResponseToTFModel(ctx, &entity)
+			diags = append(diags, d...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			usages = append(usages, *tmp)
+		}
+
+		usagesList, d := types.ListValueFrom(ctx, types.ObjectType{
+			AttrTypes: tfconv.GetAttributesTypes(new(tfcommon.TypedUsage).GetSchema().Attributes),
+		}, usages)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		t.TypedResourceMetadata.Usages = usagesList
+	} else {
+		t.TypedResourceMetadata.Usages = types.ListNull(types.ObjectType{
+			AttrTypes: tfconv.GetAttributesTypes(new(tfcommon.TypedUsage).GetSchema().Attributes),
+		})
+	}
+
+	if val, ok := am.Description.Get(); ok {
+		t.TypedResourceMetadata.Description = types.StringValue(val)
+	} else {
+		t.TypedResourceMetadata.Description = types.StringNull()
+	}
+
+	if am.Id != nil {
+		t.Id = types.StringPointerValue(new(am.Id.ID()))
+	} else {
+		t.Id = types.StringNull()
+	}
+
+	return &t, diags
+}
+
 func ApiKeyMetadataAPIResponseToTFModel(ctx context.Context, am *model.ApiKeyMetadataResponse) (*tfmodel.ApiKeyMetadata, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
@@ -205,19 +343,19 @@ func ApiKeyMetadataAPIResponseToTFModel(ctx context.Context, am *model.ApiKeyMet
 	}
 
 	if am.CreateTime != nil {
-		t.TypedResourceMetadata.CreateTime = types.StringPointerValue(ptr.Get(am.CreateTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.CreateTime = types.StringPointerValue(new(am.CreateTime.Format(time.RFC3339)))
 	} else {
 		t.TypedResourceMetadata.CreateTime = types.StringNull()
 	}
 
 	if am.DeleteTime != nil {
-		t.TypedResourceMetadata.DeleteTime = types.StringPointerValue(ptr.Get(am.DeleteTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.DeleteTime = types.StringPointerValue(new(am.DeleteTime.Format(time.RFC3339)))
 	} else {
 		t.TypedResourceMetadata.DeleteTime = types.StringNull()
 	}
 
 	if am.PurgeTime != nil {
-		t.TypedResourceMetadata.PurgeTime = types.StringPointerValue(ptr.Get(am.PurgeTime.Format(time.RFC3339)))
+		t.TypedResourceMetadata.PurgeTime = types.StringPointerValue(new(am.PurgeTime.Format(time.RFC3339)))
 	} else {
 		t.TypedResourceMetadata.PurgeTime = types.StringNull()
 	}
@@ -256,7 +394,7 @@ func ApiKeyMetadataAPIResponseToTFModel(ctx context.Context, am *model.ApiKeyMet
 	}
 
 	if am.Id != nil {
-		t.Id = types.StringPointerValue(ptr.Get(am.Id.ID()))
+		t.Id = types.StringPointerValue(new(am.Id.ID()))
 	} else {
 		t.Id = types.StringNull()
 	}
