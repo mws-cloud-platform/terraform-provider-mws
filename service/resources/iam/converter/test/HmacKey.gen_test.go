@@ -16,6 +16,27 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/iam/model"
 )
 
+func TestHmacKeyOptionalResponseConverters(t *testing.T) {
+	t.Parallel()
+	apiModelRequest := model.HmacKeyRequest{
+		Spec: model.HmacKeySpecRequest{},
+	}
+
+	apiModelResponse, err := model.HmacKeyRequestToOptionalResponse(&apiModelRequest)
+	require.NoError(t, err)
+
+	tfModel, diags := conv.HmacKeyAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
+	require.False(t, diags.HasError())
+
+	filledApiModelRequest, diags := conv.HmacKeyTFToAPIRequestModel(context.Background(), tfModel)
+	require.False(t, diags.HasError())
+
+	result, err := model.HmacKeyRequestToOptionalResponse(filledApiModelRequest)
+	require.NoError(t, err)
+
+	require.Equal(t, *apiModelResponse, *result)
+}
+
 func TestHmacKeyResponseConverters(t *testing.T) {
 	t.Parallel()
 	apiModelRequest := model.HmacKeyRequest{
@@ -55,6 +76,27 @@ func TestUpdateHmacKeyRequestConverters(t *testing.T) {
 	require.False(t, diags.HasError())
 
 	require.Equal(t, expectedUpdateModel, result)
+}
+
+func TestHmacKeyMetadataOptionalResponseConverters(t *testing.T) {
+	t.Parallel()
+	apiModelRequest := model.HmacKeyMetadataRequest{
+		TypedResourceMetadataRequest: commonmodel.TypedResourceMetadataRequest{},
+	}
+
+	apiModelResponse, err := model.HmacKeyMetadataRequestToOptionalResponse(&apiModelRequest)
+	require.NoError(t, err)
+
+	tfModel, diags := conv.HmacKeyMetadataAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
+	require.False(t, diags.HasError())
+
+	filledApiModelRequest, diags := conv.HmacKeyMetadataTFToAPIRequestModel(context.Background(), tfModel)
+	require.False(t, diags.HasError())
+
+	result, err := model.HmacKeyMetadataRequestToOptionalResponse(filledApiModelRequest)
+	require.NoError(t, err)
+
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestHmacKeyMetadataResponseConverters(t *testing.T) {

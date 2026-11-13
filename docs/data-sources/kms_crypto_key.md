@@ -39,7 +39,11 @@ data "mws_kms_crypto_key" "kms_crypto_key" {
 - `metadata` (Attributes) Набор общих для всех пользовательских объектов атрибутов. Может быть расширен атрибутами, специфичными для контейнеров (see [below for nested schema](#nestedatt--metadata))
 - `primary_key_version_ref` (String) Идентификатор основной версии криптографического ключа.
 Используется только когда автоматическая ротация отключена
-- `rotation_policy` (Attributes) Параметры политики, управляющие ротацией криптографического ключа (see [below for nested schema](#nestedatt--rotation_policy))
+- `rotation_policy` (Attributes) Параметры политики, управляющие ротацией криптографического ключа.
+Применимо только к симметричным ключам. Для асимметричных ключей автоматическая ротация
+не поддерживается, поэтому секция 'rotationPolicy' должна отсутствовать в запросах
+(указание объекта или явного "null" приведёт к ошибке валидации) и никогда не возвращается
+в ответах для асимметричных ключей (see [below for nested schema](#nestedatt--rotation_policy))
 - `status` (Attributes) (see [below for nested schema](#nestedatt--status))
 - `usage_policy` (Attributes) Политика использования ключа. Определяет, разрешены ли криптографические операции с этим ключом (see [below for nested schema](#nestedatt--usage_policy))
 

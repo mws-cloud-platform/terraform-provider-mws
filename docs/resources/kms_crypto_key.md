@@ -60,7 +60,11 @@ variable "crypto_key_name" {
 - `primary_key_version_ref` (String) Идентификатор основной версии криптографического ключа.
 Используется только когда автоматическая ротация отключена
 - `project` (String) Путь к проекту.
-- `rotation_policy` (Attributes) Параметры политики, управляющие ротацией криптографического ключа (see [below for nested schema](#nestedatt--rotation_policy))
+- `rotation_policy` (Attributes) Параметры политики, управляющие ротацией криптографического ключа.
+Применимо только к симметричным ключам. Для асимметричных ключей автоматическая ротация
+не поддерживается, поэтому секция 'rotationPolicy' должна отсутствовать в запросах
+(указание объекта или явного "null" приведёт к ошибке валидации) и никогда не возвращается
+в ответах для асимметричных ключей (see [below for nested schema](#nestedatt--rotation_policy))
 - `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 - `usage_policy` (Attributes) Политика использования ключа. Определяет, разрешены ли криптографические операции с этим ключом (see [below for nested schema](#nestedatt--usage_policy))
 

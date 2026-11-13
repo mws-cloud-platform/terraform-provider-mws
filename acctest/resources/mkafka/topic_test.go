@@ -6,17 +6,8 @@ import (
 	"strings"
 	"testing"
 	"text/template"
-	"time"
 
 	"github.com/stretchr/testify/suite"
-	"go.mws.cloud/go-sdk/mws/wait"
-	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
-	mkafkaclient "go.mws.cloud/go-sdk/service/mkafka/client"
-	mkafkamodel "go.mws.cloud/go-sdk/service/mkafka/model"
-	mkafkasdk "go.mws.cloud/go-sdk/service/mkafka/sdk"
-	"go.mws.cloud/go-sdk/service/resources/references/compute"
-	rmref "go.mws.cloud/go-sdk/service/resources/references/rm"
-	vpcref "go.mws.cloud/go-sdk/service/resources/references/vpc"
 
 	"go.mws.cloud/terraform-provider-mws/acctest/utils"
 	mkafkatest "go.mws.cloud/terraform-provider-mws/service/resources/mkafka/acctest"
@@ -40,65 +31,13 @@ func TestTopicSuite(t *testing.T) {
 }
 
 type TopicSuite struct {
-	MkafkaTestSuite
-	kafkaSDK     *mkafkasdk.Kafka
-	kafkaCluster *mkafkamodel.KafkaClusterResponse
-	topicName    string
+	MkafkaClusterTestSuite
+	topicName string
 }
 
 func (s *TopicSuite) SetupSuite() {
-	var err error
-
-	s.MkafkaTestSuite.SetupSuite()
-	ctx := s.T().Context()
-
-	s.kafkaSDK, err = mkafkasdk.NewKafka(ctx, s.SDK)
-	s.Require().NoError(err)
+	s.MkafkaClusterTestSuite.SetupSuite()
 	s.topicName = utils.RandResourceName("topic")
-	networkRef, err := vpcref.ParseNetworkRef(ctx, s.Network.GetMetadata().GetId().ID())
-	s.Require().NoError(err)
-	addressRef, err := vpcref.ParseAddressRef(ctx, s.address1ID)
-	s.Require().NoError(err)
-	gen24 := compute.NewMustVmTypeRef("gen-2-8")
-	disk10GB := bytesize.MustParseString("10GB")
-	isActive := true
-	s.kafkaCluster, err = s.kafkaSDK.CreateKafkaCluster(ctx, mkafkaclient.UpsertKafkaClusterRequest{
-		Cluster: s.kafkaName,
-		Body: mkafkamodel.KafkaClusterRequest{
-			Spec: mkafkamodel.KafkaClusterSpecRequest{
-				Version: "4.0",
-				Active:  &isActive,
-				Endpoints: []mkafkamodel.KafkaEndpointRequest{{
-					Name:    "vpc-endpoints",
-					Network: networkRef,
-					BrokerAddresses: []mkafkamodel.KafkaEndpointBrokerAddressRequest{{
-						Ref: &addressRef,
-					}},
-				}},
-				Instances: mkafkamodel.KafkaInstanceRequest{
-					Broker: mkafkamodel.KafkaInstanceSpecRequest{
-						VmType: gen24,
-						Disk:   mkafkamodel.KafkaDataDiskSpecRequest{Size: disk10GB},
-						Allocation: []mkafkamodel.KafkaAllocationRequest{{
-							Zone:  rmref.NewMustZoneRef("ru-central1-a"),
-							Count: 1,
-						}},
-					},
-					Controller: mkafkamodel.KafkaControllerInstanceSpecRequest{
-						CombinedWithBroker: new(true),
-					},
-				},
-			},
-		},
-	}, mkafkaclient.WithWait(wait.WithTimeout(time.Hour)))
-
-	s.Require().NoError(err)
-}
-
-func (s *TopicSuite) TearDownSuite() {
-	err := s.kafkaSDK.DeleteKafkaCluster(s.T().Context(), mkafkaclient.DeleteKafkaClusterRequest{Cluster: s.kafkaName}, mkafkaclient.WithWait(wait.WithTimeout(time.Hour)))
-	s.Require().NoError(err)
-	s.MkafkaTestSuite.TearDownSuite()
 }
 
 func (s *TopicSuite) TestTopic() {

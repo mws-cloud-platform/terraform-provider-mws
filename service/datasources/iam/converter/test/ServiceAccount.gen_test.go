@@ -13,12 +13,30 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/iam/converter"
 )
 
+func TestServiceAccountAPIOptionalResponseToTFModel(t *testing.T) {
+	t.Parallel()
+	apiModel := model.ServiceAccountOptionalResponse{
+		Spec: model.ServiceAccountSpecOptionalResponse{},
+	}
+	_, diags := conv.ServiceAccountAPIOptionalResponseToTFModel(context.Background(), &apiModel)
+	require.False(t, diags.HasError())
+}
+
 func TestServiceAccountAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
 	apiModel := model.ServiceAccountResponse{
 		Spec: model.ServiceAccountSpecResponse{},
 	}
 	_, diags := conv.ServiceAccountAPIResponseToTFModel(context.Background(), &apiModel)
+	require.False(t, diags.HasError())
+}
+
+func TestServiceAccountMetadataAPIOptionalResponseToTFModel(t *testing.T) {
+	t.Parallel()
+	apiModel := model.ServiceAccountMetadataOptionalResponse{
+		TypedResourceMetadataOptionalResponse: commonmodel.TypedResourceMetadataOptionalResponse{},
+	}
+	_, diags := conv.ServiceAccountMetadataAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 

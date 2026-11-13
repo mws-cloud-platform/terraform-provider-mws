@@ -55,6 +55,21 @@ func (s *CryptoKey) GetSchema() schema.Schema {
 						"AES_128_GCM",
 						"AES_192_GCM",
 						"AES_256_GCM",
+						"RSA_2048_ENC_OAEP_SHA_256",
+						"RSA_3072_ENC_OAEP_SHA_256",
+						"RSA_4096_ENC_OAEP_SHA_256",
+						"RSA_2048_SIGN_PSS_SHA_256",
+						"RSA_2048_SIGN_PSS_SHA_384",
+						"RSA_2048_SIGN_PSS_SHA_512",
+						"RSA_3072_SIGN_PSS_SHA_256",
+						"RSA_3072_SIGN_PSS_SHA_384",
+						"RSA_3072_SIGN_PSS_SHA_512",
+						"RSA_4096_SIGN_PSS_SHA_256",
+						"RSA_4096_SIGN_PSS_SHA_384",
+						"RSA_4096_SIGN_PSS_SHA_512",
+						"ECDSA_NIST_P256_SHA_256",
+						"ECDSA_NIST_P384_SHA_384",
+						"ECDSA_NIST_P521_SHA_512",
 					),
 				},
 				Optional: true,
@@ -73,9 +88,13 @@ func (s *CryptoKey) GetSchema() schema.Schema {
 				Optional:            true,
 			},
 			"rotation_policy": schema.SingleNestedAttribute{
-				Attributes:          new(CryptoKeySpecRotationPolicy).GetSchema().Attributes,
-				MarkdownDescription: `Параметры политики, управляющие ротацией криптографического ключа`,
-				Optional:            true,
+				Attributes: new(CryptoKeySpecRotationPolicy).GetSchema().Attributes,
+				MarkdownDescription: `Параметры политики, управляющие ротацией криптографического ключа.
+Применимо только к симметричным ключам. Для асимметричных ключей автоматическая ротация
+не поддерживается, поэтому секция 'rotationPolicy' должна отсутствовать в запросах
+(указание объекта или явного "null" приведёт к ошибке валидации) и никогда не возвращается
+в ответах для асимметричных ключей`,
+				Optional: true,
 			},
 			"primary_key_version_ref": schema.StringAttribute{
 				MarkdownDescription: `Идентификатор основной версии криптографического ключа.

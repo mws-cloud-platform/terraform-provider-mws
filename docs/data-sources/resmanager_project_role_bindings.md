@@ -40,7 +40,7 @@ output "role_bindings" {
 
 ### Read-Only
 
-- `items` (Attributes List) List of public role bindings (see [below for nested schema](#nestedatt--items))
+- `items` (Attributes List) Список привязок ролей (see [below for nested schema](#nestedatt--items))
 
 <a id="nestedatt--timeouts"></a>
 ### Nested Schema for `timeouts`

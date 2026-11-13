@@ -18,7 +18,7 @@ type CommonRoleBinding struct {
 
 func (s *CommonRoleBinding) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: ``,
+		MarkdownDescription: `Привязка роли — это связь субъекта (пользователя, сервисного аккаунта, группы пользователей или другой сущности) и роли, определяющая права субъекта на проект или организацию`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,

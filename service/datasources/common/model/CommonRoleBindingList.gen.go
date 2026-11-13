@@ -19,7 +19,7 @@ func (s *CommonRoleBindingList) GetSchema() schema.Schema {
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: new(CommonRoleBinding).GetSchema().Attributes,
 				},
-				MarkdownDescription: `List of public role bindings`,
+				MarkdownDescription: `Список привязок ролей`,
 				Computed:            true,
 			},
 		},

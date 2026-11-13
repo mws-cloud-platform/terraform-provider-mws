@@ -11,6 +11,7 @@ import (
 	"go.mws.cloud/go-sdk/pkg/optional"
 	commonmodel "go.mws.cloud/go-sdk/service/common/model"
 	"go.mws.cloud/go-sdk/service/metastore/model"
+	"go.mws.cloud/go-sdk/service/resources/references/iam"
 	tfconv "go.mws.cloud/terraform-provider-mws/internal/conv"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/metastore/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/metastore/model"
@@ -19,7 +20,12 @@ import (
 func TestIcebergCatalogOptionalResponseConverters(t *testing.T) {
 	t.Parallel()
 	apiModelRequest := model.IcebergCatalogRequest{
-		Spec: model.CatalogSpecRequest{},
+		Spec: model.CatalogSpecRequest{
+			Properties: make(map[string]string),
+			ServiceAccount: model.CatalogSpecServiceAccountRequest{
+				Ref: iam.NewMustServiceAccountRef("projectID", "serviceAccountID"),
+			},
+		},
 	}
 
 	apiModelResponse, err := model.IcebergCatalogRequestToOptionalResponse(&apiModelRequest)
@@ -50,12 +56,6 @@ func TestUpdateIcebergCatalogRequestConverters(t *testing.T) {
 			Set:  true,
 			Null: true,
 		},
-		Spec: optional.NewOptional(model.UpdateCatalogSpecRequest{
-			ServiceAccount: optional.OptionalNil[model.UpdateCatalogSpecServiceAccountRequest]{
-				Set:  true,
-				Null: true,
-			},
-		}),
 	}
 
 	result, diags := conv.IcebergCatalogTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)

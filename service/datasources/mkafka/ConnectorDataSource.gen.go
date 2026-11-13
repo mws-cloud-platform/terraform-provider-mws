@@ -22,25 +22,25 @@ import (
 )
 
 var (
-	_ datasource.DataSource = &KafkaConnectorDataSource{}
+	_ datasource.DataSource = &ConnectorDataSource{}
 )
 
-type KafkaConnectorDataSource struct {
+type ConnectorDataSource struct {
 	sdk    *resourcesdk.KafkaConnector
 	config *provider.Config
 }
 
-func NewKafkaConnectorDataSource() datasource.DataSource {
-	return &KafkaConnectorDataSource{}
+func NewConnectorDataSource() datasource.DataSource {
+	return &ConnectorDataSource{}
 }
 
-func (m *KafkaConnectorDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	tflog.Info(ctx, "KafkaConnectorDataSource.Metadata")
-	resp.TypeName = req.ProviderTypeName + "_mkafka_kafka_connector"
+func (m *ConnectorDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	tflog.Info(ctx, "ConnectorDataSource.Metadata")
+	resp.TypeName = req.ProviderTypeName + "_mkafka_connector"
 }
 
-func (m *KafkaConnectorDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	tflog.Info(ctx, "KafkaConnectorDataSource.Schema")
+func (m *ConnectorDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	tflog.Info(ctx, "ConnectorDataSource.Schema")
 	resp.Schema = new(tfmodel.KafkaConnector).GetSchema()
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
@@ -58,9 +58,9 @@ func (m *KafkaConnectorDataSource) Schema(ctx context.Context, req datasource.Sc
 	resp.Schema.Attributes["timeouts"] = timeouts.Attributes(ctx)
 }
 
-func (m *KafkaConnectorDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (m *ConnectorDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	var err error
-	tflog.Info(ctx, "KafkaConnectorDataSource.Configure")
+	tflog.Info(ctx, "ConnectorDataSource.Configure")
 	if req.ProviderData == nil {
 		return
 	}
@@ -76,17 +76,17 @@ func (m *KafkaConnectorDataSource) Configure(ctx context.Context, req datasource
 	m.sdk, err = resourcesdk.NewKafkaConnector(ctx, providerData.SDK)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Create SDK client for KafkaConnector",
+			"Create SDK client for Connector",
 			diag.FormatError(err),
 		)
 		return
 	}
 }
 
-func (m *KafkaConnectorDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	tflog.Info(ctx, "KafkaConnectorDataSource.Read")
+func (m *ConnectorDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	tflog.Info(ctx, "ConnectorDataSource.Read")
 
-	var config tfmodel.KafkaConnectorDataSourceModel
+	var config tfmodel.ConnectorDataSourceModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -106,7 +106,7 @@ func (m *KafkaConnectorDataSource) Read(ctx context.Context, req datasource.Read
 	readTimeout, diags := config.Timeouts.Read(ctx, 300*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
-		tflog.Debug(ctx, "KafkaConnectorDataSource.Timeouts")
+		tflog.Debug(ctx, "ConnectorDataSource.Timeouts")
 		return
 	}
 
@@ -123,7 +123,7 @@ func (m *KafkaConnectorDataSource) Read(ctx context.Context, req datasource.Read
 	)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Get KafkaConnector",
+			"Get Connector",
 			diag.FormatError(err),
 		)
 		return
@@ -132,7 +132,7 @@ func (m *KafkaConnectorDataSource) Read(ctx context.Context, req datasource.Read
 	tfRes, diags := conv.KafkaConnectorAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfRes == nil {
-		tflog.Debug(ctx, "KafkaConnectorDataSource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})
+		tflog.Debug(ctx, "ConnectorDataSource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})
 		return
 	}
 

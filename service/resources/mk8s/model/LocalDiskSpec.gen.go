@@ -4,7 +4,10 @@ package model
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 )
 
 type LocalDiskSpec struct {
@@ -24,6 +27,9 @@ func (s *LocalDiskSpec) GetSchema() schema.Schema {
 			"device_name": schema.StringAttribute{
 				MarkdownDescription: `Имя устройства в /dev/disk/by-id/mws-*. Если не указано — mws-{name}`,
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					localstringplanmodifier.RequiresReplaceIfRemoved(),
+				},
 			},
 			"size": schema.StringAttribute{
 				MarkdownDescription: `Размер диска. Должен быть кратен 248GB

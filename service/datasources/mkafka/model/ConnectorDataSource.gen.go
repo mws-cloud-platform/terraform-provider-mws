@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-type KafkaConnectorDataSourceModel struct {
+type ConnectorDataSourceModel struct {
 	ProjectParam   types.String   `tfsdk:"project"`
 	ClusterParam   types.String   `tfsdk:"cluster"`
 	ConnectorParam types.String   `tfsdk:"connector"`

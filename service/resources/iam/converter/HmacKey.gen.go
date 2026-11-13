@@ -18,6 +18,65 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/iam/model"
 )
 
+func HmacKeyAPIOptionalResponseToTFModel(ctx context.Context, am *model.HmacKeyOptionalResponse) (*tfmodel.HmacKey, tfdiag.Diagnostics) {
+	if am == nil {
+		return nil, nil
+	}
+
+	var diags tfdiag.Diagnostics
+	var t tfmodel.HmacKey
+
+	if am.Kind != nil {
+		t.Kind = types.StringPointerValue(am.Kind)
+	} else {
+		t.Kind = types.StringNull()
+	}
+
+	if val, ok := am.Metadata.Get(); ok {
+		metadataTmp, d := HmacKeyMetadataAPIOptionalResponseToTFModel(ctx, &val)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		metadataTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.HmacKeyMetadata).GetSchema().Attributes),
+			*metadataTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.Metadata = metadataTfObject
+	} else {
+		t.Metadata = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.HmacKeyMetadata).GetSchema().Attributes))
+	}
+
+	if am.Status != nil {
+		statusTmp, d := HmacKeyResourceStatusAPIResponseToTFModel(ctx, am.Status)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		statusTfObject, d := types.ObjectValueFrom(ctx,
+			tfconv.GetAttributesTypes(new(tfmodel.HmacKeyResourceStatus).GetSchema().Attributes),
+			*statusTmp)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+		t.Status = statusTfObject
+	} else {
+		t.Status = types.ObjectNull(tfconv.GetAttributesTypes(new(tfmodel.HmacKeyResourceStatus).GetSchema().Attributes))
+	}
+
+	if val, ok := am.Spec.ExpirationTime.Get(); ok {
+		t.ExpirationTime = types.StringPointerValue(new(val.Format(time.RFC3339)))
+	} else {
+		t.ExpirationTime = types.StringNull()
+	}
+
+	return &t, diags
+}
+
 func HmacKeyAPIResponseToTFModel(ctx context.Context, am *model.HmacKeyResponse) (*tfmodel.HmacKey, tfdiag.Diagnostics) {
 	if am == nil {
 		return nil, nil
@@ -168,6 +227,80 @@ func HmacKeyTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tfmodel.
 	}
 
 	return &am, diags
+}
+
+func HmacKeyMetadataAPIOptionalResponseToTFModel(ctx context.Context, am *model.HmacKeyMetadataOptionalResponse) (*tfmodel.HmacKeyMetadata, tfdiag.Diagnostics) {
+	if am == nil {
+		return nil, nil
+	}
+
+	var diags tfdiag.Diagnostics
+	var t tfmodel.HmacKeyMetadata
+
+	if val, ok := am.DisplayName.Get(); ok {
+		t.TypedResourceMetadata.DisplayName = types.StringValue(val)
+	} else {
+		t.TypedResourceMetadata.DisplayName = types.StringNull()
+	}
+
+	if am.CreateTime != nil {
+		t.TypedResourceMetadata.CreateTime = types.StringPointerValue(new(am.CreateTime.Format(time.RFC3339)))
+	} else {
+		t.TypedResourceMetadata.CreateTime = types.StringNull()
+	}
+
+	if am.DeleteTime != nil {
+		t.TypedResourceMetadata.DeleteTime = types.StringPointerValue(new(am.DeleteTime.Format(time.RFC3339)))
+	} else {
+		t.TypedResourceMetadata.DeleteTime = types.StringNull()
+	}
+
+	if am.PurgeTime != nil {
+		t.TypedResourceMetadata.PurgeTime = types.StringPointerValue(new(am.PurgeTime.Format(time.RFC3339)))
+	} else {
+		t.TypedResourceMetadata.PurgeTime = types.StringNull()
+	}
+
+	if val, ok := am.Usages.Get(); ok {
+		usages := make([]tfcommon.TypedUsage, 0, len(val))
+
+		for _, entity := range val {
+			tmp, d := commonconv.TypedUsageAPIOptionalResponseToTFModel(ctx, &entity)
+			diags = append(diags, d...)
+			if diags.HasError() {
+				return nil, diags
+			}
+			usages = append(usages, *tmp)
+		}
+
+		usagesList, d := types.ListValueFrom(ctx, types.ObjectType{
+			AttrTypes: tfconv.GetAttributesTypes(new(tfcommon.TypedUsage).GetSchema().Attributes),
+		}, usages)
+		diags = append(diags, d...)
+		if diags.HasError() {
+			return nil, diags
+		}
+
+		t.TypedResourceMetadata.Usages = usagesList
+	} else {
+		t.TypedResourceMetadata.Usages = types.ListNull(types.ObjectType{
+			AttrTypes: tfconv.GetAttributesTypes(new(tfcommon.TypedUsage).GetSchema().Attributes),
+		})
+	}
+
+	if val, ok := am.Description.Get(); ok {
+		t.TypedResourceMetadata.Description = types.StringValue(val)
+	} else {
+		t.TypedResourceMetadata.Description = types.StringNull()
+	}
+
+	if am.Id != nil {
+		t.Id = types.StringPointerValue(new(am.Id.ID()))
+	} else {
+		t.Id = types.StringNull()
+	}
+
+	return &t, diags
 }
 
 func HmacKeyMetadataAPIResponseToTFModel(ctx context.Context, am *model.HmacKeyMetadataResponse) (*tfmodel.HmacKeyMetadata, tfdiag.Diagnostics) {

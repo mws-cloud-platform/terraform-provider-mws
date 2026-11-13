@@ -11,6 +11,7 @@ import (
 	provider "go.mws.cloud/terraform-provider-mws/internal/provider/public"
 	crsrm "go.mws.cloud/terraform-provider-mws/service/custom/resources/rm"
 	crssecretmanager "go.mws.cloud/terraform-provider-mws/service/custom/resources/secretmanager"
+	dsauditlogs "go.mws.cloud/terraform-provider-mws/service/datasources/auditlogs"
 	dscertmanager "go.mws.cloud/terraform-provider-mws/service/datasources/certmanager"
 	dscompute "go.mws.cloud/terraform-provider-mws/service/datasources/compute"
 	dsgpt "go.mws.cloud/terraform-provider-mws/service/datasources/gpt"
@@ -26,6 +27,7 @@ import (
 	dsrm "go.mws.cloud/terraform-provider-mws/service/datasources/rm"
 	dssecretmanager "go.mws.cloud/terraform-provider-mws/service/datasources/secretmanager"
 	dsvpc "go.mws.cloud/terraform-provider-mws/service/datasources/vpc"
+	rsauditlogs "go.mws.cloud/terraform-provider-mws/service/resources/auditlogs"
 	rscertmanager "go.mws.cloud/terraform-provider-mws/service/resources/certmanager"
 	rscompute "go.mws.cloud/terraform-provider-mws/service/resources/compute"
 	rsgpt "go.mws.cloud/terraform-provider-mws/service/resources/gpt"
@@ -54,6 +56,8 @@ func NewProvider(version string, opts ...baseprovider.Option) func() tfprovider.
 
 func resources() []func() resource.Resource {
 	return []func() resource.Resource{
+		rsauditlogs.NewStorageResource,
+		rsauditlogs.NewCollectorResource,
 		rscertmanager.NewCertificateResource,
 		rscompute.NewVirtualMachineResource,
 		rscompute.NewSnapshotResource,
@@ -75,6 +79,7 @@ func resources() []func() resource.Resource {
 		rsmkafka.NewClusterResource,
 		rsmkafka.NewClusterUserResource,
 		rsmkafka.NewTopicResource,
+		rsmkafka.NewConnectorResource,
 		rsmpostgres.NewClusterResource,
 		rsmpostgres.NewClusterUserResource,
 		rsmpostgres.NewClusterDatabaseResource,
@@ -100,6 +105,8 @@ func resources() []func() resource.Resource {
 
 func dataSources() []func() datasource.DataSource {
 	return []func() datasource.DataSource{
+		dsauditlogs.NewStorageDataSource,
+		dsauditlogs.NewCollectorDataSource,
 		dscertmanager.NewCertificateDataSource,
 		dscompute.NewVmTypeDataSource,
 		dscompute.NewVirtualMachineDataSource,
@@ -115,6 +122,7 @@ func dataSources() []func() datasource.DataSource {
 		dsiam.NewHmacKeyDataSource,
 		dsiam.NewAuthorizedKeyDataSource,
 		dsiam.NewApiKeyDataSource,
+		dsiam.NewRolesListDataSource,
 		dskms.NewCryptoKeyDataSource,
 		dsmclickhouse.NewClusterDataSource,
 		dsmclickhouse.NewBackupDataSource,
@@ -127,6 +135,7 @@ func dataSources() []func() datasource.DataSource {
 		dsmkafka.NewClusterDataSource,
 		dsmkafka.NewClusterUserDataSource,
 		dsmkafka.NewTopicDataSource,
+		dsmkafka.NewConnectorDataSource,
 		dsmpostgres.NewClusterDataSource,
 		dsmpostgres.NewClusterUserDataSource,
 		dsmpostgres.NewClusterDatabaseDataSource,

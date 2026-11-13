@@ -52,7 +52,7 @@ func ServiceAccountTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleRe
 	}, nil
 }
 
-func GetServiceAccount(ctx context.Context, sdk *resourcesdk.ServiceAccount, id string) (*model.ServiceAccountResponse, error) {
+func GetServiceAccount(ctx context.Context, sdk *resourcesdk.ServiceAccount, id string) (*model.ServiceAccountOptionalResponse, error) {
 	ref, err := iamref.ParseServiceAccountRef(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("parse reference: %w", err)

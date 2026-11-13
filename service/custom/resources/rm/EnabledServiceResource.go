@@ -2,7 +2,6 @@ package rm
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
@@ -173,7 +172,7 @@ func (r *EnabledServiceResource) Read(ctx context.Context, req resource.ReadRequ
 
 	service := data.ServiceParam.ValueString()
 
-	apiRes, err := r.sdk.GetEnabledService(
+	_, err := r.sdk.GetEnabledService(
 		ctx,
 		client.GetEnabledServiceRequest{
 			Project: data.ProjectParam.ValueString(),
@@ -184,14 +183,6 @@ func (r *EnabledServiceResource) Read(ctx context.Context, req resource.ReadRequ
 		resp.Diagnostics.AddError(
 			"Get Enabled Service",
 			diag.FormatError(err),
-		)
-		return
-	}
-
-	if active, ok := apiRes.GetSpec().Active.Get(); !ok || !active {
-		resp.Diagnostics.AddError(
-			"Service Disabled",
-			fmt.Sprintf("Service %q disabled", service),
 		)
 		return
 	}

@@ -21,6 +21,7 @@ var existingResources = map[string]bool{
 	"mws_compute_vm_type":       true,
 	"mws_compute_vm_types":      true,
 	"mws_iam_role":              true,
+	"mws_iam_roles":             true,
 	"mws_mk8s_release_channels": true,
 	"mws_mk8s_versions":         true,
 }

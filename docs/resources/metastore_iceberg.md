@@ -3,12 +3,12 @@
 page_title: "mws_metastore_iceberg Resource - mws"
 subcategory: ""
 description: |-
-  Ресурс Iceberg-каталога. При создании обязательны "properties.location" и "serviceAccount.ref"; при обновлении допускается частичный "spec".
+  Ресурс Iceberg-каталога.
 ---
 
 # mws_metastore_iceberg (Resource)
 
-Ресурс Iceberg-каталога. При создании обязательны "properties.location" и "serviceAccount.ref"; при обновлении допускается частичный "spec".
+Ресурс Iceberg-каталога.
 
 ## Примеры использования
 
@@ -54,20 +54,28 @@ variable "warehouse_location" {
 ### Required
 
 - `catalog_name` (String) Имя каталога
+- `properties` (Map of String) Дополнительные настройки каталога. Для расположения данных в Object Storage обязательно задайте значение параметра "location"
+- `service_account` (Attributes) Сервисный аккаунт, используемый для доступа к Object Storage (see [below for nested schema](#nestedatt--service_account))
 
 ### Optional
 
 - `kind` (String)
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
 - `project` (String) Путь к проекту.
-- `properties` (Map of String) Дополнительные настройки каталога
-- `service_account` (Attributes) Сервисный аккаунт, используемый для доступа к Object Storage (see [below for nested schema](#nestedatt--service_account))
 - `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 
 ### Read-Only
 
 - `id` (String) The ID of this resource.
 - `status` (Attributes) Текущее состояние ресурса, вычисляемое системой (see [below for nested schema](#nestedatt--status))
+
+<a id="nestedatt--service_account"></a>
+### Nested Schema for `service_account`
+
+Required:
+
+- `ref` (String) Ссылка на сервисный аккаунт, используемый для доступа к Object Storage
+
 
 <a id="nestedatt--metadata"></a>
 ### Nested Schema for `metadata`
@@ -100,14 +108,6 @@ Read-Only:
 - `resource` (String) Ссылка на ресурс
 - `usage_type` (String) Тип связи. Помимо стандартных "own" и "use" могут быть добавлены специализированные типы для конкретных сервисов
 
-
-
-<a id="nestedatt--service_account"></a>
-### Nested Schema for `service_account`
-
-Required:
-
-- `ref` (String) Ссылка на сервисный аккаунт, используемый для доступа к Object Storage
 
 
 <a id="nestedatt--timeouts"></a>

@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	localmapplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/mapplanmodifier"
 	localstringplanmodifier "go.mws.cloud/terraform-provider-mws/internal/planmodifier/stringplanmodifier"
 	tfcommon "go.mws.cloud/terraform-provider-mws/service/resources/common/model"
 )
@@ -23,7 +22,7 @@ type IcebergCatalog struct {
 
 func (s *IcebergCatalog) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Ресурс Iceberg-каталога. При создании обязательны "properties.location" и "serviceAccount.ref"; при обновлении допускается частичный "spec".`,
+		MarkdownDescription: `Ресурс Iceberg-каталога.`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,
@@ -45,16 +44,13 @@ func (s *IcebergCatalog) GetSchema() schema.Schema {
 			},
 			"properties": schema.MapAttribute{
 				ElementType:         types.StringType,
-				MarkdownDescription: `Дополнительные настройки каталога`,
-				Optional:            true,
-				PlanModifiers: []planmodifier.Map{
-					localmapplanmodifier.RequiresReplaceIfRemoved(),
-				},
+				MarkdownDescription: `Дополнительные настройки каталога. Для расположения данных в Object Storage обязательно задайте значение параметра "location"`,
+				Required:            true,
 			},
 			"service_account": schema.SingleNestedAttribute{
 				Attributes:          new(CatalogSpecServiceAccount).GetSchema().Attributes,
 				MarkdownDescription: `Сервисный аккаунт, используемый для доступа к Object Storage`,
-				Optional:            true,
+				Required:            true,
 			},
 		},
 	}

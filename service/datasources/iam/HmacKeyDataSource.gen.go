@@ -127,7 +127,7 @@ func (m *HmacKeyDataSource) Read(ctx context.Context, req datasource.ReadRequest
 		return
 	}
 
-	tfRes, diags := conv.HmacKeyAPIResponseToTFModel(ctx, apiRes)
+	tfRes, diags := conv.HmacKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfRes == nil {
 		tflog.Debug(ctx, "HmacKeyDataSource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})

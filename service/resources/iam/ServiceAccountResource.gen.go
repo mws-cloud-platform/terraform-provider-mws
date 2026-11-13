@@ -175,9 +175,9 @@ func (m *ServiceAccountResource) Create(ctx context.Context, req resource.Create
 		return
 	}
 
-	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
-	tfRes, diags := conv.ServiceAccountAPIResponseToTFModel(ctx, apiRes)
+	tfRes, diags := conv.ServiceAccountAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfRes == nil {
 		tflog.Debug(ctx, "ServiceAccountResource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})
@@ -238,9 +238,9 @@ func (m *ServiceAccountResource) Read(ctx context.Context, req resource.ReadRequ
 		return
 	}
 
-	state.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
-	tfRes, diags := conv.ServiceAccountAPIResponseToTFModel(ctx, apiRes)
+	tfRes, diags := conv.ServiceAccountAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfRes == nil {
 		tflog.Debug(ctx, "ServiceAccountResource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})
@@ -313,9 +313,9 @@ func (m *ServiceAccountResource) Update(ctx context.Context, req resource.Update
 		return
 	}
 
-	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
-	tfRes, diags := conv.ServiceAccountAPIResponseToTFModel(ctx, apiRes)
+	tfRes, diags := conv.ServiceAccountAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfRes == nil {
 		tflog.Debug(ctx, "ServiceAccountResource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})
@@ -420,9 +420,9 @@ func (m *ServiceAccountResource) ImportState(ctx context.Context, req resource.I
 		return
 	}
 
-	state.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
-	tfRes, diags := conv.ServiceAccountAPIResponseToTFModel(ctx, apiRes)
+	tfRes, diags := conv.ServiceAccountAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfRes == nil {
 		tflog.Debug(ctx, "ServiceAccountResource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})

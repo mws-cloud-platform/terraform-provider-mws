@@ -159,7 +159,7 @@ func IcebergCatalogTFToAPIRequestModel(ctx context.Context, plan *tfmodel.Iceber
 		if diags.HasError() {
 			return nil, diags
 		}
-		am.Spec.ServiceAccount = serviceAccountTmp
+		am.Spec.ServiceAccount = *serviceAccountTmp
 	}
 
 	return &am, diags
@@ -253,11 +253,6 @@ func IcebergCatalogTFToAPIUpdateRequestModel(ctx context.Context, plan, state *t
 				return nil, diags
 			}
 			am.Spec.Value.ServiceAccount.SetTo(*serviceAccountTmp)
-		} else if plan.ServiceAccount.IsNull() {
-			if !am.Spec.IsSet() {
-				am.Spec.SetTo(model.UpdateCatalogSpecRequest{})
-			}
-			am.Spec.Value.ServiceAccount.SetToNull()
 		}
 	}
 

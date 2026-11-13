@@ -83,8 +83,6 @@ func LocalDiskSpecTFToAPIUpdateRequestModel(ctx context.Context, plan, state *tf
 	if !plan.DeviceName.Equal(state.DeviceName) {
 		if !plan.DeviceName.IsNull() && !plan.DeviceName.IsUnknown() {
 			am.DeviceName.SetTo(plan.DeviceName.ValueString())
-		} else if plan.DeviceName.IsNull() {
-			am.DeviceName.SetToNull()
 		}
 	}
 

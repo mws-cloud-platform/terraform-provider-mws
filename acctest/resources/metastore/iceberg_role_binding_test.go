@@ -52,7 +52,7 @@ func (s *IcebergRoleBindingSuite) SetupSuite() {
 				Properties: map[string]string{
 					"location": fmt.Sprintf("s3://%s-iceberg-warehouse/%s", s.SDK.DefaultProject(), s.catalogName),
 				},
-				ServiceAccount: &metastoremodel.CatalogSpecServiceAccountRequest{
+				ServiceAccount: metastoremodel.CatalogSpecServiceAccountRequest{
 					Ref: s.ServiceAccountRef,
 				},
 			},

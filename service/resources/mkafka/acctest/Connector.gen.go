@@ -16,7 +16,7 @@ import (
 	"go.mws.cloud/terraform-provider-mws/internal/acctest"
 )
 
-func KafkaConnectorTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleResourceTestCase, error) {
+func ConnectorTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleResourceTestCase, error) {
 	resourceSDK, err := resourcesdk.NewKafkaConnector(ctx, sdk)
 	if err != nil {
 		return acctest.SingleResourceTestCase{}, fmt.Errorf("init resource sdk: %w", err)
@@ -26,7 +26,7 @@ func KafkaConnectorTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleRe
 	return acctest.SingleResourceTestCase{
 		ProviderConfig: string(providerConfig.Bytes()),
 		ResourceExists: func(ctx context.Context, id string) error {
-			r, err := GetKafkaConnector(ctx, resourceSDK, id)
+			r, err := GetConnector(ctx, resourceSDK, id)
 			if err != nil {
 				return fmt.Errorf("get: %w", err)
 			}
@@ -40,7 +40,7 @@ func KafkaConnectorTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleRe
 			return nil
 		},
 		ResourceNotExists: func(ctx context.Context, id string) error {
-			_, err := GetKafkaConnector(ctx, resourceSDK, id)
+			_, err := GetConnector(ctx, resourceSDK, id)
 			if err != nil {
 				if commonerrors.IsAPIErrorNotFoundStatus(err) {
 					return nil
@@ -52,7 +52,7 @@ func KafkaConnectorTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleRe
 	}, nil
 }
 
-func GetKafkaConnector(ctx context.Context, sdk *resourcesdk.KafkaConnector, id string) (*model.KafkaConnectorOptionalResponse, error) {
+func GetConnector(ctx context.Context, sdk *resourcesdk.KafkaConnector, id string) (*model.KafkaConnectorOptionalResponse, error) {
 	ref, err := mkafkaref.ParseKafkaConnectorRef(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("parse reference: %w", err)

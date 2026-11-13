@@ -16,6 +16,27 @@ import (
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/iam/model"
 )
 
+func TestServiceAccountOptionalResponseConverters(t *testing.T) {
+	t.Parallel()
+	apiModelRequest := model.ServiceAccountRequest{
+		Spec: model.ServiceAccountSpecRequest{},
+	}
+
+	apiModelResponse, err := model.ServiceAccountRequestToOptionalResponse(&apiModelRequest)
+	require.NoError(t, err)
+
+	tfModel, diags := conv.ServiceAccountAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
+	require.False(t, diags.HasError())
+
+	filledApiModelRequest, diags := conv.ServiceAccountTFToAPIRequestModel(context.Background(), tfModel)
+	require.False(t, diags.HasError())
+
+	result, err := model.ServiceAccountRequestToOptionalResponse(filledApiModelRequest)
+	require.NoError(t, err)
+
+	require.Equal(t, *apiModelResponse, *result)
+}
+
 func TestServiceAccountResponseConverters(t *testing.T) {
 	t.Parallel()
 	apiModelRequest := model.ServiceAccountRequest{
@@ -55,6 +76,27 @@ func TestUpdateServiceAccountRequestConverters(t *testing.T) {
 	require.False(t, diags.HasError())
 
 	require.Equal(t, expectedUpdateModel, result)
+}
+
+func TestServiceAccountMetadataOptionalResponseConverters(t *testing.T) {
+	t.Parallel()
+	apiModelRequest := model.ServiceAccountMetadataRequest{
+		TypedResourceMetadataRequest: commonmodel.TypedResourceMetadataRequest{},
+	}
+
+	apiModelResponse, err := model.ServiceAccountMetadataRequestToOptionalResponse(&apiModelRequest)
+	require.NoError(t, err)
+
+	tfModel, diags := conv.ServiceAccountMetadataAPIOptionalResponseToTFModel(context.Background(), apiModelResponse)
+	require.False(t, diags.HasError())
+
+	filledApiModelRequest, diags := conv.ServiceAccountMetadataTFToAPIRequestModel(context.Background(), tfModel)
+	require.False(t, diags.HasError())
+
+	result, err := model.ServiceAccountMetadataRequestToOptionalResponse(filledApiModelRequest)
+	require.NoError(t, err)
+
+	require.Equal(t, *apiModelResponse, *result)
 }
 
 func TestServiceAccountMetadataResponseConverters(t *testing.T) {

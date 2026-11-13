@@ -52,7 +52,7 @@ func HmacKeyTestCase(ctx context.Context, sdk *mws.SDK) (acctest.SingleResourceT
 	}, nil
 }
 
-func GetHmacKey(ctx context.Context, sdk *resourcesdk.ServiceAccountHmacKey, id string) (*model.HmacKeyResponse, error) {
+func GetHmacKey(ctx context.Context, sdk *resourcesdk.ServiceAccountHmacKey, id string) (*model.HmacKeyOptionalResponse, error) {
 	ref, err := iamref.ParseHmacKeyRef(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("parse reference: %w", err)

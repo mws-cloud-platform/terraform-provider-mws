@@ -188,9 +188,9 @@ func (m *HmacKeyResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
-	tfRes, diags := conv.HmacKeyAPIResponseToTFModel(ctx, apiRes)
+	tfRes, diags := conv.HmacKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfRes == nil {
 		tflog.Debug(ctx, "HmacKeyResource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})
@@ -225,9 +225,9 @@ func (m *HmacKeyResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
-	tfFinalRes, diags := conv.HmacKeyAPIResponseToTFModel(ctx, apiRes)
+	tfFinalRes, diags := conv.HmacKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfFinalRes == nil {
 		tflog.Debug(ctx, "HmacKeyResource.ApiToTfConvert.tfFinalRes", map[string]any{"res": tfFinalRes})
@@ -288,9 +288,9 @@ func (m *HmacKeyResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 
-	state.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
-	tfRes, diags := conv.HmacKeyAPIResponseToTFModel(ctx, apiRes)
+	tfRes, diags := conv.HmacKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfRes == nil {
 		tflog.Debug(ctx, "HmacKeyResource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})
@@ -368,9 +368,9 @@ func (m *HmacKeyResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
-	tfRes, diags := conv.HmacKeyAPIResponseToTFModel(ctx, apiRes)
+	tfRes, diags := conv.HmacKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfRes == nil {
 		tflog.Debug(ctx, "HmacKeyResource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})
@@ -403,9 +403,9 @@ func (m *HmacKeyResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	plan.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	plan.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
-	tfFinalRes, diags := conv.HmacKeyAPIResponseToTFModel(ctx, apiRes)
+	tfFinalRes, diags := conv.HmacKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfFinalRes == nil {
 		tflog.Debug(ctx, "HmacKeyResource.ApiToTfConvert.tfFinalRes", map[string]any{"res": tfFinalRes})
@@ -511,9 +511,9 @@ func (m *HmacKeyResource) ImportState(ctx context.Context, req resource.ImportSt
 		return
 	}
 
-	state.ID = types.StringValue(apiRes.Metadata.Id.ID())
+	state.ID = types.StringValue(apiRes.Metadata.Value.Id.ID())
 
-	tfRes, diags := conv.HmacKeyAPIResponseToTFModel(ctx, apiRes)
+	tfRes, diags := conv.HmacKeyAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfRes == nil {
 		tflog.Debug(ctx, "HmacKeyResource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})

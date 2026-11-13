@@ -137,7 +137,7 @@ type VirtualMachineWithSASuite struct {
 	serviceAccountSDK *iamsdk.ServiceAccount
 
 	serviceAccountName string
-	serviceAccount     *iammodel.ServiceAccountResponse
+	serviceAccount     *iammodel.ServiceAccountOptionalResponse
 }
 
 func (s *VirtualMachineWithSASuite) SetupSuite() {

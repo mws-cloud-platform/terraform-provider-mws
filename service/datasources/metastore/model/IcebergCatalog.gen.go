@@ -19,7 +19,7 @@ type IcebergCatalog struct {
 
 func (s *IcebergCatalog) GetSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: `Ресурс Iceberg-каталога. При создании обязательны "properties.location" и "serviceAccount.ref"; при обновлении допускается частичный "spec".`,
+		MarkdownDescription: `Ресурс Iceberg-каталога.`,
 		Attributes: map[string]schema.Attribute{
 			"kind": schema.StringAttribute{
 				Computed: true,
@@ -35,7 +35,7 @@ func (s *IcebergCatalog) GetSchema() schema.Schema {
 			},
 			"properties": schema.MapAttribute{
 				ElementType:         types.StringType,
-				MarkdownDescription: `Дополнительные настройки каталога`,
+				MarkdownDescription: `Дополнительные настройки каталога. Для расположения данных в Object Storage обязательно задайте значение параметра "location"`,
 				Computed:            true,
 			},
 			"service_account": schema.SingleNestedAttribute{

@@ -6,11 +6,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/stretchr/testify/require"
 	"go.mws.cloud/go-sdk/pkg/apimodels/units/bytesize"
 
-	"go.mws.cloud/go-sdk/pkg/optional"
 	"go.mws.cloud/go-sdk/service/mk8s/model"
 	conv "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/converter"
 	tfmodel "go.mws.cloud/terraform-provider-mws/service/resources/mk8s/model"
@@ -43,14 +41,8 @@ func TestUpdateLocalDiskSpecRequestConverters(t *testing.T) {
 
 	var nullPlanTfModel tfmodel.LocalDiskSpec
 	var stateTfModel tfmodel.LocalDiskSpec
-	stateTfModel.DeviceName = types.StringValue("")
 
-	expectedUpdateModel := &model.UpdateLocalDiskSpecRequest{
-		DeviceName: optional.OptionalNil[string]{
-			Set:  true,
-			Null: true,
-		},
-	}
+	expectedUpdateModel := &model.UpdateLocalDiskSpecRequest{}
 
 	result, diags := conv.LocalDiskSpecTFToAPIUpdateRequestModel(context.Background(), &nullPlanTfModel, &stateTfModel)
 	require.False(t, diags.HasError())

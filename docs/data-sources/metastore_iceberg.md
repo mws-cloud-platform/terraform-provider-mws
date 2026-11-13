@@ -3,12 +3,12 @@
 page_title: "mws_metastore_iceberg Data Source - mws"
 subcategory: ""
 description: |-
-  Ресурс Iceberg-каталога. При создании обязательны "properties.location" и "serviceAccount.ref"; при обновлении допускается частичный "spec".
+  Ресурс Iceberg-каталога.
 ---
 
 # mws_metastore_iceberg (Data Source)
 
-Ресурс Iceberg-каталога. При создании обязательны "properties.location" и "serviceAccount.ref"; при обновлении допускается частичный "spec".
+Ресурс Iceberg-каталога.
 
 ## Примеры использования
 
@@ -34,7 +34,7 @@ data "mws_metastore_iceberg" "example" {
 
 - `kind` (String)
 - `metadata` (Attributes) (see [below for nested schema](#nestedatt--metadata))
-- `properties` (Map of String) Дополнительные настройки каталога
+- `properties` (Map of String) Дополнительные настройки каталога. Для расположения данных в Object Storage обязательно задайте значение параметра "location"
 - `service_account` (Attributes) Сервисный аккаунт, используемый для доступа к Object Storage (see [below for nested schema](#nestedatt--service_account))
 - `status` (Attributes) Текущее состояние ресурса, вычисляемое системой (see [below for nested schema](#nestedatt--status))
 

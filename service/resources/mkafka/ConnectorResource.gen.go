@@ -31,27 +31,27 @@ import (
 )
 
 var (
-	_ resource.Resource                = &KafkaConnectorResource{}
-	_ resource.ResourceWithImportState = &KafkaConnectorResource{}
-	_ resource.ResourceWithIdentity    = &KafkaConnectorResource{}
+	_ resource.Resource                = &ConnectorResource{}
+	_ resource.ResourceWithImportState = &ConnectorResource{}
+	_ resource.ResourceWithIdentity    = &ConnectorResource{}
 )
 
-type KafkaConnectorResource struct {
+type ConnectorResource struct {
 	sdk    *resourcesdk.KafkaConnector
 	config *provider.Config
 }
 
-func NewKafkaConnectorResource() resource.Resource {
-	return &KafkaConnectorResource{}
+func NewConnectorResource() resource.Resource {
+	return &ConnectorResource{}
 }
 
-func (m *KafkaConnectorResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	tflog.Info(ctx, "KafkaConnectorResource.Metadata")
-	resp.TypeName = req.ProviderTypeName + "_mkafka_kafka_connector"
+func (m *ConnectorResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	tflog.Info(ctx, "ConnectorResource.Metadata")
+	resp.TypeName = req.ProviderTypeName + "_mkafka_connector"
 }
 
-func (m *KafkaConnectorResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	tflog.Info(ctx, "KafkaConnectorResource.Schema")
+func (m *ConnectorResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	tflog.Info(ctx, "ConnectorResource.Schema")
 	resp.Schema = new(tfmodel.KafkaConnector).GetSchema()
 	resp.Schema.Attributes["project"] = schema.StringAttribute{
 		MarkdownDescription: `Путь к проекту.`,
@@ -89,14 +89,14 @@ func (m *KafkaConnectorResource) Schema(ctx context.Context, req resource.Schema
 	}
 }
 
-type kafkaConnectorResourceIdentityModel struct {
+type connectorResourceIdentityModel struct {
 	Project   types.String `tfsdk:"project"`
 	Cluster   types.String `tfsdk:"cluster"`
 	Connector types.String `tfsdk:"connector"`
 }
 
-func (m *KafkaConnectorResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
-	tflog.Info(ctx, "KafkaConnectorResource.IdentitySchema")
+func (m *ConnectorResource) IdentitySchema(ctx context.Context, req resource.IdentitySchemaRequest, resp *resource.IdentitySchemaResponse) {
+	tflog.Info(ctx, "ConnectorResource.IdentitySchema")
 	resp.IdentitySchema = identityschema.Schema{
 		Attributes: map[string]identityschema.Attribute{
 			"project": identityschema.StringAttribute{
@@ -115,9 +115,9 @@ func (m *KafkaConnectorResource) IdentitySchema(ctx context.Context, req resourc
 	}
 }
 
-func (m *KafkaConnectorResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (m *ConnectorResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	var err error
-	tflog.Info(ctx, "KafkaConnectorResource.Configure")
+	tflog.Info(ctx, "ConnectorResource.Configure")
 	if req.ProviderData == nil {
 		return
 	}
@@ -133,17 +133,17 @@ func (m *KafkaConnectorResource) Configure(ctx context.Context, req resource.Con
 	m.sdk, err = resourcesdk.NewKafkaConnector(ctx, providerData.SDK)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Create SDK client for KafkaConnector",
+			"Create SDK client for Connector",
 			diag.FormatError(err),
 		)
 		return
 	}
 }
 
-func (m *KafkaConnectorResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	tflog.Info(ctx, "KafkaConnectorResource.Create")
+func (m *ConnectorResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	tflog.Info(ctx, "ConnectorResource.Create")
 
-	var plan tfmodel.KafkaConnectorResourceModel
+	var plan tfmodel.ConnectorResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -165,20 +165,20 @@ func (m *KafkaConnectorResource) Create(ctx context.Context, req resource.Create
 	resourceWaiterTimeout, diags := plan.Timeouts.Create(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
-		tflog.Debug(ctx, "KafkaConnectorResource.Timeouts")
+		tflog.Debug(ctx, "ConnectorResource.Timeouts")
 		return
 	}
 
 	body, diags := conv.KafkaConnectorTFToAPIRequestModel(ctx, &plan.KafkaConnector)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
-		tflog.Debug(ctx, "KafkaConnectorResource.TFToAPI")
+		tflog.Debug(ctx, "ConnectorResource.TFToAPI")
 		return
 	}
 
 	body, diags = func(ctx context.Context, planApiRequest *model.KafkaConnectorRequest) (*model.KafkaConnectorRequest, tfdiag.Diagnostics) {
 
-		var configData tfmodel.KafkaConnectorResourceModel
+		var configData tfmodel.ConnectorResourceModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
 		if resp.Diagnostics.HasError() {
 			return nil, resp.Diagnostics
@@ -191,7 +191,7 @@ func (m *KafkaConnectorResource) Create(ctx context.Context, req resource.Create
 
 		resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, tfpath.Root("s3_sink_connector").AtName("s3_properties").AtName("secret_access_key_version"), &specS3SinkConnectorS3PropertiesSecretAccessKeyVersion)...)
 		if resp.Diagnostics.HasError() {
-			tflog.Debug(ctx, "KafkaConnectorResource.GetWriteOnlyAttributeFromConfig")
+			tflog.Debug(ctx, "ConnectorResource.GetWriteOnlyAttributeFromConfig")
 			return nil, resp.Diagnostics
 		}
 		if !specS3SinkConnectorS3PropertiesSecretAccessKeyVersion.IsNull() && !specS3SinkConnectorS3PropertiesSecretAccessKeyVersion.IsUnknown() {
@@ -202,7 +202,7 @@ func (m *KafkaConnectorResource) Create(ctx context.Context, req resource.Create
 	}(ctx, body)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
-		tflog.Debug(ctx, "KafkaConnectorResource.GetWriteOnlyAttributesFromConfig")
+		tflog.Debug(ctx, "ConnectorResource.GetWriteOnlyAttributesFromConfig")
 		return
 	}
 
@@ -218,7 +218,7 @@ func (m *KafkaConnectorResource) Create(ctx context.Context, req resource.Create
 	)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Create KafkaConnector",
+			"Create Connector",
 			diag.FormatError(err),
 		)
 		return
@@ -229,14 +229,14 @@ func (m *KafkaConnectorResource) Create(ctx context.Context, req resource.Create
 	tfRes, diags := conv.KafkaConnectorAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfRes == nil {
-		tflog.Debug(ctx, "KafkaConnectorResource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})
+		tflog.Debug(ctx, "ConnectorResource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})
 		return
 	}
 
 	plan.KafkaConnector = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
-	resp.Diagnostics.Append(resp.Identity.Set(ctx, kafkaConnectorResourceIdentityModel{
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, connectorResourceIdentityModel{
 		Project:   plan.ProjectParam,
 		Cluster:   plan.ClusterParam,
 		Connector: plan.ConnectorParam,
@@ -246,10 +246,10 @@ func (m *KafkaConnectorResource) Create(ctx context.Context, req resource.Create
 	}
 }
 
-func (m *KafkaConnectorResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	tflog.Info(ctx, "KafkaConnectorResource.Read")
+func (m *ConnectorResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	tflog.Info(ctx, "ConnectorResource.Read")
 
-	var state tfmodel.KafkaConnectorResourceModel
+	var state tfmodel.ConnectorResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -271,7 +271,7 @@ func (m *KafkaConnectorResource) Read(ctx context.Context, req resource.ReadRequ
 	readTimeout, diags := state.Timeouts.Read(ctx, 300*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
-		tflog.Debug(ctx, "KafkaConnectorResource.Timeouts")
+		tflog.Debug(ctx, "ConnectorResource.Timeouts")
 		return
 	}
 
@@ -288,7 +288,7 @@ func (m *KafkaConnectorResource) Read(ctx context.Context, req resource.ReadRequ
 	)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Get KafkaConnector",
+			"Get Connector",
 			diag.FormatError(err),
 		)
 		return
@@ -299,14 +299,14 @@ func (m *KafkaConnectorResource) Read(ctx context.Context, req resource.ReadRequ
 	tfRes, diags := conv.KafkaConnectorAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfRes == nil {
-		tflog.Debug(ctx, "KafkaConnectorResource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})
+		tflog.Debug(ctx, "ConnectorResource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})
 		return
 	}
 
 	state.KafkaConnector = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
-	resp.Diagnostics.Append(resp.Identity.Set(ctx, kafkaConnectorResourceIdentityModel{
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, connectorResourceIdentityModel{
 		Project:   state.ProjectParam,
 		Cluster:   state.ClusterParam,
 		Connector: state.ConnectorParam,
@@ -317,16 +317,16 @@ func (m *KafkaConnectorResource) Read(ctx context.Context, req resource.ReadRequ
 	}
 }
 
-func (m *KafkaConnectorResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	tflog.Info(ctx, "KafkaConnectorResource.Update")
+func (m *ConnectorResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	tflog.Info(ctx, "ConnectorResource.Update")
 
-	var plan tfmodel.KafkaConnectorResourceModel
+	var plan tfmodel.ConnectorResourceModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var state tfmodel.KafkaConnectorResourceModel
+	var state tfmodel.ConnectorResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -348,20 +348,20 @@ func (m *KafkaConnectorResource) Update(ctx context.Context, req resource.Update
 	resourceWaiterTimeout, diags := plan.Timeouts.Update(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
-		tflog.Debug(ctx, "KafkaConnectorResource.Timeouts")
+		tflog.Debug(ctx, "ConnectorResource.Timeouts")
 		return
 	}
 
 	body, diags := conv.KafkaConnectorTFToAPIUpdateRequestModel(ctx, &plan.KafkaConnector, &state.KafkaConnector)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
-		tflog.Debug(ctx, "KafkaConnectorResource.TFToAPI")
+		tflog.Debug(ctx, "ConnectorResource.TFToAPI")
 		return
 	}
 
 	body, diags = func(ctx context.Context, planApiRequest *model.UpdateKafkaConnectorRequest) (*model.UpdateKafkaConnectorRequest, tfdiag.Diagnostics) {
 
-		var configData tfmodel.KafkaConnectorResourceModel
+		var configData tfmodel.ConnectorResourceModel
 		resp.Diagnostics.Append(req.Config.Get(ctx, &configData)...)
 		if resp.Diagnostics.HasError() {
 			return nil, resp.Diagnostics
@@ -374,7 +374,7 @@ func (m *KafkaConnectorResource) Update(ctx context.Context, req resource.Update
 
 		resp.Diagnostics.Append(req.Plan.GetAttribute(ctx, tfpath.Root("s3_sink_connector").AtName("s3_properties").AtName("secret_access_key_version"), &specS3SinkConnectorS3PropertiesSecretAccessKeyVersion)...)
 		if resp.Diagnostics.HasError() {
-			tflog.Debug(ctx, "KafkaConnectorResource.GetWriteOnlyAttributeFromConfig")
+			tflog.Debug(ctx, "ConnectorResource.GetWriteOnlyAttributeFromConfig")
 			return nil, resp.Diagnostics
 		}
 		if !specS3SinkConnectorS3PropertiesSecretAccessKeyVersion.IsNull() && !specS3SinkConnectorS3PropertiesSecretAccessKeyVersion.IsUnknown() {
@@ -385,7 +385,7 @@ func (m *KafkaConnectorResource) Update(ctx context.Context, req resource.Update
 	}(ctx, body)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
-		tflog.Debug(ctx, "KafkaConnectorResource.GetWriteOnlyAttributesFromConfig")
+		tflog.Debug(ctx, "ConnectorResource.GetWriteOnlyAttributesFromConfig")
 		return
 	}
 
@@ -401,7 +401,7 @@ func (m *KafkaConnectorResource) Update(ctx context.Context, req resource.Update
 	)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Update KafkaConnector",
+			"Update Connector",
 			diag.FormatError(err),
 		)
 		return
@@ -412,14 +412,14 @@ func (m *KafkaConnectorResource) Update(ctx context.Context, req resource.Update
 	tfRes, diags := conv.KafkaConnectorAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfRes == nil {
-		tflog.Debug(ctx, "KafkaConnectorResource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})
+		tflog.Debug(ctx, "ConnectorResource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})
 		return
 	}
 
 	plan.KafkaConnector = *tfRes
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
-	resp.Diagnostics.Append(resp.Identity.Set(ctx, kafkaConnectorResourceIdentityModel{
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, connectorResourceIdentityModel{
 		Project:   plan.ProjectParam,
 		Cluster:   plan.ClusterParam,
 		Connector: plan.ConnectorParam,
@@ -429,10 +429,10 @@ func (m *KafkaConnectorResource) Update(ctx context.Context, req resource.Update
 	}
 }
 
-func (m *KafkaConnectorResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	tflog.Info(ctx, "KafkaConnectorResource.Delete")
+func (m *ConnectorResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	tflog.Info(ctx, "ConnectorResource.Delete")
 
-	var state tfmodel.KafkaConnectorResourceModel
+	var state tfmodel.ConnectorResourceModel
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -452,7 +452,7 @@ func (m *KafkaConnectorResource) Delete(ctx context.Context, req resource.Delete
 	resourceWaiterTimeout, diags := state.Timeouts.Delete(ctx, 3600*time.Second)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
-		tflog.Debug(ctx, "KafkaConnectorResource.Timeouts")
+		tflog.Debug(ctx, "ConnectorResource.Timeouts")
 		return
 	}
 
@@ -467,17 +467,17 @@ func (m *KafkaConnectorResource) Delete(ctx context.Context, req resource.Delete
 	)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Delete KafkaConnector",
+			"Delete Connector",
 			diag.FormatError(err),
 		)
 		return
 	}
 }
 
-func (m *KafkaConnectorResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	tflog.Info(ctx, "KafkaConnectorResource.ImportState")
+func (m *ConnectorResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	tflog.Info(ctx, "ConnectorResource.ImportState")
 
-	var state tfmodel.KafkaConnectorResourceModel
+	var state tfmodel.ConnectorResourceModel
 
 	var (
 		ref mkafkaref.KafkaConnectorRef
@@ -486,7 +486,7 @@ func (m *KafkaConnectorResource) ImportState(ctx context.Context, req resource.I
 	if req.ID != "" {
 		ref, err = mkafkaref.ParseKafkaConnectorRef(ctx, req.ID)
 	} else {
-		var identity kafkaConnectorResourceIdentityModel
+		var identity connectorResourceIdentityModel
 		resp.Diagnostics.Append(req.Identity.Get(ctx, &identity)...)
 		if resp.Diagnostics.HasError() {
 			return
@@ -500,7 +500,7 @@ func (m *KafkaConnectorResource) ImportState(ctx context.Context, req resource.I
 	}
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Parse reference for KafkaConnector",
+			"Parse reference for Connector",
 			diag.FormatError(err),
 		)
 		return
@@ -515,7 +515,7 @@ func (m *KafkaConnectorResource) ImportState(ctx context.Context, req resource.I
 		})
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Get KafkaConnector",
+			"Get Connector",
 			diag.FormatError(err),
 		)
 		return
@@ -526,7 +526,7 @@ func (m *KafkaConnectorResource) ImportState(ctx context.Context, req resource.I
 	tfRes, diags := conv.KafkaConnectorAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfRes == nil {
-		tflog.Debug(ctx, "KafkaConnectorResource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})
+		tflog.Debug(ctx, "ConnectorResource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})
 		return
 	}
 
@@ -539,13 +539,13 @@ func (m *KafkaConnectorResource) ImportState(ctx context.Context, req resource.I
 	var rwTimeouts timeouts.Value
 	resp.Diagnostics.Append(resp.State.GetAttribute(ctx, tfpath.Root("timeouts"), &rwTimeouts)...)
 	if resp.Diagnostics.HasError() {
-		tflog.Debug(ctx, "KafkaConnectorResource.timeouts.GetAttribute")
+		tflog.Debug(ctx, "ConnectorResource.timeouts.GetAttribute")
 		return
 	}
 	state.Timeouts = rwTimeouts
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
-	resp.Diagnostics.Append(resp.Identity.Set(ctx, kafkaConnectorResourceIdentityModel{
+	resp.Diagnostics.Append(resp.Identity.Set(ctx, connectorResourceIdentityModel{
 		Project:   state.ProjectParam,
 		Cluster:   state.ClusterParam,
 		Connector: state.ConnectorParam,

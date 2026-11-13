@@ -123,7 +123,7 @@ func (m *ServiceAccountDataSource) Read(ctx context.Context, req datasource.Read
 		return
 	}
 
-	tfRes, diags := conv.ServiceAccountAPIResponseToTFModel(ctx, apiRes)
+	tfRes, diags := conv.ServiceAccountAPIOptionalResponseToTFModel(ctx, apiRes)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() || tfRes == nil {
 		tflog.Debug(ctx, "ServiceAccountDataSource.ApiToTfConvert.tfRes", map[string]any{"res": tfRes})

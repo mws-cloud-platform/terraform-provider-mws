@@ -13,12 +13,30 @@ import (
 	conv "go.mws.cloud/terraform-provider-mws/service/datasources/iam/converter"
 )
 
+func TestHmacKeyAPIOptionalResponseToTFModel(t *testing.T) {
+	t.Parallel()
+	apiModel := model.HmacKeyOptionalResponse{
+		Spec: model.HmacKeySpecOptionalResponse{},
+	}
+	_, diags := conv.HmacKeyAPIOptionalResponseToTFModel(context.Background(), &apiModel)
+	require.False(t, diags.HasError())
+}
+
 func TestHmacKeyAPIResponseToTFModel(t *testing.T) {
 	t.Parallel()
 	apiModel := model.HmacKeyResponse{
 		Spec: model.HmacKeySpecResponse{},
 	}
 	_, diags := conv.HmacKeyAPIResponseToTFModel(context.Background(), &apiModel)
+	require.False(t, diags.HasError())
+}
+
+func TestHmacKeyMetadataAPIOptionalResponseToTFModel(t *testing.T) {
+	t.Parallel()
+	apiModel := model.HmacKeyMetadataOptionalResponse{
+		TypedResourceMetadataOptionalResponse: commonmodel.TypedResourceMetadataOptionalResponse{},
+	}
+	_, diags := conv.HmacKeyMetadataAPIOptionalResponseToTFModel(context.Background(), &apiModel)
 	require.False(t, diags.HasError())
 }
 
